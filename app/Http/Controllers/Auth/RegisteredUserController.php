@@ -35,9 +35,12 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'phone' => 'required|unique:users,phone',
+            'phone' => 'required|regex:/^\+\d+$/|unique:users,phone',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ],
+            [
+                'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            ]);
 
         $user = User::create([
             'name' => $request->name,

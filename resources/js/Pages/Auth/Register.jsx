@@ -105,6 +105,8 @@ export default function Register() {
                                         Required={true}
                                     />
 
+                                    {errors?.phone && <p className="mt-10">&nbsp;</p>}
+
                                     <Input
                                         InputName={'Password'}
                                         Error={errors.password}
@@ -142,8 +144,10 @@ export default function Register() {
                                                 processing ||
                                                 data.name == '' ||
                                                 data.email == '' ||
+                                                data.phone == '' ||
                                                 data.password == '' ||
-                                                data.password_confirmation == ''
+                                                data.password_confirmation == '' ||
+                                                data.password != data.password_confirmation
                                             }
                                             Type={'submit'}
                                             Icon={
