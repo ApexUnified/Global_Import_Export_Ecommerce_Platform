@@ -5,13 +5,11 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
 createInertiaApp({
     title: (title) => {
         // Get the app name from the current page props if available
         const page = document.getElementById('app')?.dataset?.page;
-        let appName = 'Laravel';
+        let appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
         if (page) {
             try {

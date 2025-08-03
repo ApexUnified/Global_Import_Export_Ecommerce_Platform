@@ -1,0 +1,13 @@
+Milestone 1: Project Setup + Full Authentication
+Laravel + Inertia.js + TailwindCSS setup
+1: Authentication system ✅
+2: Full Auth Features:
+ * Registration ✅
+ * Login/Logout ✅
+ * Password Reset (via email) ✅
+ * Email Verification ✅
+ * Optional: 2-Factor Authentication (using email or TOTP app) ❌
+ * Dashboard shell layout (sidebar + header) ✅
+ * Toggle For Dark Mode And Light Mode ✅
+ * Define and implement 4 distinct user roles:(Admin, Customer, Collaborator, Supplier) ✅
+ * General Settings, Smtp Settings, Role Settings ✅

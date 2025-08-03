@@ -34,7 +34,6 @@ export default function Header({
     // For Managing  References
     const dropdownRef = useRef(null);
     const profileDropdownRef = useRef(null);
-    const searchInputRef = useRef(null);
 
     // Toggle Mode Dark + Light
     useEffect(() => {
@@ -77,40 +76,11 @@ export default function Header({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Handle Key Press For opening Search And Focusing it
-    useEffect(() => {
-        const handleCtrlK = (event) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-                event.preventDefault();
-                if (searchInputRef.current) {
-                    searchInputRef.current.focus();
-                }
-            }
-        };
-
-        const handleSlash = (event) => {
-            if (event.key === '/' && document.activeElement !== searchInputRef.current) {
-                event.preventDefault();
-                if (searchInputRef.current) {
-                    searchInputRef.current.focus();
-                }
-            }
-        };
-
-        document.addEventListener('keydown', handleCtrlK);
-        document.addEventListener('keydown', handleSlash);
-
-        return () => {
-            document.removeEventListener('keydown', handleCtrlK);
-            document.removeEventListener('keydown', handleSlash);
-        };
-    }, []);
-
     return (
         <>
-            <header className="flex w-full bg-white border-gray-200 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
-                <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
-                    <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
+            <header className="flex w-full border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:border-b">
+                <div className="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
+                    <div className="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
                         <button
                             className={`${sidebarToggle ? 'bg-gray-100 dark:bg-gray-800 md:bg-transparent dark:lg:bg-transparent' : ''} z-99999 flex h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 dark:border-gray-800 dark:text-gray-400 lg:h-11 lg:w-11 lg:border`}
                             onClick={() => setSidebarToggle(!sidebarToggle)}
@@ -181,57 +151,14 @@ export default function Header({
                                 />
                             </svg>
                         </button>
-
-                        <div className="hidden lg:block">
-                            <form>
-                                <div className="relative">
-                                    <span className="absolute -translate-y-1/2 left-4 top-1/2">
-                                        <svg
-                                            className="fill-gray-500 dark:fill-gray-400"
-                                            width="20"
-                                            height="20"
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
-                                                fill=""
-                                            />
-                                        </svg>
-                                    </span>
-                                    <input
-                                        type="search"
-                                        ref={searchInputRef}
-                                        placeholder="Search ..."
-                                        id="search-input"
-                                        className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 focus:ring-3 focus:outline-hidden h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 placeholder:text-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 xl:w-[430px]"
-                                    />
-
-                                    <button
-                                        id="search-button"
-                                        className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
-                                    >
-                                        <span> ⌘ </span>
-                                        <span> K </span>
-
-                                        <span> | </span>
-
-                                        <span> / </span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
 
                     <div
                         className={`${menuToggle ? 'flex' : 'hidden'} shadow-theme-md w-full items-center justify-between gap-4 px-5 py-4 lg:flex lg:justify-end lg:px-0 lg:shadow-none`}
                     >
-                        <div className="flex items-center gap-2 2xsm:gap-3">
+                        <div className="2xsm:gap-3 flex items-center gap-2">
                             <button
-                                className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                                className="hover:text-dark-900 relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
                                 onClick={() => {
                                     setDarkMode(!darkMode);
                                     localStorage.setItem('darkMode', !darkMode);
@@ -269,7 +196,7 @@ export default function Header({
 
                             <div className="relative" ref={dropdownRef}>
                                 <button
-                                    className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                                    className="hover:text-dark-900 relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
                                     onClick={() => {
                                         setNotifying(false);
                                         setNotificationDropdown((prev) => !prev);
@@ -278,7 +205,7 @@ export default function Header({
                                     <span
                                         className={`${!notifying ? 'hidden' : 'flex'} z-1 absolute right-0 top-0.5 h-2 w-2 rounded-full bg-orange-400`}
                                     >
-                                        <span className="absolute inline-flex w-full h-full bg-orange-400 rounded-full opacity-75 -z-1 animate-ping"></span>
+                                        <span className="-z-1 absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
                                     </span>
                                     <svg
                                         className="fill-current"
@@ -299,7 +226,7 @@ export default function Header({
 
                                 {NotificationDropdown && (
                                     <div className="absolute z-[1] mt-[17px] flex h-[300px] w-[250px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-800 dark:bg-gray-900 sm:w-[361px] lg:right-0">
-                                        <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-800">
+                                        <div className="mb-3 flex items-center justify-between border-b border-gray-100 pb-3 dark:border-gray-800">
                                             <h5 className="text-lg font-semibold text-gray-800 dark:text-white/90">
                                                 Notification
                                             </h5>
@@ -326,13 +253,13 @@ export default function Header({
                                             </button>
                                         </div>
 
-                                        <ul className="flex flex-col h-auto overflow-y-auto custom-scrollbar">
+                                        <ul className="custom-scrollbar flex h-auto flex-col overflow-y-auto">
                                             <li>
                                                 <a
                                                     className="px-4.5 flex gap-3 rounded-lg border-b border-gray-100 p-3 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                                                     href="#"
                                                 >
-                                                    <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
+                                                    <span className="z-1 relative block h-10 w-full max-w-10 rounded-full">
                                                         <img
                                                             src={not1}
                                                             alt="User"
@@ -352,9 +279,9 @@ export default function Header({
                                                             </span>
                                                         </span>
 
-                                                        <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
+                                                        <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                                             <span>Project</span>
-                                                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                                            <span className="h-1 w-1 rounded-full bg-gray-400"></span>
                                                             <span>5 min ago</span>
                                                         </span>
                                                     </span>
@@ -366,7 +293,7 @@ export default function Header({
                                                     className="px-4.5 flex gap-3 rounded-lg border-b border-gray-100 p-3 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                                                     href="#"
                                                 >
-                                                    <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
+                                                    <span className="z-1 relative block h-10 w-full max-w-10 rounded-full">
                                                         <img
                                                             src={not2}
                                                             alt="User"
@@ -386,9 +313,9 @@ export default function Header({
                                                             </span>
                                                         </span>
 
-                                                        <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
+                                                        <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                                             <span>Project</span>
-                                                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                                            <span className="h-1 w-1 rounded-full bg-gray-400"></span>
                                                             <span>8 min ago</span>
                                                         </span>
                                                     </span>
@@ -400,7 +327,7 @@ export default function Header({
                                                     className="px-4.5 flex gap-3 rounded-lg border-b border-gray-100 p-3 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                                                     href="#"
                                                 >
-                                                    <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
+                                                    <span className="z-1 relative block h-10 w-full max-w-10 rounded-full">
                                                         <img
                                                             src={not3}
                                                             alt="User"
@@ -420,9 +347,9 @@ export default function Header({
                                                             </span>
                                                         </span>
 
-                                                        <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
+                                                        <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                                             <span>Project</span>
-                                                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                                            <span className="h-1 w-1 rounded-full bg-gray-400"></span>
                                                             <span>15 min ago</span>
                                                         </span>
                                                     </span>
@@ -434,7 +361,7 @@ export default function Header({
                                                     className="px-4.5 flex gap-3 rounded-lg border-b border-gray-100 p-3 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                                                     href="#"
                                                 >
-                                                    <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
+                                                    <span className="z-1 relative block h-10 w-full max-w-10 rounded-full">
                                                         <img
                                                             src={not4}
                                                             alt="User"
@@ -454,9 +381,9 @@ export default function Header({
                                                             </span>
                                                         </span>
 
-                                                        <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
+                                                        <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                                             <span>Project</span>
-                                                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                                            <span className="h-1 w-1 rounded-full bg-gray-400"></span>
                                                             <span>15 min ago</span>
                                                         </span>
                                                     </span>
@@ -477,14 +404,14 @@ export default function Header({
 
                         <div className="relative z-[1]" ref={profileDropdownRef}>
                             <div
-                                className="flex items-center text-gray-700 cursor-pointer dark:text-gray-400"
+                                className="flex cursor-pointer items-center text-gray-700 dark:text-gray-400"
                                 onClick={() => setProfileDropdown(!profileDropdown)}
                             >
-                                <span className="flex items-center justify-center mr-3 overflow-hidden bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+                                <span className="hover:text-dark-900 mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
                                     {user.avatar}
                                 </span>
 
-                                <span className="block mr-1 font-medium text-theme-sm">
+                                <span className="text-theme-sm mr-1 block font-medium">
                                     {' '}
                                     {user.name.length > 10
                                         ? user.name.slice(0, 10) + '...'
@@ -512,9 +439,9 @@ export default function Header({
                             {profileDropdown && (
                                 <div className="absolute right-0 mt-[17px] flex w-auto min-w-[300px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-800 dark:bg-gray-900">
                                     <div>
-                                        <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-                                            {user.name.length > 15
-                                                ? user.name.slice(0, 15) + '...'
+                                        <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
+                                            {user.name.length > 20
+                                                ? user.name.slice(0, 20) + '...'
                                                 : (user.name ?? 'User')}
                                         </span>
                                         <span className="text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400">
@@ -524,11 +451,11 @@ export default function Header({
                                         </span>
                                     </div>
 
-                                    <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+                                    <ul className="flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4 dark:border-gray-800">
                                         <li>
                                             <Link
-                                                href={route('profile.index')}
-                                                className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                href={route('dashboard.profile.index')}
+                                                className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                             >
                                                 <svg
                                                     className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -550,8 +477,8 @@ export default function Header({
                                         </li>
                                         <li>
                                             <Link
-                                                href={route('settings.general.setting')}
-                                                className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                href={route('dashboard.settings.general.setting')}
+                                                className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                             >
                                                 <svg
                                                     className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -576,7 +503,7 @@ export default function Header({
                                         onClick={() => {
                                             logout(route('logout'));
                                         }}
-                                        className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                        className="text-theme-sm group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                     >
                                         {logoutProcessing ? (
                                             <Spinner />

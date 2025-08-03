@@ -89,7 +89,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
+                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -116,7 +116,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="flex flex-col gap-4 mb-6">
+                            <ul className="mb-6 flex flex-col gap-4">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
@@ -162,7 +162,7 @@ export default function Sidebar({
                                     </Link>
                                 </li>
 
-                                <li>
+                                {/* <li>
                                     <a
                                         onClick={() => {
                                             if (selected === 'Categories') {
@@ -171,7 +171,7 @@ export default function Sidebar({
                                                 setSelected('Categories');
                                             }
                                         }}
-                                        className={`menu-item group cursor-pointer ${route().current().includes('category.') || selected === 'Categories' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.category.') || selected === 'Categories' ? 'menu-item-active' : 'menu-item-inactive'} `}
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -200,7 +200,7 @@ export default function Sidebar({
                                         </span>
 
                                         <svg
-                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('category.') || (selected === 'Categories' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.category.') || (selected === 'Categories' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
                                             width="20"
                                             height="20"
                                             viewBox="0 0 20 20"
@@ -225,105 +225,28 @@ export default function Sidebar({
                                         >
                                             <li>
                                                 <Link
-                                                    href={route('category.index')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'category.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.category.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.category.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Category List
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href={route('category.create')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'category.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.category.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.category.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Create Category
                                                 </Link>
                                             </li>
                                         </ul>
                                     </div>
-                                </li>
-
-                                <li>
-                                    <a
-                                        onClick={() => {
-                                            if (selected === 'demoDropdown') {
-                                                setSelected(null);
-                                            } else {
-                                                setSelected('demoDropdown');
-                                            }
-                                        }}
-                                        className={`menu-item group cursor-pointer ${selected === 'demoDropdown' ? 'menu-item-active' : 'menu-item-inactive'}`}
-                                    >
-                                        <svg
-                                            className={`${selected === 'demoDropdown' ? 'menu-item-icon-active' : 'menu-item-icon-inactive'}`}
-                                            width="24"
-                                            height="24"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M14 2.75C14 2.33579 14.3358 2 14.75 2C15.1642 2 15.5 2.33579 15.5 2.75V5.73291L17.75 5.73291H19C19.4142 5.73291 19.75 6.0687 19.75 6.48291C19.75 6.89712 19.4142 7.23291 19 7.23291H18.5L18.5 12.2329C18.5 15.5691 15.9866 18.3183 12.75 18.6901V21.25C12.75 21.6642 12.4142 22 12 22C11.5858 22 11.25 21.6642 11.25 21.25V18.6901C8.01342 18.3183 5.5 15.5691 5.5 12.2329L5.5 7.23291H5C4.58579 7.23291 4.25 6.89712 4.25 6.48291C4.25 6.0687 4.58579 5.73291 5 5.73291L6.25 5.73291L8.5 5.73291L8.5 2.75C8.5 2.33579 8.83579 2 9.25 2C9.66421 2 10 2.33579 10 2.75L10 5.73291L14 5.73291V2.75ZM7 7.23291L7 12.2329C7 14.9943 9.23858 17.2329 12 17.2329C14.7614 17.2329 17 14.9943 17 12.2329L17 7.23291L7 7.23291Z"
-                                                fill=""
-                                            />
-                                        </svg>
-
-                                        <span
-                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
-                                        >
-                                            Demo Dropdown
-                                        </span>
-
-                                        <svg
-                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${selected === 'demoDropdown' && 'menu-item-arrow-active'} ${sidebarToggle ? 'lg:hidden' : ''}`}
-                                            width="20"
-                                            height="20"
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
-                                                stroke=""
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                    </a>
-
-                                    <div
-                                        className={`translate transform overflow-hidden ${selected === 'demoDropdown' ? 'block' : 'hidden'}`}
-                                    >
-                                        <ul
-                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
-                                        >
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="menu-dropdown-item menu-dropdown-item-inactive group"
-                                                >
-                                                    DD1
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="menu-dropdown-item menu-dropdown-item-inactive group"
-                                                >
-                                                    DD2
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
+                                </li> */}
 
                                 <li>
                                     <Link
-                                        href={route('settings.index')}
-                                        className={`menu-item group ${route().current().includes('settings') ? 'menu-item-active' : 'menu-item-inactive'}`}
+                                        href={route('dashboard.settings.index')}
+                                        className={`menu-item group ${route().current().includes('dashboard.settings') ? 'menu-item-active' : 'menu-item-inactive'}`}
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"

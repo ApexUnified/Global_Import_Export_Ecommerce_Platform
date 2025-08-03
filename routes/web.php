@@ -1,50 +1,52 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SettingController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\ProfileController;
+use App\Http\Controllers\Dashboard\SettingController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+Route::redirect('/', '/dashboard')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', HomeController::class)->name('dashboard');
 
-    // Category Routes
-    Route::resource('/category', CategoryController::class)->except(['show']);
-    Route::delete('/category-delete-by-selectetion', [CategoryController::class, 'deleteBySelection'])->name('category.deletebyselection');
+    // Dashboard Routes With Prefixed /dashboard and named as dashboard. to seprate Webiste and Dashboard Logics And routes
+    Route::prefix('/dashboard')->name('dashboard.')->group(function () {
 
-    // Profile Routes
-    Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'index')->name('profile.index');
-        Route::put('/profile-update', 'updateProfile')->name('profile.update');
-        Route::put('/profile-password-update', 'updatePassword')->name('profile.password.update');
-        Route::delete('/profile/account-destroy', 'destroyAccount')->name('profile.account.destroy');
-    });
+        // Profile Routes
+        Route::controller(ProfileController::class)->group(function () {
+            Route::get('/profile', 'index')->name('profile.index');
+            Route::put('/profile-update', 'updateProfile')->name('profile.update');
+            Route::put('/profile-password-update', 'updatePassword')->name('profile.password.update');
+            Route::delete('/profile/account-destroy', 'destroyAccount')->name('profile.account.destroy');
+        });
 
-    // Setting Routes
-    Route::controller(SettingController::class)->as('settings.')->group(function () {
-        Route::get('/settings', 'index')->name('index');
+        // Setting Routes
+        Route::controller(SettingController::class)->as('settings.')->group(function () {
+            Route::get('/settings', 'index')->name('index');
 
-        // General Setting Routess
-        Route::get('/settings/general-setting', 'generalSetting')->name('general.setting');
-        Route::put('/settings/general-setting-update', 'updateGeneralSetting')->name('general.setting.update');
+            // Prefixed As /settings On Grouped Routes
+            Route::prefix('/settings')->group(function () {
+                // General Setting Routess
+                Route::get('/general-settings', 'generalSetting')->name('general.setting');
+                Route::put('/settings/general-settings-update', 'updateGeneralSetting')->name('general.setting.update');
 
-        // SMTP Setting Routes
-        Route::get('/settings/smtp-setting', 'smtpSetting')->name('smtp.setting');
-        Route::put('/settings/smtp-setting-update', 'updateSmtpSetting')->name('smtp.setting.update');
+                // SMTP Setting Routes
+                Route::get('/smtp-settings', 'smtpSetting')->name('smtp.setting');
+                Route::put('/smtp-settings-update', 'updateSmtpSetting')->name('smtp.setting.update');
+
+                // Role Setting Routes
+                Route::get('/roles', 'roleIndex')->name('roles.index');
+                Route::get('/roles-create', 'roleCreate')->name('roles.create');
+                Route::post('/roles-store', 'roleStore')->name('roles.store');
+                Route::get('/roles-edit/{id}', 'roleEdit')->name('roles.edit');
+                Route::put('/roles-update/{id}', 'roleUpdate')->name('roles.update');
+                Route::delete('/roles-destroy/{id}', 'roleDestroy')->name('roles.destroy');
+                Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
+            });
+
+        });
     });
 });
 
