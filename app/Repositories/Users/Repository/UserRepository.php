@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\Users\Interface\IUserRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class UserRepository implements IUserRepository
 {
@@ -31,6 +32,15 @@ class UserRepository implements IUserRepository
         ]);
 
         try {
+
+            $throttleKey = 'profile_update_'.$request->user()->id;
+            if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+                $seconds = RateLimiter::availableIn($throttleKey);
+
+                throw new Exception('Too many attempts. Try again After '.ceil($seconds / 60).' minutes.');
+            }
+
+            RateLimiter::hit($throttleKey, 900);
 
             $user = $this->getSingleUser($request->user()->id);
             if (empty($user)) {
@@ -68,6 +78,15 @@ class UserRepository implements IUserRepository
         ]);
 
         try {
+
+            $throttleKey = 'password_update_'.$request->user()->id;
+            if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+                $seconds = RateLimiter::availableIn($throttleKey);
+
+                throw new Exception('Too many attempts. Try again After '.ceil($seconds / 60).' minutes.');
+            }
+
+            RateLimiter::hit($throttleKey, 900);
 
             $user = $this->getSingleUser($request->user()->id);
 
