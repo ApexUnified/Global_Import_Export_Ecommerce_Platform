@@ -162,16 +162,16 @@ export default function Sidebar({
                                     </Link>
                                 </li>
 
-                                {/* <li>
+                                <li>
                                     <a
                                         onClick={() => {
-                                            if (selected === 'Categories') {
+                                            if (selected === 'Posts') {
                                                 setSelected(null);
                                             } else {
-                                                setSelected('Categories');
+                                                setSelected('Posts');
                                             }
                                         }}
-                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.category.') || selected === 'Categories' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.posts.') || selected === 'Posts' ? 'menu-item-active' : 'menu-item-inactive'} `}
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -184,23 +184,18 @@ export default function Sidebar({
                                             <path
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"
-                                            />
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M6 6h.008v.008H6V6Z"
+                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
                                             />
                                         </svg>
 
                                         <span
                                             className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
                                         >
-                                            Categories
+                                            Posts
                                         </span>
 
                                         <svg
-                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.category.') || (selected === 'Categories' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.posts.') || (selected === 'Posts' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
                                             width="20"
                                             height="20"
                                             viewBox="0 0 20 20"
@@ -218,30 +213,30 @@ export default function Sidebar({
                                     </a>
 
                                     <div
-                                        className={`translate transform overflow-hidden ${selected === 'Categories' ? 'block' : 'hidden'}`}
+                                        className={`translate transform overflow-hidden ${selected === 'Posts' ? 'block' : 'hidden'}`}
                                     >
                                         <ul
                                             className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
                                         >
                                             <li>
                                                 <Link
-                                                    href={route('dashboard.category.index')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.category.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.posts.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
-                                                    Category List
+                                                    Posts List
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href={route('dashboard.category.create')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.category.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.posts.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
-                                                    Create Category
+                                                    Create Post
                                                 </Link>
                                             </li>
                                         </ul>
                                     </div>
-                                </li> */}
+                                </li>
 
                                 <li>
                                     <Link

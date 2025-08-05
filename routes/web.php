@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Routes With Prefixed /dashboard and named as dashboard. to seprate Webiste and Dashboard Logics And routes
     Route::prefix('/dashboard')->name('dashboard.')->group(function () {
+
+        // Posts / Blogs Routes
+        Route::resource('/posts', PostController::class);
+        Route::delete('/posts-destroy-by-selection', [PostController::class, 'destroyBySelection'])->name('posts.destroybyselection');
+
+        // Google Locaiton AutoCompletion Route  For Posts
+        Route::post('/posts-google-location-autocomplete', [PostController::class, 'googleLocationAutoComplete'])->name('posts.google.location.autocomplete');
+        Route::post('/posts-google-location-place-details', [PostController::class, 'googleLocationPlaceDetails'])->name('posts.google.location.placedetails');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {

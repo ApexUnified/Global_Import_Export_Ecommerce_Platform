@@ -28,6 +28,7 @@ export default function FileUploaderInput({
     DefaultFile,
     acceptedFileTypes,
     MaxFileSize,
+    MaxFiles,
 }) {
     const [files, setFiles] = useState(() => {
         if (!DefaultFile || !Array.isArray(DefaultFile)) return [];
@@ -82,6 +83,28 @@ export default function FileUploaderInput({
                         dropOnElement={true}
                         className="filepond--root"
                         maxFileSize={MaxFileSize ?? '2MB'}
+                        allowReorder={true}
+                        onreorderfiles={(fileItems) => {
+                            setFiles(fileItems);
+
+                            const updatedFiles = fileItems.map((item) => {
+                                if (item.file instanceof File) {
+                                    return {
+                                        file: item.file,
+                                        isNew: true,
+                                    };
+                                } else {
+                                    return {
+                                        source: item.source,
+                                        isNew: false,
+                                    };
+                                }
+                            });
+
+                            // Send full list to parent
+                            onUpdate(updatedFiles);
+                        }}
+                        {...(MaxFiles ? { maxFiles: MaxFiles } : {})}
                     />
                 </div>
 

@@ -8,6 +8,7 @@ export default function PrimaryButton({
     Icon,
     Action,
     Spinner = false,
+    Id,
     CustomClass = null,
 }) {
     return (
@@ -16,6 +17,7 @@ export default function PrimaryButton({
                 <button
                     disabled={Disabled}
                     type={Type}
+                    id={Id}
                     onClick={Action}
                     className={`shadow-theme-xs my-3 flex items-center justify-center rounded-xl bg-blue-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-600 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 sm:px-4 sm:py-3 ${CustomClass ? CustomClass : 'w-full min-w-0 max-w-full'} ${Disabled ? 'cursor-not-allowed opacity-25 dark:opacity-40' : ''} `}
                 >
@@ -25,7 +27,7 @@ export default function PrimaryButton({
                         <div role="status">
                             <svg
                                 aria-hidden="true"
-                                className="w-8 h-4 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                className="h-4 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -46,14 +48,20 @@ export default function PrimaryButton({
                     )}
                 </button>
             ) : (
-                <button disabled={Disabled} className={ClassName} onClick={Action} type={Type}>
+                <button
+                    disabled={Disabled}
+                    className={ClassName}
+                    onClick={Action}
+                    type={Type}
+                    id={Id}
+                >
                     {Text}
 
                     {Spinner ? (
                         <div role="status">
                             <svg
                                 aria-hidden="true"
-                                className="w-8 h-4 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                className="h-4 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"

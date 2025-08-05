@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Posts\Interface\IPostRepository;
+use App\Repositories\Posts\Repository\PostRepository;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use App\Repositories\Settings\Repository\SettingRepository;
 use App\Repositories\Users\Interface\IUserRepository;
@@ -17,6 +19,7 @@ class BinderServerProvider extends ServiceProvider
     {
         $this->app->bind(IUserRepository::class, UserRepository::class);
         $this->app->bind(ISettingRepository::class, SettingRepository::class);
+        $this->app->bind(IPostRepository::class, PostRepository::class);
     }
 
     /**

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Repositories\Posts\Interface;
+
+use Illuminate\Http\Request;
+
+interface IPostRepository
+{
+    public function getAllPosts(Request $request);
+
+    public function getSinglePostBySlug(string $slug);
+
+    public function getSinglePostById(string $id);
+
+    public function storePost(Request $request);
+
+    public function updatePost(Request $request, string $slug);
+
+    public function destroyPost(string $id);
+
+    public function destroyPostBySelection(Request $request);
+
+    public function autoCompleteLocations(Request $request);
+
+    public function placeDetails(string $placeId);
+}
