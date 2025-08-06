@@ -60,6 +60,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $added_at
+ * @property-read mixed $created_at_time
  * @property-read mixed $post_image_urls
  * @property-read mixed $post_video_urls
  * @property-read \App\Models\User|null $user

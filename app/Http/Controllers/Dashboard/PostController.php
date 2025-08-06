@@ -28,6 +28,7 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+
         $created = $this->post->storePost($request);
         if ($created['status'] === false) {
             return back()->with('error', $created['message']);
@@ -42,9 +43,9 @@ class PostController extends Controller
             return back()->with('error', 'Slug Not Found');
         }
 
-        $post_data = $this->post->getSinglePostBySlug($slug);
+        $post = $this->post->getSinglePostBySlug($slug);
 
-        return Inertia::render('Dashboard/Posts/show', compact('post_data'));
+        return Inertia::render('Dashboard/Posts/show', compact('post'));
     }
 
     public function edit(string $slug)
@@ -53,9 +54,9 @@ class PostController extends Controller
             return back()->with('error', 'Slug Not Found');
         }
 
-        $post_data = $this->post->getSinglePostBySlug($slug);
+        $post = $this->post->getSinglePostBySlug($slug);
 
-        return Inertia::render('Dashboard/Posts/edit', compact('post_data'));
+        return Inertia::render('Dashboard/Posts/edit', compact('post'));
     }
 
     public function update(Request $request, string $slug)

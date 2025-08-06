@@ -4,45 +4,82 @@ import LinkButton from '@/Components/LinkButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import { Head, router, useForm } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
 import TipTapEditor from '@/Components/TipTapEditor';
 import Toast from '@/Components/Toast';
 
-export default function edit({ post_data }) {
-    // Edit Data Form Data
-    const { data, setData, post, processing, errors, reset } = useForm({
+export default function edit({ post }) {
+    // Create Data Form Data
+    const { data, setData, reset } = useForm({
         _method: 'PUT',
-        title: post_data.title || '',
-        content: post_data.content || '',
+        title: post?.title || '',
+        content: post?.content || '',
         images: [],
         videos: [],
-        floor: post_data.floor || '',
-        tag: post_data.tag || '',
-        post_type: post_data.post_type || '',
-        status: post_data.status || 1,
+        floor: post?.floor || '',
+        tag: post?.tag || '',
+        post_type: post?.post_type || '',
+        status: post?.status ?? 1,
+        deleted_images: [],
+        deleted_videos: [],
+        new_images: [],
+        new_videos: [],
     });
 
-    // Edit Data Form Request
+    // Submit Processing
+    const [processing, setProcessing] = useState(false);
+
+    // Submit Errors
+    const [errors, setErrors] = useState({});
+
+    // Tracking Deleted Files
+    const getDeletedFiles = (original, current) => {
+        if (!Array.isArray(original) || !Array.isArray(current)) return [];
+
+        console.log(original, current);
+        const currentSources = current.filter((f) => !f.isNew).map((f) => f.source);
+
+        return original.filter((file) => !currentSources.includes(file.url));
+    };
+
+    // Update Data Form Request
+
     const submit = (e) => {
         e.preventDefault();
 
-        if (data?.images?.length === post_data?.images?.length) {
-            setData('images', []);
-        }
+        const deletedImages = getDeletedFiles(post.images, data.images || []);
+        const deletedVideos = getDeletedFiles(post.videos, data.videos || []);
 
-        if (data?.videos?.length === post_data?.videos?.length) {
-            setData('videos', []);
-        }
+        const newImages = (data.images || []).filter((f) => f.isNew).map((f) => f.file);
+        const newVideos = (data.videos || []).filter((f) => f.isNew).map((f) => f.file);
 
-        post(route('dashboard.posts.update', post_data.slug), {
+        const formData = {
+            ...data,
+            deleted_images: deletedImages,
+            deleted_videos: deletedVideos,
+            new_images: newImages,
+            new_videos: newVideos,
+        };
+
+        console.log(formData);
+        setProcessing(true);
+        router.post(route('dashboard.posts.update', post?.slug), formData, {
+            forceFormData: true,
             onSuccess: () => {
+                setProcessing(false);
                 setShowProgressModal(false);
                 reset();
             },
-            onError: () => {
+            onError: (errors) => {
+                setErrors(errors);
+                setProcessing(false);
+                setShowProgressModal(false);
+            },
+            onFinish: () => {
+                setProcessing(false);
                 setShowProgressModal(false);
             },
         });
@@ -50,12 +87,6 @@ export default function edit({ post_data }) {
 
     const [file_error, setFileError] = useState(null);
     const [showProgressModal, setShowProgressModal] = useState(false);
-
-    useEffect(() => {
-        if (errors?.file_error) {
-            setFileError(errors?.file_error);
-        }
-    }, [errors]);
 
     useEffect(() => {
         if (file_error != null) {
@@ -71,6 +102,12 @@ export default function edit({ post_data }) {
         }
     }, [processing, data?.images, data?.videos]);
 
+    useEffect(() => {
+        if (errors?.file_error) {
+            setFileError(errors.file_error);
+        }
+    }, [errors]);
+
     return (
         <>
             <AuthenticatedLayout>
@@ -84,6 +121,7 @@ export default function edit({ post_data }) {
                 />
 
                 {file_error != null && <Toast flash={{ info: file_error }} />}
+
                 <Card
                     Content={
                         <>
@@ -155,18 +193,14 @@ export default function edit({ post_data }) {
                                                     MaxFileSize={'10MB'}
                                                     onUpdate={(files) => {
                                                         if (files.length > 0) {
-                                                            const newFiles = files
-                                                                .filter((f) => f.isNew)
-                                                                .map((f) => f.file);
-
-                                                            setData('images', newFiles);
+                                                            setData('images', files);
                                                         } else {
                                                             setData('images', null);
                                                         }
                                                     }}
                                                     MaxFiles={35}
                                                     Multiple={true}
-                                                    DefaultFile={post_data?.post_image_urls}
+                                                    DefaultFile={post.post_image_urls}
                                                 />
 
                                                 <FileUploaderInput
@@ -180,18 +214,14 @@ export default function edit({ post_data }) {
                                                     MaxFileSize={'1000MB'}
                                                     onUpdate={(files) => {
                                                         if (files.length > 0) {
-                                                            const newFiles = files
-                                                                .filter((f) => f.isNew)
-                                                                .map((f) => f.file);
-
-                                                            setData('videos', newFiles);
+                                                            setData('videos', files);
                                                         } else {
                                                             setData('videos', null);
                                                         }
                                                     }}
                                                     MaxFiles={5}
                                                     Multiple={true}
-                                                    DefaultFile={post_data?.post_video_urls}
+                                                    DefaultFile={post.post_video_urls}
                                                 />
 
                                                 <Input
@@ -240,8 +270,8 @@ export default function edit({ post_data }) {
                                                 <TipTapEditor
                                                     Label={'Content'}
                                                     Id={'content'}
-                                                    Value={data.content}
                                                     Required={true}
+                                                    Value={data.content}
                                                     Action={(value) => {
                                                         if (value == '<p></p>')
                                                             setData('content', '');
@@ -258,6 +288,7 @@ export default function edit({ post_data }) {
                                                     processing ||
                                                     data.title.trim() === '' ||
                                                     data.content.trim() === '' ||
+                                                    data.post_type.trim() === '' ||
                                                     data.status === ''
                                                 }
                                                 Spinner={processing}
@@ -301,7 +332,7 @@ export default function edit({ post_data }) {
                                     <div role="status">
                                         <svg
                                             aria-hidden="true"
-                                            class="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                            className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
                                             viewBox="0 0 100 101"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -315,7 +346,7 @@ export default function edit({ post_data }) {
                                                 fill="currentFill"
                                             />
                                         </svg>
-                                        <span class="sr-only">Loading...</span>
+                                        <span className="sr-only">Loading...</span>
                                     </div>
                                 </div>
                             </div>

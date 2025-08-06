@@ -37,6 +37,7 @@ export default function index({ posts }) {
             { key: 'location_name', label: 'Location Name' },
             { key: 'floor', label: 'Floor' },
             { key: 'tag', label: 'Tag' },
+
             {
                 label: 'Post Type',
                 render: (item) => {
@@ -68,6 +69,12 @@ export default function index({ posts }) {
         ];
 
         const customActions = [
+            {
+                label: 'View',
+                type: 'link',
+                href: (item) => route('dashboard.posts.show', item.slug),
+            },
+
             {
                 label: 'Edit',
                 type: 'link',

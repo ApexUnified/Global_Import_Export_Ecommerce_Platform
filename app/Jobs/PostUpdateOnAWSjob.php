@@ -22,19 +22,12 @@ class PostUpdateOnAWSjob implements ShouldQueue
     public function handle(): void
     {
 
+        $this->post->refresh();
+
         $images = [];
         $videos = [];
 
         if (isset($this->files['images'])) {
-
-            foreach ($this->post->images as $prevImage) {
-
-                $relative_path = Str::after($prevImage['url'], '.com/');
-
-                if (Storage::disk('s3')->exists($relative_path)) {
-                    Storage::disk('s3')->delete($relative_path);
-                }
-            }
 
             foreach ($this->files['images'] as $image) {
                 $fullLocalPath = Storage::disk('local')->path($image);
@@ -46,26 +39,23 @@ class PostUpdateOnAWSjob implements ShouldQueue
                 Storage::disk('local')->delete($image);
 
                 $url = Storage::disk('s3')->url($this->post_images_dir.$new_name);
+
+                if (! blank($this->post?->images)) {
+                    $images = $this->post?->images;
+                }
+
                 $images[] = [
                     'name' => $new_name,
                     'url' => $url,
                 ];
 
+                $this->post->update(['images' => $images]);
+                $this->post->refresh();
             }
-
-            $this->post->update(['images' => $images]);
 
         }
 
         if (isset($this->files['videos'])) {
-
-            foreach ($this->post->videos as $prevVideo) {
-                $relative_path = Str::after($prevVideo['url'], '.com/');
-
-                if (Storage::disk('s3')->exists($relative_path)) {
-                    Storage::disk('s3')->delete($relative_path);
-                }
-            }
 
             foreach ($this->files['videos'] as $video) {
                 $fullLocalPath = Storage::disk('local')->path($video);
@@ -77,14 +67,19 @@ class PostUpdateOnAWSjob implements ShouldQueue
                 Storage::disk('local')->delete($video);
 
                 $url = Storage::disk('s3')->url($this->post_videos_dir.$new_name);
+
+                if (! blank($this->post->videos)) {
+                    $videos = $this->post?->videos;
+                }
+
                 $videos[] = [
                     'name' => $new_name,
                     'url' => $url,
                 ];
 
+                $this->post->update(['videos' => $videos]);
+                $this->post->refresh();
             }
-
-            $this->post->update(['videos' => $videos]);
         }
 
     }

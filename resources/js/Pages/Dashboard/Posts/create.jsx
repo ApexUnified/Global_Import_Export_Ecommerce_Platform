@@ -5,13 +5,14 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
 import TipTapEditor from '@/Components/TipTapEditor';
 import Toast from '@/Components/Toast';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { Loader } from '@googlemaps/js-api-loader';
 
 export default function create() {
     // Create Data Form Data
@@ -26,6 +27,7 @@ export default function create() {
         longitude: '',
         post_type: '',
         status: 1,
+        location_name: '',
     });
 
     // Location Get Success state
@@ -40,11 +42,9 @@ export default function create() {
 
     useEffect(() => {
         setLocationGotSuccessMessage(null);
-
-        if (locationDetector == '') {
-            setData('latitude', '');
-            setData('longitude', '');
-        }
+        setData('location_name', '');
+        setData('latitude', '');
+        setData('longitude', '');
 
         if (locationDetector !== '' && locationDetector == 0) {
             autoLocationDetector();
@@ -52,6 +52,10 @@ export default function create() {
 
         if (locationDetector !== '' && locationDetector == 1) {
             setAutoCompletionLocationModalOpen(true);
+        }
+
+        if (locationDetector != '' && locationDetector == 2) {
+            setGoogleMapLocatioModalOpen(true);
         }
     }, [locationDetector]);
 
@@ -74,14 +78,11 @@ export default function create() {
     // Auto Completion Location States
     const [autoCompletionLocationSearch, setAutoCompletionLocationSearch] = useState('');
     const [autoCompletionInfoMessage, setAutoCompletionInfoMessage] = useState('');
-
     const [autoCompletionLoading, setAutoCompletionLoading] = useState(false);
-
     const [autoCompletionResults, setAutoCompletionResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
     const [selectedPlaceId, setSelectedPlaceId] = useState('');
-
     const [fetchingLatlngProcessing, setFetchingLatlngProcessing] = useState(false);
 
     useEffect(() => {
@@ -109,8 +110,9 @@ export default function create() {
     useEffect(() => {
         if (selectedPlaceId != '' && selectedPlaceId != '') {
             Swal.fire({
-                icon: 'info',
-                title: 'Do You Want To Proceed With This Location?',
+                icon: 'success',
+                title: 'Location Got Successfully',
+                text: 'Do You Want To Proceed With This Location?',
                 showCancelButton: true,
                 showConfirmButton: true,
                 cancelButtonText: 'No',
@@ -130,8 +132,10 @@ export default function create() {
                                 place_id: selectedPlaceId,
                             })
                             .then((res) => {
+                                console.log(res);
                                 setData('latitude', res.data.data.lat);
                                 setData('longitude', res.data.data.lng);
+                                setData('location_name', res.data.data.place_name);
                                 setSelectedPlaceId('');
                                 setFetchingLatlngProcessing(false);
                                 setLocationGotSuccessMessage('Location Got Successfully');
@@ -183,6 +187,8 @@ export default function create() {
         }
     };
 
+    const [googleMapLocatioModalOpen, setGoogleMapLocatioModalOpen] = useState(false);
+
     // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
@@ -220,6 +226,122 @@ export default function create() {
             setShowProgressModal(false);
         }
     }, [processing, data?.images, data?.videos]);
+
+    // Init Google Map
+
+    const mapRef = useRef(null);
+    const mapSearchboxRef = useRef(null);
+    useEffect(() => {
+        if (!googleMapLocatioModalOpen || !mapRef.current) {
+            return;
+        }
+
+        const loader = new Loader({
+            apiKey: 'AIzaSyCoMU6iAYNgCGUJfVpPJsEVvg6rBwj4yaU',
+            version: 'weekly',
+            libraries: ['places', 'marker'],
+        });
+
+        const getCurrentPosition = () =>
+            new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+
+        const lat = data.latitude || -34.397;
+        const lng = data.longitude || 150.644;
+
+        loader.load().then(async () => {
+            let lat = -34.397;
+            let lng = 150.644;
+
+            try {
+                const position = await getCurrentPosition();
+                lat = position.coords.latitude;
+                lng = position.coords.longitude;
+
+                setData('latitude', lat);
+                setData('longitude', lng);
+            } catch (err) {
+                console.warn('Geolocation failed, using fallback coords');
+            }
+            const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
+            const map = new google.maps.Map(mapRef.current, {
+                center: { lat, lng },
+                zoom: 12,
+                mapId: 'd57c9f8663e69c6fcacbee1f',
+            });
+
+            let marker = new AdvancedMarkerElement({
+                position: { lat, lng },
+                map,
+                title: 'Your Location',
+            });
+
+            map.addListener('click', (e) => {
+                const clickedLocation = {
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                };
+
+                if (marker) {
+                    marker.position = clickedLocation;
+                } else {
+                    marker = new google.maps.Marker({
+                        position: clickedLocation,
+                        map: map,
+                    });
+                }
+
+                setData('latitude', clickedLocation.lat);
+                setData('longitude', clickedLocation.lng);
+            });
+
+            const input = mapSearchboxRef.current;
+            const searchBox = new google.maps.places.SearchBox(input);
+
+            map.addListener('bounds_changed', () => {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            let markers = [];
+
+            searchBox.addListener('places_changed', () => {
+                const places = searchBox.getPlaces();
+
+                if (!places || places.length === 0) return;
+
+                setData('latitude', places[0].geometry.location.lat());
+                setData('longitude', places[0].geometry.location.lng());
+                setData('location_name', places[0].name);
+
+                markers.forEach((marker) => marker.setMap(null));
+                markers = [];
+
+                const bounds = new google.maps.LatLngBounds();
+
+                places.forEach((place) => {
+                    console.log(place);
+                    if (!place.geometry?.location) return;
+
+                    markers.push(
+                        new google.maps.Marker({
+                            map,
+                            title: place.name,
+                            position: place.geometry.location,
+                        }),
+                    );
+
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+
+                map.fitBounds(bounds);
+            });
+        });
+    }, [googleMapLocatioModalOpen]);
 
     return (
         <>
@@ -391,7 +513,7 @@ export default function create() {
                                                     Id={'location_detection_method'}
                                                     Name={'location_detection_method'}
                                                     Value={locationDetector}
-                                                    Required={true}
+                                                    Required={false}
                                                     Action={(e) =>
                                                         setLocationDetector(e.target.value)
                                                     }
@@ -426,6 +548,7 @@ export default function create() {
                                                     processing ||
                                                     data.title.trim() === '' ||
                                                     data.content.trim() === '' ||
+                                                    data.post_type.trim() === '' ||
                                                     data.status === ''
                                                 }
                                                 Spinner={processing}
@@ -583,6 +706,90 @@ export default function create() {
                                         </svg>
                                         <span className="sr-only">Loading...</span>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {googleMapLocatioModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                        {/* Backdrop */}
+                        <div
+                            className="fixed inset-0 backdrop-blur-[32px]"
+                            onClick={() => setGoogleMapLocatioModalOpen(false)}
+                        ></div>
+
+                        {/* Modal content */}
+                        <div className="relative z-10 max-h-[95vh] w-full max-w-4xl overflow-auto rounded-2xl bg-white p-4 shadow-xl dark:bg-gray-800 sm:max-w-3xl sm:p-6 md:max-w-2xl lg:max-w-6xl">
+                            {/* Title */}
+                            <div className="text-center">
+                                <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+                                    Please Search And Select Your Location
+                                </h2>
+                            </div>
+
+                            {/* Content */}
+                            <div className="mt-5 space-y-4">
+                                {/* Search Box */}
+                                <input
+                                    id="search-box"
+                                    type="text"
+                                    ref={mapSearchboxRef}
+                                    placeholder="Search a location"
+                                    className="w-full px-4 py-2 border rounded"
+                                />
+
+                                {/* Google Map */}
+                                <div
+                                    ref={mapRef}
+                                    className="h-[200px] w-full overflow-hidden rounded-md sm:h-[250px] md:h-[400px]"
+                                ></div>
+
+                                {/* Save Button */}
+                                <div className="flex justify-center">
+                                    <PrimaryButton
+                                        Text={'Save Location'}
+                                        Id={'save-location'}
+                                        CustomClass={'w-40'}
+                                        Action={() => {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Location Got Successfully',
+                                                text: 'Do You Want To Proceed With This Location?',
+                                                showConfirmButton: true,
+                                                showCancelButton: true,
+                                                confirmButtonText: 'Yes',
+                                                cancelButtonText: 'No',
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    setGoogleMapLocatioModalOpen(false);
+                                                    setLocationGotSuccessMessage(
+                                                        'Location Got Successfully',
+                                                    );
+                                                    setTimeout(() => {
+                                                        setLocationGotSuccessMessage('');
+                                                    });
+                                                }
+                                            });
+                                        }}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
+                                                />
+                                            </svg>
+                                        }
+                                    />
                                 </div>
                             </div>
                         </div>

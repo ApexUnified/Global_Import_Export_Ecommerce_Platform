@@ -89,7 +89,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
+                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -116,7 +116,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="mb-6 flex flex-col gap-4">
+                            <ul className="flex flex-col gap-4 mb-6">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
@@ -232,6 +232,82 @@ export default function Sidebar({
                                                     className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Create Post
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Floors') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Floors');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.posts.') || selected === 'Posts' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Floors
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.posts.') || (selected === 'Floors' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Floors' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.posts.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Floors List
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.posts.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create Floor
                                                 </Link>
                                             </li>
                                         </ul>

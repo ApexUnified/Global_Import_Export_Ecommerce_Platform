@@ -25,7 +25,7 @@ class Post extends Model
         'status',
     ];
 
-    protected $appends = ['added_at', 'post_image_urls', 'post_video_urls'];
+    protected $appends = ['added_at', 'post_image_urls', 'post_video_urls', 'created_at_time'];
 
     // RelationShips
     public function user(): BelongsTo
@@ -37,6 +37,11 @@ class Post extends Model
     public function getAddedAtAttribute()
     {
         return $this->created_at->format('Y-m-d');
+    }
+
+    public function getCreatedAtTimeAttribute()
+    {
+        return $this->created_at->format('g:i A');
     }
 
     public function getPostImageUrlsAttribute()

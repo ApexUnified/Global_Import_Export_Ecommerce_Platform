@@ -187,4 +187,8 @@
     .dark .filepond--file {
         background-color: #374151 !important; /* Tailwind gray-700 */
     }
+
+    .filepond--drip {
+        pointer-events: none !important;
+    }
 }

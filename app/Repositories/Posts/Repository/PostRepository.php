@@ -63,8 +63,9 @@ class PostRepository implements IPostRepository
             'post_type' => ['required', 'string', 'in:Review,Inquiry'],
             'status' => ['required', 'boolean'],
             'floor' => ['nullable', 'string'],
-            'latitude' => ['required', 'numeric'],
-            'longitude' => ['required', 'numeric'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'location_name' => ['nullable', 'string'],
             'status' => ['required', 'boolean'],
         ], [
             'images.max' => 'The :attribute field must not exceed 35 files.',
@@ -110,13 +111,14 @@ class PostRepository implements IPostRepository
             }, ARRAY_FILTER_USE_BOTH);
 
             // Get Location Name  From Google Api Behalf Of Lat/lng
+            if (empty($validated_req['location_name']) && ! empty($validated_req['latitude']) && ! empty($validated_req['longitude'])) {
+                $response = $this->googleGeoCoderService->getLocationNameFromLatLng($validated_req['latitude'], $validated_req['longitude']);
+                if ($response['status'] === false) {
+                    throw new Exception($response['message']);
+                }
 
-            $response = $this->googleGeoCoderService->getAddressFromLatLng($validated_req['latitude'], $validated_req['longitude']);
-            if ($response['status'] === false) {
-                throw new Exception($response['message']);
+                $validated_req['location_name'] = $response['place_name'] ?? 'No Location Name Found';
             }
-
-            $validated_req['location_name'] = $response['data']['results'][0]['formatted_address'] ?? 'No Location Found';
 
             $post = $this->post->create($validated_req);
             if (empty($post)) {
@@ -150,7 +152,7 @@ class PostRepository implements IPostRepository
 
             return [
                 'status' => true,
-                'message' => 'Post Created Successfully'.$request->hasFile('images') && $request->hasFile('videos') ? 'Please Wait While We Upload Your Post' : '',
+                'message' => 'Post Created Successfully'.$request->hasFile('images') && $request->hasFile('videos') ? 'Please Wait While We Upload Your Files On Server' : '',
                 'post' => $post,
             ];
 
@@ -164,6 +166,7 @@ class PostRepository implements IPostRepository
 
     public function updatePost(Request $request, string $slug)
     {
+
         $validated_req = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
@@ -182,8 +185,6 @@ class PostRepository implements IPostRepository
             'post_type' => ['required', 'string', 'in:Review,Inquiry'],
             'status' => ['required', 'boolean'],
             'floor' => ['nullable', 'string'],
-            'latitude' => ['required', 'numeric'],
-            'longitude' => ['required', 'numeric'],
             'status' => ['required', 'boolean'],
         ], [
             'images.max' => 'The :attribute field must not exceed 35 files.',
@@ -194,22 +195,22 @@ class PostRepository implements IPostRepository
         ]);
 
         $validator = Validator::make($request->allFiles(), [
-            'images.*' => [
+            'new_images.*' => [
                 'mimes:jpg,jpeg,png',
                 'max:10240',
                 'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
             ],
 
-            'videos.*' => [
+            'new_videos.*' => [
                 'mimes:mp4,mov,avi',
                 'max:1048576',
             ],
         ], [
-            'images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
-            'images.*.max' => 'Each image must not exceed 10MB.',
-            'images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
-            'videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
-            'videos.*.max' => 'Each video must not exceed 1GB.',
+            'new_images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
+            'new_images.*.max' => 'Each image must not exceed 10MB.',
+            'new_images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
+            'new_videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
+            'new_videos.*.max' => 'Each video must not exceed 1GB.',
 
         ], [
             'images.*' => 'image',
@@ -230,26 +231,47 @@ class PostRepository implements IPostRepository
                 throw new Exception('Post Not Found');
             }
 
-            if ($request->hasFile('images')) {
-                $imagePaths = collect($request->file('images'))->map(function ($image) {
-                    return $image->store('temp/uploads'); // Save temporarily
-                })->toArray();
-
-                dispatch(new PostUpdateOnAWSJob(['images' => $imagePaths], $post));
-            }
-
-            if ($request->hasFile('videos')) {
-
-                $videoPaths = collect($request->file('videos'))->map(function ($video) {
-                    return $video->store('temp/uploads'); // Save temporarily
-                })->toArray();
-
-                dispatch(new PostUpdateOnAWSJob(['videos' => $videoPaths], $post));
-            }
-
             $validated_req = array_filter($validated_req, function ($value, $key) {
                 return ! in_array($key, ['images', 'videos']);
             }, ARRAY_FILTER_USE_BOTH);
+
+            if ($request->filled('deleted_images')) {
+                $deleted = $request->array('deleted_images');
+                $deleted_image_urls = array_map(function ($deletedItem) {
+                    return $deletedItem['url'] ?? null;
+                }, $deleted);
+
+                dispatch(new PostDestroyOnAWSJob(['images' => $deleted_image_urls]));
+
+                $oldImages = $post->images ?? [];
+
+                $remeaning_images = array_filter($oldImages, function ($image) use ($deleted) {
+                    return ! in_array($image, $deleted);
+                });
+
+                $remaining_images_array = array_values($remeaning_images);
+
+                $validated_req['images'] = $remaining_images_array;
+            }
+
+            if ($request->filled('deleted_videos')) {
+                $deleted = $request->array('deleted_videos');
+                $deleted_video_urls = array_map(function ($deletedItem) {
+                    return $deletedItem['url'] ?? null;
+                }, $deleted);
+
+                dispatch(new PostDestroyOnAWSJob(['videos' => $deleted_video_urls]));
+
+                $old_videos = $post->videos ?? [];
+
+                $remeaning_videos = array_filter($old_videos, function ($video) use ($deleted) {
+                    return ! in_array($video, $deleted);
+                });
+
+                $remaining_videos_array = array_values($remeaning_videos);
+
+                $validated_req['videos'] = $remaining_videos_array;
+            }
 
             $updated = $post->update($validated_req);
 
@@ -257,11 +279,36 @@ class PostRepository implements IPostRepository
                 throw new Exception('Something Went Wrong While Updating Post');
             }
 
+            if ($request->hasFile('new_images')) {
+                $paths = [];
+
+                foreach ($request->file('new_images') as $image) {
+                    $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
+                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new PostUpdateOnAWSjob(['images' => $paths], $post));
+
+            }
+
+            if ($request->hasFile('new_videos')) {
+                $paths = [];
+
+                foreach ($request->file('new_videos') as $video) {
+                    $new_name = time().uniqid().'-'.Str::random(10).'.'.$video->getClientOriginalExtension();
+                    $tempPath = $video->storeAs('temp/uploads', $new_name, 'local');
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new PostUpdateOnAWSjob(['videos' => $paths], $post));
+            }
+
             $post->refresh();
 
             return [
                 'status' => true,
-                'message' => 'Post Updated Successfully',
+                'message' => 'Post Updated Successfully '.$request->hasFile('images') && $request->hasFile('videos') ? 'Please Wait While We Upload Your Files On Server' : '',
                 'post' => $post,
             ];
 
@@ -382,7 +429,7 @@ class PostRepository implements IPostRepository
 
             return [
                 'status' => true,
-                'data' => $response['data'],
+                'data' => ['lat' => $response['data']['lat'], 'lng' => $response['data']['lng'], 'place_name' => $response['data']['place_name'], 'formatted_address' => $response['data']['formatted_address']],
             ];
 
         } catch (Exception $e) {

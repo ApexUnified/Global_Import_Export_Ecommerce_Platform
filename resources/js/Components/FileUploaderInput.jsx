@@ -79,11 +79,10 @@ export default function FileUploaderInput({
                             onUpdate(updatedFiles);
                         }}
                         files={files}
-                        allowDrop={true}
                         dropOnElement={true}
+                        dropOnPage={true}
                         className="filepond--root"
                         maxFileSize={MaxFileSize ?? '2MB'}
-                        allowReorder={true}
                         onreorderfiles={(fileItems) => {
                             setFiles(fileItems);
 
