@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ posts }) {
+export default function index({ floors }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -30,73 +30,25 @@ export default function index({ posts }) {
     });
 
     const [columns, setColumns] = useState([]);
-    const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'title', label: 'Post Title' },
-            { key: 'location_name', label: 'Location Name' },
-            { key: 'floor.name', label: 'Floor' },
-            { key: 'tag', label: 'Tag' },
-
-            {
-                label: 'Post Type',
-                render: (item) => {
-                    return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item.post_type.charAt(0).toUpperCase() +
-                                item.post_type.slice(1).toLowerCase()}
-                        </span>
-                    );
-                },
-            },
-
-            {
-                label: 'Status',
-                render: (item) => {
-                    if (item.status === 1) {
-                        return (
-                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
-                        );
-                    } else {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
-                        );
-                    }
-                },
-            },
-
-            { key: 'user.name', label: 'Posted By' },
+            { key: 'name', label: 'Floor Name' },
             { key: 'added_at', label: 'Added At' },
         ];
 
-        const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.posts.show', item.slug),
-            },
-
-            {
-                label: 'Edit',
-                type: 'link',
-                href: (item) => route('dashboard.posts.edit', item.slug),
-            },
-        ];
-
-        setActions(customActions);
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Posts" />
+                <Head title="Floors" />
 
                 <BreadCrumb
-                    header={'Posts'}
+                    header={'Floors'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Posts'}
+                    child={'Floors'}
                 />
 
                 <Card
@@ -104,8 +56,8 @@ export default function index({ posts }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create Post'}
-                                    URL={route('dashboard.posts.create')}
+                                    Text={'Create Floor'}
+                                    URL={route('dashboard.floors.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -133,14 +85,15 @@ export default function index({ posts }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.posts.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.posts.destroy'}
-                                SearchRoute={'dashboard.posts.index'}
-                                Search={false}
-                                items={posts}
+                                BulkDeleteRoute={'dashboard.floors.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.floors.destroy'}
+                                EditRoute={'dashboard.floors.edit'}
+                                SearchRoute={'dashboard.floors.index'}
+                                Search={true}
+                                DefaultSearchInput={true}
+                                items={floors}
                                 props={props}
                                 columns={columns}
-                                customActions={actions}
                             />
                         </>
                     }

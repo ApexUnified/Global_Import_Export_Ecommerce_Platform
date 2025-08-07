@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Floors\Interface\IFloorRepostitory;
 use App\Repositories\Posts\Interface\IPostRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,7 +11,8 @@ use Inertia\Inertia;
 class PostController extends Controller
 {
     public function __construct(
-        private IPostRepository $post
+        private IPostRepository $post,
+        private IFloorRepostitory $floor
     ) {}
 
     public function index(Request $request)
@@ -23,7 +25,10 @@ class PostController extends Controller
 
     public function create()
     {
-        return Inertia::render('Dashboard/Posts/create');
+
+        $floors = $this->floor->getAllWithoutPaginateFloors();
+
+        return Inertia::render('Dashboard/Posts/create', compact('floors'));
     }
 
     public function store(Request $request)
@@ -45,6 +50,10 @@ class PostController extends Controller
 
         $post = $this->post->getSinglePostBySlug($slug);
 
+        if (empty($post)) {
+            return back()->with('error', 'Post Not Found');
+        }
+
         return Inertia::render('Dashboard/Posts/show', compact('post'));
     }
 
@@ -56,7 +65,13 @@ class PostController extends Controller
 
         $post = $this->post->getSinglePostBySlug($slug);
 
-        return Inertia::render('Dashboard/Posts/edit', compact('post'));
+        if (empty($post)) {
+            return back()->with('error', 'Post Not Found');
+        }
+
+        $floors = $this->floor->getAllWithoutPaginateFloors();
+
+        return Inertia::render('Dashboard/Posts/edit', compact('post', 'floors'));
     }
 
     public function update(Request $request, string $slug)

@@ -14,6 +14,26 @@
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $posts
+ * @property-read int|null $posts_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Floor whereUpdatedAt($value)
+ */
+	class Floor extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $app_name
  * @property string $contact_email
  * @property string $contact_number
@@ -45,13 +65,14 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int|null $user_id
+ * @property int|null $floor_id
  * @property string $title
  * @property string $content
  * @property array<array-key, mixed>|null $images
  * @property array<array-key, mixed>|null $videos
  * @property string|null $slug
  * @property string|null $tag
- * @property string|null $floor
+ * @property \App\Models\Floor|null $floor
  * @property string|null $latitude
  * @property string|null $longitude
  * @property string|null $location_name
@@ -70,6 +91,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereFloor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereFloorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereImages($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereLatitude($value)

@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Dashboard\BookmarkController;
+use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
+use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -22,6 +25,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Google Locaiton AutoCompletion Route  For Posts
         Route::post('/posts-google-location-autocomplete', [PostController::class, 'googleLocationAutoComplete'])->name('posts.google.location.autocomplete');
         Route::post('/posts-google-location-place-details', [PostController::class, 'googleLocationPlaceDetails'])->name('posts.google.location.placedetails');
+
+        // Floor Routes
+        Route::resource('/floors', FloorController::class)->except(['show']);
+        Route::delete('/floors-delete-by-selection', [FloorController::class, 'destroyBySelection'])->name('floors.destroybyselection');
+
+        // Bookmark Routes
+        Route::controller(BookmarkController::class)->group(function () {
+            Route::get('/bookmarks', 'index')->name('bookmarks.index');
+            Route::put('/bookmarks-toggle', 'toggleBookmark')->name('bookmarks.toggle');
+            Route::delete('/bookmarks-destroy/{id}', 'destroy')->name('bookmarks.destroy');
+            Route::delete('/bookmarks-delete-by-selection', 'destroyBySelection')->name('bookmarks.destroybyselection');
+
+        });
+
+        // User Routes
+        Route::resource('/users', UserController::class);
+        Route::delete('/users-destroy-by-selection', [UserController::class, 'destroyBySelection'])->name('users.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {

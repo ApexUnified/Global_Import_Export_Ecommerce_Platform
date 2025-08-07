@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import React, { lazy, useEffect, useRef, useState } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import Card from '@/Components/Card';
-import dummyImage from '../../../../../public/assets/images/thumbnail.jpg';
 import DummyLogo from '../../../../../public/assets/images/Logo/Favicon.png';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Navigation, Pagination } from 'swiper/modules';
 import { createPortal } from 'react-dom';
@@ -69,23 +69,25 @@ export default function view({ post }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-col w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-lg md:flex-row">
+                            <div className="mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-lg shadow-lg md:flex-row">
                                 {((Array.isArray(post?.post_video_urls) &&
                                     post.post_video_urls.length > 0) ||
                                     (Array.isArray(post?.post_image_urls) &&
                                         post.post_image_urls.length > 0)) && (
-                                    <div className="w-full bg-gray-100 dark:bg-gray-900 md:w-1/2">
+                                    <div className="w-full bg-gray-200 dark:bg-gray-900 md:w-1/2">
                                         <div className="flex h-[500px] items-center justify-center">
-                                            {/* Images Crosel */}
-
                                             <Swiper
-                                                modules={[Navigation, Pagination]}
-                                                spaceBetween={10}
-                                                slidesPerView={1}
-                                                navigation
-                                                loop={true}
-                                                pagination={{ clickable: true }}
-                                                className="w-full h-96"
+                                                style={{
+                                                    '--swiper-navigation-color': '#fff',
+                                                    '--swiper-pagination-color': '#fff',
+                                                }}
+                                                pagination={{
+                                                    clickable: true,
+                                                }}
+                                                loop
+                                                navigation={true}
+                                                modules={[Pagination, Navigation]}
+                                                className="mySwiper"
                                             >
                                                 {Array.isArray(post?.post_image_urls) &&
                                                     post.post_image_urls.map(
@@ -95,8 +97,10 @@ export default function view({ post }) {
                                                                     <img
                                                                         src={img}
                                                                         alt={`Image ${index + 1}`}
-                                                                        className="object-contain w-full h-full rounded-lg select-none"
+                                                                        loading="lazy"
+                                                                        className="h-[400px] w-full select-none rounded-lg object-contain"
                                                                     />
+                                                                    <div className="swiper-lazy-preloader dark:swiper-lazy-preloader-white"></div>
                                                                 </SwiperSlide>
                                                             ),
                                                     )}
@@ -107,7 +111,8 @@ export default function view({ post }) {
                                                                 <SwiperSlide key={`vid-${index}`}>
                                                                     <video
                                                                         controls
-                                                                        className="object-cover w-full h-full rounded-lg select-none"
+                                                                        controlsList="nodownload"
+                                                                        className="h-[350px] w-full select-none rounded-lg object-cover"
                                                                     >
                                                                         <source
                                                                             src={vid}
@@ -119,47 +124,7 @@ export default function view({ post }) {
                                                                 </SwiperSlide>
                                                             ),
                                                     )}
-
-                                                {/* Customize navigation buttons via CSS or Tailwind */}
-                                                <style>{`
-                                                    .swiper-button-next,
-                                                    .swiper-button-prev {
-                                                        @apply rounded-full bg-black/40 p-2 text-white;
-                                                        width: 36px;
-                                                        height: 36px;
-                                                        top: 50%;
-                                                        transform: translateY(-50%);
-                                                    }
-
-                                                    .swiper-button-next::after,
-                                                    .swiper-button-prev::after {
-                                                        font-size: 16px;
-                                                        font-weight: bold;
-                                                        color: #fff;
-                                                        background-color: rgba(0, 0, 0, 0.5);
-                                                        padding: 10px;
-                                                        border-radius: 50%;
-
-                                                        width: 36px;
-                                                        height: 36px;
-                                                        text-align: center;
-                                                    }
-
-                                                    .swiper-button-next {
-                                                        right: 10px;
-                                                    }
-
-                                                    .swiper-button-prev {
-                                                        left: 10px;
-                                                    }
-                                                `}</style>
                                             </Swiper>
-
-                                            {/* Video Example */}
-                                            {/* <video controls className="object-cover w-full h-full">
-                                    <source src="/path/to/video.mp4" type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video> */}
                                         </div>
                                     </div>
                                 )}
@@ -179,7 +144,7 @@ export default function view({ post }) {
                                         <div className="flex items-center space-x-3">
                                             <img
                                                 src={generalSetting?.app_favicon_url ?? DummyLogo}
-                                                className="w-10 h-10 rounded-full"
+                                                className="h-10 w-10 rounded-full"
                                                 alt="Profile"
                                             />
                                             <span className="text-lg font-semibold dark:text-white/80">
@@ -224,11 +189,11 @@ export default function view({ post }) {
                                                         }}
                                                     >
                                                         <ul
-                                                            className="py-1 overflow-y-scroll text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
+                                                            className="overflow-y-scroll py-1 text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
                                                             style={{ maxHeight: '180px' }}
                                                         >
                                                             <li>
-                                                                <button className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                <button className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                                     <svg
                                                                         xmlns="http://www.w3.org/2000/svg"
                                                                         fill="none"
@@ -253,10 +218,37 @@ export default function view({ post }) {
                                                             </li>
 
                                                             <li>
-                                                                <button className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                <button
+                                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        router.put(
+                                                                            route(
+                                                                                'dashboard.bookmarks.toggle',
+                                                                                post?.id,
+                                                                            ),
+                                                                            {
+                                                                                post_id: post?.id,
+                                                                            },
+                                                                            {
+                                                                                onError: (e) => {
+                                                                                    setCustomToastMessage(
+                                                                                        {
+                                                                                            error: e.post_id,
+                                                                                        },
+                                                                                    );
+                                                                                },
+                                                                            },
+                                                                        );
+                                                                    }}
+                                                                >
                                                                     <svg
                                                                         xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
+                                                                        fill={
+                                                                            post?.is_bookmarked
+                                                                                ? '#000080'
+                                                                                : 'none'
+                                                                        }
                                                                         viewBox="0 0 24 24"
                                                                         strokeWidth={1.5}
                                                                         stroke="currentColor"
@@ -274,7 +266,7 @@ export default function view({ post }) {
 
                                                             <li>
                                                                 <button
-                                                                    className="flex items-center w-full gap-1 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                    className="flex w-full items-center gap-1 px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                                     onClick={(e) => {
                                                                         navigator.clipboard.writeText(
                                                                             (
@@ -286,7 +278,7 @@ export default function view({ post }) {
                                                                                 `${post?.longitude != null ? '&lng=' + post?.longitude : ''}` +
                                                                                 `${post?.location_name != null ? '&location_name=' + post?.location_name : ''}` +
                                                                                 `&timestamp=${post?.created_at}` +
-                                                                                `${post?.floor != null ? '&floor=' + post?.floor : ''}`
+                                                                                `${post?.floor_id != null ? '&floor=' + post?.floor?.name : ''}`
                                                                             ).trim(),
                                                                         );
                                                                         setCustomToastMessage({
@@ -329,7 +321,7 @@ export default function view({ post }) {
                                     </div>
 
                                     <div
-                                        className="my-12 text-gray-800 text-md dark:text-white/80"
+                                        className="text-md my-12 text-gray-800 dark:text-white/80"
                                         dangerouslySetInnerHTML={{ __html: post?.content }}
                                     />
 
@@ -342,12 +334,12 @@ export default function view({ post }) {
                                     <hr />
 
                                     <div className="flex flex-wrap gap-2 text-xs text-gray-700 dark:text-white/80">
-                                        <span className="px-2 py-1 bg-gray-100 rounded-full dark:bg-gray-500">
+                                        <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-500">
                                             {post?.added_at + ' ' + post?.created_at_time}
                                         </span>
 
-                                        {post.location_name && (
-                                            <span className="px-2 py-1 bg-gray-100 rounded-full dark:bg-gray-500">
+                                        {post?.location_name && (
+                                            <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-500">
                                                 {post?.location_name}
                                             </span>
                                         )}

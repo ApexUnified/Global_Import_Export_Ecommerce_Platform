@@ -14,14 +14,14 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Loader } from '@googlemaps/js-api-loader';
 
-export default function create() {
+export default function create({ floors }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         content: '',
         images: [],
         videos: [],
-        floor: '',
+        floor_id: '',
         tag: '',
         latitude: '',
         longitude: '',
@@ -32,10 +32,6 @@ export default function create() {
 
     // Location Get Success state
     const [LocationGotSuccessMessage, setLocationGotSuccessMessage] = useState(null);
-
-    useEffect(() => {
-        console.log(data.latitude, data.longitude);
-    }, [data.latitude, data.longitude]);
 
     // location Detector State
     const [locationDetector, setLocationDetector] = useState('');
@@ -132,14 +128,13 @@ export default function create() {
                                 place_id: selectedPlaceId,
                             })
                             .then((res) => {
-                                console.log(res);
                                 setData('latitude', res.data.data.lat);
                                 setData('longitude', res.data.data.lng);
                                 setData('location_name', res.data.data.place_name);
                                 setSelectedPlaceId('');
                                 setFetchingLatlngProcessing(false);
-                                setLocationGotSuccessMessage('Location Got Successfully');
                                 setAutoCompletionLocationSearch('');
+                                setLocationGotSuccessMessage('Location Got Successfully');
                                 setTimeout(() => {
                                     setLocationGotSuccessMessage(null);
                                 }, 1000);
@@ -320,7 +315,6 @@ export default function create() {
                 const bounds = new google.maps.LatLngBounds();
 
                 places.forEach((place) => {
-                    console.log(place);
                     if (!place.geometry?.location) return;
 
                     markers.push(
@@ -362,7 +356,7 @@ export default function create() {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Posts'}
                                     URL={route('dashboard.posts.index')}
@@ -409,9 +403,7 @@ export default function create() {
                                                     Error={errors.post_type}
                                                     Value={data.post_type}
                                                     Required={true}
-                                                    Action={(e) =>
-                                                        setData('post_type', e.target.value)
-                                                    }
+                                                    Action={(value) => setData('post_type', value)}
                                                     items={[
                                                         { name: 'Review' },
                                                         { name: 'Inquiry' },
@@ -479,16 +471,16 @@ export default function create() {
                                                     Required={false}
                                                 />
 
-                                                <Input
+                                                <SelectInput
                                                     InputName={'Floor'}
-                                                    Error={errors.floor}
-                                                    Value={data.floor}
-                                                    Action={(e) => setData('floor', e.target.value)}
-                                                    Placeholder={'Enter Floor'}
-                                                    Id={'floor'}
-                                                    Name={'floor'}
-                                                    Type={'text'}
+                                                    Id={'floor_id'}
+                                                    Name={'floor_id'}
+                                                    Error={errors.floor_id}
+                                                    Value={data.floor_id}
                                                     Required={false}
+                                                    Action={(value) => setData('floor_id', value)}
+                                                    items={floors}
+                                                    itemKey={'name'}
                                                 />
 
                                                 <SelectInput
@@ -498,9 +490,7 @@ export default function create() {
                                                     Error={errors.status}
                                                     Value={data.status}
                                                     Required={true}
-                                                    Action={(e) =>
-                                                        setData('status', e.target.value)
-                                                    }
+                                                    Action={(value) => setData('status', value)}
                                                     items={[
                                                         { id: 1, name: 'Active' },
                                                         { id: 0, name: 'In Active' },
@@ -514,9 +504,7 @@ export default function create() {
                                                     Name={'location_detection_method'}
                                                     Value={locationDetector}
                                                     Required={false}
-                                                    Action={(e) =>
-                                                        setLocationDetector(e.target.value)
-                                                    }
+                                                    Action={(value) => setLocationDetector(value)}
                                                     items={[
                                                         { id: 0, name: 'Automatic Detection' },
                                                         { id: 1, name: 'Google Auto Completion' },
@@ -578,21 +566,21 @@ export default function create() {
                 />
 
                 {showProgressModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                         {/* Modal content */}
-                        <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
+                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
                             <div className="text-center">
                                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                     Please Wait While We Are Uploading Your Files
                                 </h2>
 
-                                <div className="flex items-center justify-center mt-5">
+                                <div className="mt-5 flex items-center justify-center">
                                     <div role="status">
                                         <svg
                                             aria-hidden="true"
-                                            className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                             viewBox="0 0 100 101"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -615,7 +603,7 @@ export default function create() {
                 )}
 
                 {autoCompletionLocationModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         <div
                             className="fixed inset-0 backdrop-blur-[32px]"
                             onClick={() => setAutoCompletionLocationModalOpen(false)}
@@ -629,7 +617,7 @@ export default function create() {
                                 </h2>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 mt-5 md:grid-cols-1">
+                            <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-1">
                                 <div className="relative">
                                     <Input
                                         InputName={'Location'}
@@ -645,16 +633,16 @@ export default function create() {
                                     />
 
                                     {showDropdown && (
-                                        <ul className="relative z-50 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-60 dark:border-gray-600 dark:bg-gray-700">
+                                        <ul className="relative z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-700">
                                             {autoCompletionLoading ? (
                                                 <li className="flex items-center justify-center px-4 py-4">
-                                                    <div className="w-5 h-5 border-2 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
+                                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
                                                 </li>
                                             ) : (
                                                 autoCompletionResults.map((item, index) => (
                                                     <li
                                                         key={index}
-                                                        className="px-4 py-2 text-sm text-gray-800 cursor-pointer hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-600"
+                                                        className="cursor-pointer px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-600"
                                                         onClick={() => {
                                                             setSelectedPlaceId(item.place_id);
                                                             setShowDropdown(false);
@@ -676,21 +664,21 @@ export default function create() {
                 )}
 
                 {fetchingLatlngProcessing && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                         {/* Modal content */}
-                        <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
+                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
                             <div className="text-center">
                                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                     Please Wait While We Are Setting up Location
                                 </h2>
 
-                                <div className="flex items-center justify-center mt-5">
+                                <div className="mt-5 flex items-center justify-center">
                                     <div role="status">
                                         <svg
                                             aria-hidden="true"
-                                            className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                             viewBox="0 0 100 101"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -713,7 +701,7 @@ export default function create() {
                 )}
 
                 {googleMapLocatioModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         {/* Backdrop */}
                         <div
                             className="fixed inset-0 backdrop-blur-[32px]"
@@ -737,7 +725,7 @@ export default function create() {
                                     type="text"
                                     ref={mapSearchboxRef}
                                     placeholder="Search a location"
-                                    className="w-full px-4 py-2 border rounded"
+                                    className="w-full rounded border px-4 py-2"
                                 />
 
                                 {/* Google Map */}
@@ -769,7 +757,7 @@ export default function create() {
                                                     );
                                                     setTimeout(() => {
                                                         setLocationGotSuccessMessage('');
-                                                    });
+                                                    }, 1000);
                                                 }
                                             });
                                         }}

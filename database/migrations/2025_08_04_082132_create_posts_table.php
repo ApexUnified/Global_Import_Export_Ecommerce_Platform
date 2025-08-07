@@ -20,7 +20,6 @@ return new class extends Migration
             $table->json('videos')->nullable();
             $table->string('slug')->unique()->nullable();
             $table->string('tag')->nullable();
-            $table->string('floor')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('location_name')->nullable(); // will be get from google api

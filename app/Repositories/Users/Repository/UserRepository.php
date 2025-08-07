@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Users\Repository;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Repositories\Users\Interface\IUserRepository;
 use Exception;
@@ -11,12 +12,13 @@ use Illuminate\Support\Facades\RateLimiter;
 class UserRepository implements IUserRepository
 {
     public function __construct(
-        private User $user
+        private User $user,
+        private Role $role
     ) {}
 
     public function getSingleUser(string $id)
     {
-        $user = $this->user->find($id);
+        $user = $this->user->with(['roles'])->find($id);
 
         return $user;
     }
@@ -140,5 +142,185 @@ class UserRepository implements IUserRepository
             ];
         }
 
+    }
+
+    public function getAllUsers(Request $request)
+    {
+        $users = $this->user
+            ->with(['roles'])
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('email', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('phone', 'like', '%'.$request->input('search').'%')
+                        ->orWhereHas('roles', function ($query) use ($request) {
+                            $query->where('name', 'like', '%'.$request->input('search').'%');
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(10)->withQueryString();
+
+        return $users;
+    }
+
+    public function storeUser(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role_id' => ['required', 'exists:roles,id'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'role_id.exists' => 'The selected role is invalid.',
+            'role_id.required' => 'The Role Field Is Required.',
+
+        ]);
+
+        try {
+            unset($validated_req['role_id']);
+
+            $created = $this->user->create($validated_req);
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating New User');
+            }
+
+            $role = $this->role->where('id', $request->input('role_id'))->first();
+            if (empty($role)) {
+                throw new Exception('Something Went Wrong While Creating New User');
+            }
+
+            $created->syncRoles($role->name);
+
+            return [
+                'status' => true,
+                'message' => 'User Created Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateUser(Request $request, string $id)
+    {
+
+        $validated_req = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$id],
+            ...(
+                $request->filled('password')
+                ||
+                $request->filled('password_confirmation')
+                ? ['password' => ['required', 'string', 'min:8', 'confirmed']]
+                :
+                []
+            ),
+            'role_id' => ['required', 'exists:roles,id'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'role_id.exists' => 'The selected role is invalid.',
+            'role_id.required' => 'The Role Field Is Required.',
+
+        ]);
+
+        try {
+            unset($validated_req['role_id']);
+
+            $user = $this->getSingleUser($id);
+
+            if (empty($user)) {
+                throw new Exception('Something Went Wrong While Updating User');
+            }
+            $updated = $user->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While updating User');
+            }
+
+            $role = $this->role->where('id', $request->input('role_id'))->first();
+            if (empty($role)) {
+                throw new Exception('Something Went Wrong While Updating  User');
+            }
+
+            $user->syncRoles($role->name);
+
+            return [
+                'status' => true,
+                'message' => 'User Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyUser(string $id)
+    {
+        try {
+            $user = $this->getSingleUser($id);
+
+            if (empty($user)) {
+                throw new Exception('Something Went Wrong While Deleting User');
+            }
+
+            $deleted = $user->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting User');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'User Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyUserBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Something Went Wrong While Deleting User');
+            }
+
+            $deleted = $this->user->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting User');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'User Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getAllRoles()
+    {
+        return $this->role->all();
     }
 }

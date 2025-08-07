@@ -16,21 +16,31 @@ class Post extends Model
         'images',
         'videos',
         'slug',
-        'floor',
         'tag',
         'latitude',
         'longitude',
         'location_name',
         'post_type',
         'status',
+        'floor_id',
     ];
 
-    protected $appends = ['added_at', 'post_image_urls', 'post_video_urls', 'created_at_time'];
+    protected $appends = ['added_at', 'post_image_urls', 'post_video_urls', 'created_at_time', 'is_bookmarked'];
 
     // RelationShips
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function floor(): BelongsTo
+    {
+        return $this->belongsTo(Floor::class, 'floor_id', 'id');
+    }
+
+    public function bookmarkedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'bookmarks', 'post_id', 'user_id')->withTimestamps();
     }
 
     // Attributes
@@ -56,6 +66,11 @@ class Post extends Model
         return array_map(function ($video) {
             return $video['url'];
         }, $this->videos ?? []);
+    }
+
+    public function getIsBookmarkedAttribute()
+    {
+        return $this->bookmarkedByUsers()->where('user_id', Auth::id())->exists();
     }
 
     // Static Booting

@@ -5,6 +5,7 @@ namespace App\Repositories\Posts\Repository;
 use App\Jobs\PostDestroyOnAWSJob;
 use App\Jobs\PostStoreOnAWSJob;
 use App\Jobs\PostUpdateOnAWSjob;
+use App\Models\Floor;
 use App\Models\Post;
 use App\Repositories\Posts\Interface\IPostRepository;
 use App\Services\GoogleGeoCoderService;
@@ -23,21 +24,21 @@ class PostRepository implements IPostRepository
 
     public function getAllPosts(Request $request)
     {
-        $posts = $this->post->latest()->paginate(10);
+        $posts = $this->post->with(['floor', 'user'])->latest()->paginate(10);
 
         return $posts;
     }
 
     public function getSinglePostBySlug(string $slug)
     {
-        $post = $this->post->where('slug', $slug)->first();
+        $post = $this->post->with(['floor', 'user'])->where('slug', $slug)->first();
 
         return $post;
     }
 
     public function getSinglePostById(string $id)
     {
-        $post = $this->post->find($id);
+        $post = $this->post->with(['floor', 'user'])->find($id);
 
         return $post;
     }
@@ -62,7 +63,7 @@ class PostRepository implements IPostRepository
 
             'post_type' => ['required', 'string', 'in:Review,Inquiry'],
             'status' => ['required', 'boolean'],
-            'floor' => ['nullable', 'string'],
+            'floor_id' => ['nullable', 'exists:floors,id'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
             'location_name' => ['nullable', 'string'],
@@ -72,6 +73,7 @@ class PostRepository implements IPostRepository
             'videos.max' => 'The :attribute field must not exceed 5 files.',
             'tag.max' => 'The :attribute field must not exceed 50 characters.',
             'tag.starts_with' => 'The :attribute field must start with #.',
+            'floor_id.exists' => 'Selected Floor field does not exist.',
 
         ]);
 
@@ -184,13 +186,14 @@ class PostRepository implements IPostRepository
 
             'post_type' => ['required', 'string', 'in:Review,Inquiry'],
             'status' => ['required', 'boolean'],
-            'floor' => ['nullable', 'string'],
+            'floor_id' => ['nullable'],
             'status' => ['required', 'boolean'],
         ], [
             'images.max' => 'The :attribute field must not exceed 35 files.',
             'videos.max' => 'The :attribute field must not exceed 5 files.',
             'tag.max' => 'The :attribute field must not exceed 50 characters.',
             'tag.starts_with' => 'The :attribute field must start with #.',
+            'floor_id.exists' => 'Selected Floor field does not exist.',
 
         ]);
 
@@ -229,6 +232,13 @@ class PostRepository implements IPostRepository
 
             if (empty($post)) {
                 throw new Exception('Post Not Found');
+            }
+
+            if ($request->filled('floor_id')) {
+                $floor = Floor::find($request->floor_id);
+                if (empty($floor)) {
+                    throw new Exception('Selected Floor Does Not Exists');
+                }
             }
 
             $validated_req = array_filter($validated_req, function ($value, $key) {

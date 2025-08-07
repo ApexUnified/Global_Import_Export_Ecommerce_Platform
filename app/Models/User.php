@@ -8,6 +8,7 @@ use App\Notifications\CustomResetPasswordNotification;
 use App\Notifications\CustomVerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -28,6 +29,8 @@ class User extends Authenticatable // implements MustVerifyEmail
         'email',
         'phone',
         'password',
+        'is_active',
+
     ];
 
     /**
@@ -40,7 +43,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = ['avatar'];
+    protected $appends = ['avatar', 'added_at'];
 
     /**
      * Get the attributes that should be cast.
@@ -53,6 +56,11 @@ class User extends Authenticatable // implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAddedAtAttribute()
+    {
+        return $this->created_at->format('Y-m-d');
     }
 
     public function getAvatarAttribute()
@@ -83,5 +91,11 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'user_id', 'id');
+    }
+
+    public function bookMarkedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id')
+            ->withTimestamps();
     }
 }

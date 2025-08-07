@@ -120,12 +120,12 @@ export default function Header({
 
                         <Link href={route('dashboard')} className="lg:hidden">
                             <img
-                                className="h-[140px] w-auto dark:hidden"
+                                className="h-[80px] w-auto object-contain dark:hidden"
                                 src={ApplicationLogoLight}
                                 alt="Logo"
                             />
                             <img
-                                className="hidden h-[140px] w-auto dark:block"
+                                className="hidden h-[80px] w-auto object-contain dark:block"
                                 src={ApplicationLogoDark}
                                 alt="Logo"
                             />

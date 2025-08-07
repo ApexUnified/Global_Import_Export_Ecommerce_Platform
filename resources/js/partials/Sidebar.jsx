@@ -16,30 +16,29 @@ export default function Sidebar({
     const isLargeScreen = width >= 1025;
     const prevIsLargeScreenRef = useRef(isLargeScreen);
 
+    // Always read from localStorage on initial load
+    useEffect(() => {
+        const saved = localStorage.getItem('sidebarToggle');
+        if (saved !== null) {
+            setSidebarToggle(JSON.parse(saved));
+        } else {
+            setSidebarToggle(false);
+            localStorage.setItem('sidebarToggle', JSON.stringify(false));
+        }
+    }, []);
+
+    // Save sidebarToggle to localStorage on change
+    useEffect(() => {
+        localStorage.setItem('sidebarToggle', JSON.stringify(sidebarToggle));
+    }, [sidebarToggle]);
+
+    // Hide sidebar when resizing to small screen
     useEffect(() => {
         if (prevIsLargeScreenRef.current && !isLargeScreen && sidebarToggle) {
             setSidebarToggle(false);
         }
         prevIsLargeScreenRef.current = isLargeScreen;
     }, [isLargeScreen, sidebarToggle]);
-
-    useEffect(() => {
-        if (isLargeScreen) {
-            const saved = localStorage.getItem('sidebarToggle');
-            if (saved === null) {
-                setSidebarToggle(false);
-                localStorage.setItem('sidebarToggle', JSON.stringify(false));
-            } else {
-                setSidebarToggle(JSON.parse(saved));
-            }
-        }
-    }, [isLargeScreen]);
-
-    useEffect(() => {
-        if (isLargeScreen) {
-            localStorage.setItem('sidebarToggle', JSON.stringify(sidebarToggle));
-        }
-    }, [sidebarToggle, isLargeScreen]);
 
     return (
         <>
@@ -54,13 +53,13 @@ export default function Sidebar({
                     <Link href={route('dashboard')}>
                         <span className={`logo ${sidebarToggle ? 'hidden' : ''}`}>
                             <img
-                                className="h-[140px] w-auto dark:hidden"
+                                className="h-[80px] w-auto object-contain dark:hidden"
                                 src={ApplicationLogoLight}
                                 alt="Logo"
                             />
 
                             <img
-                                className="hidden h-[140px] w-auto dark:block"
+                                className="hidden h-[80px] w-auto object-contain dark:block"
                                 src={ApplicationLogoDark}
                                 alt="Logo"
                             />
@@ -89,7 +88,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
+                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -116,7 +115,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="flex flex-col gap-4 mb-6">
+                            <ul className="mb-6 flex flex-col gap-4">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
@@ -247,7 +246,7 @@ export default function Sidebar({
                                                 setSelected('Floors');
                                             }
                                         }}
-                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.posts.') || selected === 'Posts' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.floors.') || selected === 'Floors' ? 'menu-item-active' : 'menu-item-inactive'} `}
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +259,7 @@ export default function Sidebar({
                                             <path
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                                d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"
                                             />
                                         </svg>
 
@@ -271,7 +270,7 @@ export default function Sidebar({
                                         </span>
 
                                         <svg
-                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.posts.') || (selected === 'Floors' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.floors.') || (selected === 'Floors' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
                                             width="20"
                                             height="20"
                                             viewBox="0 0 20 20"
@@ -296,18 +295,163 @@ export default function Sidebar({
                                         >
                                             <li>
                                                 <Link
-                                                    href={route('dashboard.posts.index')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.floors.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.floors.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Floors List
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href={route('dashboard.posts.create')}
-                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.posts.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                    href={route('dashboard.floors.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.floors.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Create Floor
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Bookmarks') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Bookmarks');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.bookmarks.') || selected === 'Bookmarks' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Bookmarks
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.bookmarks.') || (selected === 'Bookmarks' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Bookmarks' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.bookmarks.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.bookmarks.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Bookmarks List
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Users') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Users');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.users.') || selected === 'Users' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Users
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.users.') || (selected === 'Users' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Users' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.users.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.users.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Users List
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.users.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.users.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create User
                                                 </Link>
                                             </li>
                                         </ul>

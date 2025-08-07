@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ posts }) {
+export default function index({ users }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -33,39 +33,31 @@ export default function index({ posts }) {
     const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'title', label: 'Post Title' },
-            { key: 'location_name', label: 'Location Name' },
-            { key: 'floor.name', label: 'Floor' },
-            { key: 'tag', label: 'Tag' },
-
+            { key: 'name', label: 'User Name' },
+            { key: 'email', label: 'User Email' },
+            { key: 'phone', label: 'User Phone' },
             {
-                label: 'Post Type',
+                label: 'User Role',
                 render: (item) => {
                     return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item.post_type.charAt(0).toUpperCase() +
-                                item.post_type.slice(1).toLowerCase()}
+                        <span className="p-2 text-white bg-blue-500 rounded-lg">
+                            {item?.roles[0]?.name ?? 'No Role'}
                         </span>
                     );
                 },
             },
-
             {
                 label: 'Status',
                 render: (item) => {
-                    if (item.status === 1) {
+                    if (item.is_active != 1) {
                         return (
-                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
-                        );
-                    } else {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
+                            <span className="p-2 text-white bg-red-500 rounded-lg">In-Active</span>
                         );
                     }
+
+                    return <span className="p-2 text-white bg-green-500 rounded-lg">Active</span>;
                 },
             },
-
-            { key: 'user.name', label: 'Posted By' },
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -73,39 +65,34 @@ export default function index({ posts }) {
             {
                 label: 'View',
                 type: 'link',
-                href: (item) => route('dashboard.posts.show', item.slug),
-            },
-
-            {
-                label: 'Edit',
-                type: 'link',
-                href: (item) => route('dashboard.posts.edit', item.slug),
+                href: (item) => route('dashboard.users.show', item?.id),
             },
         ];
 
         setActions(customActions);
+
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Posts" />
+                <Head title="Users" />
 
                 <BreadCrumb
-                    header={'Posts'}
+                    header={'Users'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Posts'}
+                    child={'Users'}
                 />
 
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
-                                    Text={'Create Post'}
-                                    URL={route('dashboard.posts.create')}
+                                    Text={'Create User'}
+                                    URL={route('dashboard.users.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -133,11 +120,13 @@ export default function index({ posts }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.posts.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.posts.destroy'}
-                                SearchRoute={'dashboard.posts.index'}
-                                Search={false}
-                                items={posts}
+                                BulkDeleteRoute={'dashboard.users.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.users.destroy'}
+                                EditRoute={'dashboard.users.edit'}
+                                SearchRoute={'dashboard.users.index'}
+                                Search={true}
+                                DefaultSearchInput={true}
+                                items={users}
                                 props={props}
                                 columns={columns}
                                 customActions={actions}

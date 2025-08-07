@@ -11,7 +11,7 @@ import FileUploaderInput from '@/Components/FileUploaderInput';
 import TipTapEditor from '@/Components/TipTapEditor';
 import Toast from '@/Components/Toast';
 
-export default function edit({ post }) {
+export default function edit({ post, floors }) {
     // Create Data Form Data
     const { data, setData, reset } = useForm({
         _method: 'PUT',
@@ -19,7 +19,7 @@ export default function edit({ post }) {
         content: post?.content || '',
         images: [],
         videos: [],
-        floor: post?.floor || '',
+        floor_id: post?.floor_id || '',
         tag: post?.tag || '',
         post_type: post?.post_type || '',
         status: post?.status ?? 1,
@@ -125,7 +125,7 @@ export default function edit({ post }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Posts'}
                                     URL={route('dashboard.posts.index')}
@@ -172,9 +172,7 @@ export default function edit({ post }) {
                                                     Error={errors.post_type}
                                                     Value={data.post_type}
                                                     Required={true}
-                                                    Action={(e) =>
-                                                        setData('post_type', e.target.value)
-                                                    }
+                                                    Action={(value) => setData('post_type', value)}
                                                     items={[
                                                         { name: 'Review' },
                                                         { name: 'Inquiry' },
@@ -236,18 +234,17 @@ export default function edit({ post }) {
                                                     Required={false}
                                                 />
 
-                                                <Input
+                                                {/* <SelectInput
                                                     InputName={'Floor'}
-                                                    Error={errors.floor}
-                                                    Value={data.floor}
-                                                    Action={(e) => setData('floor', e.target.value)}
-                                                    Placeholder={'Enter Floor'}
-                                                    Id={'floor'}
-                                                    Name={'floor'}
-                                                    Type={'text'}
+                                                    Id={'floor_id'}
+                                                    Name={'floor_id'}
+                                                    Error={errors.floor_id}
+                                                    Value={data.floor_id}
                                                     Required={false}
-                                                />
-
+                                                    Action={(value) => setData('floor_id', value)}
+                                                    items={floors}
+                                                    itemKey={'name'}
+                                                /> */}
                                                 <SelectInput
                                                     InputName={'Post Status'}
                                                     Id={'status'}
@@ -255,9 +252,7 @@ export default function edit({ post }) {
                                                     Error={errors.status}
                                                     Value={data.status}
                                                     Required={true}
-                                                    Action={(e) =>
-                                                        setData('status', e.target.value)
-                                                    }
+                                                    Action={(value) => setData('status', value)}
                                                     items={[
                                                         { id: 1, name: 'Active' },
                                                         { id: 0, name: 'In Active' },
@@ -318,21 +313,21 @@ export default function edit({ post }) {
                 />
 
                 {showProgressModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                         {/* Modal content */}
-                        <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
+                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
                             <div className="text-center">
                                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                     Please Wait While We Are Uploading Your Files
                                 </h2>
 
-                                <div className="flex items-center justify-center mt-5">
+                                <div className="mt-5 flex items-center justify-center">
                                     <div role="status">
                                         <svg
                                             aria-hidden="true"
-                                            className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                             viewBox="0 0 100 101"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"

@@ -13,4 +13,16 @@ interface IUserRepository
     public function updatePassword(Request $request);
 
     public function destroyAccount(Request $request);
+
+    public function getAllUsers(Request $request);
+
+    public function storeUser(Request $request);
+
+    public function updateUser(Request $request, string $id);
+
+    public function destroyUser(string $id);
+
+    public function destroyUserBySelection(Request $request);
+
+    public function getAllRoles();
 }
