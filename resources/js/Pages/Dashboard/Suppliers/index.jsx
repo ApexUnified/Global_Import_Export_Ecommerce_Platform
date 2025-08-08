@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ users }) {
+export default function index({ suppliers }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -33,23 +33,15 @@ export default function index({ users }) {
     const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'name', label: 'User Name' },
-            { key: 'email', label: 'User Email' },
-            { key: 'phone', label: 'User Phone' },
+            { key: 'user.name', label: 'Supplier Name' },
+            { key: 'user.email', label: 'Supplier Email' },
+            { key: 'user.phone', label: 'Supplier Phone' },
+            { key: 'company_name', label: 'Supplier Company' },
+
             {
-                label: 'User Role',
+                label: 'Supplier Status',
                 render: (item) => {
-                    return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item?.roles[0]?.name ?? 'No Role'}
-                        </span>
-                    );
-                },
-            },
-            {
-                label: 'Status',
-                render: (item) => {
-                    if (item.is_active != 1) {
+                    if (item.user.is_active != 1) {
                         return (
                             <span className="rounded-lg bg-red-500 p-2 text-white">In-Active</span>
                         );
@@ -65,25 +57,24 @@ export default function index({ users }) {
             {
                 label: 'View',
                 type: 'link',
-                href: (item) => route('dashboard.users.show', item?.id),
+                href: (item) => route('dashboard.suppliers.show', item?.id),
             },
         ];
 
         setActions(customActions);
-
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Users" />
+                <Head title="Suppliers" />
 
                 <BreadCrumb
-                    header={'Users'}
+                    header={'Suppliers'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Users'}
+                    child={'Suppliers'}
                 />
 
                 <Card
@@ -91,8 +82,8 @@ export default function index({ users }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create User'}
-                                    URL={route('dashboard.users.create')}
+                                    Text={'Create Supplier'}
+                                    URL={route('dashboard.suppliers.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -120,13 +111,13 @@ export default function index({ users }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.users.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.users.destroy'}
-                                EditRoute={'dashboard.users.edit'}
-                                SearchRoute={'dashboard.users.index'}
+                                BulkDeleteRoute={'dashboard.suppliers.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.suppliers.destroy'}
+                                EditRoute={'dashboard.suppliers.edit'}
+                                SearchRoute={'dashboard.suppliers.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
-                                items={users}
+                                items={suppliers}
                                 props={props}
                                 columns={columns}
                                 customActions={actions}

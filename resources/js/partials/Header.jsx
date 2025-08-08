@@ -4,7 +4,7 @@ import not1 from 'asset/assets/images/user/user-01.jpg';
 import not2 from 'asset/assets/images/user/user-02.jpg';
 import not3 from 'asset/assets/images/user/user-03.jpg';
 import not4 from 'asset/assets/images/user/user-04.jpg';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import Spinner from '@/Components/Spinner';
 
 export default function Header({
@@ -501,7 +501,23 @@ export default function Header({
                                     </ul>
                                     <button
                                         onClick={() => {
-                                            logout(route('logout'));
+                                            logout(route('logout'), {
+                                                onFinish: () => {
+                                                    router.visit(route('login'), { replace: true });
+                                                    window.history.pushState(
+                                                        null,
+                                                        '',
+                                                        window.location.href,
+                                                    );
+                                                    window.addEventListener(
+                                                        'popstate',
+                                                        function () {
+                                                            router.visit(route('login'));
+                                                        },
+                                                    );
+                                                    router.reload({ replace: true });
+                                                },
+                                            });
                                         }}
                                         className="text-theme-sm group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                     >

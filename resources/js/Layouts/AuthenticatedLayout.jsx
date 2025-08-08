@@ -2,12 +2,19 @@ import Header from '@/partials/Header';
 import Overlay from '@/Components/Overlay';
 import Preloader from '@/Components/Preloader';
 import Sidebar from '@/partials/Sidebar';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Toast from '@/Components/Toast';
 export default function AuthenticatedLayout({ children }) {
     // Global General Setting Prop
     const { generalSetting } = usePage().props;
+    const { auth } = usePage().props;
+
+    useEffect(() => {
+        if (!auth.user) {
+            router.visit(route('login'));
+        }
+    }, [auth]);
 
     // Global Asset Prop To Get asset() path it uses Laravel Default asset() Method
     const { asset } = usePage().props;

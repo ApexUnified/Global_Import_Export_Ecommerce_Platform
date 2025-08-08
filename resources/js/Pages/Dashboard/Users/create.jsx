@@ -17,6 +17,7 @@ export default function create({ roles }) {
         password_confirmation: '',
         role_id: '',
         is_active: 1,
+        company_name: '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -147,6 +148,22 @@ export default function create({ roles }) {
                                                     }
                                                 />
 
+                                                {data.role_id === 4 && (
+                                                    <Input
+                                                        InputName={'Company Name'}
+                                                        Error={errors.company_name}
+                                                        Value={data.company_name}
+                                                        Action={(e) =>
+                                                            setData('company_name', e.target.value)
+                                                        }
+                                                        Placeholder={'Enter Company Name'}
+                                                        Id={'company_name'}
+                                                        Name={'company_name'}
+                                                        Type={'text'}
+                                                        Required={data.role_id === 4}
+                                                    />
+                                                )}
+
                                                 <SelectInput
                                                     InputName={'User Role'}
                                                     Id={'role_id'}
@@ -195,7 +212,10 @@ export default function create({ roles }) {
                                                     data.password_confirmation.trim() === '' ||
                                                     data.role_id === '' ||
                                                     data.is_active === '' ||
-                                                    data.password !== data.password_confirmation
+                                                    data.password.trim() !==
+                                                        data.password_confirmation.trim() ||
+                                                    (data.role_id === 4 &&
+                                                        data.company_name.trim() === '')
                                                 }
                                                 Spinner={processing}
                                                 Icon={

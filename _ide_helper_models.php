@@ -14,6 +14,28 @@
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
+ * @property int $post_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Post $post
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark wherePostId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark whereUserId($value)
+ */
+	class Bookmark extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -72,7 +94,6 @@ namespace App\Models{
  * @property array<array-key, mixed>|null $videos
  * @property string|null $slug
  * @property string|null $tag
- * @property \App\Models\Floor|null $floor
  * @property string|null $latitude
  * @property string|null $longitude
  * @property string|null $location_name
@@ -80,8 +101,12 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $bookmarkedByUsers
+ * @property-read int|null $bookmarked_by_users_count
+ * @property-read \App\Models\Floor|null $floor
  * @property-read mixed $added_at
  * @property-read mixed $created_at_time
+ * @property-read mixed $is_bookmarked
  * @property-read mixed $post_image_urls
  * @property-read mixed $post_video_urls
  * @property-read \App\Models\User|null $user
@@ -90,7 +115,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereFloor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereFloorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereImages($value)
@@ -169,14 +193,40 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $company_name
+ * @property string $margin
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCompanyName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereMargin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUserId($value)
+ */
+	class Supplier extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $phone
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
+ * @property int $is_active
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $bookMarkedPosts
+ * @property-read int|null $book_marked_posts_count
+ * @property-read mixed $added_at
  * @property-read mixed $avatar
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -186,6 +236,8 @@ namespace App\Models{
  * @property-read int|null $posts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Supplier> $supplier
+ * @property-read int|null $supplier_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -196,6 +248,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhone($value)

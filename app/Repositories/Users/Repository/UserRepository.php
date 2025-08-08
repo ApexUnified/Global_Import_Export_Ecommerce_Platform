@@ -18,7 +18,7 @@ class UserRepository implements IUserRepository
 
     public function getSingleUser(string $id)
     {
-        $user = $this->user->with(['roles'])->find($id);
+        $user = $this->user->with(['roles', 'supplier'])->find($id);
 
         return $user;
     }
@@ -183,14 +183,24 @@ class UserRepository implements IUserRepository
         try {
             unset($validated_req['role_id']);
 
+            $role = $this->role->where('id', $request->input('role_id'))->first();
+            if (empty($role)) {
+                throw new Exception('Something Went Wrong While Creating New User');
+            }
+
+            if ($role->name === 'Supplier') {
+                $request->validate([
+                    'company_name' => ['required', 'max:255'],
+                ]);
+            }
+
             $created = $this->user->create($validated_req);
             if (empty($created)) {
                 throw new Exception('Something Went Wrong While Creating New User');
             }
 
-            $role = $this->role->where('id', $request->input('role_id'))->first();
-            if (empty($role)) {
-                throw new Exception('Something Went Wrong While Creating New User');
+            if ($role->name === 'Supplier') {
+                $created->supplier()->create(['company_name' => $request->input('company_name')]);
             }
 
             $created->syncRoles($role->name);
@@ -240,15 +250,30 @@ class UserRepository implements IUserRepository
             if (empty($user)) {
                 throw new Exception('Something Went Wrong While Updating User');
             }
-            $updated = $user->update($validated_req);
-
-            if (! $updated) {
-                throw new Exception('Something Went Wrong While updating User');
-            }
 
             $role = $this->role->where('id', $request->input('role_id'))->first();
             if (empty($role)) {
                 throw new Exception('Something Went Wrong While Updating  User');
+            }
+
+            // Supplier Logic
+            if ($role->name !== 'Supplier' && $user->supplier()->exists()) {
+                $user->supplier()->delete();
+            }
+
+            if ($role->name === 'Supplier' && ! $user->supplier()->exists()) {
+                $user->supplier()->create(['company_name' => $request->input('company_name')]);
+            }
+
+            if ($role->name === 'Supplier' && $user->supplier()->exists()) {
+                $user->supplier()->update(['company_name' => $request->input('company_name')]);
+            }
+            // Supplier Logic
+
+            $updated = $user->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While updating User');
             }
 
             $user->syncRoles($role->name);

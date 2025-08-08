@@ -5,17 +5,17 @@ import BreadCrumb from '@/Components/BreadCrumb';
 import { Head } from '@inertiajs/react';
 import React from 'react';
 
-export default function edit({ user }) {
+export default function edit({ supplier }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Users" />
+                <Head title="Suppliers" />
 
                 <BreadCrumb
-                    header={'View User'}
-                    parent={'Users'}
-                    parent_link={route('dashboard.users.index')}
-                    child={'View User'}
+                    header={'View Supplier'}
+                    parent={'Suppliers'}
+                    parent_link={route('dashboard.suppliers.index')}
+                    child={'View Supplier'}
                 />
 
                 <Card
@@ -23,8 +23,8 @@ export default function edit({ user }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Users'}
-                                    URL={route('dashboard.users.index')}
+                                    Text={'Back To Suppliers'}
+                                    URL={route('dashboard.suppliers.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ export default function edit({ user }) {
                                         {/* Avatar */}
                                         <div className="mb-6 flex-shrink-0 text-center md:mb-0">
                                             <div className="flex h-36 w-36 items-center justify-center rounded-full border-4 border-blue-500 bg-blue-100 text-5xl font-bold text-blue-800 dark:border-white dark:bg-white/10 dark:text-white">
-                                                {user.avatar}
+                                                {supplier?.user?.avatar}
                                             </div>
                                         </div>
 
@@ -63,7 +63,7 @@ export default function edit({ user }) {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={user.name}
+                                                    value={supplier?.user?.name}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
@@ -76,7 +76,7 @@ export default function edit({ user }) {
                                                 </label>
                                                 <input
                                                     type="email"
-                                                    value={user.email}
+                                                    value={supplier?.user?.email}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
@@ -89,7 +89,20 @@ export default function edit({ user }) {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={user.phone}
+                                                    value={supplier?.user?.phone}
+                                                    readOnly
+                                                    className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                />
+                                            </div>
+
+                                            {/* Company */}
+                                            <div>
+                                                <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                    Company Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={supplier?.company_name}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
@@ -101,8 +114,9 @@ export default function edit({ user }) {
                                                     Role(s)
                                                 </label>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {user.roles && user.roles.length > 0 ? (
-                                                        user.roles.map((role, index) => (
+                                                    {supplier?.user?.roles &&
+                                                    supplier?.user?.roles.length > 0 ? (
+                                                        supplier?.user?.roles.map((role, index) => (
                                                             <span
                                                                 key={index}
                                                                 className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-white"

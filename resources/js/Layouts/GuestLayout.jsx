@@ -1,5 +1,5 @@
 import CommonGridShape from '@/Components/common-grid-shape';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Preloader from '@/Components/Preloader';
 import Toast from '@/Components/Toast';
@@ -60,12 +60,12 @@ export default function GuestLayout({ children }) {
                         <div className="z-1 flex items-center justify-center">
                             <CommonGridShape />
                             <div className="flex max-w-xs flex-col items-center">
-                                <a
+                                <Link
                                     href={route('home')}
                                     className="dark:none mb-4 block rounded-2xl"
                                 >
                                     <img src={ApplicationLogo} alt="Logo" />
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>

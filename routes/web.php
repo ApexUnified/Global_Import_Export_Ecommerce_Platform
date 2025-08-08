@@ -6,6 +6,7 @@ use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
+use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // User Routes
         Route::resource('/users', UserController::class);
         Route::delete('/users-destroy-by-selection', [UserController::class, 'destroyBySelection'])->name('users.destroybyselection');
+
+        // Supplier Routes
+        Route::resource('/suppliers', SupplierController::class);
+        Route::delete('/suppliers-destroy-by-selection', [SupplierController::class, 'destroyBySelection'])->name('suppliers.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {
