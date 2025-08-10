@@ -14,6 +14,7 @@ export default function Input({
     ShowPasswordToggle,
     setShowPasswordToggle,
     InputRef,
+    Decimal = false,
 }) {
     return (
         <div className={CustomCss || 'w-full'}>
@@ -36,7 +37,12 @@ export default function Input({
                     onChange={Action}
                     required={Required}
                     {...(Type === 'password' ? { autoComplete: 'off' } : {})}
-                    {...(Type === 'number' ? { min: 0 } : {})}
+                    {...(Type === 'number'
+                        ? {
+                              min: 0,
+                              ...(Decimal ? { step: 0.01 } : {}),
+                          }
+                        : {})}
                 />
                 {Error && Type !== 'password' && (
                     <span className="absolute right-3.5 top-1/2 -translate-y-1/2">
@@ -59,7 +65,7 @@ export default function Input({
 
                 {Type === 'password' && (
                     <span
-                        className="absolute right-4 top-7 z-30 -translate-y-1/2 cursor-pointer pb-2 text-gray-500 dark:text-gray-400"
+                        className="absolute z-30 pb-2 text-gray-500 -translate-y-1/2 cursor-pointer right-4 top-7 dark:text-gray-400"
                         onClick={() => setShowPasswordToggle(!ShowPasswordToggle)}
                     >
                         <svg

@@ -18,6 +18,7 @@ export default function create({ roles }) {
         role_id: '',
         is_active: 1,
         company_name: '',
+        type: '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -164,6 +165,24 @@ export default function create({ roles }) {
                                                     />
                                                 )}
 
+                                                {data.role_id === 3 && (
+                                                    <SelectInput
+                                                        InputName={'Collaborator Type'}
+                                                        Id={'type'}
+                                                        Name={'type'}
+                                                        Value={data.type}
+                                                        items={[
+                                                            { name: 'Company' },
+                                                            { name: 'Indivisual' },
+                                                        ]}
+                                                        Error={errors.type}
+                                                        Placeholder={'Select Collaborator Type'}
+                                                        Required={data.role_id === 3}
+                                                        itemKey={'name'}
+                                                        Action={(value) => setData('type', value)}
+                                                    />
+                                                )}
+
                                                 <SelectInput
                                                     InputName={'User Role'}
                                                     Id={'role_id'}
@@ -174,7 +193,11 @@ export default function create({ roles }) {
                                                     Placeholder={'Select User Role'}
                                                     Required={true}
                                                     itemKey={'name'}
-                                                    Action={(value) => setData('role_id', value)}
+                                                    Action={(value) => {
+                                                        setData('role_id', value);
+                                                        setData('company_name', '');
+                                                        setData('type', '');
+                                                    }}
                                                 />
 
                                                 <SelectInput
@@ -215,7 +238,8 @@ export default function create({ roles }) {
                                                     data.password.trim() !==
                                                         data.password_confirmation.trim() ||
                                                     (data.role_id === 4 &&
-                                                        data.company_name.trim() === '')
+                                                        data.company_name.trim() === '') ||
+                                                    (data.role_id === 3 && data.type.trim() === '')
                                                 }
                                                 Spinner={processing}
                                                 Icon={

@@ -1,0 +1,277 @@
+<?php
+
+namespace App\Repositories\Smartphones\Repository;
+
+use App\Jobs\SmartphoneDestroyOnAWS;
+use App\Jobs\SmartphoneStoreOnAWS;
+use App\Jobs\SmartphoneUpdateOnAWS;
+use App\Models\Color;
+use App\Models\Smartphone;
+use App\Repositories\Smartphones\Interface\ISmartphoneRepository;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Str;
+
+class SmartphoneRepository implements ISmartphoneRepository
+{
+    public function __construct(
+        private Smartphone $smartphone,
+        private Color $color
+    ) {}
+
+    public function getAllSmartphones(Request $request)
+    {
+        $smartphones = $this->smartphone
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->where(function ($subQ) use ($request) {
+                    $subQ->where('model_name', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('upc', 'like', '%'.$request->input('search').'%');
+                });
+            })
+            ->latest()
+            ->paginate(10);
+
+        return $smartphones;
+    }
+
+    public function getSingleSmartphone(string $id)
+    {
+        $smartphone = $this->smartphone->find($id);
+
+        return $smartphone;
+    }
+
+    public function storeSmartphone(Request $request)
+    {
+        $validated_req = $request->validate([
+            'model_name' => ['required', 'max:255'],
+            'capacity' => ['required', 'max:255'],
+            'color_ids' => ['required', 'array'],
+            'color_ids.*' => ['required', 'exists:colors,id'],
+            'selling_price' => ['required', 'numeric'],
+            'upc' => ['required', 'max:255', 'unique:smartphones,upc'],
+            'images' => ['required', 'array', 'max:5'],
+
+        ]);
+
+        $validator = Validator::make($request->allFiles(), [
+            'images.*' => [
+                'mimes:jpg,jpeg,png',
+                'max:5048',
+                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
+            ],
+
+        ], [
+            'images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
+            'images.*.max' => 'Each image must not exceed 5MB.',
+            'images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
+
+        ], [
+            'images.*' => 'image',        ]);
+
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([
+                'file_error' => $validator->errors()->first(),
+            ]);
+        }
+
+        try {
+
+            $validated_req = array_filter($validated_req, function ($value, $key) {
+                return ! in_array($key, ['images']);
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $smartphone = $this->smartphone->create($validated_req);
+            if (empty($smartphone)) {
+                throw new Exception('Something Went Wrong While Creating Smartphone');
+            }
+
+            if ($request->hasFile('images')) {
+                $paths = [];
+
+                foreach ($request->file('images') as $image) {
+                    $new_name = time().uniqid().Str::random(10).'.'.$image->getClientOriginalExtension();
+                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new SmartphoneStoreOnAWS(['images' => $paths], $smartphone));
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Smartphone Created Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateSmartphone(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'model_name' => ['required', 'max:255'],
+            'capacity' => ['required', 'max:255'],
+            'color_ids' => ['required', 'array'],
+            'color_ids.*' => ['required', 'exists:colors,id'],
+            'selling_price' => ['required', 'numeric'],
+            'upc' => ['required', 'max:255', 'unique:smartphones,upc,'.$id],
+            'images' => ['required', 'array', 'max:5'],
+        ]);
+
+        $validator = Validator::make($request->allFiles(), [
+            'new_images.*' => [
+                'mimes:jpg,jpeg,png',
+                'max:10240',
+                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
+            ],
+
+        ], [
+            'new_images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
+            'new_images.*.max' => 'Each image must not exceed 10MB.',
+            'new_images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
+
+        ], [
+            'images.*' => 'image',
+
+        ]);
+
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([
+                'file_error' => $validator->errors()->first(),
+            ]);
+        }
+
+        try {
+            $validated_req = array_filter($validated_req, function ($value, $key) {
+                return ! in_array($key, ['images']);
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $smartphone = $this->smartphone->find($id);
+
+            if ($request->filled('deleted_images')) {
+                $deleted = $request->array('deleted_images');
+                $deleted_image_urls = array_map(function ($deletedItem) {
+                    return $deletedItem['url'] ?? null;
+                }, $deleted);
+
+                dispatch(new SmartphoneDestroyOnAWS(['images' => $deleted_image_urls]));
+
+                $oldImages = $smartphone->images ?? [];
+
+                $remeaning_images = array_filter($oldImages, function ($image) use ($deleted) {
+                    return ! in_array($image, $deleted);
+                });
+
+                $remaining_images_array = array_values($remeaning_images);
+
+                $validated_req['images'] = $remaining_images_array;
+            }
+
+            if (empty($smartphone)) {
+                throw new Exception('Smartphone Not Found');
+            }
+
+            $updated = $smartphone->update($validated_req);
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Smartphone');
+            }
+
+            if ($request->hasFile('new_images')) {
+                $paths = [];
+
+                foreach ($request->file('new_images') as $image) {
+                    $new_name = time().uniqid().Str::random(10).'.'.$image->getClientOriginalExtension();
+                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new SmartphoneUpdateOnAWS(['images' => $paths], $smartphone));
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Smartphone Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroySmartphone(string $id)
+    {
+        try {
+            $smartphone = $this->smartphone->find($id);
+
+            if (empty($smartphone)) {
+                throw new Exception('Smartphone Not Found');
+            }
+
+            if (! blank($smartphone->smartphone_image_urls)) {
+                dispatch(new SmartphoneDestroyOnAWS(['images' => $smartphone->smartphone_image_urls]));
+            }
+
+            $deleted = $smartphone->delete();
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Smartphone');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Smartphone Deleted Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroySmartphoneBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Smartphone');
+            }
+
+            $smartphones = $this->smartphone->whereIn('id', $ids)->get();
+            if ($smartphones->isEmpty()) {
+                throw new Exception('Given Smartphone Ids Are incorrect');
+            }
+
+            foreach ($smartphones as $smartphone) {
+                $response = $this->destroySmartphone($smartphone->id);
+                if ($response['status'] === false) {
+                    throw new Exception($response['message']);
+                }
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Smartphones Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getColors()
+    {
+        return $this->color->where('is_active', 1)->get();
+    }
+}

@@ -35,10 +35,10 @@ export default function edit({ supplier }) {
                 <Head title="Suppliers" />
 
                 <BreadCrumb
-                    header={'Edit1 Supplier'}
+                    header={'Edit Supplier'}
                     parent={'Suppliers'}
                     parent_link={route('dashboard.suppliers.index')}
-                    child={'Edit1 Supplier'}
+                    child={'Edit Supplier'}
                 />
 
                 <Card

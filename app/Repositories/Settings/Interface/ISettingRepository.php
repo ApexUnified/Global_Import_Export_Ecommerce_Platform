@@ -28,4 +28,17 @@ interface ISettingRepository
     public function destroyRole(string $id);
 
     public function destroyRoleBySelection(Request $request);
+
+    // Colors
+    public function getAllColors();
+
+    public function getSingleColor($id);
+
+    public function storeColor(Request $request);
+
+    public function updateColor(Request $request, string $id);
+
+    public function destroyColor(string $id);
+
+    public function destroyColorBySelection(Request $request);
 }

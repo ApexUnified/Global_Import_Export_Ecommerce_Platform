@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Settings\Repository;
 
+use App\Models\Color;
 use App\Models\GeneralSetting;
 use App\Models\Role;
 use App\Models\SmtpSetting;
@@ -15,7 +16,8 @@ class SettingRepository implements ISettingRepository
     public function __construct(
         private GeneralSetting $general_setting,
         private SmtpSetting $smtp_setting,
-        private Role $role
+        private Role $role,
+        private Color $color,
     ) {}
 
     // General Setting
@@ -325,6 +327,134 @@ class SettingRepository implements ISettingRepository
                 'message' => 'Role Deleted Successfully',
             ];
 
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getAllColors()
+    {
+        $colors = $this->color->latest()->paginate(10);
+
+        return $colors;
+    }
+
+    public function getSingleColor($id)
+    {
+        $color = $this->color->find($id);
+
+        return $color;
+    }
+
+    public function storeColor(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:colors,name'],
+            'code' => ['required', 'max:255', 'starts_with:#', 'unique:colors,code'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+            $created = $this->color->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Color');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Color Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateColor(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:colors,name,'.$id],
+            'code' => ['required', 'max:255', 'starts_with:#', 'unique:colors,code,'.$id],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+            $color = $this->getSingleColor($id);
+
+            if (empty($color)) {
+                throw new Exception('Color Not Found');
+            }
+
+            $updated = $color->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Color');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Color Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyColor(string $id)
+    {
+        try {
+            $color = $this->getSingleColor($id);
+
+            if (empty($color)) {
+                throw new Exception('Color Not Found');
+            }
+
+            $deleted = $color->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Color');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Color Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyColorBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Color');
+            }
+
+            $deleted = $this->color->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Color');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Color Deleted Successfully',
+            ];
         } catch (Exception $e) {
             return [
                 'status' => false,

@@ -8,6 +8,7 @@ use App\Repositories\Users\Interface\IUserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Str;
 
 class UserRepository implements IUserRepository
 {
@@ -18,7 +19,7 @@ class UserRepository implements IUserRepository
 
     public function getSingleUser(string $id)
     {
-        $user = $this->user->with(['roles', 'supplier'])->find($id);
+        $user = $this->user->with(['roles', 'supplier', 'collaborator'])->find($id);
 
         return $user;
     }
@@ -188,20 +189,42 @@ class UserRepository implements IUserRepository
                 throw new Exception('Something Went Wrong While Creating New User');
             }
 
+            // Supplier Logic
             if ($role->name === 'Supplier') {
                 $request->validate([
                     'company_name' => ['required', 'max:255'],
                 ]);
             }
+            // Supplier Logic
+
+            // Collaborator Logic
+            if ($role->name === 'Collaborator') {
+                $request->validate([
+                    'type' => ['required', 'in:Company,Indivisual'],
+                ], [
+                    'type.required' => 'The Collaborator Type Field Is Required.',
+                    'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
+                ]);
+            }
+            // Collaborator Logic
 
             $created = $this->user->create($validated_req);
             if (empty($created)) {
                 throw new Exception('Something Went Wrong While Creating New User');
             }
 
+            // Supplier Logic
             if ($role->name === 'Supplier') {
                 $created->supplier()->create(['company_name' => $request->input('company_name')]);
             }
+            // Supplier Logic
+
+            // Collaborator Logic
+            if ($role->name === 'Collaborator') {
+                $referral_code = 'Ref-'.Str::random(12);
+                $created->collaborator()->create(['type' => $request->input('type'), 'referral_code' => $referral_code]);
+            }
+            // Collaborator Logic
 
             $created->syncRoles($role->name);
 
@@ -258,6 +281,17 @@ class UserRepository implements IUserRepository
 
             // Supplier Logic
             if ($role->name !== 'Supplier' && $user->supplier()->exists()) {
+
+                $supplier = $user->supplier;
+                $createdAt = $supplier->created_at instanceof \Carbon\Carbon
+                    ? $supplier->created_at
+                    : \Carbon\Carbon::parse($supplier->created_at);
+
+                $yearsPassed = (int) $createdAt->diffInYears(now());
+                if ($yearsPassed < 5) {
+                    throw new Exception('Supplier Can Not Be Changed Before 5 Years And Currently '.$yearsPassed.' Years Passed');
+                }
+
                 $user->supplier()->delete();
             }
 
@@ -269,6 +303,21 @@ class UserRepository implements IUserRepository
                 $user->supplier()->update(['company_name' => $request->input('company_name')]);
             }
             // Supplier Logic
+
+            // Collaborator Logic
+            if ($role->name !== 'Collaborator' && $user->collaborator()->exists()) {
+                $user->collaborator()->delete();
+            }
+
+            if ($role->name === 'Collaborator' && ! $user->collaborator()->exists()) {
+                $referral_code = 'Ref-'.Str::random(12);
+                $user->collaborator()->create(['type' => $request->input('type'), 'referral_code' => $referral_code]);
+            }
+
+            if ($role->name === 'Collaborator' && $user->collaborator()->exists()) {
+                $user->collaborator()->update(['type' => $request->input('type')]);
+            }
+            // Collaborator Logic
 
             $updated = $user->update($validated_req);
 
@@ -299,6 +348,20 @@ class UserRepository implements IUserRepository
                 throw new Exception('Something Went Wrong While Deleting User');
             }
 
+            if ($user->supplier()->exists()) {
+                $supplier = $user->supplier;
+
+                $createdAt = $supplier->created_at instanceof \Carbon\Carbon
+                    ? $supplier->created_at
+                    : \Carbon\Carbon::parse($supplier->created_at);
+
+                $yearsPassed = (int) $createdAt->diffInYears(now());
+                if ($yearsPassed < 5) {
+                    throw new Exception('Supplier Can Not Be Deleted Before 5 Years And Currently '.$yearsPassed.' Years Passed');
+                }
+
+            }
+
             $deleted = $user->delete();
 
             if (! $deleted) {
@@ -326,10 +389,28 @@ class UserRepository implements IUserRepository
                 throw new Exception('Something Went Wrong While Deleting User');
             }
 
-            $deleted = $this->user->destroy($ids);
+            $users = $this->user->whereIn('id', $ids)->get();
 
-            if ($deleted !== count($ids)) {
+            if ($users->isEmpty()) {
                 throw new Exception('Something Went Wrong While Deleting User');
+            }
+
+            foreach ($users as $user) {
+                if ($user->supplier()->exists()) {
+                    $supplier = $user->supplier;
+
+                    $createdAt = $supplier->created_at instanceof \Carbon\Carbon
+                        ? $supplier->created_at
+                        : \Carbon\Carbon::parse($supplier->created_at);
+
+                    $yearsPassed = (int) $createdAt->diffInYears(now());
+                    if ($yearsPassed < 5) {
+                        throw new Exception('Suppliers Can Not Be Deleted Before 5 Years And Currently '.$yearsPassed.' Years Passed');
+                    }
+
+                }
+
+                $user->delete();
             }
 
             return [

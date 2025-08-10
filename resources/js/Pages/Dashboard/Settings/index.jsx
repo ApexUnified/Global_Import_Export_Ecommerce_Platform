@@ -20,14 +20,14 @@ export default function index() {
             <Card
                 Content={
                     <>
-                        <div className="my-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-5 my-10 sm:grid-cols-2">
                             <Card
                                 CustomCss={
                                     'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
                                 }
                                 Content={
                                     <>
-                                        <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -49,11 +49,11 @@ export default function index() {
                                             </svg>
                                         </div>
 
-                                        <h2 className="mb-2 text-center text-xl font-semibold text-gray-800 dark:text-white">
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
                                             General Settings
                                         </h2>
 
-                                        <p className="mb-6 text-center leading-relaxed text-gray-600 dark:text-white">
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
                                             Manage your application settings including app name,
                                             contact information, and branding like logos—all from
                                             one place.
@@ -95,7 +95,7 @@ export default function index() {
                                 }
                                 Content={
                                     <>
-                                        <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -112,11 +112,11 @@ export default function index() {
                                             </svg>
                                         </div>
 
-                                        <h2 className="mb-2 text-center text-xl font-semibold text-gray-800 dark:text-white">
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
                                             SMTP Settings
                                         </h2>
 
-                                        <p className="mb-6 text-center leading-relaxed text-gray-600 dark:text-white">
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
                                             Manage your application SMTP settings That Will Be Use
                                             For Sending Mails.
                                         </p>
@@ -152,7 +152,7 @@ export default function index() {
                                 }
                                 Content={
                                     <>
-                                        <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -169,11 +169,11 @@ export default function index() {
                                             </svg>
                                         </div>
 
-                                        <h2 className="mb-2 text-center text-xl font-semibold text-gray-800 dark:text-white">
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
                                             Role Settings
                                         </h2>
 
-                                        <p className="mb-6 text-center leading-relaxed text-gray-600 dark:text-white">
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
                                             Easily manage and configure and create roles across your
                                             application to control responsibilities.
                                         </p>
@@ -195,6 +195,63 @@ export default function index() {
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
                                                         d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+                                                    />
+                                                </svg>
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
+
+                            <Card
+                                CustomCss={
+                                    'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
+                                }
+                                Content={
+                                    <>
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-9 dark:border-white dark:fill-white`}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
+                                            Color Settings
+                                        </h2>
+
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
+                                            Easily manage and configure and create Colors across
+                                            your application to control SmartPhone Color Varients.
+                                        </p>
+
+                                        <LinkButton
+                                            URL={route('dashboard.settings.colors.index')}
+                                            Text={'Manage Colors'}
+                                            CustomClass="w-full md:w-[280px] mt-10 "
+                                            Icon={
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"
                                                     />
                                                 </svg>
                                             }

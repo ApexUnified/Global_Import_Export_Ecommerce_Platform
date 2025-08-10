@@ -11,3 +11,26 @@ Laravel + Inertia.js + TailwindCSS setup
  * Toggle For Dark Mode And Light Mode ✅
  * Define and implement 4 distinct user roles:(Admin, Customer, Collaborator, Supplier) ✅
  * General Settings, Smtp Settings, Role Settings ✅
+
+
+
+
+
+
+SmartPhone Schema
+// Schema::create('smart_phones', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('model_name');
+        //     $table->string('capacity');
+        //     $table->string('color');
+        //     $table->enum('condition', ['new', 'used']);
+        //     $table->string('imei');
+        //     $table->string('barcode');
+        //     $table->decimal('purchase_price', 20, 2);
+        //     $table->decimal('selling_price', 20, 2);
+        //     $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete()->cascadeOnUpdate();
+        //     $table->timestamp('purchase_date');
+        //     $table->enum('status', ['in_stock', 'sold', 'reserved']);
+        //     $table->json('images')->nullable();
+        //     $table->timestamps();
+        // });

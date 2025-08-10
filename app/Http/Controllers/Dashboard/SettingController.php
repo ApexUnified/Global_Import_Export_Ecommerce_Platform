@@ -135,4 +135,85 @@ class SettingController extends Controller
 
         return to_route('dashboard.settings.roles.index')->with('success', $deleted['message']);
     }
+
+    // Color Methods
+    public function colorIndex()
+    {
+        $colors = $this->setting->getAllColors();
+
+        return Inertia::render('Dashboard/Settings/Colors/index', compact('colors'));
+    }
+
+    public function colorCreate()
+    {
+        return Inertia::render('Dashboard/Settings/Colors/create');
+    }
+
+    public function colorStore(Request $request)
+    {
+        $created = $this->setting->storeColor($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.colors.index')->with('success', $created['message']);
+    }
+
+    public function colorEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Color ID not found');
+        }
+
+        $color = $this->setting->getSingleColor($id);
+
+        if (empty($color)) {
+            return back()->with('error', 'Color not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Colors/edit', compact('color'));
+    }
+
+    public function colorUpdate(Request $request, string $id)
+    {
+
+        if (empty($id)) {
+            return back()->with('error', 'Color ID not found');
+        }
+
+        $updated = $this->setting->updateColor($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.colors.index')->with('success', $updated['message']);
+    }
+
+    public function colorDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Color ID not found');
+        }
+
+        $deleted = $this->setting->destroyColor($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.colors.index')->with('success', $deleted['message']);
+    }
+
+    public function destroyColorBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyColorBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.colors.index')->with('success', $deleted['message']);
+    }
 }

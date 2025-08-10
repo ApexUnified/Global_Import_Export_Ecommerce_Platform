@@ -36,6 +36,51 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
+ * @property string $type
+ * @property string $referral_code
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereReferralCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereUserId($value)
+ */
+	class Collaborator extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereUpdatedAt($value)
+ */
+	class Color extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -164,6 +209,40 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $model_name
+ * @property string $capacity
+ * @property array<array-key, mixed> $color_ids
+ * @property string $condition
+ * @property string $barcode
+ * @property string $selling_price
+ * @property string $status
+ * @property array<array-key, mixed>|null $images
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read mixed $colors
+ * @property-read mixed $smartphone_image_urls
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereBarcode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereColorIds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereImages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereModelName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereSellingPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereUpdatedAt($value)
+ */
+	class Smartphone extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $smtp_mailer
  * @property string $smtp_scheme
  * @property string $smtp_host
@@ -194,10 +273,10 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $company_name
- * @property string $margin
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
@@ -205,7 +284,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCompanyName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereMargin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUserId($value)
  */
@@ -226,6 +304,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $bookMarkedPosts
  * @property-read int|null $book_marked_posts_count
+ * @property-read \App\Models\Collaborator|null $collaborator
  * @property-read mixed $added_at
  * @property-read mixed $avatar
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -236,8 +315,7 @@ namespace App\Models{
  * @property-read int|null $posts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Supplier> $supplier
- * @property-read int|null $supplier_count
+ * @property-read \App\Models\Supplier|null $supplier
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()

@@ -11,11 +11,12 @@ class RoleSeeder extends Seeder
     {
 
         if (! Role::exists()) {
+            $description = 'System Defined Roles';
             $roles = [
-                ['name' => 'Admin', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Customer', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Collaborator', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Supplier', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Admin', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Customer', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Collaborator', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Supplier', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
             ];
             Role::insert($roles);
         }

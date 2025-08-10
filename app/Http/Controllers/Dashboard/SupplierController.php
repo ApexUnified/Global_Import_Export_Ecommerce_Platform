@@ -24,9 +24,7 @@ class SupplierController extends Controller
 
     public function create()
     {
-        $roles = $this->supplier->getAllRoles();
-
-        return Inertia::render('Dashboard/Suppliers/create', compact('roles'));
+        return Inertia::render('Dashboard/Suppliers/create');
     }
 
     public function store(Request $request)

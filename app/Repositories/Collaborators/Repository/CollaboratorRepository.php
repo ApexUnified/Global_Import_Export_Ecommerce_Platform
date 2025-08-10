@@ -1,30 +1,31 @@
 <?php
 
-namespace App\Repositories\Suppliers\Repository;
+namespace App\Repositories\Collaborators\Repository;
 
+use App\Models\Collaborator;
 use App\Models\Role;
-use App\Models\Supplier;
 use App\Models\User;
-use App\Repositories\Suppliers\Interface\ISupplierRepository;
+use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Str;
 
-class SupplierRepository implements ISupplierRepository
+class CollaboratorRepository implements ICollaboratorRepository
 {
     public function __construct(
-        private Supplier $supplier,
+        private Collaborator $collaborator,
         private Role $role,
         private User $user
     ) {}
 
-    public function getAllSuppliers(Request $request)
+    public function getAllCollaborators(Request $request)
     {
-        $suppliers = $this->supplier
+        $collaborators = $this->collaborator
             ->with(['user'])
             ->when(! empty($request->input('search')), function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
-                    $query->where('company_name', 'like', '%'.$request->input('search').'%')
+                    $query->where('type', 'like', '%'.$request->input('search').'%')
                         ->orWhereHas('user', function ($subQ) use ($request) {
                             $subQ->where('name', 'like', '%'.$request->input('search').'%')
                                 ->orWhere('email', 'like', '%'.$request->input('search').'%')
@@ -35,22 +36,22 @@ class SupplierRepository implements ISupplierRepository
             ->latest()
             ->paginate(10);
 
-        return $suppliers;
+        return $collaborators;
     }
 
-    public function getSingleSupplier(string $id)
+    public function getSingleCollaborator(string $id)
     {
-        $supplier = $this->supplier
+        $collaborator = $this->collaborator
             ->with(['user', 'user.roles'])
             ->find($id);
 
-        return $supplier;
+        return $collaborator;
     }
 
-    public function storeSupplier(Request $request)
+    public function storeCollaborator(Request $request)
     {
         $validated_req = $request->validate([
-            'company_name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'in:Indivisual,Company'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -58,6 +59,8 @@ class SupplierRepository implements ISupplierRepository
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'type.required' => 'The Collaborator Type Field Is Required.',
+            'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
 
         try {
@@ -73,22 +76,24 @@ class SupplierRepository implements ISupplierRepository
             ]);
 
             if (empty($user)) {
-                throw new Exception('Something Went Wrong While Creating New Linked User To Supplier');
+                throw new Exception('Something Went Wrong While Creating New Linked User To Collaborator');
             }
+            $referral_code = 'Ref-'.Str::random(12);
 
-            $supplier = $this->supplier->create([
+            $collaborator = $this->collaborator->create([
 
-                'company_name' => $validated_req['company_name'],
+                'type' => $validated_req['type'],
+                'referral_code' => $referral_code,
                 'user_id' => $user->id,
             ]);
 
-            if (empty($supplier)) {
-                throw new Exception('Something Went Wrong While Creating New Supplier');
+            if (empty($collaborator)) {
+                throw new Exception('Something Went Wrong While Creating New Collaborator');
             }
 
-            $role = $this->role->where('name', 'Supplier')->first();
+            $role = $this->role->where('name', 'Collaborator')->first();
             if (empty($role)) {
-                throw new Exception('Something Went Wrong While Creating New Supplier Please Create "Supplier" Role First');
+                throw new Exception('Something Went Wrong While Creating New Collaborator Please Create "Collaborator" Role First');
             }
 
             $user->syncRoles($role->name);
@@ -97,7 +102,7 @@ class SupplierRepository implements ISupplierRepository
 
             return [
                 'status' => true,
-                'message' => 'Supplier Created Successfully',
+                'message' => 'Collaborator Created Successfully',
             ];
 
         } catch (Exception $e) {
@@ -110,30 +115,29 @@ class SupplierRepository implements ISupplierRepository
         }
     }
 
-    public function updateSupplier(Request $request, string $id)
+    public function updateCollaborator(Request $request, string $id)
     {
 
-        $supplier = $this->getSingleSupplier($id);
+        $collaborator = $this->getSingleCollaborator($id);
 
-        if (empty($supplier)) {
+        if (empty($collaborator)) {
             return [
                 'status' => false,
-                'message' => 'Something Went Wrong While Fetching Supplier',
+                'message' => 'Something Went Wrong While Fetching Collaborator',
             ];
         }
 
-        $user = $this->user->find($supplier->user_id);
+        $user = $this->user->find($collaborator->user_id);
 
         if (empty($user)) {
             return [
                 'status' => false,
-                'message' => 'Something Went Wrong While Fetching Linked User To Supplier',
+                'message' => 'Something Went Wrong While Fetching Linked User To Collaborator',
             ];
         }
 
         $validated_req = $request->validate([
-            'company_name' => ['required', 'string', 'max:255'],
-
+            'type' => ['required', 'string', 'in:Indivisual,Company'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             ...(
@@ -148,6 +152,8 @@ class SupplierRepository implements ISupplierRepository
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'type.required' => 'The Collaborator Type Field Is Required.',
+            'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
 
         try {
@@ -161,21 +167,21 @@ class SupplierRepository implements ISupplierRepository
             ]);
 
             if (! $user_updated) {
-                throw new Exception('Something Went Wrong While Updating Linked User To Supplier');
+                throw new Exception('Something Went Wrong While Updating Linked User To Collaborator');
             }
 
-            $supplier_updated = $supplier->update([
-                'company_name' => $validated_req['company_name'],
+            $collaborator_updated = $collaborator->update([
+                'type' => $validated_req['type'],
 
             ]);
 
-            if (! $supplier_updated) {
-                throw new Exception('Something Went Wrong While Updating Supplier');
+            if (! $collaborator_updated) {
+                throw new Exception('Something Went Wrong While Updating Collaborator');
             }
 
-            $role = $this->role->where('name', 'Supplier')->first();
+            $role = $this->role->where('name', 'Collaborator')->first();
             if (empty($role)) {
-                throw new Exception('Something Went Wrong While Creating New Supplier Please Create "Supplier" Role First');
+                throw new Exception('Something Went Wrong While Creating New Collaborator Please Create "Collaborator" Role First');
             }
 
             $user->syncRoles($role->name);
@@ -183,7 +189,7 @@ class SupplierRepository implements ISupplierRepository
 
             return [
                 'status' => true,
-                'message' => 'Supplier Updated Successfully',
+                'message' => 'Collaborator Updated Successfully',
             ];
 
         } catch (Exception  $e) {
@@ -196,48 +202,39 @@ class SupplierRepository implements ISupplierRepository
         }
     }
 
-    public function destroySupplier(string $id)
+    public function destroyCollaborator(string $id)
     {
         try {
             DB::beginTransaction();
-            $supplier = $this->getSingleSupplier($id);
+            $collaborator = $this->getSingleCollaborator($id);
 
-            if (empty($supplier)) {
-                throw new Exception('Something Went Wrong While Deleting Supplier');
+            if (empty($collaborator)) {
+                throw new Exception('Something Went Wrong While Deleting Collaborator');
             }
 
-            $createdAt = $supplier->created_at instanceof \Carbon\Carbon
-                    ? $supplier->created_at
-                    : \Carbon\Carbon::parse($supplier->created_at);
-
-            $yearsPassed = (int) $createdAt->diffInYears(now());
-            if ($yearsPassed < 5) {
-                throw new Exception('Supplier Can Not Be Deleted Before 5 Years And Currently '.$yearsPassed.' Years Passed');
-            }
-
-            $user = $this->user->find($supplier->user_id);
+            $user = $this->user->find($collaborator->user_id);
 
             if (empty($user)) {
-                throw new Exception('Something Went Wrong While Deleting Linked User To Supplier');
+                throw new Exception('Something Went Wrong While Deleting Linked User To Collaborator');
             }
 
-            $supplier_deleted = $supplier->delete();
+            $collaborator_deleted = $collaborator->delete();
 
-            if (! $supplier_deleted) {
-                throw new Exception('Something Went Wrong While Deleting Supplier');
+            if (! $collaborator_deleted) {
+                throw new Exception('Something Went Wrong While Deleting Collaborator');
             }
 
             $user_deleted = $user->delete();
 
             if (! $user_deleted) {
-                throw new Exception('Something Went Wrong While Deleting Linked User To Supplier');
+                throw new Exception('Something Went Wrong While Deleting Linked User To Collaborator');
             }
 
             DB::commit();
 
             return [
                 'status' => true,
-                'message' => 'Supplier Deleted Successfully',
+                'message' => 'Collaborator Deleted Successfully',
             ];
 
         } catch (Exception  $e) {
@@ -250,20 +247,20 @@ class SupplierRepository implements ISupplierRepository
         }
     }
 
-    public function destroySupplierBySelection(Request $request)
+    public function destroyCollaboratorBySelection(Request $request)
     {
         try {
 
             $ids = $request->array('ids');
 
             if (blank($ids)) {
-                throw new Exception('Something Went Wrong While Deleting Supplier');
+                throw new Exception('Something Went Wrong While Deleting Collaborator');
             }
 
-            $suppliers = $this->supplier->whereIn('id', $ids)->get();
+            $collaborators = $this->collaborator->whereIn('id', $ids)->get();
 
-            foreach ($suppliers as $supplier) {
-                $response = $this->destroySupplier($supplier->id);
+            foreach ($collaborators as $collaborator) {
+                $response = $this->destroyCollaborator($collaborator->id);
 
                 if ($response['status'] === false) {
                     throw new Exception($response['message']);
@@ -272,7 +269,7 @@ class SupplierRepository implements ISupplierRepository
 
             return [
                 'status' => true,
-                'message' => 'Selected Suppliers Deleted Successfully',
+                'message' => 'Selected Collaborators Deleted Successfully',
             ];
 
         } catch (Exception $e) {

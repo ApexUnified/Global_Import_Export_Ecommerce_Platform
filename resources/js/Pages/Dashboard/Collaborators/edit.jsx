@@ -8,18 +8,16 @@ import { Head, useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 
-export default function edit({ user, roles }) {
-    // Edit Data Form Data
+export default function edit({ collaborator }) {
+    // Create Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
-        name: user.name || '',
-        email: user.email || '',
-        phone: user.phone || '',
+        name: collaborator?.user?.name || '',
+        email: collaborator?.user?.email || '',
+        phone: collaborator?.user?.phone || '',
         password: '',
         password_confirmation: '',
-        role_id: user?.roles[0]?.id ?? '',
-        is_active: user.is_active ?? 1,
-        company_name: user.supplier?.company_name || '',
-        type: user?.collaborator?.type || '',
+        is_active: collaborator?.user?.is_active ?? 1,
+        type: collaborator?.type || '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -28,19 +26,19 @@ export default function edit({ user, roles }) {
     // Edit Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        put(route('dashboard.users.update', user.id));
+        put(route('dashboard.collaborators.update', collaborator.id));
     };
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Users" />
+                <Head title="Collaborators" />
 
                 <BreadCrumb
-                    header={'Edit User'}
-                    parent={'Users'}
-                    parent_link={route('dashboard.users.index')}
-                    child={'Edit User'}
+                    header={'Edit Collaborator'}
+                    parent={'Collaborators'}
+                    parent_link={route('dashboard.collaborators.index')}
+                    child={'Edit Collaborator'}
                 />
 
                 <Card
@@ -48,8 +46,8 @@ export default function edit({ user, roles }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Users'}
-                                    URL={route('dashboard.users.index')}
+                                    Text={'Back To Collaborators'}
+                                    URL={route('dashboard.collaborators.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -75,11 +73,11 @@ export default function edit({ user, roles }) {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'User Name'}
+                                                    InputName={'Collaborator Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter User Name'}
+                                                    Placeholder={'Enter Collaborator Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -87,11 +85,11 @@ export default function edit({ user, roles }) {
                                                 />
 
                                                 <Input
-                                                    InputName={'User Email'}
+                                                    InputName={'Collaborator Email'}
                                                     Error={errors.email}
                                                     Value={data.email}
                                                     Action={(e) => setData('email', e.target.value)}
-                                                    Placeholder={'Enter User Email'}
+                                                    Placeholder={'Enter Collaborator Email'}
                                                     Id={'email'}
                                                     Name={'email'}
                                                     Type={'email'}
@@ -100,27 +98,44 @@ export default function edit({ user, roles }) {
 
                                                 <div className="mb-5">
                                                     <Input
-                                                        InputName={'User Phone'}
+                                                        InputName={'Collaborator Phone'}
                                                         Error={errors.phone}
                                                         Value={data.phone}
                                                         Action={(e) =>
                                                             setData('phone', e.target.value)
                                                         }
-                                                        Placeholder={'Enter User Phone'}
+                                                        Placeholder={'Enter Collaborator Phone'}
                                                         Id={'phone'}
                                                         Name={'phone'}
                                                         Type={'text'}
                                                         Required={true}
                                                     />
                                                 </div>
+
+                                                <SelectInput
+                                                    InputName={'Collaborator Type'}
+                                                    Error={errors.type}
+                                                    Id={'type'}
+                                                    Name={'type'}
+                                                    Value={data.type}
+                                                    Action={(value) => setData('type', value)}
+                                                    Placeholder={'Select Collaborator Type'}
+                                                    Required={true}
+                                                    items={[
+                                                        { name: 'Company' },
+                                                        { name: 'Indivisual' },
+                                                    ]}
+                                                    itemKey={'name'}
+                                                />
+
                                                 <Input
-                                                    InputName={'User Password'}
+                                                    InputName={'Collaborator Password'}
                                                     Error={errors.password}
                                                     Value={data.password}
                                                     Action={(e) =>
                                                         setData('password', e.target.value)
                                                     }
-                                                    Placeholder={'Enter User Password'}
+                                                    Placeholder={'Enter Collaborator Password'}
                                                     Id={'password'}
                                                     Name={'password'}
                                                     Type={'password'}
@@ -130,7 +145,7 @@ export default function edit({ user, roles }) {
                                                 />
 
                                                 <Input
-                                                    InputName={'User Password Confirmation'}
+                                                    InputName={'Collaborator Password Confirmation'}
                                                     Error={errors.password_confirmation}
                                                     Value={data.password_confirmation}
                                                     Action={(e) =>
@@ -139,7 +154,9 @@ export default function edit({ user, roles }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    Placeholder={'Enter User Password Confirmation'}
+                                                    Placeholder={
+                                                        'Enter Collaborator Password Confirmation'
+                                                    }
                                                     Id={'password_confirmation'}
                                                     Name={'password_confirmation'}
                                                     Type={'password'}
@@ -148,55 +165,6 @@ export default function edit({ user, roles }) {
                                                     setShowPasswordToggle={
                                                         setTogglePasswordConfirmation
                                                     }
-                                                />
-
-                                                {data.role_id === 4 && (
-                                                    <Input
-                                                        InputName={'Company Name'}
-                                                        Error={errors.company_name}
-                                                        Value={data.company_name}
-                                                        Action={(e) =>
-                                                            setData('company_name', e.target.value)
-                                                        }
-                                                        Placeholder={'Enter Company Name'}
-                                                        Id={'company_name'}
-                                                        Name={'company_name'}
-                                                        Type={'text'}
-                                                        Required={data.role_id === 4}
-                                                    />
-                                                )}
-
-                                                {data.role_id === 3 && (
-                                                    <SelectInput
-                                                        InputName={'Collaborator Type'}
-                                                        Id={'type'}
-                                                        Name={'type'}
-                                                        Value={data.type}
-                                                        items={[
-                                                            { name: 'Company' },
-                                                            { name: 'Indivisual' },
-                                                        ]}
-                                                        Error={errors.type}
-                                                        Placeholder={'Select Collaborator Type'}
-                                                        Required={data.role_id === 3}
-                                                        itemKey={'name'}
-                                                        Action={(value) => setData('type', value)}
-                                                    />
-                                                )}
-
-                                                <SelectInput
-                                                    InputName={'User Role'}
-                                                    Id={'role_id'}
-                                                    Name={'role_id'}
-                                                    Value={data.role_id}
-                                                    items={roles}
-                                                    Error={errors.role_id}
-                                                    Placeholder={'Select User Role'}
-                                                    Required={true}
-                                                    itemKey={'name'}
-                                                    Action={(value) => {
-                                                        setData('role_id', value);
-                                                    }}
                                                 />
 
                                                 <SelectInput
@@ -223,19 +191,16 @@ export default function edit({ user, roles }) {
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Update User'}
+                                                Text={'Update Collaborator'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
                                                     data.email.trim() === '' ||
-                                                    data.role_id === '' ||
                                                     data.is_active === '' ||
-                                                    (data.role_id === 4 &&
-                                                        data.company_name.trim() === '') ||
-                                                    (data.role_id === 3 &&
-                                                        data.type.trim() === '') ||
+                                                    data.phone.trim() === '' ||
+                                                    data.type.trim() === '' ||
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() === '') ||
                                                     (data.password.trim() === '' &&
@@ -244,28 +209,18 @@ export default function edit({ user, roles }) {
                                                         data.password_confirmation.trim() !== '' &&
                                                         data.password.trim() !==
                                                             data.password_confirmation.trim()) ||
-                                                    // No changes for role 4
-                                                    (data.role_id === 4 &&
-                                                        data.name.trim() === user.name.trim() &&
-                                                        data.email.trim() === user.email.trim() &&
-                                                        data.phone.trim() === user.phone.trim() &&
-                                                        data.role_id === user.roles[0].id &&
-                                                        data.is_active === user.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.company_name.trim() ===
-                                                            user?.supplier?.company_name.trim()) ||
-                                                    // No changes for role 3
-                                                    (data.role_id === 3 &&
-                                                        data.name.trim() === user.name.trim() &&
-                                                        data.email.trim() === user.email.trim() &&
-                                                        data.phone.trim() === user.phone.trim() &&
-                                                        data.role_id === user.roles[0].id &&
-                                                        data.is_active === user.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
+                                                    (data.name.trim() ===
+                                                        collaborator?.user?.name.trim() &&
+                                                        data.email.trim() ===
+                                                            collaborator?.user?.email.trim() &&
+                                                        data.phone.trim() ===
+                                                            collaborator?.user?.phone.trim() &&
+                                                        data.is_active ===
+                                                            collaborator?.user?.is_active &&
                                                         data.type.trim() ===
-                                                            user?.collaborator?.type.trim())
+                                                            collaborator.type.trim() &&
+                                                        data.password.trim() === '' &&
+                                                        data.password_confirmation.trim() === '')
                                                 }
                                                 Spinner={processing}
                                                 Icon={

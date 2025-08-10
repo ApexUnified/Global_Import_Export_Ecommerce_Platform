@@ -34,12 +34,12 @@ export default function edit({ post, floors }) {
 
     // Submit Errors
     const [errors, setErrors] = useState({});
+    const [fileChanged, setFileChanged] = useState(false);
 
     // Tracking Deleted Files
     const getDeletedFiles = (original, current) => {
         if (!Array.isArray(original) || !Array.isArray(current)) return [];
 
-        console.log(original, current);
         const currentSources = current.filter((f) => !f.isNew).map((f) => f.source);
 
         return original.filter((file) => !currentSources.includes(file.url));
@@ -64,7 +64,6 @@ export default function edit({ post, floors }) {
             new_videos: newVideos,
         };
 
-        console.log(formData);
         setProcessing(true);
         router.post(route('dashboard.posts.update', post?.slug), formData, {
             forceFormData: true,
@@ -125,7 +124,7 @@ export default function edit({ post, floors }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
                                     Text={'Back To Posts'}
                                     URL={route('dashboard.posts.index')}
@@ -195,6 +194,7 @@ export default function edit({ post, floors }) {
                                                         } else {
                                                             setData('images', null);
                                                         }
+                                                        setFileChanged(true);
                                                     }}
                                                     MaxFiles={35}
                                                     Multiple={true}
@@ -216,6 +216,7 @@ export default function edit({ post, floors }) {
                                                         } else {
                                                             setData('videos', null);
                                                         }
+                                                        setFileChanged(true);
                                                     }}
                                                     MaxFiles={5}
                                                     Multiple={true}
@@ -284,7 +285,12 @@ export default function edit({ post, floors }) {
                                                     data.title.trim() === '' ||
                                                     data.content.trim() === '' ||
                                                     data.post_type.trim() === '' ||
-                                                    data.status === ''
+                                                    data.status === '' ||
+                                                    (data.title === post.title &&
+                                                        data.content === post.content &&
+                                                        data.post_type === post.post_type &&
+                                                        data.status === post.status &&
+                                                        !fileChanged)
                                                 }
                                                 Spinner={processing}
                                                 Icon={
@@ -313,21 +319,21 @@ export default function edit({ post, floors }) {
                 />
 
                 {showProgressModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
                         <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                         {/* Modal content */}
-                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
+                        <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
                             <div className="text-center">
                                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                     Please Wait While We Are Uploading Your Files
                                 </h2>
 
-                                <div className="mt-5 flex items-center justify-center">
+                                <div className="flex items-center justify-center mt-5">
                                     <div role="status">
                                         <svg
                                             aria-hidden="true"
-                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                            className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
                                             viewBox="0 0 100 101"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"

@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Dashboard\BookmarkController;
+use App\Http\Controllers\Dashboard\CollaboratorController;
 use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
+use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +50,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/suppliers', SupplierController::class);
         Route::delete('/suppliers-destroy-by-selection', [SupplierController::class, 'destroyBySelection'])->name('suppliers.destroybyselection');
 
+        // Collaborator Routes
+        Route::resource('/collaborators', CollaboratorController::class);
+        Route::delete('/collaborators-destroy-by-selection', [CollaboratorController::class, 'destroyBySelection'])->name('collaborators.destroybyselection');
+
+        // Smart Phone Routes
+        Route::resource('/smartphones', SmartphoneController::class);
+        Route::delete('/smartphones-destroy-by-selection', [SmartphoneController::class, 'destroyBySelection'])->name('smartphones.destroybyselection');
+
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {
             Route::get('/profile', 'index')->name('profile.index');
@@ -78,6 +88,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/roles-update/{id}', 'roleUpdate')->name('roles.update');
                 Route::delete('/roles-destroy/{id}', 'roleDestroy')->name('roles.destroy');
                 Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
+
+                // Color Routes
+                Route::get('/colors', 'colorIndex')->name('colors.index');
+                Route::get('/colors-create', 'colorCreate')->name('colors.create');
+                Route::post('/colors-store', 'colorStore')->name('colors.store');
+                Route::get('/colors-edit/{id}', 'colorEdit')->name('colors.edit');
+                Route::put('/colors-update/{id}', 'colorUpdate')->name('colors.update');
+                Route::delete('/colors-destroy/{id}', 'colorDestroy')->name('colors.destroy');
+                Route::delete('/colors-destroy-by-selection', 'destroyColorBySelection')->name('colors.destroybyselection');
             });
 
         });
