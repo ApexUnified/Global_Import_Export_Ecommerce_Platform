@@ -41,4 +41,30 @@ interface ISettingRepository
     public function destroyColor(string $id);
 
     public function destroyColorBySelection(Request $request);
+
+    // Model Names
+    public function getAllModelNames();
+
+    public function getSingleModelName(string $id);
+
+    public function storeModelName(Request $request);
+
+    public function updateModelName(Request $request, string $id);
+
+    public function destroyModelName(string $id);
+
+    public function destroyModelNameBySelection(Request $request);
+
+    // Capcacites
+    public function getAllCapacities();
+
+    public function getSingleCapacity(string $id);
+
+    public function storeCapacity(Request $request);
+
+    public function updateCapacity(Request $request, string $id);
+
+    public function destroyCapacity(string $id);
+
+    public function destroyCapacityBySelection(Request $request);
 }

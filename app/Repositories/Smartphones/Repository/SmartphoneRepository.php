@@ -5,7 +5,9 @@ namespace App\Repositories\Smartphones\Repository;
 use App\Jobs\SmartphoneDestroyOnAWS;
 use App\Jobs\SmartphoneStoreOnAWS;
 use App\Jobs\SmartphoneUpdateOnAWS;
+use App\Models\Capacity;
 use App\Models\Color;
+use App\Models\ModelName;
 use App\Models\Smartphone;
 use App\Repositories\Smartphones\Interface\ISmartphoneRepository;
 use Exception;
@@ -18,7 +20,9 @@ class SmartphoneRepository implements ISmartphoneRepository
 {
     public function __construct(
         private Smartphone $smartphone,
-        private Color $color
+        private Color $color,
+        private ModelName $model_name,
+        private Capacity $capacity
     ) {}
 
     public function getAllSmartphones(Request $request)
@@ -30,6 +34,7 @@ class SmartphoneRepository implements ISmartphoneRepository
                         ->orWhere('upc', 'like', '%'.$request->input('search').'%');
                 });
             })
+            ->with(['model_name', 'capacity'])
             ->latest()
             ->paginate(10);
 
@@ -38,7 +43,7 @@ class SmartphoneRepository implements ISmartphoneRepository
 
     public function getSingleSmartphone(string $id)
     {
-        $smartphone = $this->smartphone->find($id);
+        $smartphone = $this->smartphone->with(['model_name', 'capacity'])->find($id);
 
         return $smartphone;
     }
@@ -46,8 +51,8 @@ class SmartphoneRepository implements ISmartphoneRepository
     public function storeSmartphone(Request $request)
     {
         $validated_req = $request->validate([
-            'model_name' => ['required', 'max:255'],
-            'capacity' => ['required', 'max:255'],
+            'model_name_id' => ['required', 'exists:model_names,id'],
+            'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
             'selling_price' => ['required', 'numeric'],
@@ -116,8 +121,8 @@ class SmartphoneRepository implements ISmartphoneRepository
     public function updateSmartphone(Request $request, string $id)
     {
         $validated_req = $request->validate([
-            'model_name' => ['required', 'max:255'],
-            'capacity' => ['required', 'max:255'],
+            'model_name_id' => ['required', 'exists:model_names,id'],
+            'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
             'selling_price' => ['required', 'numeric'],
@@ -273,5 +278,15 @@ class SmartphoneRepository implements ISmartphoneRepository
     public function getColors()
     {
         return $this->color->where('is_active', 1)->get();
+    }
+
+    public function getModelNames()
+    {
+        return $this->model_name->where('is_active', 1)->get();
+    }
+
+    public function getCapacities()
+    {
+        return $this->capacity->where('is_active', 1)->get();
     }
 }

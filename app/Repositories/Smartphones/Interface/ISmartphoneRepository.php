@@ -19,4 +19,8 @@ interface ISmartphoneRepository
     public function destroySmartphoneBySelection(Request $request);
 
     public function getColors();
+
+    public function getModelNames();
+
+    public function getCapacities();
 }

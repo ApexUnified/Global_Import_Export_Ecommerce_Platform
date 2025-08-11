@@ -216,4 +216,164 @@ class SettingController extends Controller
 
         return to_route('dashboard.settings.colors.index')->with('success', $deleted['message']);
     }
+
+    // Model Name Methods
+
+    public function modelNameIndex()
+    {
+        $model_names = $this->setting->getAllModelNames();
+
+        return Inertia::render('Dashboard/Settings/ModelNames/index', compact('model_names'));
+    }
+
+    public function modelNameCreate()
+    {
+        return Inertia::render('Dashboard/Settings/ModelNames/create');
+    }
+
+    public function modelNameStore(Request $request)
+    {
+        $created = $this->setting->storeModelName($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.model_names.index')->with('success', $created['message']);
+    }
+
+    public function modelNameEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Model Name ID not found');
+        }
+
+        $model_name = $this->setting->getSingleModelName($id);
+
+        if (empty($model_name)) {
+            return back()->with('error', 'Model Name not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/ModelNames/edit', compact('model_name'));
+    }
+
+    public function modelNameUpdate(Request $request, string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Model Name ID not found');
+        }
+
+        $updated = $this->setting->updateModelName($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.model_names.index')->with('success', $updated['message']);
+    }
+
+    public function modelNameDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Model Name ID not found');
+        }
+
+        $deleted = $this->setting->destroyModelName($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.model_names.index')->with('success', $deleted['message']);
+    }
+
+    public function destroyModelNameBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyModelNameBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.model_names.index')->with('success', $deleted['message']);
+    }
+
+    public function capacityIndex()
+    {
+        $capacities = $this->setting->getAllCapacities();
+
+        return Inertia::render('Dashboard/Settings/Capacities/index', compact('capacities'));
+    }
+
+    public function capacityCreate()
+    {
+        return Inertia::render('Dashboard/Settings/Capacities/create');
+    }
+
+    public function capacityStore(Request $request)
+    {
+        $created = $this->setting->storeCapacity($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.capacities.index')->with('success', $created['message']);
+    }
+
+    public function capacityEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Capacity ID not found');
+        }
+
+        $capacity = $this->setting->getSingleCapacity($id);
+
+        if (empty($capacity)) {
+            return back()->with('error', 'Capacity not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Capacities/edit', compact('capacity'));
+    }
+
+    public function capacityUpdate(Request $request, string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Capacity ID not found');
+        }
+
+        $updated = $this->setting->updateCapacity($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.capacities.index')->with('success', $updated['message']);
+    }
+
+    public function capacityDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Capacity ID not found');
+        }
+
+        $deleted = $this->setting->destroyCapacity($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.capacities.index')->with('success', $deleted['message']);
+    }
+
+    public function destroyCapacityBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyCapacityBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return to_route('dashboard.settings.capacities.index')->with('success', $deleted['message']);
+    }
 }

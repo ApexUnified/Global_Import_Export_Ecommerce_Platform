@@ -86,7 +86,7 @@ export default function AuthenticatedLayout({ children }) {
                     ApplicationLogoDark={ApplicationLogoDark}
                 />
 
-                <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                <div className="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
                     <Overlay sidebarToggle={sidebarToggle} setSidebarToggle={setSidebarToggle} />
 
                     <Header

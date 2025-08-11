@@ -11,12 +11,12 @@ import FileUploaderInput from '@/Components/FileUploaderInput';
 import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 import Toast from '@/Components/Toast';
 
-export default function edit({ smartphone, colors }) {
+export default function edit({ smartphone, colors, model_names, capacities }) {
     // Create Data Form Data
     const { data, setData, post, reset } = useForm({
         _method: 'PUT',
-        model_name: smartphone.model_name || '',
-        capacity: smartphone.capacity || '',
+        model_name_id: smartphone.model_name_id || '',
+        capacity_id: smartphone.capacity_id || '',
         color_ids: smartphone.color_ids || [],
         upc: smartphone.upc || '',
         selling_price: smartphone.selling_price || '',
@@ -145,32 +145,34 @@ export default function edit({ smartphone, colors }) {
                                     Content={
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                <Input
+                                                <SelectInput
                                                     InputName={'Model Name'}
-                                                    Error={errors.model_name}
-                                                    Value={data.model_name}
-                                                    Action={(e) =>
-                                                        setData('model_name', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter Model Name'}
-                                                    Id={'model_name'}
-                                                    Name={'model_name'}
-                                                    Type={'text'}
+                                                    Id={'model_name_id'}
+                                                    Name={'model_name_id'}
+                                                    items={model_names}
+                                                    itemKey={'name'}
+                                                    Value={data.model_name_id}
+                                                    Error={errors.model_name_id}
                                                     Required={true}
+                                                    Placeholder={'Select Model Name'}
+                                                    Action={(value) => {
+                                                        setData('model_name_id', value);
+                                                    }}
                                                 />
 
-                                                <Input
+                                                <SelectInput
                                                     InputName={'Capacity'}
-                                                    Error={errors.capacity}
-                                                    Value={data.capacity}
-                                                    Action={(e) =>
-                                                        setData('capacity', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter Capacity'}
-                                                    Id={'capacity'}
-                                                    Name={'capacity'}
-                                                    Type={'text'}
+                                                    Id={'capacity_id'}
+                                                    Name={'capacity_id'}
+                                                    items={capacities}
+                                                    itemKey={'name'}
+                                                    Value={data.capacity_id}
+                                                    Error={errors.capacity_id}
                                                     Required={true}
+                                                    Placeholder={'Select Capacity'}
+                                                    Action={(value) => {
+                                                        setData('capacity_id', value);
+                                                    }}
                                                 />
 
                                                 <SelectInput
@@ -283,16 +285,16 @@ export default function edit({ smartphone, colors }) {
                                                 CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
-                                                    data.model_name.trim() === '' ||
-                                                    data.capacity.trim() === '' ||
+                                                    data.model_name_id === '' ||
+                                                    data.capacity_id === '' ||
                                                     data.color_ids.length === 0 ||
                                                     data.upc.trim() === '' ||
                                                     data.selling_price.trim() === '' ||
                                                     data?.images?.length === 0 ||
-                                                    (data.model_name.trim() ===
-                                                        smartphone.model_name &&
-                                                        data.capacity.trim() ===
-                                                            smartphone.capacity &&
+                                                    (data.model_name_id ===
+                                                        smartphone.model_name_id &&
+                                                        data.capacity_id ===
+                                                            smartphone.capacity_id &&
                                                         data.upc.trim() === smartphone.upc &&
                                                         data.selling_price ===
                                                             smartphone.selling_price &&

@@ -4,11 +4,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
-
 import { useEffect, useState } from 'react';
-import getContrastingColor from '@/Hooks/useColorContraster';
 
-export default function index({ smartphones }) {
+export default function index({ capacities }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -31,48 +29,24 @@ export default function index({ smartphones }) {
     });
 
     const [columns, setColumns] = useState([]);
-
     useEffect(() => {
         const columns = [
-            { key: 'model_name.name', label: 'Model Name' },
+            { key: 'name', label: 'Capacity' },
             {
-                key: 'capacity.name',
-                label: 'Capacity',
-                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
-            },
-            {
-                label: 'Colors',
+                label: 'Capacity Status',
                 render: (item) => {
-                    return (
-                        <div className="flex items-center gap-2">
-                            {item.colors.map((color) => {
-                                return (
-                                    <span
-                                        key={color.id}
-                                        className="p-2 text-white rounded-lg"
-                                        style={{
-                                            backgroundColor: color.code,
-                                            color: getContrastingColor(color.code),
-                                        }}
-                                    >
-                                        {color.name}
-                                    </span>
-                                );
-                            })}
-                        </div>
-                    );
+                    if (item.is_active === 1) {
+                        return (
+                            <span className="p-3 text-white bg-green-500 rounded-lg">Active</span>
+                        );
+                    } else {
+                        return (
+                            <span className="p-2 text-white bg-red-500 rounded-lg">In Active</span>
+                        );
+                    }
                 },
             },
-            {
-                key: 'upc',
-                label: 'UPC/EAN',
-                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
-            },
-            {
-                key: 'selling_price',
-                label: 'Selling Price',
-                badge: (value) => 'p-2 text-white bg-green-600 rounded-lg',
-            },
+
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -82,13 +56,13 @@ export default function index({ smartphones }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Smart Phones" />
+                <Head title="Capacities" />
 
                 <BreadCrumb
-                    header={'Smart Phones'}
-                    parent={'Dashboard'}
-                    parent_link={route('dashboard')}
-                    child={'Smart Phones'}
+                    header={'Capacities'}
+                    parent={'Settings'}
+                    parent_link={route('dashboard.settings.index')}
+                    child={'Capacities'}
                 />
 
                 <Card
@@ -96,8 +70,8 @@ export default function index({ smartphones }) {
                         <>
                             <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
-                                    Text={'Create Smart Phone'}
-                                    URL={route('dashboard.smartphones.create')}
+                                    Text={'Create Capacity'}
+                                    URL={route('dashboard.settings.capacities.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -125,13 +99,13 @@ export default function index({ smartphones }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.smartphones.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.smartphones.destroy'}
-                                EditRoute={'dashboard.smartphones.edit'}
-                                SearchRoute={'dashboard.smartphones.index'}
-                                Search={true}
-                                DefaultSearchInput={true}
-                                items={smartphones}
+                                BulkDeleteRoute={'dashboard.settings.capacities.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.settings.capacities.destroy'}
+                                EditRoute={'dashboard.settings.capacities.edit'}
+                                SearchRoute={'dashboard.settings.capacities.index'}
+                                Search={false}
+                                DefaultSearchInput={false}
+                                items={capacities}
                                 props={props}
                                 columns={columns}
                             />

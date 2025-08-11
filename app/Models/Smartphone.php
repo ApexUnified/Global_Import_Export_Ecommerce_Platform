@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Smartphone extends Model
 {
     protected $fillable = [
-        'model_name',
-        'capacity',
+        'model_name_id',
+        'capacity_id',
         'color_ids',
         'upc',
         'selling_price',
@@ -34,6 +35,17 @@ class Smartphone extends Model
         return array_map(function ($image) {
             return $image['url'];
         }, $this->images ?? []);
+    }
+
+    // RelationShip
+    public function model_name(): BelongsTo
+    {
+        return $this->belongsTo(ModelName::class, 'model_name_id', 'id');
+    }
+
+    public function capacity(): BelongsTo
+    {
+        return $this->belongsTo(Capacity::class, 'capacity_id', 'id');
     }
 
     // Casting

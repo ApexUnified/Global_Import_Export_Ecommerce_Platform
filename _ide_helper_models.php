@@ -36,6 +36,26 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Smartphone> $smartphone
+ * @property-read int|null $smartphone_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereUpdatedAt($value)
+ */
+	class Capacity extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $user_id
  * @property string $type
  * @property string $referral_code
@@ -131,6 +151,26 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Smartphone> $smartphone
+ * @property-read int|null $smartphone_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereUpdatedAt($value)
+ */
+	class ModelName extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int|null $user_id
  * @property int|null $floor_id
  * @property string $title
@@ -209,32 +249,30 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property string $model_name
- * @property string $capacity
  * @property array<array-key, mixed> $color_ids
- * @property string $condition
- * @property string $barcode
+ * @property int|null $model_name_id
+ * @property int|null $capacity_id
+ * @property string $upc
  * @property string $selling_price
- * @property string $status
  * @property array<array-key, mixed>|null $images
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Capacity|null $capacity
  * @property-read mixed $added_at
  * @property-read mixed $colors
  * @property-read mixed $smartphone_image_urls
+ * @property-read \App\Models\ModelName|null $model_name
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereBarcode($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCapacityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereColorIds($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCondition($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereImages($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereModelName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereModelNameId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereSellingPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereUpc($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereUpdatedAt($value)
  */
 	class Smartphone extends \Eloquent {}

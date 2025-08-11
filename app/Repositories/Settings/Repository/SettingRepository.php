@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Settings\Repository;
 
+use App\Models\Capacity;
 use App\Models\Color;
 use App\Models\GeneralSetting;
+use App\Models\ModelName;
 use App\Models\Role;
 use App\Models\SmtpSetting;
 use App\Repositories\Settings\Interface\ISettingRepository;
@@ -18,6 +20,8 @@ class SettingRepository implements ISettingRepository
         private SmtpSetting $smtp_setting,
         private Role $role,
         private Color $color,
+        private ModelName $model_name,
+        private Capacity $capacity
     ) {}
 
     // General Setting
@@ -335,6 +339,7 @@ class SettingRepository implements ISettingRepository
         }
     }
 
+    // Colors
     public function getAllColors()
     {
         $colors = $this->color->latest()->paginate(10);
@@ -454,6 +459,286 @@ class SettingRepository implements ISettingRepository
             return [
                 'status' => true,
                 'message' => 'Color Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Model Names
+    public function getAllModelNames()
+    {
+        $model_names = $this->model_name->latest()->paginate(10);
+
+        return $model_names;
+    }
+
+    public function getSingleModelName(string $id)
+    {
+        $model_name = $this->model_name->find($id);
+
+        return $model_name;
+    }
+
+    public function storeModelName(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:model_names,name'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Model Name Is Required',
+            'name.unique' => 'Model Name Already Exists',
+            'name.max' => 'Model Name Must Not Exceed 255 Characters',
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be True Or False',
+        ]);
+
+        try {
+            $created = $this->model_name->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Model Name');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Model Name Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateModelName(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:model_names,name,'.$id],
+            'is_active' => ['required', 'boolean'],
+
+        ], [
+            'name.required' => 'Model Name Is Required',
+            'name.unique' => 'Model Name Already Exists',
+            'name.max' => 'Model Name Must Not Exceed 255 Characters',
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be True Or False',
+        ]);
+
+        try {
+            $model_name = $this->getSingleModelName($id);
+
+            if (empty($model_name)) {
+                throw new Exception('Model Name Not Found');
+            }
+
+            $updated = $model_name->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Model Name');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Model Name Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+    }
+
+    public function destroyModelName(string $id)
+    {
+        try {
+            $model_name = $this->getSingleModelName($id);
+
+            if (empty($model_name)) {
+                throw new Exception('Model Name Not Found');
+            }
+
+            $deleted = $model_name->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Model Name');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Model Name Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyModelNameBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Model Name');
+            }
+
+            $deleted = $this->model_name->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Model Name');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Model Name Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Capcacites
+    public function getAllCapacities()
+    {
+        $capacities = $this->capacity->latest()->paginate(10);
+
+        return $capacities;
+    }
+
+    public function getSingleCapacity(string $id)
+    {
+        $capacity = $this->capacity->find($id);
+
+        return $capacity;
+    }
+
+    public function storeCapacity(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:capacities,name'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Capacity Is Required',
+            'name.unique' => 'Capacity Already Exists',
+            'name.max' => 'Capacity Must Not Exceed 255 Characters',
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be True Or False',
+        ]);
+
+        try {
+            $created = $this->capacity->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Capacity');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Capacity Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateCapacity(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:capacities,name,'.$id],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Capacity Is Required',
+            'name.unique' => 'Capacity Already Exists',
+            'name.max' => 'Capacity Must Not Exceed 255 Characters',
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be True Or False',
+        ]);
+
+        try {
+            $capacity = $this->getSingleCapacity($id);
+
+            if (empty($capacity)) {
+                throw new Exception('Capacity Not Found');
+            }
+
+            $updated = $capacity->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Capacity');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Capacity Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCapacity(string $id)
+    {
+        try {
+            $capacity = $this->getSingleCapacity($id);
+
+            if (empty($capacity)) {
+                throw new Exception('Capacity Not Found');
+            }
+
+            $deleted = $capacity->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Capacity');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Capacity Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCapacityBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Capacity');
+            }
+
+            $deleted = $this->capacity->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Capacity');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Capacity Deleted Successfully',
             ];
         } catch (Exception $e) {
             return [

@@ -97,6 +97,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/colors-update/{id}', 'colorUpdate')->name('colors.update');
                 Route::delete('/colors-destroy/{id}', 'colorDestroy')->name('colors.destroy');
                 Route::delete('/colors-destroy-by-selection', 'destroyColorBySelection')->name('colors.destroybyselection');
+
+                // Model Name Routes
+                Route::get('/model-names', 'modelNameIndex')->name('model_names.index');
+                Route::get('/model-names-create', 'modelNameCreate')->name('model_names.create');
+                Route::post('/model-names-store', 'modelNameStore')->name('model_names.store');
+                Route::get('/model-names-edit/{id}', 'modelNameEdit')->name('model_names.edit');
+                Route::put('/model-names-update/{id}', 'modelNameUpdate')->name('model_names.update');
+                Route::delete('/model-names-destroy/{id}', 'modelNameDestroy')->name('model_names.destroy');
+                Route::delete('/model-names-destroy-by-selection', 'destroyModelNameBySelection')->name('model_names.destroybyselection');
+
+                // Capcaity Routes
+                Route::get('/capacities', 'capacityIndex')->name('capacities.index');
+                Route::get('/capacities-create', 'capacityCreate')->name('capacities.create');
+                Route::post('/capacities-store', 'capacityStore')->name('capacities.store');
+                Route::get('/capacities-edit/{id}', 'capacityEdit')->name('capacities.edit');
+                Route::put('/capacities-update/{id}', 'capacityUpdate')->name('capacities.update');
+                Route::delete('/capacities-destroy/{id}', 'capacityDestroy')->name('capacities.destroy');
+                Route::delete('/capacities-destroy-by-selection', 'destroyCapacityBySelection')->name('capacities.destroybyselection');
             });
 
         });
