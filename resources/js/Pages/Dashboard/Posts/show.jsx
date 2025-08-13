@@ -3,7 +3,7 @@ import { Head, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import Card from '@/Components/Card';
-import DummyLogo from '../../../../../public/assets/images/Logo/Favicon.png';
+import DummyLogo from '../../../../../public/assets/images/Logo/512512.png';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';

@@ -1,6 +1,6 @@
 @php
     $general_setting = Illuminate\Support\Facades\Cache::get('general_config');
-    $favicon = $general_setting?->app_favicon ?? 'Favicon.png';
+    $favicon = $general_setting?->app_favicon ?? '512512.png';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

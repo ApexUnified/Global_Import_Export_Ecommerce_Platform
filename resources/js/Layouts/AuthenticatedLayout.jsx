@@ -21,10 +21,10 @@ export default function AuthenticatedLayout({ children }) {
 
     // Application Logo Sate With Default Images
     const [ApplicationLogoLight, setApplicationLogoLight] = useState(
-        asset + 'assets/images/Logo/ApplicationLogoLight.png',
+        asset + 'assets/images/Logo/256b.png',
     );
     const [ApplicationLogoDark, setApplicationLogoDark] = useState(
-        asset + 'assets/images/Logo/ApplicationLogoDark.png',
+        asset + 'assets/images/Logo/256w.png',
     );
 
     // For Updating Application Logo
@@ -86,7 +86,7 @@ export default function AuthenticatedLayout({ children }) {
                     ApplicationLogoDark={ApplicationLogoDark}
                 />
 
-                <div className="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+                <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
                     <Overlay sidebarToggle={sidebarToggle} setSidebarToggle={setSidebarToggle} />
 
                     <Header
