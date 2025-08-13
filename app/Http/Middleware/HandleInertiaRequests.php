@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             },
 
             'generalSetting' => Cache::get('general_config'),
+            'currency' => Cache::get('currencies'),
             'asset' => asset(''),
         ];
     }

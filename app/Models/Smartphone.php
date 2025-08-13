@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Smartphone extends Model
 {
@@ -46,6 +47,11 @@ class Smartphone extends Model
     public function capacity(): BelongsTo
     {
         return $this->belongsTo(Capacity::class, 'capacity_id', 'id');
+    }
+
+    public function inventory_items(): HasMany
+    {
+        return $this->hasMany(Inventory::class, 'smartphone_id', 'id');
     }
 
     // Casting

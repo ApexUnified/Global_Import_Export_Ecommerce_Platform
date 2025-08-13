@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\SmtpSetting;
 use Exception;
@@ -68,6 +69,10 @@ class AppServiceProvider extends ServiceProvider
                         'mail.from.address' => $smtp->smtp_mail_from_address,
                     ]);
                 }
+            }
+
+            if (Schema::hasTable('currencies')) {
+                Cache::rememberForever('currencies', fn () => Currency::where('is_active', true)->first() ?? null);
             }
 
         } catch (Exception $e) {

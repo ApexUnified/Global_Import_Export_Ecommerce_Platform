@@ -160,7 +160,8 @@ class UserRepository implements IUserRepository
                 });
             })
             ->latest()
-            ->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
         return $users;
     }

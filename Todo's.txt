@@ -15,21 +15,46 @@ Laravel + Inertia.js + TailwindCSS setup
 
 
 
+Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management,
+1: Collaborators Module: ✅
+- Full CRUD operations (Create, Read, Update, Delete).
+- Referral Code Generation
+
+2: Suppliers Module: ✅
+- CRUD (Create, Read, Update, Delete) functionality to manage smartphone suppliers.
+- Prevent Deletion Less Than 5 years Supplier
+
+3: Smartphone Management: ✅
+- CRUD with barcode/manual entry
+- Image upload support for smartphone listing.
+- UPC/EAN Code Scanning From Barcode
+
+4: Posts Management: ✅
+- CRUD for Posts
+- Track Posts View Count
+- Location Tracking And URL Generation
+- QR Code Generation
+- pre-filled floor field — from B15 (Basement 15) to F167 (Floor 167). (The current tallest building has 165 floors, and the 167-floor building is under construction.)
+
+5: Bookmark module ✅
+- CRUD for Bookmarks
+- Show Bookmarked Posts in the System
+
+6: Google Api Integration ✅
+7: Barcode Scanning ✅
+8: Floors Module (Full CRUD With Showing in the posts module) ✅
+9: color Settings (Full CRUD) ✅
+10: model name settings (Full CRUD) ✅
+11: capacity settings (Full CRUD) ✅
+12: storage location Settings (Full CRUD) ✅
+13: currency settings (Full CRUD With Showing Active Currency In The System) ✅
+14: Batches (Full CRUD With Automatic Calculation Total Batch Amount And Unit Price) ✅
+15: Inventory (Full CRUD With Full Stock Tracking Also With Batch Quantity, Also Barcode Scanning Logic Added ) ✅
+16: Laravel Horizon Added For Monitoring And Boosting Laravel Queue Workers ✅
+17: Integration With AWS ✅
 
 
 
 
-Inventory Schema
-Schema::create('inventory', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('smartphone_id')->constrained()->onDelete('cascade');
-    $table->date('purchase_date')->nullable();
-    $table->string('supplier')->nullable();
-    $table->decimal('purchase_unit_price', 20, 2)->nullable();
-    $table->decimal('additional_costs', 20, 2)->nullable();
-    $table->decimal('total_purchase_amount', 20, 2)->nullable();
-    $table->string('storage_location')->nullable();
-    $table->enum('status', ['in_stock', 'on_hold', 'sold', 'returned'])->default('in_stock');
-    $table->date('return_date')->nullable();
-    $table->timestamps();
-});
+
+

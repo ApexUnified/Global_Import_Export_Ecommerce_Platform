@@ -16,6 +16,7 @@ export default function SelectInput({
     Multiple = false,
     Placeholder = true,
     isDisabled = false,
+    customPlaceHolder = false,
 }) {
     const [options, setOptions] = useState([]);
     const isDarkMode = useDarkMode();
@@ -139,7 +140,7 @@ export default function SelectInput({
                         isClearable={!Multiple}
                         isSearchable
                         required={Required}
-                        {...(Placeholder && {
+                        {...(!customPlaceHolder && {
                             placeholder: `Select ${InputName} Or Search By its Name`,
                         })}
                         styles={isDarkMode ? darkStyles : lightStyles}

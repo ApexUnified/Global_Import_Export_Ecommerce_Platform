@@ -4,7 +4,7 @@ import LinkButton from '@/Components/LinkButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
@@ -22,6 +22,7 @@ export default function create({ colors, model_names, capacities }) {
         images: [],
     });
 
+    const { currency } = usePage().props;
     const [file_error, setFileError] = useState(null);
 
     useEffect(() => {
@@ -138,7 +139,7 @@ export default function create({ colors, model_names, capacities }) {
                                                         Type={'button'}
                                                         Id={'scan_upc'}
                                                         ClassName={
-                                                            'dark:bg-gray-900 dark:text-white p-2 mt-1 rounded-lg text-center dark:hover:bg-gray-700 transition duration-200 ease-in-out hover:bg-blue-700 hover:text-white bg-slate-100'
+                                                            'dark:bg-gray-900 dark:text-white p-2  rounded-lg text-center dark:hover:bg-gray-700 transition duration-200 ease-in-out hover:bg-blue-700 hover:text-white bg-slate-100'
                                                         }
                                                         Icon={
                                                             <svg
@@ -178,20 +179,27 @@ export default function create({ colors, model_names, capacities }) {
                                                     />
                                                 </div>
 
-                                                <Input
-                                                    InputName={'Selling Price'}
-                                                    Error={errors.selling_price}
-                                                    Value={data.selling_price}
-                                                    Action={(e) =>
-                                                        setData('selling_price', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter Selling Price'}
-                                                    Id={'selling_price'}
-                                                    Name={'selling_price'}
-                                                    Type={'number'}
-                                                    Decimal={true}
-                                                    Required={true}
-                                                />
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={currency?.symbol}
+                                                        readOnly={true}
+                                                    />
+                                                    <Input
+                                                        InputName={'Selling Price'}
+                                                        Error={errors.selling_price}
+                                                        Value={data.selling_price}
+                                                        Action={(e) =>
+                                                            setData('selling_price', e.target.value)
+                                                        }
+                                                        Placeholder={'Enter Selling Price'}
+                                                        Id={'selling_price'}
+                                                        Name={'selling_price'}
+                                                        Type={'number'}
+                                                        Decimal={true}
+                                                        Required={true}
+                                                    />
+                                                </div>
                                             </div>
 
                                             <div className="grid grid-cols-1 col-span-2 gap-4 md:grid-cols-1">

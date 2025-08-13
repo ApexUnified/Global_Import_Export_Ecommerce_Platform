@@ -88,7 +88,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
+                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -109,7 +109,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="flex flex-col gap-4 mb-6">
+                            <ul className="mb-6 flex flex-col gap-4">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
@@ -677,6 +677,160 @@ export default function Sidebar({
                                                     className={`menu-dropdown-item group ${route().current() === 'dashboard.smartphones.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Create Smart Phone
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Batches') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Batches');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.batches.') || selected === 'Batches' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Batches
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.batches.') || (selected === 'Batches' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Batches' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.batches.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.batches.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Batches List
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.batches.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.batches.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create Batch
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Inventories') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Inventories');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.inventories.') || selected === 'Inventories' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Inventories
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.inventories.') || (selected === 'Inventories' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Inventories' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.inventories.index')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.inventories.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Inventories List
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link
+                                                    href={route('dashboard.inventories.create')}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.inventories.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create Inventory
                                                 </Link>
                                             </li>
                                         </ul>

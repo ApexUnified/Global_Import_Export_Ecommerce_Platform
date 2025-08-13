@@ -34,7 +34,8 @@ class CollaboratorRepository implements ICollaboratorRepository
                 });
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return $collaborators;
     }

@@ -24,7 +24,10 @@ class PostRepository implements IPostRepository
 
     public function getAllPosts(Request $request)
     {
-        $posts = $this->post->with(['floor', 'user'])->latest()->paginate(10);
+        $posts = $this->post
+            ->with(['floor', 'user'])
+            ->latest()
+            ->paginate(10);
 
         return $posts;
     }

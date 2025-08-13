@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
 use App\Http\Controllers\Dashboard\CollaboratorController;
 use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\InventoryController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
@@ -57,6 +59,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Smart Phone Routes
         Route::resource('/smartphones', SmartphoneController::class);
         Route::delete('/smartphones-destroy-by-selection', [SmartphoneController::class, 'destroyBySelection'])->name('smartphones.destroybyselection');
+
+        // Batch Routes
+        Route::resource('/batches', BatchController::class)->except(['show']);
+        Route::delete('/batches-destroy-by-selection', [BatchController::class, 'destroyBySelection'])->name('batches.destroybyselection');
+
+        // Inventory Routes
+        Route::resource('/inventories', InventoryController::class)->except(['show']);
+        Route::get('/inventories-get-smart-phone-by-upc/{upc}', [InventoryController::class, 'getSmartPhoneByUpc'])->name('inventories.getsmartphonebyupc');
+        Route::delete('/inventories-destroy-by-selection', [InventoryController::class, 'destroyBySelection'])->name('inventories.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {
@@ -115,6 +126,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/capacities-update/{id}', 'capacityUpdate')->name('capacities.update');
                 Route::delete('/capacities-destroy/{id}', 'capacityDestroy')->name('capacities.destroy');
                 Route::delete('/capacities-destroy-by-selection', 'destroyCapacityBySelection')->name('capacities.destroybyselection');
+
+                // Storage Location Routes
+                Route::get('/storage-locations', 'storageLocationIndex')->name('storage_locations.index');
+                Route::get('/storage-locations-create', 'storageLocationCreate')->name('storage_locations.create');
+                Route::post('/storage-locations-store', 'storageLocationStore')->name('storage_locations.store');
+                Route::get('/storage-locations-edit/{id}', 'storageLocationEdit')->name('storage_locations.edit');
+                Route::put('/storage-locations-update/{id}', 'storageLocationUpdate')->name('storage_locations.update');
+                Route::delete('/storage-locations-destroy/{id}', 'storageLocationDestroy')->name('storage_locations.destroy');
+                Route::delete('/storage-locations-destroy-by-selection', 'destroyStorageLocationBySelection')->name('storage_locations.destroybyselection');
+
+                // Currency Routes
+                Route::get('/currencies', 'currencyIndex')->name('currencies.index');
+                Route::get('/currencies-create', 'currencyCreate')->name('currencies.create');
+                Route::post('/currencies-store', 'currencyStore')->name('currencies.store');
+                Route::get('/currencies-edit/{id}', 'currencyEdit')->name('currencies.edit');
+                Route::put('/currencies-update/{id}', 'currencyUpdate')->name('currencies.update');
+                Route::put('/currencies-toggle/{id}', 'toggleCurrencyStatus')->name('currencies.toggle');
+                Route::delete('/currencies-destroy/{id}', 'currencyDestroy')->name('currencies.destroy');
+                Route::delete('/currencies-destroy-by-selection', 'destroycurrencyBySelection')->name('currencies.destroybyselection');
             });
 
         });

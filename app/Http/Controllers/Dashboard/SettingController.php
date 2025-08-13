@@ -376,4 +376,180 @@ class SettingController extends Controller
 
         return to_route('dashboard.settings.capacities.index')->with('success', $deleted['message']);
     }
+
+    // Storage Locations
+    public function storageLocationIndex()
+    {
+        $storage_locations = $this->setting->getAllStorageLocations();
+
+        return Inertia::render('Dashboard/Settings/StorageLocations/index', compact('storage_locations'));
+    }
+
+    public function storageLocationCreate()
+    {
+        return Inertia::render('Dashboard/Settings/StorageLocations/create');
+    }
+
+    public function storageLocationStore(Request $request)
+    {
+        $created = $this->setting->storeStorageLocation($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.storage_locations.index')->with('success', $created['message']);
+    }
+
+    public function storageLocationEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Storage Location ID not found');
+        }
+
+        $storage_location = $this->setting->getSingleStorageLocation($id);
+
+        if (empty($storage_location)) {
+            return back()->with('error', 'Storage Location not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/StorageLocations/edit', compact('storage_location'));
+    }
+
+    public function storageLocationUpdate(Request $request, string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Storage Location ID not found');
+        }
+
+        $updated = $this->setting->updateStorageLocation($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.storage_locations.index')->with('success', $updated['message']);
+    }
+
+    public function storageLocationDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Storage Location ID not found');
+        }
+
+        $deleted = $this->setting->destroyStorageLocation($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function destroyStorageLocationBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyStorageLocationBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    // Currencies Methods
+
+    public function currencyIndex()
+    {
+        $currencies = $this->setting->getAllCurrencies();
+
+        return Inertia::render('Dashboard/Settings/Currencies/index', compact('currencies'));
+    }
+
+    public function currencyCreate()
+    {
+        return Inertia::render('Dashboard/Settings/Currencies/create');
+    }
+
+    public function currencyStore(Request $request)
+    {
+        $created = $this->setting->storeCurrency($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.currencies.index')->with('success', $created['message']);
+    }
+
+    public function currencyEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Currency ID not found');
+        }
+
+        $currency = $this->setting->getSingleCurrency($id);
+
+        if (empty($currency)) {
+            return back()->with('error', 'Currency not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Currencies/edit', compact('currency'));
+    }
+
+    public function currencyUpdate(Request $request, string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Currency ID not found');
+        }
+
+        $updated = $this->setting->updateCurrency($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.currencies.index')->with('success', $updated['message']);
+    }
+
+    public function currencyDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Currency ID not found');
+        }
+
+        $deleted = $this->setting->destroyCurrency($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function destroyCurrencyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyCurrencyBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function toggleCurrencyStatus(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Currency ID not found');
+        }
+
+        $updated = $this->setting->toggleCurrencyStatus($id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return back()->with('success', $updated['message']);
+    }
 }

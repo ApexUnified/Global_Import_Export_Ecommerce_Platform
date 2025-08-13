@@ -20,7 +20,8 @@ class FloorRepostitory implements IFloorRepostitory
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('name', 'like', '%'.$request->input('search').'%');
             })
-            ->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
         return $floors;
     }

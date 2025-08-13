@@ -30,6 +30,8 @@ export default function index({ smartphones }) {
         id: null,
     });
 
+    const { currency } = usePage().props;
+
     const [columns, setColumns] = useState([]);
 
     useEffect(() => {
@@ -69,9 +71,15 @@ export default function index({ smartphones }) {
                 badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
             },
             {
-                key: 'selling_price',
                 label: 'Selling Price',
-                badge: (value) => 'p-2 text-white bg-green-600 rounded-lg',
+                render: (item) => {
+                    return (
+                        <span className="p-2 text-white bg-blue-500 rounded-lg">
+                            {currency?.symbol}
+                            {item.selling_price}
+                        </span>
+                    );
+                },
             },
             { key: 'added_at', label: 'Added At' },
         ];

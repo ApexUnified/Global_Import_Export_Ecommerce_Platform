@@ -4,7 +4,7 @@ import LinkButton from '@/Components/LinkButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
@@ -25,6 +25,8 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
 
     // Submit Processing
     const [processing, setProcessing] = useState(false);
+
+    const { currency } = usePage().props;
 
     // File Change State Tracker
     const [fileChanged, setFileChanged] = useState(false);
@@ -236,20 +238,27 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                                                     />
                                                 </div>
 
-                                                <Input
-                                                    InputName={'Selling Price'}
-                                                    Error={errors.selling_price}
-                                                    Value={data.selling_price}
-                                                    Action={(e) =>
-                                                        setData('selling_price', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter Selling Price'}
-                                                    Id={'selling_price'}
-                                                    Name={'selling_price'}
-                                                    Type={'number'}
-                                                    Decimal={true}
-                                                    Required={true}
-                                                />
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={currency?.symbol}
+                                                        readOnly={true}
+                                                    />
+                                                    <Input
+                                                        InputName={'Selling Price'}
+                                                        Error={errors.selling_price}
+                                                        Value={data.selling_price}
+                                                        Action={(e) =>
+                                                            setData('selling_price', e.target.value)
+                                                        }
+                                                        Placeholder={'Enter Selling Price'}
+                                                        Id={'selling_price'}
+                                                        Name={'selling_price'}
+                                                        Type={'number'}
+                                                        Decimal={true}
+                                                        Required={true}
+                                                    />
+                                                </div>
                                             </div>
 
                                             <div className="grid grid-cols-1 col-span-2 gap-4 md:grid-cols-1">

@@ -34,7 +34,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className={`size-10 dark:border-white dark:fill-white`}
+                                                className={`size-10 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -102,7 +102,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className={`size-9 dark:border-white dark:fill-white`}
+                                                className={`size-9 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -159,7 +159,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className={`size-9 dark:border-white dark:fill-white`}
+                                                className={`size-9 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -216,7 +216,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className={`size-9 dark:border-white dark:fill-white`}
+                                                className={`size-9 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -273,7 +273,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className={`size-9 dark:border-white dark:fill-white`}
+                                                className={`size-9 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -330,7 +330,7 @@ export default function index() {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth="1.5"
                                                 stroke="currentColor"
-                                                className={`size-9 dark:border-white dark:fill-white`}
+                                                className={`size-9 dark:border-white`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -366,6 +366,133 @@ export default function index() {
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
                                                         d="M4.5 6.75h15m-15 10.5h15M5.25 3A2.25 2.25 0 003 5.25v2.25A2.25 2.25 0 005.25 9.75h13.5A2.25 2.25 0 0021 7.5V5.25A2.25 2.25 0 0018.75 3H5.25zm0 12A2.25 2.25 0 003 17.25v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 19.5v-2.25A2.25 2.25 0 0018.75 15H5.25z"
+                                                    />
+                                                </svg>
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
+
+                            <Card
+                                CustomCss={
+                                    'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
+                                }
+                                Content={
+                                    <>
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-9 dark:border-white`}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
+                                            Storage Location Settings
+                                        </h2>
+
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
+                                            Easily manage and configure and create Storage Locations
+                                            across your application to control Inventory Storage
+                                            Locations.
+                                        </p>
+
+                                        <LinkButton
+                                            URL={route(
+                                                'dashboard.settings.storage_locations.index',
+                                            )}
+                                            Text={'Manage Storage Locations'}
+                                            CustomClass="w-full md:w-[280px] mt-10 "
+                                            Icon={
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                    />
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                                                    />
+                                                </svg>
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
+
+                            <Card
+                                CustomCss={
+                                    'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
+                                }
+                                Content={
+                                    <>
+                                        <div className="flex items-center justify-center w-20 h-20 mb-3 bg-gray-100 rounded-full">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-9 dark:border-white`}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <h2 className="mb-2 text-xl font-semibold text-center text-gray-800 dark:text-white">
+                                            Currency Settings
+                                        </h2>
+
+                                        <p className="mb-6 leading-relaxed text-center text-gray-600 dark:text-white">
+                                            Easily manage and configure and create Currencies across
+                                            your application to control Currencies In The System.
+                                        </p>
+
+                                        <LinkButton
+                                            URL={route('dashboard.settings.currencies.index')}
+                                            Text={'Manage Currencies'}
+                                            CustomClass="w-full md:w-[280px] mt-10 "
+                                            Icon={
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                                     />
                                                 </svg>
                                             }

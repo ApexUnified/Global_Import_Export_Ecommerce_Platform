@@ -30,13 +30,14 @@ class SmartphoneRepository implements ISmartphoneRepository
         $smartphones = $this->smartphone
             ->when(! empty($request->input('search')), function ($query) use ($request) {
                 $query->where(function ($subQ) use ($request) {
-                    $subQ->where('model_name', 'like', '%'.$request->input('search').'%')
+                    $subQ->whereHas('model_name', fn ($query) => $query->where('name', 'like', '%'.$request->input('search').'%'))
                         ->orWhere('upc', 'like', '%'.$request->input('search').'%');
                 });
             })
             ->with(['model_name', 'capacity'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return $smartphones;
     }
@@ -55,7 +56,7 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
-            'selling_price' => ['required', 'numeric'],
+            'selling_price' => ['required', 'numeric', 'min:1'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc'],
             'images' => ['required', 'array', 'max:5'],
 
@@ -125,7 +126,7 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
-            'selling_price' => ['required', 'numeric'],
+            'selling_price' => ['required', 'numeric', 'min:1'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc,'.$id],
             'images' => ['required', 'array', 'max:5'],
         ]);
@@ -277,16 +278,16 @@ class SmartphoneRepository implements ISmartphoneRepository
 
     public function getColors()
     {
-        return $this->color->where('is_active', 1)->get();
+        return $this->color->where('is_active', true)->get();
     }
 
     public function getModelNames()
     {
-        return $this->model_name->where('is_active', 1)->get();
+        return $this->model_name->where('is_active', true)->get();
     }
 
     public function getCapacities()
     {
-        return $this->capacity->where('is_active', 1)->get();
+        return $this->capacity->where('is_active', true)->get();
     }
 }

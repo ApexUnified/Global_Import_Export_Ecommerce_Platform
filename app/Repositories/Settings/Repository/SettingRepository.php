@@ -4,10 +4,12 @@ namespace App\Repositories\Settings\Repository;
 
 use App\Models\Capacity;
 use App\Models\Color;
+use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\ModelName;
 use App\Models\Role;
 use App\Models\SmtpSetting;
+use App\Models\StorageLocation;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +23,9 @@ class SettingRepository implements ISettingRepository
         private Role $role,
         private Color $color,
         private ModelName $model_name,
-        private Capacity $capacity
+        private Capacity $capacity,
+        private StorageLocation $storage_location,
+        private Currency $currency,
     ) {}
 
     // General Setting
@@ -360,6 +364,18 @@ class SettingRepository implements ISettingRepository
             'name' => ['required', 'max:255', 'unique:colors,name'],
             'code' => ['required', 'max:255', 'starts_with:#', 'unique:colors,code'],
             'is_active' => ['required', 'boolean'],
+        ], [
+            [
+                'name.required' => 'Color Name Is Required',
+                'name.unique' => 'Color Name Already Exists',
+                'name.max' => 'Color Name Must Not Exceed 255 Characters',
+                'code.required' => 'Color Code Is Required',
+                'code.unique' => 'Color Code Already Exists',
+                'code.max' => 'Color Code Must Not Exceed 255 Characters',
+                'code.starts_with' => 'Color Code Must Start With #',
+                'is_active.required' => 'Status Is Required',
+                'is_active.boolean' => 'Status Must Be Active Or In-Active',
+            ],
         ]);
 
         try {
@@ -387,6 +403,16 @@ class SettingRepository implements ISettingRepository
             'name' => ['required', 'max:255', 'unique:colors,name,'.$id],
             'code' => ['required', 'max:255', 'starts_with:#', 'unique:colors,code,'.$id],
             'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Color Name Is Required',
+            'name.unique' => 'Color Name Already Exists',
+            'name.max' => 'Color Name Must Not Exceed 255 Characters',
+            'code.required' => 'Color Code Is Required',
+            'code.unique' => 'Color Code Already Exists',
+            'code.max' => 'Color Code Must Not Exceed 255 Characters',
+            'code.starts_with' => 'Color Code Must Start With #',
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
         ]);
 
         try {
@@ -493,7 +519,7 @@ class SettingRepository implements ISettingRepository
             'name.unique' => 'Model Name Already Exists',
             'name.max' => 'Model Name Must Not Exceed 255 Characters',
             'is_active.required' => 'Status Is Required',
-            'is_active.boolean' => 'Status Must Be True Or False',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
         ]);
 
         try {
@@ -526,7 +552,7 @@ class SettingRepository implements ISettingRepository
             'name.unique' => 'Model Name Already Exists',
             'name.max' => 'Model Name Must Not Exceed 255 Characters',
             'is_active.required' => 'Status Is Required',
-            'is_active.boolean' => 'Status Must Be True Or False',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
         ]);
 
         try {
@@ -634,7 +660,7 @@ class SettingRepository implements ISettingRepository
             'name.unique' => 'Capacity Already Exists',
             'name.max' => 'Capacity Must Not Exceed 255 Characters',
             'is_active.required' => 'Status Is Required',
-            'is_active.boolean' => 'Status Must Be True Or False',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
         ]);
 
         try {
@@ -666,7 +692,7 @@ class SettingRepository implements ISettingRepository
             'name.unique' => 'Capacity Already Exists',
             'name.max' => 'Capacity Must Not Exceed 255 Characters',
             'is_active.required' => 'Status Is Required',
-            'is_active.boolean' => 'Status Must Be True Or False',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
         ]);
 
         try {
@@ -740,6 +766,366 @@ class SettingRepository implements ISettingRepository
                 'status' => true,
                 'message' => 'Capacity Deleted Successfully',
             ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Storage Locations
+    public function getAllStorageLocations()
+    {
+        $storage_locations = $this->storage_location->latest()->paginate(10);
+
+        return $storage_locations;
+    }
+
+    public function getSingleStorageLocation(string $id)
+    {
+        $storage_location = $this->storage_location->find($id);
+
+        return $storage_location;
+    }
+
+    public function storeStorageLocation(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'string', 'unique:storage_locations,name'],
+            'address' => ['nullable', 'unique:storage_locations,address'],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Storage Location Name Is Required',
+            'name.max' => 'Storage Location Name Must Not Exceed 255 Characters',
+            'name.string' => 'Storage Location Name Must Be String',
+            'name.unique' => 'Storage Location Is Already Exists',
+
+            'address.unique' => 'Storage Location Address Is Already Exists',
+
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
+        ]);
+
+        try {
+            $created = $this->storage_location->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Storage Location');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Storage Location Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateStorageLocation(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'string', 'unique:storage_locations,name,'.$id],
+            'address' => ['nullable', 'unique:storage_locations,address,'.$id],
+            'is_active' => ['required', 'boolean'],
+        ], [
+            'name.required' => 'Storage Location Name Is Required',
+            'name.max' => 'Storage Location Name Must Not Exceed 255 Characters',
+            'name.string' => 'Storage Location Name Must Be String',
+            'name.unique' => 'Storage Location Is Already Exists',
+
+            'address.unique' => 'Storage Location Address Is Already Exists',
+
+            'is_active.required' => 'Status Is Required',
+            'is_active.boolean' => 'Status Must Be Active Or In-Active',
+
+        ]);
+
+        try {
+
+            $storage_location = $this->getSingleStorageLocation($id);
+
+            if (empty($storage_location)) {
+                throw new Exception('Storage Location Not Found');
+            }
+
+            $updated = $storage_location->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Storage Location');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Storage Location Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyStorageLocation(string $id)
+    {
+        try {
+            $storage_location = $this->getSingleStorageLocation($id);
+
+            if (empty($storage_location)) {
+                throw new Exception('Storage Location Not Found');
+            }
+
+            $deleted = $storage_location->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Storage Location');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Storage Location Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyStorageLocationBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Storage Location');
+            }
+
+            $deleted = $this->storage_location->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Storage Location');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Storage Locations Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Currencies
+
+    public function getAllCurrencies()
+    {
+        $currencies = $this->currency->latest()->paginate(10);
+
+        return $currencies;
+    }
+
+    public function getSingleCurrency(string $id)
+    {
+        $currency = $this->currency->find($id);
+
+        return $currency;
+    }
+
+    public function storeCurrency(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:100', 'string', 'unique:currencies,name'],
+            'symbol' => ['required', 'max:10', 'string', 'unique:currencies,symbol'],
+        ], [
+            'name.required' => 'Currency Name Is Required',
+            'name.max' => 'Currency Name Must Not Exceed 100 Characters',
+            'name.string' => 'Currency Name Must Be String',
+            'name.unique' => 'Currency Is Already Exists',
+
+            'symbol.required' => 'Currency Symbol Is Required',
+            'symbol.max' => 'Currency Symbol Must Not Exceed 10 Characters',
+            'symbol.string' => 'Currency Symbol Must Be String',
+            'symbol.unique' => 'Currency Symbol Is Already Exists',
+
+        ]);
+
+        try {
+
+            if ($this->currency->count() == 0) {
+                $validated_req['is_active'] = true;
+            }
+
+            $created = $this->currency->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Currency');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Currency Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateCurrency(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:100', 'string', 'unique:currencies,name'],
+            'symbol' => ['required', 'max:10', 'string', 'unique:currencies,symbol'],
+        ], [
+            'name.required' => 'Currency Name Is Required',
+            'name.max' => 'Currency Name Must Not Exceed 100 Characters',
+            'name.string' => 'Currency Name Must Be String',
+            'name.unique' => 'Currency Is Already Exists',
+
+            'symbol.required' => 'Currency Symbol Is Required',
+            'symbol.max' => 'Currency Symbol Must Not Exceed 10 Characters',
+            'symbol.string' => 'Currency Symbol Must Be String',
+            'symbol.unique' => 'Currency Symbol Is Already Exists',
+
+        ]);
+
+        try {
+            $currency = $this->getSingleCurrency($id);
+
+            if (empty($currency)) {
+                throw new Exception('Currency Not Found');
+            }
+
+            $updated = $currency->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Currency');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Currency Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCurrency(string $id)
+    {
+        try {
+
+            if ($this->currency->count() < 2) {
+                throw new Exception('Please Create New Currency Before Deleting This One Because You Have Only One Currency And One Active Currency Should Be Present');
+            }
+
+            $currency = $this->getSingleCurrency($id);
+
+            if (empty($currency)) {
+                throw new Exception('Currency Not Found');
+            }
+
+            $deleted = $currency->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Currency');
+            }
+
+            $this->currency->first()->update(['is_active' => true]);
+
+            return [
+                'status' => true,
+                'message' => 'Currency Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCurrencyBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Currency');
+            }
+
+            $currencies = $this->currency->whereIn('id', $ids)->get();
+
+            if ($currencies->isEmpty()) {
+                throw new Exception('Currency Not Found');
+            }
+
+            foreach ($currencies as $currency) {
+                $response = $this->destroyCurrency($currency->id);
+
+                if ($response['status'] == false) {
+                    throw new Exception($response['message']);
+                }
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Currencies Deleted Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function toggleCurrencyStatus(string $id)
+    {
+        try {
+            $currency = $this->getSingleCurrency($id);
+
+            if (empty($currency)) {
+                throw new Exception('Currency Not Found');
+            }
+
+            if ($currency->is_active == 1) {
+                return [
+                    'status' => false,
+                    'message' => 'The currently active currency cannot be deactivated unless a new currency is activated. It will be automatically deactivated when a new currency is set as active.',
+
+                ];
+            }
+
+            // Deactivate all currencies
+            $this->currency->where('is_active', true)->update([
+                'is_active' => false,
+            ]);
+
+            $currency->is_active = true;
+            $currency->save();
+
+            return [
+                'status' => true,
+                'message' => 'Currency Activated Successfully',
+            ];
+
         } catch (Exception $e) {
             return [
                 'status' => false,

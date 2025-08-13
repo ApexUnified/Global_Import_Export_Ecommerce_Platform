@@ -14,7 +14,8 @@ export default function Input({
     ShowPasswordToggle,
     setShowPasswordToggle,
     InputRef,
-    Decimal = false,
+    readOnly = false,
+    Disabled = false,
 }) {
     return (
         <div className={CustomCss || 'w-full'}>
@@ -27,22 +28,20 @@ export default function Input({
             </label>
             <div className="relative">
                 <input
+                    readOnly={readOnly}
                     type={ShowPasswordToggle ? 'text' : Type}
                     id={Id}
+                    disabled={Disabled}
                     ref={InputRef}
-                    className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden h-[42px] w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
+                    className={`dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 h-[42px] w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800 ${Disabled && 'cursor-not-allowed opacity-25 dark:opacity-40'}`}
                     placeholder={Placeholder}
+                    step="any"
                     name={Name}
                     value={Value ?? ''}
-                    onChange={Action}
+                    {...(!readOnly && { onChange: Action })}
                     required={Required}
                     {...(Type === 'password' ? { autoComplete: 'off' } : {})}
-                    {...(Type === 'number'
-                        ? {
-                              min: 0,
-                              ...(Decimal ? { step: 0.01 } : {}),
-                          }
-                        : {})}
+                    {...(Type === 'number' ? { min: 0 } : {})}
                 />
                 {Error && Type !== 'password' && (
                     <span className="absolute right-3.5 top-1/2 -translate-y-1/2">
@@ -65,7 +64,7 @@ export default function Input({
 
                 {Type === 'password' && (
                     <span
-                        className="absolute z-30 pb-2 text-gray-500 -translate-y-1/2 cursor-pointer right-4 top-7 dark:text-gray-400"
+                        className="absolute z-30 pb-2 text-gray-500 -translate-y-1/2 cursor-pointer right-4 top-1/2 dark:text-gray-400"
                         onClick={() => setShowPasswordToggle(!ShowPasswordToggle)}
                     >
                         <svg

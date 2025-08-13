@@ -14,6 +14,37 @@
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $batch_name
+ * @property int $total_quantity
+ * @property string $base_purchase_unit_price
+ * @property int|null $supplier_id
+ * @property array<array-key, mixed> $extra_costs
+ * @property string $total_batch_cost
+ * @property string $final_unit_price
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Supplier|null $supplier
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereBasePurchaseUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereBatchName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereExtraCosts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereFinalUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereTotalBatchCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereTotalQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereUpdatedAt($value)
+ */
+	class Batch extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $user_id
  * @property int $post_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -37,6 +68,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $name
+ * @property int $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $added_at
@@ -47,6 +79,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Capacity whereUpdatedAt($value)
  */
@@ -96,6 +129,28 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Color whereUpdatedAt($value)
  */
 	class Color extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $symbol
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereSymbol($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereUpdatedAt($value)
+ */
+	class Currency extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -152,6 +207,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $name
+ * @property int $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $added_at
@@ -162,6 +218,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ModelName whereUpdatedAt($value)
  */
@@ -310,10 +367,34 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property string|null $address
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation whereUpdatedAt($value)
+ */
+	class StorageLocation extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $company_name
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Batch> $batches
+ * @property-read int|null $batches_count
  * @property-read mixed $added_at
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()

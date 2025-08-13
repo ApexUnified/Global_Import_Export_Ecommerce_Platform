@@ -67,4 +67,33 @@ interface ISettingRepository
     public function destroyCapacity(string $id);
 
     public function destroyCapacityBySelection(Request $request);
+
+    // Storage Locations
+    public function getAllStorageLocations();
+
+    public function getSingleStorageLocation(string $id);
+
+    public function storeStorageLocation(Request $request);
+
+    public function updateStorageLocation(Request $request, string $id);
+
+    public function destroyStorageLocation(string $id);
+
+    public function destroyStorageLocationBySelection(Request $request);
+
+    // Currencies
+
+    public function getAllCurrencies();
+
+    public function getSingleCurrency(string $id);
+
+    public function storeCurrency(Request $request);
+
+    public function updateCurrency(Request $request, string $id);
+
+    public function destroyCurrency(string $id);
+
+    public function destroyCurrencyBySelection(Request $request);
+
+    public function toggleCurrencyStatus(string $id);
 }
