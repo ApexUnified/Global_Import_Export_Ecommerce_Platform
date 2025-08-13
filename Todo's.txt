@@ -53,6 +53,11 @@ Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management
 16: Laravel Horizon Added For Monitoring And Boosting Laravel Queue Workers ✅
 17: Integration With AWS ✅
 
+18: Batch Invoice Saving In Batch
+19: OnAll Settings Modules Back Button Will Be Added
+20: Automatically Adding # In Tag If Not Given
+21: Auto Adjusting To High Resolution Provided images
+22: In Posts View Section Adjust The Swiper Slider So It Wont Show Empty Spaces In Top and bottom
 
 
 

@@ -14,6 +14,7 @@ createInertiaApp({
         if (page) {
             try {
                 const parsed = JSON.parse(page);
+
                 appName = parsed.props.generalSetting?.app_name || 'Laravel';
             } catch (e) {
                 console.warn('Failed to parse Inertia page:', e);

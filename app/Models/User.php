@@ -70,11 +70,9 @@ class User extends Authenticatable // implements MustVerifyEmail
 
         $parts = explode(' ', trim($name));
 
-        $first = isset($parts[0]) ? strtoupper(substr($parts[0], 0, 1)) : '';
+        $first = isset($parts[0]) ? mb_strtoupper(mb_substr($parts[0], 0, 1)) : '';
+        $last = isset($parts[1]) ? mb_strtoupper(mb_substr(end($parts), 0, 1)) : '';
 
-        $last = isset($parts[1]) ? strtoupper(substr(end($parts), 0, 1)) : '';
-
-        // Return initials
         return $first.$last;
     }
 

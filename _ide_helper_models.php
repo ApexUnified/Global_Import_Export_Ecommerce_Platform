@@ -24,6 +24,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
+ * @property-read int|null $inventory_items_count
  * @property-read \App\Models\Supplier|null $supplier
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch newQuery()
@@ -206,6 +208,43 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $smartphone_id
+ * @property int $batch_id
+ * @property int|null $storage_location_id
+ * @property string $imei1
+ * @property string|null $imei2
+ * @property string|null $eid
+ * @property string|null $serial_no
+ * @property \Illuminate\Support\Carbon|null $returned_date
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Batch $batch
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Smartphone $smartphone
+ * @property-read \App\Models\StorageLocation|null $storage_location
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereEid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereImei1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereImei2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereReturnedDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereSerialNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereSmartphoneId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereStorageLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereUpdatedAt($value)
+ */
+	class Inventory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property int $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -318,6 +357,8 @@ namespace App\Models{
  * @property-read mixed $added_at
  * @property-read mixed $colors
  * @property-read mixed $smartphone_image_urls
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
+ * @property-read int|null $inventory_items_count
  * @property-read \App\Models\ModelName|null $model_name
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
@@ -373,6 +414,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
+ * @property-read int|null $inventory_items_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StorageLocation query()
