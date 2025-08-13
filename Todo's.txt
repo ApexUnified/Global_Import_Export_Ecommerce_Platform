@@ -54,12 +54,38 @@ Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management
 17: Integration With AWS ✅
 
 18: Batch Invoice Saving In Batch
-19: OnAll Settings Modules Back Button Will Be Added
-20: Automatically Adding # In Tag If Not Given
+19: OnAll Settings Modules Back Button Will Be Added ✅
+20: Automatically Adding # In Tag If Not Given ✅
 21: Auto Adjusting To High Resolution Provided images
-22: In Posts View Section Adjust The Swiper Slider So It Wont Show Empty Spaces In Top and bottom
+22: In Posts View Section Adjust The Swiper Slider So It Wont Show Empty Spaces In Top and bottom ✅
 
 
 
 
+More Additional Work
+As per your suggestions, here’s how I plan to implement the inventory registration flow:
+
+Settings / Configuration Phase ✅
+The modules for Brand Name List, Capacity List, Color List, and Storage Location List are already completed, so no further changes are needed here.
+
+Smartphone Module ✅
+I will remove the selling price field from this module.
+All other fields (brand, capacity, color, image, etc.) will remain unchanged.
+
+Batches Module ✅
+All existing columns will remain the same.
+I will add a VAT number field.
+Functionality will be added to create inventory items directly while registering a batch.
+The total quantity will be calculated automatically based on the number of phones added, so manual input is no longer needed.
+
+Inventory List Menu ✅
+This already shows all relevant information, including model, batch, storage location, quantity, status, and serial number.
+No major changes are needed here.
+
+Product-for-Sale Module
+A new module will be created to register products for sale from inventory.
+Users will select smartphones from the inventory, manually input the selling price, and add any additional fees (similar to extra costs in the batches module).
+The final selling price will be automatically calculated at the end.
+
+This approach ensures a smooth, UX-friendly workflow, where purchases are linked directly to inventory, and products can be listed for sale efficiently with accurate cost tracking.
 

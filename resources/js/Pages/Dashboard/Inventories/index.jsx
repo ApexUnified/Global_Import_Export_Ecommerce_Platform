@@ -55,6 +55,7 @@ export default function index({ inventories, batches, storage_locations, smartph
             { key: 'storage_location.name', label: 'Storage Location Name' },
             { key: 'imei1', label: 'IMEI 1' },
             { key: 'imei2', label: 'IMEI 2' },
+            { key: 'eid', label: 'EID' },
             { key: 'serial_no', label: 'Serial No' },
             { key: 'returned_date', label: 'Returned Date' },
             {
@@ -73,7 +74,7 @@ export default function index({ inventories, batches, storage_locations, smartph
                 label: 'Unit Price',
                 render: (item) => {
                     return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
+                        <span className="p-2 text-white bg-blue-500 rounded-lg">
                             {currency?.symbol}
                             {item.batch.final_unit_price}
                         </span>
@@ -102,7 +103,7 @@ export default function index({ inventories, batches, storage_locations, smartph
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            {/* <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
                                     Text={'Create Inventory'}
                                     URL={route('dashboard.inventories.create')}
@@ -123,7 +124,7 @@ export default function index({ inventories, batches, storage_locations, smartph
                                         </svg>
                                     }
                                 />
-                            </div>
+                            </div> */}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}

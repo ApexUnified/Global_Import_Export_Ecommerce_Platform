@@ -28,6 +28,9 @@ class InventoryController extends Controller
         return Inertia::render('Dashboard/Inventories/index', compact('inventories', 'batches', 'storage_locations', 'smartphones', 'smartphone_id', 'batch_id', 'storage_location_id', 'status'));
     }
 
+    /**
+     * @Message This Method is not in used right now
+     */
     public function create()
     {
         $batches = $this->inventory->getBatches();
@@ -37,6 +40,9 @@ class InventoryController extends Controller
         return Inertia::render('Dashboard/Inventories/create', compact('batches', 'storage_locations', 'smartphones'));
     }
 
+    /**
+     * @Message This Method is not in used right now
+     */
     public function store(Request $request)
     {
         $created = $this->inventory->storeInventory($request);

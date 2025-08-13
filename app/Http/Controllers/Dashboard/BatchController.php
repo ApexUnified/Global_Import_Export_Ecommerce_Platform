@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Batches\Interface\IBatchRepository;
+use App\Repositories\Inventories\Repository\InventoryRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BatchController extends Controller
 {
     public function __construct(
-        private IBatchRepository $batch
+        private IBatchRepository $batch,
+        private InventoryRepository $inventory,
     ) {}
 
     public function index(Request $request)
@@ -24,8 +26,10 @@ class BatchController extends Controller
     public function create()
     {
         $suppliers = $this->batch->getSuppliers();
+        $smartphones = $this->inventory->getSmartphones();
+        $storage_locations = $this->inventory->getStorageLocations();
 
-        return Inertia::render('Dashboard/Batches/create', compact('suppliers'));
+        return Inertia::render('Dashboard/Batches/create', compact('suppliers', 'smartphones', 'storage_locations'));
     }
 
     public function store(Request $request)
@@ -45,15 +49,17 @@ class BatchController extends Controller
             return back()->with('error', 'Batch ID Not Found');
         }
 
-        $batch = $this->batch->getSingleBatch($id);
+        $batch = $this->batch->getSingleFormatedBatchForEdit($id);
 
         if (empty($batch)) {
             return back()->with('error', 'Batch Not Found');
         }
 
         $suppliers = $this->batch->getSuppliers();
+        $smartphones = $this->inventory->getSmartphones();
+        $storage_locations = $this->inventory->getStorageLocations();
 
-        return Inertia::render('Dashboard/Batches/edit', compact('batch', 'suppliers'));
+        return Inertia::render('Dashboard/Batches/edit', compact('batch', 'suppliers', 'smartphones', 'storage_locations'));
 
     }
 

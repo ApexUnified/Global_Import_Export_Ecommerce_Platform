@@ -23,6 +23,7 @@ namespace App\Models{
  * @property string $final_unit_price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $vat
  * @property-read mixed $added_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
  * @property-read int|null $inventory_items_count
@@ -40,6 +41,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereTotalBatchCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereTotalQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Batch whereVat($value)
  */
 	class Batch extends \Eloquent {}
 }
@@ -349,7 +351,6 @@ namespace App\Models{
  * @property int|null $model_name_id
  * @property int|null $capacity_id
  * @property string $upc
- * @property string $selling_price
  * @property array<array-key, mixed>|null $images
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -360,6 +361,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
  * @property-read int|null $inventory_items_count
  * @property-read \App\Models\ModelName|null $model_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SmartphoneForSale> $selling_info
+ * @property-read int|null $selling_info_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone query()
@@ -369,11 +372,33 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereImages($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereModelNameId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereSellingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereUpc($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereUpdatedAt($value)
  */
 	class Smartphone extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $smartphone_id
+ * @property string $selling_price
+ * @property array<array-key, mixed>|null $additional_fee
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Smartphone $smartphone
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereAdditionalFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereSellingPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereSmartphoneId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmartphoneForSale whereUpdatedAt($value)
+ */
+	class SmartphoneForSale extends \Eloquent {}
 }
 
 namespace App\Models{

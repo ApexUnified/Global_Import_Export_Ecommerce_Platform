@@ -7,6 +7,7 @@ import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
 import React from 'react';
 import Swal from 'sweetalert2';
+import LinkButton from '@/Components/LinkButton';
 
 export default function index({ general_setting }) {
     // Update General Setting Form Data
@@ -69,6 +70,28 @@ export default function index({ general_setting }) {
                 <Card
                     Content={
                         <>
+                            <div className="my-3 flex flex-wrap justify-end">
+                                <LinkButton
+                                    Text={'Back To Settings'}
+                                    URL={route('dashboard.settings.index')}
+                                    Icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                                            />
+                                        </svg>
+                                    }
+                                />
+                            </div>
                             <form onSubmit={submit}>
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <Input

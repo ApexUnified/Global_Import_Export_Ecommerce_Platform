@@ -14,6 +14,7 @@ class Batch extends Model
         'base_purchase_unit_price',
         'supplier_id',
         'extra_costs',
+        'vat',
         'total_batch_cost',
         'final_unit_price',
     ];

@@ -51,7 +51,7 @@ export default function index({ smartphones }) {
                                 return (
                                     <span
                                         key={color.id}
-                                        className="p-2 text-white rounded-lg"
+                                        className="rounded-lg p-2 text-white"
                                         style={{
                                             backgroundColor: color.code,
                                             color: getContrastingColor(color.code),
@@ -70,17 +70,7 @@ export default function index({ smartphones }) {
                 label: 'UPC/EAN',
                 badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
             },
-            {
-                label: 'Selling Price',
-                render: (item) => {
-                    return (
-                        <span className="p-2 text-white bg-blue-500 rounded-lg">
-                            {currency?.symbol}
-                            {item.selling_price}
-                        </span>
-                    );
-                },
-            },
+
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -102,7 +92,7 @@ export default function index({ smartphones }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Create Smart Phone'}
                                     URL={route('dashboard.smartphones.create')}

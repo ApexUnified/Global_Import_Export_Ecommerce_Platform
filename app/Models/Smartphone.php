@@ -13,7 +13,6 @@ class Smartphone extends Model
         'capacity_id',
         'color_ids',
         'upc',
-        'selling_price',
         'images',
     ];
 
@@ -52,6 +51,11 @@ class Smartphone extends Model
     public function inventory_items(): HasMany
     {
         return $this->hasMany(Inventory::class, 'smartphone_id', 'id');
+    }
+
+    public function selling_info(): HasMany
+    {
+        return $this->hasMany(SmartphoneForSale::class, 'smartphone_id', 'id');
     }
 
     // Casting

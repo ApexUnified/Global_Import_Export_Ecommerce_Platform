@@ -65,7 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/batches-destroy-by-selection', [BatchController::class, 'destroyBySelection'])->name('batches.destroybyselection');
 
         // Inventory Routes
-        Route::resource('/inventories', InventoryController::class)->except(['show']);
+        Route::resource('/inventories', InventoryController::class)->except(['show', 'create', 'store']);
         Route::get('/inventories-get-smart-phone-by-upc/{upc}', [InventoryController::class, 'getSmartPhoneByUpc'])->name('inventories.getsmartphonebyupc');
         Route::delete('/inventories-destroy-by-selection', [InventoryController::class, 'destroyBySelection'])->name('inventories.destroybyselection');
 

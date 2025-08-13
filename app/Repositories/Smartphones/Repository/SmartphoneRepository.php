@@ -56,7 +56,6 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
-            'selling_price' => ['required', 'numeric', 'min:1'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc'],
             'images' => ['required', 'array', 'max:5'],
 
@@ -126,7 +125,6 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
-            'selling_price' => ['required', 'numeric', 'min:1'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc,'.$id],
             'images' => ['required', 'array', 'max:5'],
         ]);

@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smartphones', function (Blueprint $table) {
+        Schema::create('smartphone_for_sales', function (Blueprint $table) {
             $table->id();
-            $table->string('model_name');
-            $table->string('capacity');
-            $table->json('color_ids');
-            $table->string('upc')->unique();
-            $table->json('images')->nullable();
+            $table->foreignId('smartphone_id')->constrained('smartphones')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->decimal('selling_price', 30, 2);
+            $table->json('additional_fee')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smartphones');
+        Schema::dropIfExists('smartphone_for_sales');
     }
 };

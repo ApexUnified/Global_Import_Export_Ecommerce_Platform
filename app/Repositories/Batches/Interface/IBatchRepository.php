@@ -10,6 +10,8 @@ interface IBatchRepository
 
     public function getSingleBatch(string $id);
 
+    public function getSingleFormatedBatchForEdit(string $id);
+
     public function storeBatch(Request $request);
 
     public function updateBatch(Request $request, string $id);

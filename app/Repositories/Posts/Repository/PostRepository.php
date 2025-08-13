@@ -54,7 +54,7 @@ class PostRepository implements IPostRepository
             'content' => ['required', 'string'],
             'images' => ['nullable', 'max:35', 'array'],
             'videos' => ['nullable', 'max:5', 'array'],
-            'tag' => ['nullable', 'string', 'max:50', 'starts_with:#', function ($attribute, $value, $fail) {
+            'tag' => ['nullable', 'string', 'max:50', function ($attribute, $value, $fail) {
                 if (str_contains($value, ',')) {
                     $fail('Only One Tag Allowed In The Post');
                 }
@@ -114,6 +114,12 @@ class PostRepository implements IPostRepository
             $validated_req = array_filter($validated_req, function ($value, $key) {
                 return ! in_array($key, ['images', 'videos']);
             }, ARRAY_FILTER_USE_BOTH);
+
+            if (! empty($validated_req['tag']) && ! str_starts_with($validated_req['tag'], '#')) {
+                $tag = $validated_req['tag'];
+                $concatinated_tag = '#'.$tag;
+                $validated_req['tag'] = $concatinated_tag;
+            }
 
             // Get Location Name  From Google Api Behalf Of Lat/lng
             if (empty($validated_req['location_name']) && ! empty($validated_req['latitude']) && ! empty($validated_req['longitude'])) {
@@ -177,7 +183,7 @@ class PostRepository implements IPostRepository
             'content' => ['required', 'string'],
             'images' => ['nullable', 'max:35', 'array'],
             'videos' => ['nullable', 'max:5', 'array'],
-            'tag' => ['nullable', 'string', 'max:50', 'starts_with:#', function ($attribute, $value, $fail) {
+            'tag' => ['nullable', 'string', 'max:50', function ($attribute, $value, $fail) {
                 if (str_contains($value, ',')) {
                     $fail('Only One Tag Allowed In The Post');
                 }
@@ -242,6 +248,12 @@ class PostRepository implements IPostRepository
                 if (empty($floor)) {
                     throw new Exception('Selected Floor Does Not Exists');
                 }
+            }
+
+            if (! empty($validated_req['tag']) && ! str_starts_with($validated_req['tag'], '#')) {
+                $tag = $validated_req['tag'];
+                $concatinated_tag = '#'.$tag;
+                $validated_req['tag'] = $concatinated_tag;
             }
 
             $validated_req = array_filter($validated_req, function ($value, $key) {

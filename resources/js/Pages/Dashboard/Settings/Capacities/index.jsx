@@ -37,11 +37,11 @@ export default function index({ capacities }) {
                 render: (item) => {
                     if (item.is_active === 1) {
                         return (
-                            <span className="p-3 text-white bg-green-500 rounded-lg">Active</span>
+                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
                         );
                     } else {
                         return (
-                            <span className="p-2 text-white bg-red-500 rounded-lg">In Active</span>
+                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
                         );
                     }
                 },
@@ -68,7 +68,7 @@ export default function index({ capacities }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end gap-4">
                                 <LinkButton
                                     Text={'Create Capacity'}
                                     URL={route('dashboard.settings.capacities.create')}
@@ -85,6 +85,27 @@ export default function index({ capacities }) {
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                                 d="M12 4.5v15m7.5-7.5h-15"
+                                            />
+                                        </svg>
+                                    }
+                                />
+
+                                <LinkButton
+                                    Text={'Back To Settings'}
+                                    URL={route('dashboard.settings.index')}
+                                    Icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
                                             />
                                         </svg>
                                     }

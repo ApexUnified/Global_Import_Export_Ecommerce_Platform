@@ -4,7 +4,7 @@ import LinkButton from '@/Components/LinkButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
@@ -19,14 +19,11 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
         capacity_id: smartphone.capacity_id || '',
         color_ids: smartphone.color_ids || [],
         upc: smartphone.upc || '',
-        selling_price: smartphone.selling_price || '',
         images: [],
     });
 
     // Submit Processing
     const [processing, setProcessing] = useState(false);
-
-    const { currency } = usePage().props;
 
     // File Change State Tracker
     const [fileChanged, setFileChanged] = useState(false);
@@ -119,7 +116,7 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Smart Phones'}
                                     URL={route('dashboard.smartphones.index')}
@@ -237,31 +234,9 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                                                         Required={true}
                                                     />
                                                 </div>
-
-                                                <div className="flex items-center">
-                                                    <Input
-                                                        CustomCss={'w-[40px] mt-5'}
-                                                        Value={currency?.symbol}
-                                                        readOnly={true}
-                                                    />
-                                                    <Input
-                                                        InputName={'Selling Price'}
-                                                        Error={errors.selling_price}
-                                                        Value={data.selling_price}
-                                                        Action={(e) =>
-                                                            setData('selling_price', e.target.value)
-                                                        }
-                                                        Placeholder={'Enter Selling Price'}
-                                                        Id={'selling_price'}
-                                                        Name={'selling_price'}
-                                                        Type={'number'}
-                                                        Decimal={true}
-                                                        Required={true}
-                                                    />
-                                                </div>
                                             </div>
 
-                                            <div className="grid grid-cols-1 col-span-2 gap-4 md:grid-cols-1">
+                                            <div className="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-1">
                                                 <FileUploaderInput
                                                     InputName={'Smart Phone Images'}
                                                     Id={'images'}
@@ -298,15 +273,12 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                                                     data.capacity_id === '' ||
                                                     data.color_ids.length === 0 ||
                                                     data.upc.trim() === '' ||
-                                                    data.selling_price.trim() === '' ||
                                                     data?.images?.length === 0 ||
                                                     (data.model_name_id ===
                                                         smartphone.model_name_id &&
                                                         data.capacity_id ===
                                                             smartphone.capacity_id &&
                                                         data.upc.trim() === smartphone.upc &&
-                                                        data.selling_price ===
-                                                            smartphone.selling_price &&
                                                         !fileChanged)
                                                 }
                                                 Spinner={processing}
@@ -335,11 +307,11 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                             {/* Cam */}
                             {scannerOpen && (
                                 <>
-                                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                                         <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                                         {/* Modal content */}
-                                        <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
+                                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
                                             <div className="text-center">
                                                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                                     Place The Camera On The UPC Barcode
@@ -398,22 +370,22 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                             )}
 
                             {showProgressModal && (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                                     <div className="fixed inset-0 backdrop-blur-[32px]"></div>
 
                                     {/* Modal content */}
-                                    <div className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8">
+                                    <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
                                         <div className="text-center">
                                             <h2 className="text-lg font-medium text-gray-800 dark:text-white">
                                                 Please Wait While We Are Uploading Smart Phone
                                                 Images
                                             </h2>
 
-                                            <div className="flex items-center justify-center mt-5">
+                                            <div className="mt-5 flex items-center justify-center">
                                                 <div role="status">
                                                     <svg
                                                         aria-hidden="true"
-                                                        className="w-8 h-8 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                                        className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                                         viewBox="0 0 100 101"
                                                         fill="none"
                                                         xmlns="http://www.w3.org/2000/svg"
