@@ -230,7 +230,7 @@ export default function create({ smartphones, additional_fee_lists }) {
                                                         <tbody>
                                                             {additionalFees.map((item, idx) => (
                                                                 <tr key={idx}>
-                                                                    <td className="border p-2 dark:border-gray-700">
+                                                                    <td className="w-1/2 border p-2 dark:border-gray-700">
                                                                         <SelectInput
                                                                             InputName={
                                                                                 'Select Type'
@@ -242,6 +242,7 @@ export default function create({ smartphones, additional_fee_lists }) {
                                                                                 additional_fee_lists
                                                                             }
                                                                             itemKey={'name'}
+                                                                            customPlaceHolder={true}
                                                                             Action={(value) =>
                                                                                 handleChange(
                                                                                     idx,
@@ -256,7 +257,7 @@ export default function create({ smartphones, additional_fee_lists }) {
                                                                             }
                                                                         />
                                                                     </td>
-                                                                    <td className="border p-2 dark:border-gray-700">
+                                                                    <td className="w-1/2 border p-2 dark:border-gray-700">
                                                                         <Input
                                                                             InputName={'Amount'}
                                                                             Id={'amount'}

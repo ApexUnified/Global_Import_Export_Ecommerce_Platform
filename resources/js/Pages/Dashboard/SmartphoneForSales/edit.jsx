@@ -226,7 +226,7 @@ export default function create({ smartphone_for_sale, smartphones, additional_fe
                                                         <tbody>
                                                             {additionalFees.map((item, idx) => (
                                                                 <tr key={idx}>
-                                                                    <td className="border p-2 dark:border-gray-700">
+                                                                    <td className="w-1/2 border p-2 dark:border-gray-700">
                                                                         <SelectInput
                                                                             InputName={
                                                                                 'Select Type'
@@ -252,7 +252,7 @@ export default function create({ smartphone_for_sale, smartphones, additional_fe
                                                                             }
                                                                         />
                                                                     </td>
-                                                                    <td className="border p-2 dark:border-gray-700">
+                                                                    <td className="w-1/2 border p-2 dark:border-gray-700">
                                                                         <Input
                                                                             InputName={'Amount'}
                                                                             Id={'amount'}
