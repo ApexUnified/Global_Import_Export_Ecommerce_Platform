@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Settings\Repository;
 
+use App\Models\AdditionalFeeList;
 use App\Models\Capacity;
 use App\Models\Color;
 use App\Models\Currency;
@@ -26,6 +27,7 @@ class SettingRepository implements ISettingRepository
         private Capacity $capacity,
         private StorageLocation $storage_location,
         private Currency $currency,
+        private AdditionalFeeList $additional_fee_list
     ) {}
 
     // General Setting
@@ -1126,6 +1128,134 @@ class SettingRepository implements ISettingRepository
                 'message' => 'Currency Activated Successfully',
             ];
 
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Additional Fees List
+
+    public function getAllAdditionalFeeLists()
+    {
+        $additional_fee_lists = $this->additional_fee_list->latest()->paginate(10);
+
+        return $additional_fee_lists;
+    }
+
+    public function getSingleAdditionalFeeList(string $id)
+    {
+        $additional_fee_list = $this->additional_fee_list->find($id);
+
+        return $additional_fee_list;
+    }
+
+    public function storeAdditionalFeeList(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'unique:additional_fee_lists,name'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+            $created = $this->additional_fee_list->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Additional Fee List');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Additional Fee List Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateAdditionalFeeList(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'unique:additional_fee_lists,name,'.$id],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+            $additional_fee_list = $this->getSingleAdditionalFeeList($id);
+
+            if (empty($additional_fee_list)) {
+                throw new Exception('Additional Fee List Not Found');
+            }
+
+            $updated = $additional_fee_list->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Additional Fee List');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Additional Fee List Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyAdditionalFeeList(string $id)
+    {
+        try {
+            $additional_fee_list = $this->getSingleAdditionalFeeList($id);
+
+            if (empty($additional_fee_list)) {
+                throw new Exception('Additional Fee List Not Found');
+            }
+
+            $deleted = $additional_fee_list->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Additional Fee List');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Additional Fee List Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyAdditionalFeeListBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Additional Fee List');
+            }
+
+            $deleted = $this->additional_fee_list->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Additional Fee List');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Additional Fee List Deleted Successfully',
+            ];
         } catch (Exception $e) {
             return [
                 'status' => false,

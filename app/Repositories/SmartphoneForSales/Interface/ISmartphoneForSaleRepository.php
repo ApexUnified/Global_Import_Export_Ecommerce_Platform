@@ -17,4 +17,6 @@ interface ISmartphoneForSaleRepository
     public function destroySmartphoneForSale(string $id);
 
     public function destroySmartphoneForSaleBySelection(Request $request);
+
+    public function getAllAdditionalFeeLists();
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\SmartphoneForSales\Repository;
 
+use App\Models\AdditionalFeeList;
 use App\Models\SmartphoneForSale;
 use App\Repositories\SmartphoneForSales\Interface\ISmartphoneForSaleRepository;
 use Exception;
@@ -11,7 +12,8 @@ use Illuminate\Support\Facades\Validator;
 class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
 {
     public function __construct(
-        private SmartphoneForSale $smartphone_for_sale
+        private SmartphoneForSale $smartphone_for_sale,
+        private AdditionalFeeList $additional_fee_list,
     ) {}
 
     public function getAllSmartphoneForSales(Request $request)
@@ -215,5 +217,14 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public function getAllAdditionalFeeLists()
+    {
+        return $this->additional_fee_list->where('is_active', true)->get()->map(function ($list) {
+            return [
+                'name' => $list->name,
+            ];
+        });
     }
 }

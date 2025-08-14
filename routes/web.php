@@ -150,6 +150,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/currencies-toggle/{id}', 'toggleCurrencyStatus')->name('currencies.toggle');
                 Route::delete('/currencies-destroy/{id}', 'currencyDestroy')->name('currencies.destroy');
                 Route::delete('/currencies-destroy-by-selection', 'destroycurrencyBySelection')->name('currencies.destroybyselection');
+
+                // Additional Fee List Routes
+                Route::get('/additional-fee-lists', 'additionalFeeListIndex')->name('additional_fee_lists.index');
+                Route::get('/additional-fee-lists-create', 'additionalFeeListCreate')->name('additional_fee_lists.create');
+                Route::post('/additional-fee-lists-store', 'additionalFeeListStore')->name('additional_fee_lists.store');
+                Route::get('/additional-fee-lists-edit/{id}', 'additionalFeeListEdit')->name('additional_fee_lists.edit');
+                Route::put('/additional-fee-lists-update/{id}', 'additionalFeeListUpdate')->name('additional_fee_lists.update');
+                Route::put('/additional-fee-lists-toggle/{id}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
+                Route::delete('/additional-fee-lists-destroy/{id}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
+                Route::delete('/additional-fee-lists-destroy-by-selection', 'destroyAdditionalFeeListBySelection')->name('additional_fee_lists.destroybyselection');
             });
 
         });

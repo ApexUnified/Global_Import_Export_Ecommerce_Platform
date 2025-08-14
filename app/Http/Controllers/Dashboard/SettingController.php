@@ -552,4 +552,85 @@ class SettingController extends Controller
 
         return back()->with('success', $updated['message']);
     }
+
+    // Additional Fee lists
+
+    public function additionalFeeListIndex()
+    {
+        $additional_fee_lists = $this->setting->getAllAdditionalFeeLists();
+
+        return Inertia::render('Dashboard/Settings/AdditionalFeeLists/index', compact('additional_fee_lists'));
+    }
+
+    public function additionalFeeListCreate()
+    {
+        return Inertia::render('Dashboard/Settings/AdditionalFeeLists/create');
+    }
+
+    public function additionalFeeListStore(Request $request)
+    {
+        $created = $this->setting->storeAdditionalFeeList($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.additional_fee_lists.index')->with('success', $created['message']);
+    }
+
+    public function additionalFeeListEdit(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Additional Fee List ID not found');
+        }
+
+        $additional_fee_list = $this->setting->getSingleAdditionalFeeList($id);
+
+        if (empty($additional_fee_list)) {
+            return back()->with('error', 'Additional Fee List not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/AdditionalFeeLists/edit', compact('additional_fee_list'));
+    }
+
+    public function additionalFeeListUpdate(Request $request, string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Additional Fee List ID not found');
+        }
+
+        $updated = $this->setting->updateAdditionalFeeList($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.additional_fee_lists.index')->with('success', $updated['message']);
+    }
+
+    public function additionalFeeListDestroy(string $id)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Additional Fee List ID not found');
+        }
+
+        $deleted = $this->setting->destroyAdditionalFeeList($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function destroyAdditionalFeeListBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyAdditionalFeeListBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
 }

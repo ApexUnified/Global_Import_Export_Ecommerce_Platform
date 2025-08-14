@@ -96,4 +96,18 @@ interface ISettingRepository
     public function destroyCurrencyBySelection(Request $request);
 
     public function toggleCurrencyStatus(string $id);
+
+    // Additional Fees List
+
+    public function getAllAdditionalFeeLists();
+
+    public function getSingleAdditionalFeeList(string $id);
+
+    public function storeAdditionalFeeList(Request $request);
+
+    public function updateAdditionalFeeList(Request $request, string $id);
+
+    public function destroyAdditionalFeeList(string $id);
+
+    public function destroyAdditionalFeeListBySelection(Request $request);
 }

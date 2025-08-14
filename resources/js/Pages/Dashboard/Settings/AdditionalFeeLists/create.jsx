@@ -18,19 +18,19 @@ export default function create() {
     // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        post(route('dashboard.settings.capacities.store'));
+        post(route('dashboard.settings.additional_fee_lists.store'));
     };
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Capacities" />
+                <Head title="Additional Fee Lists" />
 
                 <BreadCrumb
-                    header={'Create Capacity'}
-                    parent={'Capacities'}
-                    parent_link={route('dashboard.settings.capacities.index')}
-                    child={'Create Capacity'}
+                    header={'Create Additional Fee List'}
+                    parent={'Additional Fee Lists'}
+                    parent_link={route('dashboard.settings.additional_fee_lists.index')}
+                    child={'Create Additional Fee List'}
                 />
 
                 <Card
@@ -38,8 +38,8 @@ export default function create() {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Capacities'}
-                                    URL={route('dashboard.settings.capacities.index')}
+                                    Text={'Back To Additional Fee Lists'}
+                                    URL={route('dashboard.settings.additional_fee_lists.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -65,11 +65,11 @@ export default function create() {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Capacity'}
+                                                    InputName={'Additional Fee List Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Capacity'}
+                                                    Placeholder={'Enter Additional Fee List Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -77,7 +77,7 @@ export default function create() {
                                                 />
 
                                                 <SelectInput
-                                                    InputName={'Capacity Status'}
+                                                    InputName={'Aditional Fee list Status'}
                                                     Id={'is_active'}
                                                     Name={'is_active'}
                                                     Value={data.is_active}
@@ -88,15 +88,15 @@ export default function create() {
                                                         { id: 0, name: 'In-Active' },
                                                     ]}
                                                     itemKey={'name'}
-                                                    Placeholder={'Select Capacity Status'}
+                                                    Placeholder={'Select Aditional Fee list Status'}
                                                     Required={true}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Create Capacity'}
+                                                Text={'Create Aditional Fee list'}
                                                 Type={'submit'}
-                                                CustomClass={'w-[200px] '}
+                                                CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||

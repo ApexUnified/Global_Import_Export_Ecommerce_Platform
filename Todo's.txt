@@ -59,9 +59,11 @@ Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management
 21: Auto Adjusting To High Resolution Provided images
 22: In Posts View Section Adjust The Swiper Slider So It Wont Show Empty Spaces In Top and bottom ✅
 
+23: Users Module
+    - CRUD For Users
+    - User Active And In-Active Status To Prevent Accessing On Dashboard
 
-
-
+24: Additional Fee List Module And Linked It to Smartphone For Sale Module With Select input For Selection directly ✅
 More Additional Work
 As per your suggestions, here’s how I plan to implement the inventory registration flow:
 

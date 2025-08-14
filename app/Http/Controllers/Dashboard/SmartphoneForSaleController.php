@@ -28,8 +28,9 @@ class SmartphoneForSaleController extends Controller
     {
 
         $smartphones = $this->inventory->getSmartphones();
+        $additional_fee_lists = $this->smartphone_for_sale->getAllAdditionalFeeLists();
 
-        return Inertia::render('Dashboard/SmartphoneForSales/create', compact('smartphones'));
+        return Inertia::render('Dashboard/SmartphoneForSales/create', compact('smartphones', 'additional_fee_lists'));
     }
 
     public function store(Request $request)
@@ -57,8 +58,9 @@ class SmartphoneForSaleController extends Controller
         }
 
         $smartphones = $this->inventory->getSmartphones();
+        $additional_fee_lists = $this->smartphone_for_sale->getAllAdditionalFeeLists();
 
-        return Inertia::render('Dashboard/SmartphoneForSales/edit', compact('smartphones', 'smartphone_for_sale'));
+        return Inertia::render('Dashboard/SmartphoneForSales/edit', compact('smartphones', 'smartphone_for_sale', 'additional_fee_lists'));
     }
 
     public function update(Request $request, string $id)

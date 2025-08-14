@@ -8,17 +8,17 @@ import { Head, useForm } from '@inertiajs/react';
 import React from 'react';
 import SelectInput from '@/Components/SelectInput';
 
-export default function create() {
+export default function edit({ additional_fee_list }) {
     // Create Data Form Data
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        is_active: 1,
+    const { data, setData, put, processing, errors, reset } = useForm({
+        name: additional_fee_list.name || '',
+        is_active: additional_fee_list.is_active ?? 1,
     });
 
     // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        post(route('dashboard.settings.capacities.store'));
+        put(route('dashboard.settings.additional_fee_lists.update', additional_fee_list.id));
     };
 
     return (
@@ -27,10 +27,10 @@ export default function create() {
                 <Head title="Capacities" />
 
                 <BreadCrumb
-                    header={'Create Capacity'}
-                    parent={'Capacities'}
-                    parent_link={route('dashboard.settings.capacities.index')}
-                    child={'Create Capacity'}
+                    header={'Edit Additional Fee List'}
+                    parent={'Additional Fee Lists'}
+                    parent_link={route('dashboard.settings.additional_fee_lists.index')}
+                    child={'Edit Additional Fee List'}
                 />
 
                 <Card
@@ -38,8 +38,8 @@ export default function create() {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Capacities'}
-                                    URL={route('dashboard.settings.capacities.index')}
+                                    Text={'Back To Additional Fee Lists'}
+                                    URL={route('dashboard.settings.additional_fee_lists.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -65,11 +65,11 @@ export default function create() {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Capacity'}
+                                                    InputName={'Additional Fee List Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Capacity'}
+                                                    Placeholder={'Enter Additional Fee List Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -77,7 +77,7 @@ export default function create() {
                                                 />
 
                                                 <SelectInput
-                                                    InputName={'Capacity Status'}
+                                                    InputName={'Additional Fee List Status'}
                                                     Id={'is_active'}
                                                     Name={'is_active'}
                                                     Value={data.is_active}
@@ -88,19 +88,25 @@ export default function create() {
                                                         { id: 0, name: 'In-Active' },
                                                     ]}
                                                     itemKey={'name'}
-                                                    Placeholder={'Select Capacity Status'}
+                                                    Placeholder={
+                                                        'Select Additional Fee List Status'
+                                                    }
                                                     Required={true}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Create Capacity'}
+                                                Text={'Update Additional Fee List'}
                                                 Type={'submit'}
-                                                CustomClass={'w-[200px] '}
+                                                CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.is_active === ''
+                                                    data.is_active === '' ||
+                                                    (data.name.trim() ===
+                                                        additional_fee_list.name &&
+                                                        data.is_active ===
+                                                            additional_fee_list.is_active)
                                                 }
                                                 Spinner={processing}
                                                 Icon={
@@ -115,7 +121,7 @@ export default function create() {
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
-                                                            d="M12 4.5v15m7.5-7.5h-15"
+                                                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                                                         />
                                                     </svg>
                                                 }

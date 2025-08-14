@@ -10,7 +10,7 @@ import SelectInput from '@/Components/SelectInput';
 import Toast from '@/Components/Toast';
 import Swal from 'sweetalert2';
 import BarcodeScannerComponent from 'react-qr-barcode-scanner';
-export default function create({ smartphones }) {
+export default function create({ smartphones, additional_fee_lists }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         smartphone_id: '',
@@ -59,6 +59,10 @@ export default function create({ smartphones }) {
 
         post(route('dashboard.smartphone-for-sales.store'));
     };
+
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
 
     return (
         <>
@@ -205,7 +209,10 @@ export default function create({ smartphones }) {
                                             </div>
 
                                             {additionalFees.length > 0 && (
-                                                <div className="col-span-1 grid grid-cols-1 gap-5 overflow-x-auto scrollbar-thin dark:scrollbar-track-slate-900 dark:scrollbar-thumb-slate-700">
+                                                <div
+                                                    className="col-span-1 grid grid-cols-1 gap-5 overflow-x-auto scrollbar-thin dark:scrollbar-track-slate-900 dark:scrollbar-thumb-slate-700"
+                                                    style={{ overflow: 'visible' }}
+                                                >
                                                     <table className="w-full border-collapse">
                                                         <thead>
                                                             <tr>
@@ -224,27 +231,28 @@ export default function create({ smartphones }) {
                                                             {additionalFees.map((item, idx) => (
                                                                 <tr key={idx}>
                                                                     <td className="border p-2 dark:border-gray-700">
-                                                                        <Input
-                                                                            InputName={'Type'}
+                                                                        <SelectInput
+                                                                            InputName={
+                                                                                'Select Type'
+                                                                            }
                                                                             Id={'type'}
                                                                             Name={'type'}
+                                                                            Value={item.type}
+                                                                            items={
+                                                                                additional_fee_lists
+                                                                            }
+                                                                            itemKey={'name'}
+                                                                            Action={(value) =>
+                                                                                handleChange(
+                                                                                    idx,
+                                                                                    'type',
+                                                                                    value,
+                                                                                )
+                                                                            }
                                                                             Error={
                                                                                 errors[
                                                                                     `additional_fee.${idx}.type`
                                                                                 ]
-                                                                            }
-                                                                            Value={item.type}
-                                                                            Required={true}
-                                                                            Type={'text'}
-                                                                            Placeholder={
-                                                                                'Enter Type'
-                                                                            }
-                                                                            Action={(e) =>
-                                                                                handleChange(
-                                                                                    idx,
-                                                                                    'type',
-                                                                                    e.target.value,
-                                                                                )
                                                                             }
                                                                         />
                                                                     </td>
