@@ -17,7 +17,6 @@ class SmartphoneController extends Controller
     {
         $smartphones = $this->smartphone->getAllSmartphones($request);
 
-        // return $smartphones;
         $search = $request->input('search');
 
         return Inertia::render('Dashboard/Smartphones/index', compact('smartphones', 'search'));

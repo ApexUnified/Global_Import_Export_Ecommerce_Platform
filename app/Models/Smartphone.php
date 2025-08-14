@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Smartphone extends Model
 {
@@ -53,9 +54,9 @@ class Smartphone extends Model
         return $this->hasMany(Inventory::class, 'smartphone_id', 'id');
     }
 
-    public function selling_info(): HasMany
+    public function selling_info(): HasOne
     {
-        return $this->hasMany(SmartphoneForSale::class, 'smartphone_id', 'id');
+        return $this->hasOne(SmartphoneForSale::class, 'smartphone_id', 'id');
     }
 
     // Casting

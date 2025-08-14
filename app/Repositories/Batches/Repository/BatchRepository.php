@@ -2,6 +2,9 @@
 
 namespace App\Repositories\Batches\Repository;
 
+use App\Jobs\DestroyBatchInvoiceonAWS;
+use App\Jobs\StoreBatchInvoicesOnAWS;
+use App\Jobs\updateBatchInvoiceOnAWS;
 use App\Models\Batch;
 use App\Models\Inventory;
 use App\Models\Supplier;
@@ -10,8 +13,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Str;
 
 class BatchRepository implements IBatchRepository
 {
@@ -66,6 +69,7 @@ class BatchRepository implements IBatchRepository
             'supplier_id' => ['required', 'exists:suppliers,id'],
             'extra_costs' => ['nullable', 'array'],
             'inventory_items' => ['required', 'array'],
+            'invoices' => ['nullable', 'array', 'max:30'],
         ]);
 
         $validator = Validator::make($request->all(), [
@@ -77,6 +81,7 @@ class BatchRepository implements IBatchRepository
             'inventory_items.*.imei2' => ['nullable', 'string', 'max:255', 'unique:inventories,imei2'],
             'inventory_items.*.eid' => ['nullable', 'string', 'max:255', 'unique:inventories,eid'],
             'inventory_items.*.serial_no' => ['nullable', 'string', 'max:255', 'unique:inventories,serial_no'],
+            'invoices.*' => ['nullable', 'mimes:jpg,jpeg,png,pdf', 'max:5048'],
 
         ], [
             'extra_costs.*.cost_type.required' => 'Cost type is required',
@@ -104,6 +109,9 @@ class BatchRepository implements IBatchRepository
             'inventory_items.*.imei1.unique' => 'IMEI 1 Already Exists',
             'inventory_items.*.imei2.unique' => 'IMEI 2 Already Exists',
             'inventory_items.*.eid.unique' => 'EID Already Exists',
+
+            'invoices.*.mimes' => 'Only jpg, jpeg, png, pdf files are allowed',
+            'invoices.*.max' => 'File size should not exceed 5MB',
 
         ]);
 
@@ -157,21 +165,21 @@ class BatchRepository implements IBatchRepository
             $validated_req['total_quantity'] = $total_quantity;
 
             $total_extra_cost = 0;
-            if (! blank($validated_req['extra_costs'])) {
+            if (isset($validated_req['extra_costs'])) {
                 foreach ($validated_req['extra_costs'] as $extra_cost) {
-                    $total_extra_cost += $extra_cost['amount'];
+                    $total_extra_cost += (float) $extra_cost['amount'];
 
                 }
             }
 
-            $total_batch_cost = $validated_req['total_quantity'] * $validated_req['base_purchase_unit_price'] + $total_extra_cost;
+            $total_batch_cost = (int) $validated_req['total_quantity'] * (float) $validated_req['base_purchase_unit_price'] + $total_extra_cost;
             $final_unit_price = $total_batch_cost / $validated_req['total_quantity'];
 
             $validated_req['total_batch_cost'] = $total_batch_cost;
             $validated_req['final_unit_price'] = $final_unit_price;
 
             $batch = $this->batch->create(array_filter($validated_req, function ($value, $key) {
-                return ! in_array($key, ['inventory_items']);
+                return ! in_array($key, ['inventory_items', 'invoices']);
             }, ARRAY_FILTER_USE_BOTH));
             if (empty($batch)) {
                 throw new Exception('Something Went Wrong While Creating Batch');
@@ -186,6 +194,17 @@ class BatchRepository implements IBatchRepository
             }
 
             DB::commit();
+
+            if ($request->hasFile('invoices')) {
+                $paths = [];
+                foreach ($validated_req['invoices'] as $invoice) {
+                    $new_name = time().uniqid().Str::random(10).'.'.$invoice->getClientOriginalExtension();
+                    $tempPath = $invoice->storeAs('temp/uploads', $new_name, 'local');
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new StoreBatchInvoicesOnAWS(['invoices' => $paths], $batch));
+            }
 
             return [
                 'status' => true,
@@ -252,36 +271,30 @@ class BatchRepository implements IBatchRepository
             ]);
         }
 
-        // Uniqueness Checking Validation
-        foreach ($validated_req['inventory_items'] as $index => $item) {
-            $uniqueness_checker = Validator::make($item, [
-                'imei1' => [
-                    Rule::unique('inventories', 'imei1')->ignore($item['id'] ?? null),
-                ],
-                'imei2' => [
-                    Rule::unique('inventories', 'imei2')->ignore($item['id'] ?? null),
-                ],
-                'eid' => [
-                    Rule::unique('inventories', 'eid')->ignore($item['id'] ?? null),
-                ],
-                'serial_no' => [
-                    Rule::unique('inventories', 'serial_no')->ignore($item['id'] ?? null),
-                ],
-            ], [
-                'serial_no' => 'Serial Number Already Exists',
-                'imei1' => 'IMEI 1 Already Exists',
-                'imei2' => 'IMEI 2 Already Exists',
-                'eid' => 'EID Already Exists',
-            ]);
-
-            if ($uniqueness_checker->fails()) {
-                throw ValidationException::withMessages([
-                    'file_error' => $uniqueness_checker->errors()->first(),
-                ]);
-            }
-        }
-
         try {
+            // Uniqueness Checking Validation
+            foreach ($validated_req['inventory_items'] as $index => $item) {
+                if (empty($item['id'])) {
+                    continue;
+                }
+
+                if (! empty($item['imei1']) && $this->inventory->where('imei1', $item['imei1'])->where('id', '!=', $item['id'])->exists()) {
+                    throw ValidationException::withMessages(['file_error' => 'IMEI 1 Already Exists']);
+                }
+
+                if (! empty($item['imei2']) && $this->inventory->where('imei2', $item['imei2'])->where('id', '!=', $item['id'])->exists()) {
+                    throw ValidationException::withMessages(['file_error' => 'IMEI 2 Already Exists']);
+                }
+
+                if (! empty($item['eid']) && $this->inventory->where('eid', $item['eid'])->where('id', '!=', $item['id'])->exists()) {
+                    throw ValidationException::withMessages(['file_error' => 'EID Already Exists']);
+                }
+
+                if (! empty($item['serial_no']) && $this->inventory->where('serial_no', $item['serial_no'])->where('id', '!=', $item['id'])->exists()) {
+                    throw ValidationException::withMessages(['file_error' => 'Serial Number Already Exists']);
+                }
+            }
+
             // dd($validated_req);
             DB::beginTransaction();
 
@@ -289,40 +302,6 @@ class BatchRepository implements IBatchRepository
 
             if (empty($batch)) {
                 throw new Exception('Batch Not Found');
-            }
-
-            // checking Duplications
-
-            // Checking For Imei 1
-            $imei1s = array_column($validated_req['inventory_items'], 'imei1');
-            $duplicate_imei1s = array_filter(array_count_values($imei1s), fn ($count) => $count > 1);
-
-            if (! empty($duplicate_imei1s)) {
-                throw new Exception('IMEI 1 cannot be duplicated');
-            }
-
-            // Checking For Imei 2
-            $imei2s = array_filter(array_column($validated_req['inventory_items'], 'imei2'));
-            $duplicate_imei2s = array_filter(array_count_values($imei2s), fn ($count) => $count > 1);
-
-            if (! empty($duplicate_imei2s)) {
-                throw new Exception('IMEI 2 cannot be duplicated');
-            }
-
-            // Checking For EID
-            $eids = array_filter(array_column($validated_req['inventory_items'], 'eid'));
-            $duplicate_eids = array_filter(array_count_values($eids), fn ($count) => $count > 1);
-
-            if (! empty($duplicate_eids)) {
-                throw new Exception('EID cannot be duplicated');
-            }
-
-            // Checking For Serial No
-            $serial_nos = array_filter(array_column($validated_req['inventory_items'], 'serial_no'));
-            $duplicate_serial_nos = array_filter(array_count_values($serial_nos), fn ($count) => $count > 1);
-
-            if (! empty($duplicate_serial_nos)) {
-                throw new Exception('Serial Number cannot be duplicated');
             }
 
             // Extracting Quantity
@@ -333,18 +312,41 @@ class BatchRepository implements IBatchRepository
             $validated_req['total_quantity'] = $total_quantity;
 
             $total_extra_cost = 0;
-            if (! blank($validated_req['extra_costs'])) {
+            if (isset($validated_req['extra_costs'])) {
                 foreach ($validated_req['extra_costs'] as $extra_cost) {
-                    $total_extra_cost += $extra_cost['amount'];
+                    $total_extra_cost += (float) $extra_cost['amount'];
 
                 }
             }
 
-            $total_batch_cost = $validated_req['total_quantity'] * $validated_req['base_purchase_unit_price'] + $total_extra_cost;
+            $total_batch_cost = (int) $validated_req['total_quantity'] * (float) $validated_req['base_purchase_unit_price'] + $total_extra_cost;
             $final_unit_price = $total_batch_cost / $validated_req['total_quantity'];
 
             $validated_req['total_batch_cost'] = $total_batch_cost;
             $validated_req['final_unit_price'] = $final_unit_price;
+
+            $validated_req = array_filter($validated_req, function ($value, $key) {
+                return ! in_array($key, ['invoices']);
+            }, ARRAY_FILTER_USE_BOTH);
+
+            if ($request->filled('deleted_invoices')) {
+                $deleted = $request->array('deleted_invoices');
+                $deleted_invoice_urls = array_map(function ($deletedItem) {
+                    return $deletedItem['url'] ?? null;
+                }, $deleted);
+
+                dispatch(new DestroyBatchInvoiceonAWS(['invoices' => $deleted_invoice_urls]));
+
+                $oldInvoices = $batch->invoices ?? [];
+
+                $remeaning_invoices = array_filter($oldInvoices, function ($invoice) use ($deleted) {
+                    return ! in_array($invoice, $deleted);
+                });
+
+                $remaining_invoices_array = array_values($remeaning_invoices);
+
+                $validated_req['invoices'] = $remaining_invoices_array;
+            }
 
             $updated = $batch->update(array_filter($validated_req, function ($value, $key) {
                 return ! in_array($key, ['inventory_items']);
@@ -372,7 +374,21 @@ class BatchRepository implements IBatchRepository
                 ]);
             }
 
-            Db::commit();
+            DB::commit();
+
+            if ($request->hasFile('new_invoices')) {
+                $paths = [];
+
+                foreach ($request->file('new_invoices') as $invoice) {
+                    $new_name = time().uniqid().'-'.Str::random(10).'.'.$invoice->getClientOriginalExtension();
+
+                    $tempPath = $invoice->storeAs('temp/uploads', $new_name, 'local');
+
+                    $paths[] = $tempPath;
+                }
+
+                dispatch(new updateBatchInvoiceOnAWS(['invoices' => $paths], $batch));
+            }
 
             return [
                 'status' => true,
@@ -397,6 +413,10 @@ class BatchRepository implements IBatchRepository
 
             if (empty($batch)) {
                 throw new Exception('Batch Not Found');
+            }
+
+            if (! blank($batch->invoice_urls)) {
+                dispatch(new DestroyBatchInvoiceonAWS(['invoices' => $batch->invoice_urls]));
             }
 
             $deleted = $batch->delete();
@@ -424,10 +444,16 @@ class BatchRepository implements IBatchRepository
                 throw new Exception('Please Select Atleast One Batch');
             }
 
-            $deleted = $this->batch->destroy($ids);
+            $batches = $this->batch->whereIn('id', $ids)->get();
+            if ($batches->isEmpty()) {
+                throw new Exception('Given Batch Ids Are incorrect');
+            }
 
-            if ($deleted !== count($ids)) {
-                throw new Exception('Something Went Wrong While Deleting Batches');
+            foreach ($batches as $batch) {
+                $response = $this->destroyBatch($batch->id);
+                if ($response['status'] === false) {
+                    throw new Exception($response['message']);
+                }
             }
 
             return [

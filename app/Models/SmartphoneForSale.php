@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SmartphoneForSale extends Model
 {
-    protected $fillable = ['smartphone_id', 'selling_price', 'additional_fee'];
+    protected $fillable = ['smartphone_id', 'selling_price', 'additional_fee', 'total_price'];
 
     protected $appends = ['added_at'];
 

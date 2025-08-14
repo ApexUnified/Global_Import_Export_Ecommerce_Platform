@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SmartphoneController;
+use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/inventories', InventoryController::class)->except(['show', 'create', 'store']);
         Route::get('/inventories-get-smart-phone-by-upc/{upc}', [InventoryController::class, 'getSmartPhoneByUpc'])->name('inventories.getsmartphonebyupc');
         Route::delete('/inventories-destroy-by-selection', [InventoryController::class, 'destroyBySelection'])->name('inventories.destroybyselection');
+
+        // Smartphone For Sale Routes
+        Route::resource('/smartphone-for-sales', SmartphoneForSaleController::class)->except(['show']);
+        Route::delete('/smartphone-for-sales-destroy-by-selection', [SmartphoneForSaleController::class, 'destroyBySelection'])->name('smartphone-for-sales.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {

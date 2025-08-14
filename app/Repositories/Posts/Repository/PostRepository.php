@@ -11,8 +11,10 @@ use App\Repositories\Posts\Interface\IPostRepository;
 use App\Services\GoogleGeoCoderService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Intervention\Image\ImageManager;
 use Str;
 
 class PostRepository implements IPostRepository
@@ -84,7 +86,6 @@ class PostRepository implements IPostRepository
             'images.*' => [
                 'mimes:jpg,jpeg,png',
                 'max:10240',
-                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
             ],
 
             'videos.*' => [
@@ -94,7 +95,6 @@ class PostRepository implements IPostRepository
         ], [
             'images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'images.*.max' => 'Each image must not exceed 10MB.',
-            'images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
             'videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
             'videos.*.max' => 'Each video must not exceed 1GB.',
 
@@ -141,7 +141,16 @@ class PostRepository implements IPostRepository
 
                 foreach ($request->file('images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->resize(1920, 1080)
+                        ->cover(1920, 1080)
+                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+
                     $paths[] = $tempPath;
                 }
 
@@ -210,7 +219,6 @@ class PostRepository implements IPostRepository
             'new_images.*' => [
                 'mimes:jpg,jpeg,png',
                 'max:10240',
-                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
             ],
 
             'new_videos.*' => [
@@ -220,7 +228,6 @@ class PostRepository implements IPostRepository
         ], [
             'new_images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'new_images.*.max' => 'Each image must not exceed 10MB.',
-            'new_images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
             'new_videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
             'new_videos.*.max' => 'Each video must not exceed 1GB.',
 
@@ -309,7 +316,16 @@ class PostRepository implements IPostRepository
 
                 foreach ($request->file('new_images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->resize(1920, 1080)
+                        ->cover(1920, 1080)
+                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+
                     $paths[] = $tempPath;
                 }
 

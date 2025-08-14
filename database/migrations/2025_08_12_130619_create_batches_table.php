@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('total_quantity');
             $table->decimal('base_purchase_unit_price', 30, 2);
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete()->cascadeOnUpdate();
-            $table->json('extra_costs');
+            $table->json('extra_costs')->nullable();
             $table->decimal('total_batch_cost', 30, 2);
             $table->decimal('final_unit_price', 30, 2);
             $table->timestamps();

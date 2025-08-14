@@ -15,7 +15,7 @@ Laravel + Inertia.js + TailwindCSS setup
 
 
 
-Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management,
+Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management And More...!,
 1: Collaborators Module: ✅
 - Full CRUD operations (Create, Read, Update, Delete).
 - Referral Code Generation
@@ -53,7 +53,7 @@ Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management
 16: Laravel Horizon Added For Monitoring And Boosting Laravel Queue Workers ✅
 17: Integration With AWS ✅
 
-18: Batch Invoice Saving In Batch
+18: Batch Invoice Saving In Batch ✅
 19: OnAll Settings Modules Back Button Will Be Added ✅
 20: Automatically Adding # In Tag If Not Given ✅
 21: Auto Adjusting To High Resolution Provided images
@@ -82,8 +82,8 @@ Inventory List Menu ✅
 This already shows all relevant information, including model, batch, storage location, quantity, status, and serial number.
 No major changes are needed here.
 
-Product-for-Sale Module
-A new module will be created to register products for sale from inventory.
+Product-for-Sale Module ✅
+A new module will be created to register products for sale from Smartphone.
 Users will select smartphones from the inventory, manually input the selling price, and add any additional fees (similar to extra costs in the batches module).
 The final selling price will be automatically calculated at the end.
 

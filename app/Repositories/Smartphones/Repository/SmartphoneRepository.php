@@ -12,8 +12,10 @@ use App\Models\Smartphone;
 use App\Repositories\Smartphones\Interface\ISmartphoneRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Intervention\Image\ImageManager;
 use Str;
 
 class SmartphoneRepository implements ISmartphoneRepository
@@ -34,7 +36,7 @@ class SmartphoneRepository implements ISmartphoneRepository
                         ->orWhere('upc', 'like', '%'.$request->input('search').'%');
                 });
             })
-            ->with(['model_name', 'capacity'])
+            ->with(['model_name', 'capacity', 'selling_info'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -65,16 +67,14 @@ class SmartphoneRepository implements ISmartphoneRepository
             'images.*' => [
                 'mimes:jpg,jpeg,png',
                 'max:5048',
-                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
             ],
 
         ], [
             'images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'images.*.max' => 'Each image must not exceed 5MB.',
-            'images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
 
         ], [
-            'images.*' => 'image',        ]);
+            'images.*' => 'image']);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages([
@@ -98,7 +98,16 @@ class SmartphoneRepository implements ISmartphoneRepository
 
                 foreach ($request->file('images') as $image) {
                     $new_name = time().uniqid().Str::random(10).'.'.$image->getClientOriginalExtension();
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->resize(1920, 1080)
+                        ->cover(1920, 1080)
+                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+
                     $paths[] = $tempPath;
                 }
 
@@ -133,13 +142,11 @@ class SmartphoneRepository implements ISmartphoneRepository
             'new_images.*' => [
                 'mimes:jpg,jpeg,png',
                 'max:10240',
-                'dimensions:min_width=1280,min_height=720,max_width=1920,max_height=1080',
             ],
 
         ], [
             'new_images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'new_images.*.max' => 'Each image must not exceed 10MB.',
-            'new_images.*.dimensions' => 'Each image must be at least 1280x720 pixels and not exceed 1920x1080 pixels.',
 
         ], [
             'images.*' => 'image',
@@ -192,7 +199,16 @@ class SmartphoneRepository implements ISmartphoneRepository
 
                 foreach ($request->file('new_images') as $image) {
                     $new_name = time().uniqid().Str::random(10).'.'.$image->getClientOriginalExtension();
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->resize(1920, 1080)
+                        ->cover(1920, 1080)
+                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+
                     $paths[] = $tempPath;
                 }
 

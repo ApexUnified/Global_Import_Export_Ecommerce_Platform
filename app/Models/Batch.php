@@ -17,9 +17,10 @@ class Batch extends Model
         'vat',
         'total_batch_cost',
         'final_unit_price',
+        'invoices',
     ];
 
-    protected $appends = ['added_at'];
+    protected $appends = ['added_at', 'invoice_urls'];
 
     // RelationShips
     public function supplier(): BelongsTo
@@ -38,8 +39,16 @@ class Batch extends Model
         return $this->created_at->format('Y-m-d');
     }
 
+    public function getInvoiceUrlsAttribute()
+    {
+        return array_map(function ($invoices) {
+            return $invoices['url'];
+        }, $this->invoices ?? []);
+    }
+
     // Casting
     protected $casts = [
         'extra_costs' => 'array',
+        'invoices' => 'array',
     ];
 }

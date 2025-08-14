@@ -4,9 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
-
 import { useEffect, useState } from 'react';
-import getContrastingColor from '@/Hooks/useColorContraster';
 
 export default function index({ batches }) {
     // Bulk Delete Form Data

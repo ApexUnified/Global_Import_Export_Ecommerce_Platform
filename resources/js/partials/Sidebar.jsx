@@ -88,7 +88,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
+                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -109,7 +109,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="flex flex-col gap-4 mb-6">
+                            <ul className="mb-6 flex flex-col gap-4">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
@@ -822,6 +822,87 @@ export default function Sidebar({
                                                     className={`menu-dropdown-item group ${route().current() === 'dashboard.inventories.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
                                                 >
                                                     Inventories List
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            if (selected === 'Smartphone For Sales') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Smartphone For Sales');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.smartphone-for-sales.') || selected === 'Smartphone For Sales' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Smartphone For Sales
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.smartphone-for-sales.') || (selected === 'Smartphone For Sales' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Smartphone For Sales' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route(
+                                                        'dashboard.smartphone-for-sales.index',
+                                                    )}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.smartphone-for-sales.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Smartphone For Sales List
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link
+                                                    href={route(
+                                                        'dashboard.smartphone-for-sales.create',
+                                                    )}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.smartphone-for-sales.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create Smartphone For Sale
                                                 </Link>
                                             </li>
                                         </ul>

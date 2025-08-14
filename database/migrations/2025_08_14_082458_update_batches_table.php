@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('batches', function (Blueprint $table) {
-            $table->string('vat')->after('total_batch_cost');
+            $table->json('invoices')->nullable()->after('vat');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('batches', function (Blueprint $table) {
-            $table->dropColumn('vat');
+            $table->dropColumn('invoices');
         });
     }
 };

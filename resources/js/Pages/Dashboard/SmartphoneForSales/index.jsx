@@ -4,11 +4,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
-
 import { useEffect, useState } from 'react';
-import getContrastingColor from '@/Hooks/useColorContraster';
-
-export default function index({ smartphones }) {
+export default function index({ smartphone_for_sales }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -36,57 +33,29 @@ export default function index({ smartphones }) {
 
     useEffect(() => {
         const columns = [
-            { key: 'model_name.name', label: 'Model Name' },
+            { key: 'smartphone.model_name.name', label: 'Smartphone' },
             {
-                key: 'capacity.name',
-                label: 'Capacity',
-                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
-            },
-            {
-                label: 'Colors',
+                label: 'Selling Price',
                 render: (item) => {
                     return (
-                        <div className="flex items-center gap-2">
-                            {item.colors.map((color) => {
-                                return (
-                                    <span
-                                        key={color.id}
-                                        className="rounded-lg p-2 text-white"
-                                        style={{
-                                            backgroundColor: color.code,
-                                            color: getContrastingColor(color.code),
-                                        }}
-                                    >
-                                        {color.name}
-                                    </span>
-                                );
-                            })}
-                        </div>
+                        <span className="rounded-lg bg-blue-500 p-2 text-white">
+                            {currency?.symbol}
+                            {item.selling_price}
+                        </span>
                     );
                 },
             },
             {
-                key: 'upc',
-                label: 'UPC/EAN',
-                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
-            },
-
-            {
-                label: 'Selling Price',
+                label: 'Final Total Selling Price',
                 render: (item) => {
-                    if (item?.selling_info) {
-                        return (
-                            <span className="rounded-lg bg-blue-500 p-2 text-white">
-                                {currency?.symbol}
-                                {item?.selling_info?.total_price}
-                            </span>
-                        );
-                    }
-
-                    return 'N/A';
+                    return (
+                        <span className="rounded-lg bg-blue-500 p-2 text-white">
+                            {currency?.symbol}
+                            {item.total_price}
+                        </span>
+                    );
                 },
             },
-
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -96,13 +65,13 @@ export default function index({ smartphones }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Smart Phones" />
+                <Head title="Smartphone For Sale" />
 
                 <BreadCrumb
-                    header={'Smart Phones'}
+                    header={'Smartphone For Sale'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Smart Phones'}
+                    child={'Smartphone For Sale'}
                 />
 
                 <Card
@@ -110,8 +79,8 @@ export default function index({ smartphones }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create Smart Phone'}
-                                    URL={route('dashboard.smartphones.create')}
+                                    Text={'Create Smartphone For Sale'}
+                                    URL={route('dashboard.smartphone-for-sales.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -139,13 +108,15 @@ export default function index({ smartphones }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.smartphones.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.smartphones.destroy'}
-                                EditRoute={'dashboard.smartphones.edit'}
-                                SearchRoute={'dashboard.smartphones.index'}
+                                BulkDeleteRoute={
+                                    'dashboard.smartphone-for-sales.destroybyselection'
+                                }
+                                SingleDeleteRoute={'dashboard.smartphone-for-sales.destroy'}
+                                EditRoute={'dashboard.smartphone-for-sales.edit'}
+                                SearchRoute={'dashboard.smartphone-for-sales.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
-                                items={smartphones}
+                                items={smartphone_for_sales}
                                 props={props}
                                 columns={columns}
                             />

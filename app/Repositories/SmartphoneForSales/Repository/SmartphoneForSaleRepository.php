@@ -16,7 +16,16 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
 
     public function getAllSmartphoneForSales(Request $request)
     {
-        $smartphone_for_sales = $this->smartphone_for_sale->with('smartphone')->latest()->paginate(10);
+        $smartphone_for_sales = $this->smartphone_for_sale
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->whereHas('smartphone.model_name', function ($subQ) use ($request) {
+                    $subQ->where('name', 'like', '%'.$request->input('search').'%');
+                });
+            })
+            ->with(['smartphone', 'smartphone.model_name'])
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return $smartphone_for_sales;
     }
@@ -34,10 +43,11 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
             'smartphone_id' => ['required', 'exists:smartphones,id', 'unique:smartphone_for_sales,smartphone_id'],
             'selling_price' => ['required', 'numeric', 'min:1'],
             'additional_fee' => ['nullable', 'array'],
+
         ], [
-            'smartphone_id.required' => 'Smartphone ID is required',
-            'smartphone_id.exists' => 'Smartphone ID is not valid',
-            'smartphone_id.unique' => 'Smartphone ID is already used',
+            'smartphone_id.required' => 'Smartphone is required',
+            'smartphone_id.exists' => 'Smartphone is not valid',
+            'smartphone_id.unique' => 'Smartphone is already Exists',
         ]);
 
         $validator = Validator::make($request->all(), [
@@ -60,6 +70,16 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
         }
 
         try {
+
+            $total_price = (float) $validated_req['selling_price'];
+
+            if (isset($validated_req['additional_fee'])) {
+                foreach ($validated_req['additional_fee'] as $fee) {
+                    $total_price += (float) $fee['amount'];
+                }
+            }
+
+            $validated_req['total_price'] = $total_price;
             $created = $this->smartphone_for_sale->create($validated_req);
             if (empty($created)) {
                 throw new Exception('Something Went Wrong While Creating Smartphone For Sale');
@@ -79,11 +99,11 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
 
     public function updateSmartphoneForSale(Request $request, string $id)
     {
-
         $validated_req = $request->validate([
             'smartphone_id' => ['required', 'exists:smartphones,id', 'unique:smartphone_for_sales,smartphone_id,'.$id],
             'selling_price' => ['required', 'numeric', 'min:1'],
             'additional_fee' => ['nullable', 'array'],
+
         ], [
             'smartphone_id.required' => 'Smartphone ID is required',
             'smartphone_id.exists' => 'Smartphone ID is not valid',
@@ -116,6 +136,16 @@ class SmartphoneForSaleRepository implements ISmartphoneForSaleRepository
             if (empty($smartphone_for_sale)) {
                 throw new Exception('Smartphone For Sale Not Found');
             }
+
+            $total_price = (float) $validated_req['selling_price'];
+
+            if (isset($validated_req['additional_fee'])) {
+                foreach ($validated_req['additional_fee'] as $fee) {
+                    $total_price += (float) $fee['amount'];
+                }
+            }
+
+            $validated_req['total_price'] = $total_price;
 
             $updated = $smartphone_for_sale->update($validated_req);
             if (! $updated) {
