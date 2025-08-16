@@ -116,7 +116,36 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string $short_description
+ * @property array<array-key, mixed> $thumbnail
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read mixed $thumbnail_url
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereShortDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereThumbnail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUpdatedAt($value)
+ */
+	class Category extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $user_id
+ * @property string $address
+ * @property string $bank_account_no
  * @property string $type
  * @property string $referral_code
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -126,6 +155,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereBankAccountNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereReferralCode($value)

@@ -6,6 +6,8 @@ use App\Repositories\Batches\Interface\IBatchRepository;
 use App\Repositories\Batches\Repository\BatchRepository;
 use App\Repositories\Bookmarks\Interface\IBookmarkRepository;
 use App\Repositories\Bookmarks\Repository\BookmarkRepository;
+use App\Repositories\Categories\Interface\ICategoryRepository;
+use App\Repositories\Categories\Repository\CategoryRepository;
 use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use App\Repositories\Collaborators\Repository\CollaboratorRepository;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
@@ -44,6 +46,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(IBatchRepository::class, BatchRepository::class);
         $this->app->bind(IInventoryRepository::class, InventoryRepository::class);
         $this->app->bind(ISmartphoneForSaleRepository::class, SmartphoneForSaleRepository::class);
+        $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
     }
 
     /**

@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ collaborators }) {
+export default function index({ categories }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -30,69 +30,38 @@ export default function index({ collaborators }) {
     });
 
     const [columns, setColumns] = useState([]);
-    const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'user.name', label: 'Collaborator Name' },
-            { key: 'user.email', label: 'Collaborator Email' },
-            { key: 'user.phone', label: 'Collaborator Phone' },
+            { key: 'name', label: 'Category Name' },
+            { key: 'short_description', label: 'Category Short Description' },
             {
-                key: 'type',
-                label: 'Collaborator Company',
-                badge: (value) => 'rounded-lg bg-blue-500 p-2 text-white',
-            },
-            {
-                key: 'referral_code',
-                label: 'Collaborator Referral Code',
-                badge: (value) => 'rounded-lg bg-blue-500 p-2 text-white',
-            },
-            {
-                key: 'address',
-                label: 'Collaborator Address',
-            },
-
-            {
-                key: 'bank_account_no',
-                label: 'Collaborator Bank Account No',
-            },
-
-            {
-                label: 'Collaborator Status',
+                label: 'Category Status',
                 render: (item) => {
-                    if (item.user.is_active != 1) {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In-Active</span>
-                        );
-                    }
-
-                    return <span className="rounded-lg bg-green-500 p-2 text-white">Active</span>;
+                    return (
+                        <span
+                            className={`${item.is_active == 1 ? 'bg-green-500' : 'bg-red-500'} rounded-lg p-2 text-white`}
+                        >
+                            {item.is_active == 1 ? 'Active' : 'In-Active'}
+                        </span>
+                    );
                 },
             },
             { key: 'added_at', label: 'Added At' },
         ];
 
-        const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.collaborators.show', item?.id),
-            },
-        ];
-
-        setActions(customActions);
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Collaborators" />
+                <Head title="Categories" />
 
                 <BreadCrumb
-                    header={'Collaborators'}
+                    header={'Categories'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Collaborators'}
+                    child={'Categories'}
                 />
 
                 <Card
@@ -100,8 +69,8 @@ export default function index({ collaborators }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create Collaborator'}
-                                    URL={route('dashboard.collaborators.create')}
+                                    Text={'Create Category'}
+                                    URL={route('dashboard.categories.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -129,16 +98,15 @@ export default function index({ collaborators }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.collaborators.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.collaborators.destroy'}
-                                EditRoute={'dashboard.collaborators.edit'}
-                                SearchRoute={'dashboard.collaborators.index'}
+                                BulkDeleteRoute={'dashboard.categories.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.categories.destroy'}
+                                EditRoute={'dashboard.categories.edit'}
+                                SearchRoute={'dashboard.categories.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
-                                items={collaborators}
+                                items={categories}
                                 props={props}
                                 columns={columns}
-                                customActions={actions}
                             />
                         </>
                     }

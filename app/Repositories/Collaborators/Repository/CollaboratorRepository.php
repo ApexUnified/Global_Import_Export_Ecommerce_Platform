@@ -57,6 +57,8 @@ class CollaboratorRepository implements ICollaboratorRepository
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
+            'address' => ['required', 'string', 'max:255'],
+            'bank_account_no' => ['required', 'string', 'max:255'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
@@ -86,6 +88,8 @@ class CollaboratorRepository implements ICollaboratorRepository
                 'type' => $validated_req['type'],
                 'referral_code' => $referral_code,
                 'user_id' => $user->id,
+                'address' => $validated_req['address'],
+                'bank_account_no' => $validated_req['bank_account_no'],
             ]);
 
             if (empty($collaborator)) {
@@ -150,6 +154,8 @@ class CollaboratorRepository implements ICollaboratorRepository
                 []
             ),
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$user->id],
+            'address' => ['required', 'string', 'max:255'],
+            'bank_account_no' => ['required', 'string', 'max:255'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
@@ -173,6 +179,8 @@ class CollaboratorRepository implements ICollaboratorRepository
 
             $collaborator_updated = $collaborator->update([
                 'type' => $validated_req['type'],
+                'address' => $validated_req['address'],
+                'bank_account_no' => $validated_req['bank_account_no'],
 
             ]);
 

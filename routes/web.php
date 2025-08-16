@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
 use App\Http\Controllers\Dashboard\CollaboratorController;
@@ -73,6 +74,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Smartphone For Sale Routes
         Route::resource('/smartphone-for-sales', SmartphoneForSaleController::class)->except(['show']);
         Route::delete('/smartphone-for-sales-destroy-by-selection', [SmartphoneForSaleController::class, 'destroyBySelection'])->name('smartphone-for-sales.destroybyselection');
+
+        // Category Routes
+        Route::resource('/categories', CategoryController::class);
+        Route::delete('/categories-destroy-by-selection', [CategoryController::class, 'destroyBySelection'])->name('categories.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {

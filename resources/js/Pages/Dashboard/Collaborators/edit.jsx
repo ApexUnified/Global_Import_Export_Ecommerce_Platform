@@ -18,6 +18,8 @@ export default function edit({ collaborator }) {
         password_confirmation: '',
         is_active: collaborator?.user?.is_active ?? 1,
         type: collaborator?.type || '',
+        address: collaborator?.address || '',
+        bank_account_no: collaborator?.bank_account_no || '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -129,6 +131,49 @@ export default function edit({ collaborator }) {
                                                 />
 
                                                 <Input
+                                                    InputName={'Collaborator Bank Account No'}
+                                                    Error={errors.bank_account_no}
+                                                    Value={data.bank_account_no}
+                                                    Action={(e) =>
+                                                        setData('bank_account_no', e.target.value)
+                                                    }
+                                                    Placeholder={
+                                                        'Enter Collaborator Bank Account No'
+                                                    }
+                                                    Id={'bank_account_no'}
+                                                    Name={'bank_account_no'}
+                                                    Type={'text'}
+                                                    Required={true}
+                                                />
+
+                                                <div>
+                                                    <label
+                                                        htmlFor="address"
+                                                        className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                                                    >
+                                                        Collaborator Address{' '}
+                                                        <span className="text-red-500 dark:text-white">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    <textarea
+                                                        id="address"
+                                                        rows="3"
+                                                        className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
+                                                        placeholder="Enter Collaborator Address here..."
+                                                        value={data.address}
+                                                        onChange={(e) =>
+                                                            setData('address', e.target.value)
+                                                        }
+                                                    ></textarea>
+                                                    {errors.address && (
+                                                        <span className="ml-2 text-red-500 dark:text-white">
+                                                            {errors.address}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <Input
                                                     InputName={'Collaborator Password'}
                                                     Error={errors.password}
                                                     Value={data.password}
@@ -193,7 +238,7 @@ export default function edit({ collaborator }) {
                                             <PrimaryButton
                                                 Text={'Update Collaborator'}
                                                 Type={'submit'}
-                                                CustomClass={'w-[200px] '}
+                                                CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
@@ -201,6 +246,8 @@ export default function edit({ collaborator }) {
                                                     data.is_active === '' ||
                                                     data.phone.trim() === '' ||
                                                     data.type.trim() === '' ||
+                                                    data.address.trim() === '' ||
+                                                    data.bank_account_no.trim() === '' ||
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() === '') ||
                                                     (data.password.trim() === '' &&
@@ -211,6 +258,10 @@ export default function edit({ collaborator }) {
                                                             data.password_confirmation.trim()) ||
                                                     (data.name.trim() ===
                                                         collaborator?.user?.name.trim() &&
+                                                        data.address.trim() ===
+                                                            collaborator?.address.trim() &&
+                                                        data.bank_account_no.trim() ===
+                                                            collaborator?.bank_account_no.trim() &&
                                                         data.email.trim() ===
                                                             collaborator?.user?.email.trim() &&
                                                         data.phone.trim() ===

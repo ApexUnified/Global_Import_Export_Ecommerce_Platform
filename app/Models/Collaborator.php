@@ -10,6 +10,8 @@ class Collaborator extends Model
         'type',
         'referral_code',
         'user_id',
+        'address',
+        'bank_account_no',
     ];
 
     protected $appends = ['added_at'];
