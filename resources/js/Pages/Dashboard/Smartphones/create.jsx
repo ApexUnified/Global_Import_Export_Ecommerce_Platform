@@ -11,12 +11,13 @@ import FileUploaderInput from '@/Components/FileUploaderInput';
 import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 import Toast from '@/Components/Toast';
 
-export default function create({ colors, model_names, capacities }) {
+export default function create({ colors, model_names, capacities, categories }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         model_name_id: '',
         capacity_id: '',
         color_ids: [],
+        category_id: '',
         upc: '',
         images: [],
     });
@@ -113,6 +114,21 @@ export default function create({ colors, model_names, capacities }) {
                                                     Placeholder={'Select Capacity'}
                                                     Action={(value) => {
                                                         setData('capacity_id', value);
+                                                    }}
+                                                />
+
+                                                <SelectInput
+                                                    InputName={'Category'}
+                                                    Id={'category_id'}
+                                                    Name={'category_id'}
+                                                    items={categories}
+                                                    itemKey={'name'}
+                                                    Value={data.category_id}
+                                                    Error={errors.category_id}
+                                                    Required={true}
+                                                    Placeholder={'Select Category'}
+                                                    Action={(value) => {
+                                                        setData('category_id', value);
                                                     }}
                                                 />
 
@@ -215,7 +231,8 @@ export default function create({ colors, model_names, capacities }) {
                                                     data.capacity_id === '' ||
                                                     data.color_ids.length === 0 ||
                                                     data.upc.trim() === '' ||
-                                                    data.images?.length === 0
+                                                    data.images?.length === 0 ||
+                                                    data.category_id === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

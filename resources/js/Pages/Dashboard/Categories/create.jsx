@@ -9,12 +9,13 @@ import React from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
 
-export default function create() {
+export default function create({ distributors }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         short_description: '',
         thumbnail: '',
+        distributor_id: '',
         is_active: 1,
     });
 
@@ -80,6 +81,20 @@ export default function create() {
                                                 />
 
                                                 <SelectInput
+                                                    InputName={'Category Distributor'}
+                                                    Id={'distributor_id'}
+                                                    Name={'distributor_id'}
+                                                    Error={errors.distributor_id}
+                                                    items={distributors}
+                                                    itemKey={'name'}
+                                                    Value={data.distributor_id}
+                                                    Required={true}
+                                                    Action={(value) =>
+                                                        setData('distributor_id', value)
+                                                    }
+                                                />
+
+                                                <SelectInput
                                                     InputName={'Category Status'}
                                                     Id={'is_active'}
                                                     Name={'is_active'}
@@ -106,7 +121,7 @@ export default function create() {
                                                     </label>
                                                     <textarea
                                                         id="short_description"
-                                                        rows="3"
+                                                        rows="1"
                                                         className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
                                                         placeholder="Enter Category Short Description here..."
                                                         value={data.short_description}
@@ -123,7 +138,9 @@ export default function create() {
                                                         </span>
                                                     )}
                                                 </div>
+                                            </div>
 
+                                            <div className="col-span-1 grid gap-4">
                                                 <FileUploaderInput
                                                     InputName={'Category Thumbnail'}
                                                     Id={'thumbnail'}

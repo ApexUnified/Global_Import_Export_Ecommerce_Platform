@@ -48,7 +48,7 @@ class SettingRepository implements ISettingRepository
             ...($request->hasFile('app_main_logo_light') ? ['app_main_logo_light' => 'nullable|mimes:png|max:2048'] : []),
             ...($request->hasFile('app_favicon') ? ['app_favicon' => 'nullable|mimes:jpg,jpeg,png|max:2048'] : []),
         ], [
-            'contact_number.regex' => 'The Contact Number must be a valid number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'contact_number.regex' => 'The Contact Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
 
         try {
@@ -203,7 +203,7 @@ class SettingRepository implements ISettingRepository
     // Role Setting
     public function getAllRoles()
     {
-        $roles = $this->role->latest()->paginate(10);
+        $roles = $this->role->orderBy('id', 'asc')->paginate(10);
 
         return $roles;
     }
@@ -248,8 +248,8 @@ class SettingRepository implements ISettingRepository
         ]);
 
         try {
-            $system_defined_role_ids = [1, 2, 3, 4];
-            $system_defined_role_names = ['Admin', 'Customer', 'Collaborator', 'Supplier'];
+            $system_defined_role_ids = [1, 2, 3, 4, 5];
+            $system_defined_role_names = ['Admin', 'Customer', 'Collaborator', 'Supplier', 'Distributor'];
 
             $role = $this->getSingleRole($id);
             if (empty($role)) {
@@ -280,7 +280,7 @@ class SettingRepository implements ISettingRepository
     {
         try {
 
-            $system_defined_role_ids = [1, 2, 3, 4];
+            $system_defined_role_ids = [1, 2, 3, 4, 5];
             if (in_array($id, $system_defined_role_ids)) {
                 throw new Exception('System Defined Role Can Not Be Deleted');
             }
@@ -315,7 +315,7 @@ class SettingRepository implements ISettingRepository
                 throw new Exception('Please Select Atleast One Role');
             }
 
-            $system_defined_role_ids = [1, 2, 3, 4];
+            $system_defined_role_ids = [1, 2, 3, 4, 5];
 
             foreach ($ids as $id) {
                 if (in_array($id, $system_defined_role_ids)) {

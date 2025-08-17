@@ -13,6 +13,7 @@ class Smartphone extends Model
         'model_name_id',
         'capacity_id',
         'color_ids',
+        'category_id',
         'upc',
         'images',
     ];
@@ -57,6 +58,11 @@ class Smartphone extends Model
     public function selling_info(): HasOne
     {
         return $this->hasOne(SmartphoneForSale::class, 'smartphone_id', 'id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
     // Casting

@@ -5,7 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 
 export default function edit({ user, roles }) {
@@ -20,6 +20,14 @@ export default function edit({ user, roles }) {
         is_active: user.is_active ?? 1,
         company_name: user.supplier?.company_name || '',
         type: user?.collaborator?.type || '',
+        address:
+            (user?.collaborator && user?.collaborator?.address) ||
+            (user?.distributor && user?.distributor?.address) ||
+            '',
+        bank_account_no:
+            (user?.collaborator && user?.collaborator?.bank_account_no) ||
+            (user?.distributor && user?.distributor?.bank_account_no) ||
+            '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -30,6 +38,15 @@ export default function edit({ user, roles }) {
         e.preventDefault();
         put(route('dashboard.users.update', user.id));
     };
+
+    useEffect(() => {
+        if (data.role_id != user.roles[0]?.id) {
+            setData('company_name', '');
+            setData('type', '');
+            setData('address', '');
+            setData('bank_account_no', '');
+        }
+    }, [data.role_id]);
 
     return (
         <>
@@ -167,21 +184,109 @@ export default function edit({ user, roles }) {
                                                 )}
 
                                                 {data.role_id === 3 && (
-                                                    <SelectInput
-                                                        InputName={'Collaborator Type'}
-                                                        Id={'type'}
-                                                        Name={'type'}
-                                                        Value={data.type}
-                                                        items={[
-                                                            { name: 'Company' },
-                                                            { name: 'Indivisual' },
-                                                        ]}
-                                                        Error={errors.type}
-                                                        Placeholder={'Select Collaborator Type'}
-                                                        Required={data.role_id === 3}
-                                                        itemKey={'name'}
-                                                        Action={(value) => setData('type', value)}
-                                                    />
+                                                    <>
+                                                        <SelectInput
+                                                            InputName={'Collaborator Type'}
+                                                            Id={'type'}
+                                                            Name={'type'}
+                                                            Value={data.type}
+                                                            items={[
+                                                                { name: 'Company' },
+                                                                { name: 'Indivisual' },
+                                                            ]}
+                                                            Error={errors.type}
+                                                            Placeholder={'Select Collaborator Type'}
+                                                            Required={data.role_id === 3}
+                                                            itemKey={'name'}
+                                                            Action={(value) =>
+                                                                setData('type', value)
+                                                            }
+                                                        />
+
+                                                        <div>
+                                                            <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                                Address{' '}
+                                                                <span className="text-red-500 dark:text-white">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                            <textarea
+                                                                rows={3}
+                                                                value={data?.address}
+                                                                placeholder="Enter Address"
+                                                                className={`dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden $ mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800`}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'address',
+                                                                        e.target.value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <Input
+                                                            InputName={'Bank Account Number'}
+                                                            Id={'bank_account_number'}
+                                                            Error={errors.bank_account_no}
+                                                            Name={'bank_account_no'}
+                                                            Type={'text'}
+                                                            Value={data.bank_account_no}
+                                                            Placeholder={
+                                                                'Enter Bank Account Number'
+                                                            }
+                                                            Required={data.role_id === 3}
+                                                            Action={(e) =>
+                                                                setData(
+                                                                    'bank_account_no',
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
+
+                                                {data.role_id === 5 && (
+                                                    <>
+                                                        <div>
+                                                            <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                                Address{' '}
+                                                                <span className="text-red-500 dark:text-white">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                            <textarea
+                                                                rows={3}
+                                                                value={data?.address}
+                                                                placeholder="Enter Address"
+                                                                className={`dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden $ mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800`}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'address',
+                                                                        e.target.value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <Input
+                                                            InputName={'Bank Account Number'}
+                                                            Id={'bank_account_number'}
+                                                            Error={errors.bank_account_no}
+                                                            Name={'bank_account_no'}
+                                                            Type={'text'}
+                                                            Value={data.bank_account_no}
+                                                            Placeholder={
+                                                                'Enter Bank Account Number'
+                                                            }
+                                                            Required={data.role_id === 5}
+                                                            Action={(e) =>
+                                                                setData(
+                                                                    'bank_account_no',
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                        />
+                                                    </>
                                                 )}
 
                                                 <SelectInput
@@ -236,6 +341,17 @@ export default function edit({ user, roles }) {
                                                         data.company_name.trim() === '') ||
                                                     (data.role_id === 3 &&
                                                         data.type.trim() === '') ||
+                                                    (data.role_id === 3 &&
+                                                        data.address.trim() === '') ||
+                                                    (data.role_id === 3 &&
+                                                        data.bank_account_no.trim() === '') ||
+                                                    (data.role_id === 5 &&
+                                                        data.address.trim() === '') ||
+                                                    (data.role_id === 5 &&
+                                                        data.bank_account_no.trim() === '') ||
+                                                    (data.role_id === 5 &&
+                                                        data.address.trim() === '' &&
+                                                        data.bank_account_no.trim() === '') ||
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() === '') ||
                                                     (data.password.trim() === '' &&
@@ -265,7 +381,23 @@ export default function edit({ user, roles }) {
                                                         data.password.trim() === '' &&
                                                         data.password_confirmation.trim() === '' &&
                                                         data.type.trim() ===
-                                                            user?.collaborator?.type.trim())
+                                                            user?.collaborator?.type.trim() &&
+                                                        data.address.trim() ==
+                                                            user?.collaborator?.address.trim() &&
+                                                        data.bank_account_no ==
+                                                            user?.collaborator?.bank_account_no) ||
+                                                    (data.role_id === 5 &&
+                                                        data.name.trim() === user.name.trim() &&
+                                                        data.email.trim() === user.email.trim() &&
+                                                        data.phone.trim() === user.phone.trim() &&
+                                                        data.role_id === user.roles[0].id &&
+                                                        data.is_active === user.is_active &&
+                                                        data.password.trim() === '' &&
+                                                        data.password_confirmation.trim() === '' &&
+                                                        data.address.trim() ==
+                                                            user?.distributor?.address.trim() &&
+                                                        data.bank_account_no ==
+                                                            user?.distributor?.bank_account_no)
                                                 }
                                                 Spinner={processing}
                                                 Icon={

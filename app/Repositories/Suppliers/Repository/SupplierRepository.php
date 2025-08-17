@@ -58,7 +58,7 @@ class SupplierRepository implements ISupplierRepository
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
 
         try {
@@ -148,7 +148,7 @@ class SupplierRepository implements ISupplierRepository
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$user->id],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
 
         try {

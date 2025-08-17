@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ],
             [
-                'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+                'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             ]);
 
         $user = User::create([

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Repositories\Categories\Interface\ICategoryRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,7 +23,9 @@ class CategoryController extends Controller
 
     public function create()
     {
-        return Inertia::render('Dashboard/Categories/create');
+        $distributors = $this->category->getDistributors();
+
+        return Inertia::render('Dashboard/Categories/create', compact('distributors'));
     }
 
     public function store(Request $request)
@@ -63,7 +66,9 @@ class CategoryController extends Controller
             return back()->with('error', 'Category Not found');
         }
 
-        return Inertia::render('Dashboard/Categories/edit', compact('category'));
+        $distributors = $this->category->getDistributors();
+
+        return Inertia::render('Dashboard/Categories/edit', compact('category', 'distributors'));
     }
 
     public function update(Request $request, string $id)

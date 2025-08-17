@@ -9,7 +9,7 @@ import React from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
 
-export default function edit({ category }) {
+export default function edit({ category, distributors }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         _method: 'PUT',
@@ -18,6 +18,7 @@ export default function edit({ category }) {
         thumbnail: category.thumbnail || '',
         is_active: category.is_active ?? 1,
         is_thumbnail_removed: false,
+        distributor_id: category.distributor_id || '',
     });
 
     // Edit Data Form Request
@@ -82,6 +83,20 @@ export default function edit({ category }) {
                                                 />
 
                                                 <SelectInput
+                                                    InputName={'Category Distributor'}
+                                                    Id={'distributor_id'}
+                                                    Name={'distributor_id'}
+                                                    Error={errors.distributor_id}
+                                                    items={distributors}
+                                                    itemKey={'name'}
+                                                    Value={data.distributor_id}
+                                                    Required={true}
+                                                    Action={(value) =>
+                                                        setData('distributor_id', value)
+                                                    }
+                                                />
+
+                                                <SelectInput
                                                     InputName={'Category Status'}
                                                     Id={'is_active'}
                                                     Name={'is_active'}
@@ -125,7 +140,9 @@ export default function edit({ category }) {
                                                         </span>
                                                     )}
                                                 </div>
+                                            </div>
 
+                                            <div className="col-span-1 grid gap-4">
                                                 <FileUploaderInput
                                                     InputName={'Category Thumbnail'}
                                                     Id={'thumbnail'}
@@ -169,11 +186,14 @@ export default function edit({ category }) {
                                                     data.name.trim() == '' ||
                                                     data.short_description.trim() === '' ||
                                                     data.thumbnail === '' ||
+                                                    data.distributor_id === '' ||
                                                     (data.name.trim() == category.name &&
                                                         data.short_description.trim() ==
                                                             category.short_description &&
                                                         data.is_active == category.is_active &&
-                                                        data.thumbnail == category.thumbnail)
+                                                        data.thumbnail == category.thumbnail &&
+                                                        data.distributor_id ==
+                                                            category.distributor_id)
                                                 }
                                                 Spinner={processing}
                                                 Icon={

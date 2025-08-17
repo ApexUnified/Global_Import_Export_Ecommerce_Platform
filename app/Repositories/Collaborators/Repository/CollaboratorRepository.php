@@ -26,6 +26,7 @@ class CollaboratorRepository implements ICollaboratorRepository
             ->when(! empty($request->input('search')), function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
                     $query->where('type', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('bank_account_no', 'like', '%'.$request->input('search').'%')
                         ->orWhereHas('user', function ($subQ) use ($request) {
                             $subQ->where('name', 'like', '%'.$request->input('search').'%')
                                 ->orWhere('email', 'like', '%'.$request->input('search').'%')
@@ -59,9 +60,10 @@ class CollaboratorRepository implements ICollaboratorRepository
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
+            'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'type.required' => 'The Collaborator Type Field Is Required.',
             'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
@@ -90,6 +92,7 @@ class CollaboratorRepository implements ICollaboratorRepository
                 'user_id' => $user->id,
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
+                'point_accumulation_rate' => $validated_req['point_accumulation_rate'],
             ]);
 
             if (empty($collaborator)) {
@@ -156,9 +159,10 @@ class CollaboratorRepository implements ICollaboratorRepository
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$user->id],
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
+            'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'type.required' => 'The Collaborator Type Field Is Required.',
             'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
@@ -181,6 +185,7 @@ class CollaboratorRepository implements ICollaboratorRepository
                 'type' => $validated_req['type'],
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
+                'point_accumulation_rate' => $validated_req['point_accumulation_rate'],
 
             ]);
 

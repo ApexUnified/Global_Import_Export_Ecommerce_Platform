@@ -2,7 +2,7 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
@@ -30,10 +30,33 @@ export default function index({ categories }) {
     });
 
     const [columns, setColumns] = useState([]);
+    const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'name', label: 'Category Name' },
-            { key: 'short_description', label: 'Category Short Description' },
+            {
+                label: 'Category Name',
+                render: (item) => {
+                    return (
+                        <Link
+                            className="text-blue-500 underline"
+                            href={route('dashboard.categories.show', item.id)}
+                        >
+                            {item.name}
+                        </Link>
+                    );
+                },
+            },
+            {
+                label: 'Category Short Description',
+                render: (item) => {
+                    return <span className="w-[200px] break-words">{item.short_description}</span>;
+                },
+            },
+            {
+                key: 'distributor.user.name',
+                label: 'Distributor Name',
+                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
+            },
             {
                 label: 'Category Status',
                 render: (item) => {
@@ -49,6 +72,15 @@ export default function index({ categories }) {
             { key: 'added_at', label: 'Added At' },
         ];
 
+        const customActions = [
+            {
+                label: 'View',
+                type: 'link',
+                href: (item) => route('dashboard.categories.show', item?.id),
+            },
+        ];
+
+        setActions(customActions);
         setColumns(columns);
     }, []);
 
@@ -106,6 +138,7 @@ export default function index({ categories }) {
                                 DefaultSearchInput={true}
                                 items={categories}
                                 props={props}
+                                customActions={actions}
                                 columns={columns}
                             />
                         </>

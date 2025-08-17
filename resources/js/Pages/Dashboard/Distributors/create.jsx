@@ -17,10 +17,8 @@ export default function create() {
         password: '',
         password_confirmation: '',
         is_active: 1,
-        type: '',
         address: '',
         bank_account_no: '',
-        point_accumulation_rate: '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -29,19 +27,19 @@ export default function create() {
     // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        post(route('dashboard.collaborators.store'));
+        post(route('dashboard.distributors.store'));
     };
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Collaborators" />
+                <Head title="Distributors" />
 
                 <BreadCrumb
-                    header={'Create Collaborator'}
-                    parent={'Collaborators'}
-                    parent_link={route('dashboard.collaborators.index')}
-                    child={'Create Collaborator'}
+                    header={'Create Distributor'}
+                    parent={'Distributors'}
+                    parent_link={route('dashboard.distributors.index')}
+                    child={'Create Distributors'}
                 />
 
                 <Card
@@ -49,8 +47,8 @@ export default function create() {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Collaborators'}
-                                    URL={route('dashboard.collaborators.index')}
+                                    Text={'Back To Distributors'}
+                                    URL={route('dashboard.distributors.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -76,11 +74,11 @@ export default function create() {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Collaborator Name'}
+                                                    InputName={'Distributor Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Collaborator Name'}
+                                                    Placeholder={'Enter Distributor Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -88,11 +86,11 @@ export default function create() {
                                                 />
 
                                                 <Input
-                                                    InputName={'Collaborator Email'}
+                                                    InputName={'Distributor Email'}
                                                     Error={errors.email}
                                                     Value={data.email}
                                                     Action={(e) => setData('email', e.target.value)}
-                                                    Placeholder={'Enter Collaborator Email'}
+                                                    Placeholder={'Enter Distributor Email'}
                                                     Id={'email'}
                                                     Name={'email'}
                                                     Type={'email'}
@@ -101,13 +99,13 @@ export default function create() {
 
                                                 <div className="mb-5">
                                                     <Input
-                                                        InputName={'Collaborator Phone'}
+                                                        InputName={'Distributor Phone'}
                                                         Error={errors.phone}
                                                         Value={data.phone}
                                                         Action={(e) =>
                                                             setData('phone', e.target.value)
                                                         }
-                                                        Placeholder={'Enter Collaborator Phone'}
+                                                        Placeholder={'Enter Distributor Phone'}
                                                         Id={'phone'}
                                                         Name={'phone'}
                                                         Type={'text'}
@@ -115,31 +113,15 @@ export default function create() {
                                                     />
                                                 </div>
 
-                                                <SelectInput
-                                                    InputName={'Collaborator Type'}
-                                                    Error={errors.type}
-                                                    Id={'type'}
-                                                    Name={'type'}
-                                                    Value={data.type}
-                                                    Action={(value) => setData('type', value)}
-                                                    Placeholder={'Select Collaborator Type'}
-                                                    Required={true}
-                                                    items={[
-                                                        { name: 'Company' },
-                                                        { name: 'Indivisual' },
-                                                    ]}
-                                                    itemKey={'name'}
-                                                />
-
                                                 <Input
-                                                    InputName={'Collaborator Bank Account No'}
+                                                    InputName={'Distributor Bank Account No'}
                                                     Error={errors.bank_account_no}
                                                     Value={data.bank_account_no}
                                                     Action={(e) =>
                                                         setData('bank_account_no', e.target.value)
                                                     }
                                                     Placeholder={
-                                                        'Enter Collaborator Bank Account No'
+                                                        'Enter Distributor Bank Account No'
                                                     }
                                                     Id={'bank_account_no'}
                                                     Name={'bank_account_no'}
@@ -152,7 +134,7 @@ export default function create() {
                                                         htmlFor="address"
                                                         className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                                                     >
-                                                        Collaborator Address{' '}
+                                                        Distributor Address{' '}
                                                         <span className="text-red-500 dark:text-white">
                                                             *
                                                         </span>
@@ -161,7 +143,7 @@ export default function create() {
                                                         id="address"
                                                         rows="3"
                                                         className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
-                                                        placeholder="Enter Collaborator Address here..."
+                                                        placeholder="Enter Distributor Address here..."
                                                         value={data.address}
                                                         onChange={(e) =>
                                                             setData('address', e.target.value)
@@ -175,13 +157,13 @@ export default function create() {
                                                 </div>
 
                                                 <Input
-                                                    InputName={'Collaborator Password'}
+                                                    InputName={'Distributor Password'}
                                                     Error={errors.password}
                                                     Value={data.password}
                                                     Action={(e) =>
                                                         setData('password', e.target.value)
                                                     }
-                                                    Placeholder={'Enter Collaborator Password'}
+                                                    Placeholder={'Enter Distributor Password'}
                                                     Id={'password'}
                                                     Name={'password'}
                                                     Type={'password'}
@@ -191,7 +173,7 @@ export default function create() {
                                                 />
 
                                                 <Input
-                                                    InputName={'Collaborator Password Confirmation'}
+                                                    InputName={'Distributor Password Confirmation'}
                                                     Error={errors.password_confirmation}
                                                     Value={data.password_confirmation}
                                                     Action={(e) =>
@@ -201,7 +183,7 @@ export default function create() {
                                                         )
                                                     }
                                                     Placeholder={
-                                                        'Enter Collaborator Password Confirmation'
+                                                        'Enter Distributor Password Confirmation'
                                                     }
                                                     Id={'password_confirmation'}
                                                     Name={'password_confirmation'}
@@ -212,33 +194,6 @@ export default function create() {
                                                         setTogglePasswordConfirmation
                                                     }
                                                 />
-
-                                                <div className="flex items-center">
-                                                    <Input
-                                                        CustomCss={'w-[40px] mt-5'}
-                                                        Value={'%'}
-                                                        readOnly={true}
-                                                    />
-
-                                                    <Input
-                                                        InputName={'Point Accumulation Rate'}
-                                                        Error={errors.point_accumulation_rate}
-                                                        Id={'point_accumulation_rate'}
-                                                        Name={'point_accumulation_rate'}
-                                                        Value={data.point_accumulation_rate}
-                                                        Action={(e) =>
-                                                            setData(
-                                                                'point_accumulation_rate',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        Placeholder={
-                                                            'Enter Point Accumulation Rate'
-                                                        }
-                                                        Required={false}
-                                                        Type={'number'}
-                                                    />
-                                                </div>
 
                                                 <SelectInput
                                                     InputName={'Active Status'}
@@ -264,7 +219,7 @@ export default function create() {
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Create Collaborator'}
+                                                Text={'Create Distributor'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
                                                 Disabled={
@@ -277,7 +232,6 @@ export default function create() {
                                                     data.is_active === '' ||
                                                     data.password.trim() !==
                                                         data.password_confirmation.trim() ||
-                                                    data.type.trim() === '' ||
                                                     data.address.trim() === '' ||
                                                     data.bank_account_no.trim() === ''
                                                 }

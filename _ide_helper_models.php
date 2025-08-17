@@ -119,16 +119,21 @@ namespace App\Models{
  * @property string $name
  * @property string $slug
  * @property string $short_description
- * @property array<array-key, mixed> $thumbnail
+ * @property array<array-key, mixed>|null $thumbnail
+ * @property int|null $distributor_id
  * @property int $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Distributor|null $distributor
  * @property-read mixed $added_at
  * @property-read mixed $thumbnail_url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Smartphone> $smartphones
+ * @property-read int|null $smartphones_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereDistributorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
@@ -146,6 +151,7 @@ namespace App\Models{
  * @property int $user_id
  * @property string $address
  * @property string $bank_account_no
+ * @property string|null $point_accumulation_rate
  * @property string $type
  * @property string $referral_code
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -159,6 +165,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereBankAccountNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator wherePointAccumulationRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereReferralCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereUpdatedAt($value)
@@ -209,6 +216,31 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereUpdatedAt($value)
  */
 	class Currency extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $address
+ * @property string $bank_account_no
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Category> $categories
+ * @property-read int|null $categories_count
+ * @property-read mixed $added_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereBankAccountNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereUserId($value)
+ */
+	class Distributor extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -404,11 +436,13 @@ namespace App\Models{
  * @property array<array-key, mixed> $color_ids
  * @property int|null $model_name_id
  * @property int|null $capacity_id
+ * @property int|null $category_id
  * @property string $upc
  * @property array<array-key, mixed>|null $images
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Capacity|null $capacity
+ * @property-read \App\Models\Category|null $category
  * @property-read mixed $added_at
  * @property-read mixed $colors
  * @property-read mixed $smartphone_image_urls
@@ -420,6 +454,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCapacityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereColorIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone whereId($value)
@@ -547,6 +582,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $bookMarkedPosts
  * @property-read int|null $book_marked_posts_count
  * @property-read \App\Models\Collaborator|null $collaborator
+ * @property-read \App\Models\Distributor|null $distributor
  * @property-read mixed $added_at
  * @property-read mixed $avatar
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications

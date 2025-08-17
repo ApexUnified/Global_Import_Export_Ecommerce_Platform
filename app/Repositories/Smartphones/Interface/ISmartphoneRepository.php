@@ -23,4 +23,6 @@ interface ISmartphoneRepository
     public function getModelNames();
 
     public function getCapacities();
+
+    public function getCategories();
 }

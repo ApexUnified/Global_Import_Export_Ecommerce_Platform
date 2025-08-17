@@ -19,6 +19,8 @@ export default function create({ roles }) {
         is_active: 1,
         company_name: '',
         type: '',
+        address: '',
+        bank_account_no: '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -166,21 +168,109 @@ export default function create({ roles }) {
                                                 )}
 
                                                 {data.role_id === 3 && (
-                                                    <SelectInput
-                                                        InputName={'Collaborator Type'}
-                                                        Id={'type'}
-                                                        Name={'type'}
-                                                        Value={data.type}
-                                                        items={[
-                                                            { name: 'Company' },
-                                                            { name: 'Indivisual' },
-                                                        ]}
-                                                        Error={errors.type}
-                                                        Placeholder={'Select Collaborator Type'}
-                                                        Required={data.role_id === 3}
-                                                        itemKey={'name'}
-                                                        Action={(value) => setData('type', value)}
-                                                    />
+                                                    <>
+                                                        <SelectInput
+                                                            InputName={'Collaborator Type'}
+                                                            Id={'type'}
+                                                            Name={'type'}
+                                                            Value={data.type}
+                                                            items={[
+                                                                { name: 'Company' },
+                                                                { name: 'Indivisual' },
+                                                            ]}
+                                                            Error={errors.type}
+                                                            Placeholder={'Select Collaborator Type'}
+                                                            Required={data.role_id === 3}
+                                                            itemKey={'name'}
+                                                            Action={(value) =>
+                                                                setData('type', value)
+                                                            }
+                                                        />
+
+                                                        <div>
+                                                            <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                                Address{' '}
+                                                                <span className="text-red-500 dark:text-white">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                            <textarea
+                                                                rows={3}
+                                                                value={data?.address}
+                                                                placeholder="Enter Address"
+                                                                className={`dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden $ mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800`}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'address',
+                                                                        e.target.value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <Input
+                                                            InputName={'Bank Account Number'}
+                                                            Id={'bank_account_number'}
+                                                            Error={errors.bank_account_no}
+                                                            Name={'bank_account_no'}
+                                                            Type={'text'}
+                                                            Value={data.bank_account_no}
+                                                            Placeholder={
+                                                                'Enter Bank Account Number'
+                                                            }
+                                                            Required={data.role_id === 3}
+                                                            Action={(e) =>
+                                                                setData(
+                                                                    'bank_account_no',
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
+
+                                                {data.role_id === 5 && (
+                                                    <>
+                                                        <div>
+                                                            <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                                Address{' '}
+                                                                <span className="text-red-500 dark:text-white">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                            <textarea
+                                                                rows={3}
+                                                                value={data?.address}
+                                                                placeholder="Enter Address"
+                                                                className={`dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden $ mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800`}
+                                                                onChange={(e) =>
+                                                                    setData(
+                                                                        'address',
+                                                                        e.target.value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <Input
+                                                            InputName={'Bank Account Number'}
+                                                            Id={'bank_account_number'}
+                                                            Error={errors.bank_account_no}
+                                                            Name={'bank_account_no'}
+                                                            Type={'text'}
+                                                            Value={data.bank_account_no}
+                                                            Placeholder={
+                                                                'Enter Bank Account Number'
+                                                            }
+                                                            Required={data.role_id === 5}
+                                                            Action={(e) =>
+                                                                setData(
+                                                                    'bank_account_no',
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                        />
+                                                    </>
                                                 )}
 
                                                 <SelectInput
@@ -197,6 +287,8 @@ export default function create({ roles }) {
                                                         setData('role_id', value);
                                                         setData('company_name', '');
                                                         setData('type', '');
+                                                        setData('address', '');
+                                                        setData('bank_account_no', '');
                                                     }}
                                                 />
 
@@ -239,7 +331,13 @@ export default function create({ roles }) {
                                                         data.password_confirmation.trim() ||
                                                     (data.role_id === 4 &&
                                                         data.company_name.trim() === '') ||
-                                                    (data.role_id === 3 && data.type.trim() === '')
+                                                    (data.role_id === 3 &&
+                                                        data.type.trim() === '' &&
+                                                        data.address.trim() === '' &&
+                                                        data.bank_account_no.trim() === '') ||
+                                                    (data.role_id === 5 &&
+                                                        data.address.trim() === '' &&
+                                                        data.bank_account_no.trim() === '')
                                                 }
                                                 Spinner={processing}
                                                 Icon={

@@ -11,12 +11,13 @@ import FileUploaderInput from '@/Components/FileUploaderInput';
 import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 import Toast from '@/Components/Toast';
 
-export default function edit({ smartphone, colors, model_names, capacities }) {
+export default function edit({ smartphone, colors, model_names, capacities, categories }) {
     // Create Data Form Data
     const { data, setData, post, reset } = useForm({
         _method: 'PUT',
         model_name_id: smartphone.model_name_id || '',
         capacity_id: smartphone.capacity_id || '',
+        category_id: smartphone.category_id || '',
         color_ids: smartphone.color_ids || [],
         upc: smartphone.upc || '',
         images: [],
@@ -175,6 +176,21 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                                                 />
 
                                                 <SelectInput
+                                                    InputName={'Category'}
+                                                    Id={'category_id'}
+                                                    Name={'category_id'}
+                                                    items={categories}
+                                                    itemKey={'name'}
+                                                    Value={data.category_id}
+                                                    Error={errors.category_id}
+                                                    Required={true}
+                                                    Placeholder={'Select Category'}
+                                                    Action={(value) => {
+                                                        setData('category_id', value);
+                                                    }}
+                                                />
+
+                                                <SelectInput
                                                     InputName={'Colors'}
                                                     Id={'color_ids'}
                                                     Name={'color_ids'}
@@ -274,11 +290,14 @@ export default function edit({ smartphone, colors, model_names, capacities }) {
                                                     data.color_ids.length === 0 ||
                                                     data.upc.trim() === '' ||
                                                     data?.images?.length === 0 ||
+                                                    data.category_id === '' ||
                                                     (data.model_name_id ===
                                                         smartphone.model_name_id &&
                                                         data.capacity_id ===
                                                             smartphone.capacity_id &&
                                                         data.upc.trim() === smartphone.upc &&
+                                                        data.category_id ==
+                                                            smartphone.category_id &&
                                                         !fileChanged)
                                                 }
                                                 Spinner={processing}

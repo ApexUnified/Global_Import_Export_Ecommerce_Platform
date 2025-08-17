@@ -27,8 +27,9 @@ class SmartphoneController extends Controller
         $colors = $this->smartphone->getColors();
         $model_names = $this->smartphone->getModelNames();
         $capacities = $this->smartphone->getCapacities();
+        $categories = $this->smartphone->getCategories();
 
-        return Inertia::render('Dashboard/Smartphones/create', compact('colors', 'model_names', 'capacities'));
+        return Inertia::render('Dashboard/Smartphones/create', compact('colors', 'model_names', 'capacities', 'categories'));
     }
 
     public function store(Request $request)
@@ -72,8 +73,9 @@ class SmartphoneController extends Controller
         $colors = $this->smartphone->getColors();
         $model_names = $this->smartphone->getModelNames();
         $capacities = $this->smartphone->getCapacities();
+        $categories = $this->smartphone->getCategories();
 
-        return Inertia::render('Dashboard/Smartphones/edit', compact('smartphone', 'colors', 'model_names', 'capacities'));
+        return Inertia::render('Dashboard/Smartphones/edit', compact('smartphone', 'colors', 'model_names', 'capacities', 'categories'));
     }
 
     public function update(Request $request, string $id)

@@ -10,6 +10,8 @@ use App\Repositories\Categories\Interface\ICategoryRepository;
 use App\Repositories\Categories\Repository\CategoryRepository;
 use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use App\Repositories\Collaborators\Repository\CollaboratorRepository;
+use App\Repositories\Distributors\Interface\IDistributorRepository;
+use App\Repositories\Distributors\Repository\DistributorRepository;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
 use App\Repositories\Floors\Repository\FloorRepostitory;
 use App\Repositories\Inventories\Interface\IInventoryRepository;
@@ -47,6 +49,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(IInventoryRepository::class, InventoryRepository::class);
         $this->app->bind(ISmartphoneForSaleRepository::class, SmartphoneForSaleRepository::class);
         $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
+        $this->app->bind(IDistributorRepository::class, DistributorRepository::class);
     }
 
     /**

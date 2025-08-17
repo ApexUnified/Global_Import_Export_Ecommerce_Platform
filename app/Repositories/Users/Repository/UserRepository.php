@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\Users\Interface\IUserRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Str;
 
@@ -19,7 +20,7 @@ class UserRepository implements IUserRepository
 
     public function getSingleUser(string $id)
     {
-        $user = $this->user->with(['roles', 'supplier', 'collaborator'])->find($id);
+        $user = $this->user->with(['roles', 'supplier', 'collaborator', 'distributor'])->find($id);
 
         return $user;
     }
@@ -31,7 +32,7 @@ class UserRepository implements IUserRepository
             'email' => 'required|email|unique:users,email,'.$request->user()->id,
             'phone' => 'required|regex:/^\+\d+$/|unique:users,phone,'.$request->user()->id,
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
 
         try {
@@ -176,13 +177,14 @@ class UserRepository implements IUserRepository
             'role_id' => ['required', 'exists:roles,id'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'role_id.exists' => 'The selected role is invalid.',
             'role_id.required' => 'The Role Field Is Required.',
 
         ]);
 
         try {
+            DB::beginTransaction();
             unset($validated_req['role_id']);
 
             $role = $this->role->where('id', $request->input('role_id'))->first();
@@ -202,12 +204,23 @@ class UserRepository implements IUserRepository
             if ($role->name === 'Collaborator') {
                 $request->validate([
                     'type' => ['required', 'in:Company,Indivisual'],
+                    'address' => ['required', 'max:255'],
+                    'bank_account_no' => ['required', 'max:255'],
                 ], [
                     'type.required' => 'The Collaborator Type Field Is Required.',
                     'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
                 ]);
             }
             // Collaborator Logic
+
+            // Distributor Logic
+            if ($role->name === 'Distributor') {
+                $request->validate([
+                    'address' => ['required', 'max:255'],
+                    'bank_account_no' => ['required', 'max:255'],
+                ]);
+            }
+            // Distributor Logic
 
             $created = $this->user->create($validated_req);
             if (empty($created)) {
@@ -223,11 +236,31 @@ class UserRepository implements IUserRepository
             // Collaborator Logic
             if ($role->name === 'Collaborator') {
                 $referral_code = 'Ref-'.Str::random(12);
-                $created->collaborator()->create(['type' => $request->input('type'), 'referral_code' => $referral_code]);
+                $created->collaborator()->create(
+                    [
+                        'type' => $request->input('type'),
+                        'referral_code' => $referral_code,
+                        'bank_account_no' => $request->input('bank_account_no'),
+                        'address' => $request->input('address'),
+                    ]
+                );
             }
             // Collaborator Logic
 
+            // Distributor Logic
+            if ($role->name === 'Distributor') {
+                $created->distributor()->create(
+                    [
+                        'bank_account_no' => $request->input('bank_account_no'),
+                        'address' => $request->input('address'),
+                    ]
+                );
+            }
+            // Distributor Logic
+
             $created->syncRoles($role->name);
+
+            DB::commit();
 
             return [
                 'status' => true,
@@ -235,6 +268,9 @@ class UserRepository implements IUserRepository
             ];
 
         } catch (Exception $e) {
+
+            DB::rollBack();
+
             return [
                 'status' => false,
                 'message' => $e->getMessage(),
@@ -244,6 +280,7 @@ class UserRepository implements IUserRepository
 
     public function updateUser(Request $request, string $id)
     {
+        // dd($request->all());
 
         $validated_req = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -260,13 +297,14 @@ class UserRepository implements IUserRepository
             'role_id' => ['required', 'exists:roles,id'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'phone.regex' => 'The phone must be a valid phone number And Starting With + Country Code - Example: +8801xxxxxxxxx',
+            'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'role_id.exists' => 'The selected role is invalid.',
             'role_id.required' => 'The Role Field Is Required.',
 
         ]);
 
         try {
+            DB::beginTransaction();
             unset($validated_req['role_id']);
 
             $user = $this->getSingleUser($id);
@@ -279,6 +317,36 @@ class UserRepository implements IUserRepository
             if (empty($role)) {
                 throw new Exception('Something Went Wrong While Updating  User');
             }
+
+            // Supplier Logic
+            if ($role->name === 'Supplier') {
+                $request->validate([
+                    'company_name' => ['required', 'max:255'],
+                ]);
+            }
+            // Supplier Logic
+
+            // Collaborator Logic
+            if ($role->name === 'Collaborator') {
+                $request->validate([
+                    'type' => ['required', 'in:Company,Indivisual'],
+                    'address' => ['required', 'max:255'],
+                    'bank_account_no' => ['required', 'max:255'],
+                ], [
+                    'type.required' => 'The Collaborator Type Field Is Required.',
+                    'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
+                ]);
+            }
+            // Collaborator Logic
+
+            // Distributor Logic
+            if ($role->name === 'Distributor') {
+                $request->validate([
+                    'address' => ['required', 'max:255'],
+                    'bank_account_no' => ['required', 'max:255'],
+                ]);
+            }
+            // Distributor Logic
 
             // Supplier Logic
             if ($role->name !== 'Supplier' && $user->supplier()->exists()) {
@@ -312,13 +380,27 @@ class UserRepository implements IUserRepository
 
             if ($role->name === 'Collaborator' && ! $user->collaborator()->exists()) {
                 $referral_code = 'Ref-'.Str::random(12);
-                $user->collaborator()->create(['type' => $request->input('type'), 'referral_code' => $referral_code]);
+                $user->collaborator()->create(['type' => $request->input('type'), 'referral_code' => $referral_code, 'address' => $request->input('address'), 'bank_account_no' => $request->input('bank_account_no')]);
             }
 
             if ($role->name === 'Collaborator' && $user->collaborator()->exists()) {
-                $user->collaborator()->update(['type' => $request->input('type')]);
+                $user->collaborator()->update(['type' => $request->input('type'), 'address' => $request->input('address'), 'bank_account_no' => $request->input('bank_account_no')]);
             }
             // Collaborator Logic
+
+            // Distributor Logic
+            if ($role->name !== 'Distributor' && $user->distributor()->exists()) {
+                $user->distributor()->delete();
+            }
+
+            if ($role->name === 'Distributor' && ! $user->distributor()->exists()) {
+                $user->distributor()->create(['address' => $request->input('address'), 'bank_account_no' => $request->input('bank_account_no')]);
+            }
+
+            if ($role->name === 'Distributor' && $user->distributor()->exists()) {
+                $user->distributor()->update(['address' => $request->input('address'), 'bank_account_no' => $request->input('bank_account_no')]);
+            }
+            // Distributor Logic
 
             $updated = $user->update($validated_req);
 
@@ -328,11 +410,15 @@ class UserRepository implements IUserRepository
 
             $user->syncRoles($role->name);
 
+            DB::commit();
+
             return [
                 'status' => true,
                 'message' => 'User Updated Successfully',
             ];
         } catch (Exception $e) {
+            DB::rollBack();
+
             return [
                 'status' => false,
                 'message' => $e->getMessage(),

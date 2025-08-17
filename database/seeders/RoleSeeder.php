@@ -17,6 +17,7 @@ class RoleSeeder extends Seeder
                 ['name' => 'Customer', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
                 ['name' => 'Collaborator', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
                 ['name' => 'Supplier', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
+                ['name' => 'Distributor', 'guard_name' => 'web', 'description' => $description, 'created_at' => now(), 'updated_at' => now()],
             ];
             Role::insert($roles);
         }

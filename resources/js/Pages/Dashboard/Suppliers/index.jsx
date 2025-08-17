@@ -2,7 +2,7 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
@@ -33,7 +33,19 @@ export default function index({ suppliers }) {
     const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'user.name', label: 'Supplier Name' },
+            {
+                label: 'Supplier Name',
+                render: (item) => {
+                    return (
+                        <Link
+                            href={route('dashboard.suppliers.show', item?.id)}
+                            className="cursor-pointer text-blue-500 underline"
+                        >
+                            {item.user.name}
+                        </Link>
+                    );
+                },
+            },
             { key: 'user.email', label: 'Supplier Email' },
             { key: 'user.phone', label: 'Supplier Phone' },
             { key: 'company_name', label: 'Supplier Company' },

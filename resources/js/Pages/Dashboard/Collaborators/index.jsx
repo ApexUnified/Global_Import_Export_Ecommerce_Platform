@@ -2,7 +2,7 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
@@ -33,12 +33,38 @@ export default function index({ collaborators }) {
     const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'user.name', label: 'Collaborator Name' },
+            {
+                label: 'Collaborator Name',
+                render: (item) => {
+                    return (
+                        <Link
+                            href={route('dashboard.collaborators.show', item?.id)}
+                            className="cursor-pointer text-blue-500 underline"
+                        >
+                            {item.user.name}
+                        </Link>
+                    );
+                },
+            },
             { key: 'user.email', label: 'Collaborator Email' },
             { key: 'user.phone', label: 'Collaborator Phone' },
             {
+                label: 'Point Accumulation Rate',
+                render: (item) => {
+                    if (item.point_accumulation_rate) {
+                        return (
+                            <span className="rounded-lg bg-blue-500 p-2 text-white">
+                                {item.point_accumulation_rate}%
+                            </span>
+                        );
+                    } else {
+                        return 'Default';
+                    }
+                },
+            },
+            {
                 key: 'type',
-                label: 'Collaborator Company',
+                label: 'Collaborator Type',
                 badge: (value) => 'rounded-lg bg-blue-500 p-2 text-white',
             },
             {
@@ -47,8 +73,14 @@ export default function index({ collaborators }) {
                 badge: (value) => 'rounded-lg bg-blue-500 p-2 text-white',
             },
             {
-                key: 'address',
                 label: 'Collaborator Address',
+                render: (item) => {
+                    return (
+                        <span className="w-[200px] text-wrap break-words">
+                            {item.address ?? 'N/A'}
+                        </span>
+                    );
+                },
             },
 
             {

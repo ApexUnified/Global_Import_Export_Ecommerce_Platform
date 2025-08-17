@@ -104,15 +104,17 @@ Collaborator Module Updates ✅
 I will be updating the Collaborator module to include the following missing fields:
 Address
 Bank Account Number
+Manually Point accumulation Rate Input in Collaborator Module For Seprate Rate Tracking And Points Assigning If Not Set than we will take point accumulation rate from settings
 These additions will ensure complete information is captured for each collaborator.
 
+
 Category & Distributor Module
-A Category Module will be created to manage product categories.
+A Category Module will be created to manage product categories.  ✅
 Each Distributor will be assigned to a specific category.
-When an order is placed for a product in that category, the customer will instantly see the distributor’s account number for payment.
-Collaborator Bank Account: Only used internally for paying commissions; not shown to customers.
-Distributor Scope: Exclusive to the assigned category or region.
-Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.
+When an order is placed for a product in that category, the customer will instantly see the distributor’s account number for payment.  ✅
+Collaborator Bank Account: Only used internally for paying commissions; not shown to customers.  ✅
+Distributor Scope: Exclusive to the assigned category or region.  ✅
+Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.  ✅
 Commission Rates: Both distributor and collaborator commission rates will be configurable in the settings.
 
 Invoice Management

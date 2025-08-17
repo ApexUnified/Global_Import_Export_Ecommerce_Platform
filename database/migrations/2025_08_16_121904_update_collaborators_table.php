@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('collaborators', function (Blueprint $table) {
             $table->text('address')->after('user_id');
             $table->string('bank_account_no')->after('address');
+            $table->decimal('point_accumulation_rate', 8, 2)->after('bank_account_no')->nullable();
         });
     }
 
@@ -23,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('collaborators', function (Blueprint $table) {
-            $table->dropColumn(['address', 'bank_account_no']);
+            $table->dropColumn(['address', 'bank_account_no', 'point_accumulation_rate']);
         });
     }
 };

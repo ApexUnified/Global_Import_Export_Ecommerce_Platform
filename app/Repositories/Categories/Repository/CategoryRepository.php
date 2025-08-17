@@ -6,6 +6,7 @@ use App\Jobs\CategoryDestroyOnAWS;
 use App\Jobs\CategoryStoreOnAWS;
 use App\Jobs\CategoryUpdateOnAWS;
 use App\Models\Category;
+use App\Models\Distributor;
 use App\Repositories\Categories\Interface\ICategoryRepository;
 use Exception;
 use Illuminate\Http\Request;
@@ -16,15 +17,24 @@ use Str;
 class CategoryRepository implements ICategoryRepository
 {
     public function __construct(
-        private Category $category
+        private Category $category,
+        private Distributor $distributor
     ) {}
 
     public function getAllCategories(Request $request)
     {
         $categories = $this->category
             ->when(! empty($request->input('search')), function ($query) use ($request) {
-                $query->where('name', 'like', '%'.$request->input('search').'%');
+                $query->where(function ($subQ) use ($request) {
+                    $subQ->where('name', 'like', '%'.$request->input('search').'%')
+                        ->orWhereHas('distributor', function ($subQQ) use ($request) {
+                            $subQQ->whereHas('user', function ($subQQQ) use ($request) {
+                                $subQQQ->where('name', 'like', '%'.$request->input('search').'%');
+                            });
+                        });
+                });
             })
+            ->with(['distributor.user'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -34,7 +44,7 @@ class CategoryRepository implements ICategoryRepository
 
     public function getSingleCategory(string $id)
     {
-        $category = $this->category->find($id);
+        $category = $this->category->with(['smartphones', 'smartphones.model_name'])->find($id);
 
         return $category;
     }
@@ -45,6 +55,7 @@ class CategoryRepository implements ICategoryRepository
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
             'short_description' => ['required', 'string', 'max:255'],
             'thumbnail' => ['required', 'mimes:jpg,jpeg,png', 'max:5048'],
+            'distributor_id' => ['required', 'exists:distributors,id'],
             'is_active' => ['required', 'boolean'],
         ], [
             'name.required' => 'Category name is required',
@@ -57,6 +68,9 @@ class CategoryRepository implements ICategoryRepository
 
             'thumbnail.required' => 'Category thumbnail is required',
             'thumbnail.max' => 'Category thumbnail should not exceed 5MB',
+
+            'distributor_id.required' => 'Category distributor is required',
+            'distributor_id.exists' => 'Category distributor does not exist',
 
             'is_active.required' => 'Category status is required',
             'is_active.boolean' => 'Category status should be a Active or In-Active',
@@ -116,6 +130,7 @@ class CategoryRepository implements ICategoryRepository
             'name' => ['required', 'string', 'max:255', 'unique:categories,name,'.$id],
             'short_description' => ['required', 'string', 'max:255'],
             'thumbnail' => ['required', ...($request->file('thumbnail') instanceof \Illuminate\Http\UploadedFile && $request->hasFile('thumbnail') ? ['mimes:jpg,jpeg,png', 'max:5048'] : [])],
+            'distributor_id' => ['required', 'exists:distributors,id'],
             'is_active' => ['required', 'boolean'],
         ], [
             'name.required' => 'Category name is required',
@@ -128,6 +143,9 @@ class CategoryRepository implements ICategoryRepository
 
             'thumbnail.required' => 'Category thumbnail is required',
             'thumbnail.max' => 'Category thumbnail should not exceed 5MB',
+
+            'distributor_id.required' => 'Category distributor is required',
+            'distributor_id.exists' => 'Category distributor does not exist',
 
             'is_active.required' => 'Category status is required',
             'is_active.boolean' => 'Category status should be a Active or In-Active',
@@ -244,5 +262,19 @@ class CategoryRepository implements ICategoryRepository
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public function getDistributors()
+    {
+        return $this->distributor->whereHas('user', function ($query) {
+            $query->where('is_active', true);
+        })->with('user')->latest()
+            ->get()
+            ->map(function ($distributor) {
+                return [
+                    'id' => $distributor->id,
+                    'name' => $distributor?->user?->name,
+                ];
+            });
     }
 }

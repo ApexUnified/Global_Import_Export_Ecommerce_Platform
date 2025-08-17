@@ -5,17 +5,17 @@ import BreadCrumb from '@/Components/BreadCrumb';
 import { Head } from '@inertiajs/react';
 import React from 'react';
 
-export default function edit({ supplier }) {
+export default function edit({ distributor }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Suppliers" />
+                <Head title="Distributors" />
 
                 <BreadCrumb
-                    header={'View Supplier'}
-                    parent={'Suppliers'}
-                    parent_link={route('dashboard.suppliers.index')}
-                    child={'View Supplier'}
+                    header={'View Distributor'}
+                    parent={'Distributors'}
+                    parent_link={route('dashboard.distributors.index')}
+                    child={'View Distributor'}
                 />
 
                 <Card
@@ -23,8 +23,8 @@ export default function edit({ supplier }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end gap-4">
                                 <LinkButton
-                                    Text={'Edit Supplier'}
-                                    URL={route('dashboard.suppliers.edit', supplier.id)}
+                                    Text={'Edit Distributor'}
+                                    URL={route('dashboard.distributors.edit', distributor.id)}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -44,8 +44,8 @@ export default function edit({ supplier }) {
                                 />
 
                                 <LinkButton
-                                    Text={'Back To Suppliers'}
-                                    URL={route('dashboard.suppliers.index')}
+                                    Text={'Back To Distributors'}
+                                    URL={route('dashboard.distributors.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ export default function edit({ supplier }) {
                                         {/* Avatar */}
                                         <div className="mb-6 flex-shrink-0 text-center md:mb-0">
                                             <div className="flex h-36 w-36 items-center justify-center rounded-full border-4 border-blue-500 bg-blue-100 text-5xl font-bold text-blue-800 dark:border-white dark:bg-white/10 dark:text-white">
-                                                {supplier?.user?.avatar}
+                                                {distributor?.user?.avatar}
                                             </div>
                                         </div>
 
@@ -84,7 +84,7 @@ export default function edit({ supplier }) {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={supplier?.user?.name}
+                                                    value={distributor?.user?.name}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
@@ -97,7 +97,7 @@ export default function edit({ supplier }) {
                                                 </label>
                                                 <input
                                                     type="email"
-                                                    value={supplier?.user?.email}
+                                                    value={distributor?.user?.email}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
@@ -110,23 +110,62 @@ export default function edit({ supplier }) {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={supplier?.user?.phone}
+                                                    value={distributor?.user?.phone}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
                                             </div>
 
-                                            {/* Company */}
+                                            {/* Bank Account */}
                                             <div>
                                                 <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
-                                                    Company Name
+                                                    Bank Account Number
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={supplier?.company_name}
+                                                    value={distributor?.bank_account_no}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />
+                                            </div>
+
+                                            {/* Address */}
+                                            <div>
+                                                <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                    Address
+                                                </label>
+                                                <textarea
+                                                    type="text"
+                                                    value={distributor?.address}
+                                                    readOnly
+                                                    className="w-full text-wrap break-words rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                />
+                                            </div>
+
+                                            {/* Categories */}
+                                            <div>
+                                                <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                    Categories
+                                                </label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {distributor?.categories &&
+                                                    distributor?.categories.length > 0 ? (
+                                                        distributor.categories.map(
+                                                            (category, index) => (
+                                                                <span
+                                                                    key={index}
+                                                                    className="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800 dark:bg-purple-900 dark:text-white"
+                                                                >
+                                                                    {category.name}
+                                                                </span>
+                                                            ),
+                                                        )
+                                                    ) : (
+                                                        <span className="text-sm text-red-500">
+                                                            No categories assigned
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             <div className="flex gap-4">
@@ -136,9 +175,9 @@ export default function edit({ supplier }) {
                                                         Role(s)
                                                     </label>
                                                     <div className="flex flex-wrap gap-2">
-                                                        {supplier?.user?.roles &&
-                                                        supplier?.user?.roles.length > 0 ? (
-                                                            supplier?.user?.roles.map(
+                                                        {distributor?.user?.roles &&
+                                                        distributor?.user?.roles.length > 0 ? (
+                                                            distributor?.user?.roles.map(
                                                                 (role, index) => (
                                                                     <span
                                                                         key={index}
@@ -162,7 +201,7 @@ export default function edit({ supplier }) {
                                                         Status
                                                     </label>
                                                     <div className="flex flex-wrap gap-2">
-                                                        {supplier?.user?.is_active == 1 ? (
+                                                        {distributor?.user?.is_active == 1 ? (
                                                             <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-white">
                                                                 Active
                                                             </span>

@@ -38,6 +38,11 @@ export default function index({ smartphones }) {
         const columns = [
             { key: 'model_name.name', label: 'Model Name' },
             {
+                key: 'category.name',
+                label: 'Category',
+                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
+            },
+            {
                 key: 'capacity.name',
                 label: 'Capacity',
                 badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',

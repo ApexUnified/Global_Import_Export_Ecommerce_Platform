@@ -20,6 +20,7 @@ export default function edit({ collaborator }) {
         type: collaborator?.type || '',
         address: collaborator?.address || '',
         bank_account_no: collaborator?.bank_account_no || '',
+        point_accumulation_rate: collaborator?.point_accumulation_rate || '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -212,6 +213,33 @@ export default function edit({ collaborator }) {
                                                     }
                                                 />
 
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={'%'}
+                                                        readOnly={true}
+                                                    />
+
+                                                    <Input
+                                                        InputName={'Point Accumulation Rate'}
+                                                        Error={errors.point_accumulation_rate}
+                                                        Id={'point_accumulation_rate'}
+                                                        Name={'point_accumulation_rate'}
+                                                        Value={data.point_accumulation_rate}
+                                                        Action={(e) =>
+                                                            setData(
+                                                                'point_accumulation_rate',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        Placeholder={
+                                                            'Enter Point Accumulation Rate'
+                                                        }
+                                                        Required={false}
+                                                        Type={'number'}
+                                                    />
+                                                </div>
+
                                                 <SelectInput
                                                     InputName={'Active Status'}
                                                     Id={'is_active'}
@@ -271,7 +299,9 @@ export default function edit({ collaborator }) {
                                                         data.type.trim() ===
                                                             collaborator.type.trim() &&
                                                         data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '')
+                                                        data.password_confirmation.trim() === '' &&
+                                                        data.point_accumulation_rate ===
+                                                            collaborator?.point_accumulation_rate)
                                                 }
                                                 Spinner={processing}
                                                 Icon={

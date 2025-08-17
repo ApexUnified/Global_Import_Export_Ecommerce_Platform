@@ -6,6 +6,7 @@ use App\Jobs\SmartphoneDestroyOnAWS;
 use App\Jobs\SmartphoneStoreOnAWS;
 use App\Jobs\SmartphoneUpdateOnAWS;
 use App\Models\Capacity;
+use App\Models\Category;
 use App\Models\Color;
 use App\Models\ModelName;
 use App\Models\Smartphone;
@@ -24,7 +25,8 @@ class SmartphoneRepository implements ISmartphoneRepository
         private Smartphone $smartphone,
         private Color $color,
         private ModelName $model_name,
-        private Capacity $capacity
+        private Capacity $capacity,
+        private Category $category,
     ) {}
 
     public function getAllSmartphones(Request $request)
@@ -33,10 +35,13 @@ class SmartphoneRepository implements ISmartphoneRepository
             ->when(! empty($request->input('search')), function ($query) use ($request) {
                 $query->where(function ($subQ) use ($request) {
                     $subQ->whereHas('model_name', fn ($query) => $query->where('name', 'like', '%'.$request->input('search').'%'))
-                        ->orWhere('upc', 'like', '%'.$request->input('search').'%');
+                        ->orWhere('upc', 'like', '%'.$request->input('search').'%')
+                        ->orWhereHas('category', function ($subsubQ) use ($request) {
+                            $subsubQ->where('name', 'like', '%'.$request->input('search').'%');
+                        });
                 });
             })
-            ->with(['model_name', 'capacity', 'selling_info'])
+            ->with(['model_name', 'capacity', 'selling_info', 'category'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -58,9 +63,15 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc'],
             'images' => ['required', 'array', 'max:5'],
 
+        ], [
+            'color_ids.*.required' => 'Color Is Required ',
+            'color_ids.*.exists' => 'Given Color Are incorrect',
+            'category_id.required' => 'Category  Is Required',
+            'category_id.exists' => 'Given Category  Is incorrect',
         ]);
 
         $validator = Validator::make($request->allFiles(), [
@@ -134,8 +145,14 @@ class SmartphoneRepository implements ISmartphoneRepository
             'capacity_id' => ['required', 'exists:capacities,id'],
             'color_ids' => ['required', 'array'],
             'color_ids.*' => ['required', 'exists:colors,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'upc' => ['required', 'max:255', 'unique:smartphones,upc,'.$id],
             'images' => ['required', 'array', 'max:5'],
+        ], [
+            'color_ids.*.required' => 'Color Is Required ',
+            'color_ids.*.exists' => 'Given Color Are incorrect',
+            'category_id.required' => 'Category  Is Required',
+            'category_id.exists' => 'Given Category  Is incorrect',
         ]);
 
         $validator = Validator::make($request->allFiles(), [
@@ -303,5 +320,10 @@ class SmartphoneRepository implements ISmartphoneRepository
     public function getCapacities()
     {
         return $this->capacity->where('is_active', true)->get();
+    }
+
+    public function getCategories()
+    {
+        return $this->category->where('is_active', true)->get();
     }
 }

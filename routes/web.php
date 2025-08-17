@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
+use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\CollaboratorController;
+use App\Http\Controllers\Dashboard\DistributorController;
 use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\InventoryController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Models\Distributor;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -57,6 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Collaborator Routes
         Route::resource('/collaborators', CollaboratorController::class);
         Route::delete('/collaborators-destroy-by-selection', [CollaboratorController::class, 'destroyBySelection'])->name('collaborators.destroybyselection');
+
+        // Distributor Routes
+        Route::resource('/distributors', DistributorController::class);
+        Route::delete('/distributors-destroy-by-selection', [DistributorController::class, 'destroyBySelection'])->name('distributors.destroybyselection');
 
         // Smart Phone Routes
         Route::resource('/smartphones', SmartphoneController::class);

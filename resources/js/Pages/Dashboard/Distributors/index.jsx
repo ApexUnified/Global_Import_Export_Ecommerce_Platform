@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ users }) {
+export default function index({ distributors }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -34,34 +34,41 @@ export default function index({ users }) {
     useEffect(() => {
         const columns = [
             {
-                label: 'User Name',
+                label: 'Distributor Name',
                 render: (item) => {
                     return (
                         <Link
-                            href={route('dashboard.users.show', item?.id)}
+                            href={route('dashboard.distributors.show', item?.id)}
                             className="cursor-pointer text-blue-500 underline"
                         >
-                            {item.name}
+                            {item.user.name}
                         </Link>
                     );
                 },
             },
-            { key: 'email', label: 'User Email' },
-            { key: 'phone', label: 'User Phone' },
+            { key: 'user.email', label: 'Distributor Email' },
+            { key: 'user.phone', label: 'Distributor Phone' },
+
             {
-                label: 'User Role',
+                label: 'Distributor Address',
                 render: (item) => {
                     return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item?.roles[0]?.name ?? 'No Role'}
+                        <span className="w-[200px] text-wrap break-words">
+                            {item.address ?? 'N/A'}
                         </span>
                     );
                 },
             },
+
             {
-                label: 'Status',
+                key: 'bank_account_no',
+                label: 'Distributor Bank Account No',
+            },
+
+            {
+                label: 'Distributor Status',
                 render: (item) => {
-                    if (item.is_active != 1) {
+                    if (item.user.is_active != 1) {
                         return (
                             <span className="rounded-lg bg-red-500 p-2 text-white">In-Active</span>
                         );
@@ -77,25 +84,24 @@ export default function index({ users }) {
             {
                 label: 'View',
                 type: 'link',
-                href: (item) => route('dashboard.users.show', item?.id),
+                href: (item) => route('dashboard.distributors.show', item?.id),
             },
         ];
 
         setActions(customActions);
-
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Users" />
+                <Head title="Distributors" />
 
                 <BreadCrumb
-                    header={'Users'}
+                    header={'Distributors'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Users'}
+                    child={'Distributors'}
                 />
 
                 <Card
@@ -103,8 +109,8 @@ export default function index({ users }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create User'}
-                                    URL={route('dashboard.users.create')}
+                                    Text={'Create Distributor'}
+                                    URL={route('dashboard.distributors.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -132,13 +138,13 @@ export default function index({ users }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.users.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.users.destroy'}
-                                EditRoute={'dashboard.users.edit'}
-                                SearchRoute={'dashboard.users.index'}
+                                BulkDeleteRoute={'dashboard.distributors.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.distributors.destroy'}
+                                EditRoute={'dashboard.distributors.edit'}
+                                SearchRoute={'dashboard.distributors.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
-                                items={users}
+                                items={distributors}
                                 props={props}
                                 columns={columns}
                                 customActions={actions}

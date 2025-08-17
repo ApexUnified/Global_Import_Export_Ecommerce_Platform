@@ -107,4 +107,9 @@ class User extends Authenticatable // implements MustVerifyEmail
     {
         return $this->hasOne(Collaborator::class, 'user_id', 'id');
     }
+
+    public function distributor(): HasOne
+    {
+        return $this->hasOne(Distributor::class, 'user_id', 'id');
+    }
 }
