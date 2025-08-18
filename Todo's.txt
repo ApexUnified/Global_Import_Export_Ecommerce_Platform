@@ -108,14 +108,21 @@ Manually Point accumulation Rate Input in Collaborator Module For Seprate Rate T
 These additions will ensure complete information is captured for each collaborator.
 
 
-Category & Distributor Module
-A Category Module will be created to manage product categories.  ✅
+Category & Distributor Module  ✅
+A Category Module will be created to manage product categories.
 Each Distributor will be assigned to a specific category.
-When an order is placed for a product in that category, the customer will instantly see the distributor’s account number for payment.  ✅
-Collaborator Bank Account: Only used internally for paying commissions; not shown to customers.  ✅
-Distributor Scope: Exclusive to the assigned category or region.  ✅
-Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.  ✅
+When an order is placed for a product in that category, the customer will instantly see the distributor’s account number for payment.
+Collaborator Bank Account: Only used internally for paying commissions; not shown to customers.
+Distributor Scope: Exclusive to the assigned category or region.
+Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.
 Commission Rates: Both distributor and collaborator commission rates will be configurable in the settings.
+
+
+Additional Feature – Discount/Reward Points ✅
+Super admin can set a point accumulation rate per collaborator.
+Customers earn points based on purchase amount.
+Points can be used like cash within the site, valid for five years, and automatically deleted if unused.
+
 
 Invoice Management
 Invoice Format: Design is flexible; I will implement it following the required flow and fields.
@@ -136,10 +143,7 @@ Added as an input field when placing an order, along with delivery info.
 Purpose: Identifies the collaborator for commission purposes.
 Example: A collaborator promotes a product locally and shares their referral code. When used by a customer, the collaborator receives the predefined commission.
 
-Additional Feature – Discount/Reward Points
-Super admin can set a point accumulation rate per collaborator.
-Customers earn points based on purchase amount.
-Points can be used like cash within the site, valid for five years, and automatically deleted if unused.
+
 
 Order Flow Implications
 Order Creation & Payment: Customer places an order → admin confirms payment.
@@ -167,4 +171,6 @@ Order items Module
 - Arrived Locally – Shipment has arrived in local country (e.g., Mongolia)
 - Delivered – Order delivered to recipient
 - Meta API will be integrated to send push messages for the above events using customer-authorized Messenger/Instagram accounts.
+
+
 

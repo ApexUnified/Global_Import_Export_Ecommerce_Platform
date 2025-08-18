@@ -199,6 +199,26 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $type
+ * @property string $commission_rate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting whereCommissionRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CommissionSetting whereUpdatedAt($value)
+ */
+	class CommissionSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $symbol
  * @property int $is_active
@@ -405,6 +425,47 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
+ * @property int $points
+ * @property \Illuminate\Support\Carbon $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint wherePoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardPoint whereUserId($value)
+ */
+	class RewardPoint extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $reward_rate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting whereRewardRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RewardSetting whereUpdatedAt($value)
+ */
+	class RewardSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string|null $description
  * @property string $guard_name
@@ -585,12 +646,14 @@ namespace App\Models{
  * @property-read \App\Models\Distributor|null $distributor
  * @property-read mixed $added_at
  * @property-read mixed $avatar
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RewardPoint> $reward_points
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $posts
  * @property-read int|null $posts_count
+ * @property-read int|null $reward_points_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \App\Models\Supplier|null $supplier

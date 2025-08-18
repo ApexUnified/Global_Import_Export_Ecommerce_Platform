@@ -31,7 +31,8 @@ class DistributorRepository implements IDistributorRepository
             })
             ->with('user')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return $distributors;
     }

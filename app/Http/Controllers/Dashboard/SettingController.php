@@ -633,4 +633,108 @@ class SettingController extends Controller
 
         return back()->with('success', $deleted['message']);
     }
+
+    // Reward Point Setting Method
+
+    public function rewardPointSettingIndex()
+    {
+        $reward_point_setting = $this->setting->getRewardPointSetting();
+
+        return Inertia::render('Dashboard/Settings/RewardSettings/index', compact('reward_point_setting'));
+    }
+
+    public function rewardPointSettingUpdate(Request $request)
+    {
+        $updated = $this->setting->updateRewardPointSetting($request);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return back()->with('success', $updated['message']);
+    }
+
+    // Commission Setting methods
+
+    public function commissionSettingIndex()
+    {
+        $commission_settings = $this->setting->getAllCommissionSettings();
+
+        return Inertia::render('Dashboard/Settings/CommissionSettings/index', compact('commission_settings'));
+    }
+
+    public function commissionSettingCreate()
+    {
+        return Inertia::render('Dashboard/Settings/CommissionSettings/create');
+    }
+
+    public function commissionSettingStore(Request $request)
+    {
+        $created = $this->setting->storeCommissionSetting($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.commission-settings.index')->with('success', $created['message']);
+    }
+
+    public function commissionSettingEdit(string $id)
+    {
+
+        if (empty($id)) {
+            return back()->with('error', 'Commission Setting ID not found');
+        }
+
+        $commission_setting = $this->setting->getSingleCommissionSetting($id);
+        if (empty($commission_setting)) {
+            return back()->with('error', 'Commission Setting not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/CommissionSettings/edit', compact('commission_setting'));
+    }
+
+    public function commissionSettingUpdate(Request $request, string $id)
+    {
+
+        if (empty($id)) {
+            return back()->with('error', 'Commission Setting ID not found');
+        }
+
+        $updated = $this->setting->updateCommissionSetting($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.commission-settings.index')->with('success', $updated['message']);
+    }
+
+    public function destroyCommissionSetting(string $id)
+    {
+
+        if (empty($id)) {
+            return back()->with('error', 'Commission Setting ID not found');
+        }
+
+        $deleted = $this->setting->destroyCommissionSetting($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function destroyCommissionSettingBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyCommissionSettingBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+
+    }
 }

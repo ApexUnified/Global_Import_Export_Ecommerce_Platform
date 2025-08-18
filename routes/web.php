@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\InventoryController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
+use App\Http\Controllers\Dashboard\RewardPointController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
@@ -84,6 +85,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Category Routes
         Route::resource('/categories', CategoryController::class);
         Route::delete('/categories-destroy-by-selection', [CategoryController::class, 'destroyBySelection'])->name('categories.destroybyselection');
+
+        // Reward Point Routes
+        Route::resource('/reward-points', RewardPointController::class)->except(['show']);
+        Route::delete('/reward-points-destroy-by-selection', [RewardPointController::class, 'destroyBySelection'])->name('reward-points.destroybyselection');
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {
@@ -171,6 +176,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/additional-fee-lists-toggle/{id}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
                 Route::delete('/additional-fee-lists-destroy/{id}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
                 Route::delete('/additional-fee-lists-destroy-by-selection', 'destroyAdditionalFeeListBySelection')->name('additional_fee_lists.destroybyselection');
+
+                // Reward Setting Routes
+                Route::get('/reward-point-setting', 'rewardPointSettingIndex')->name('reward-point-setting.index');
+                Route::put('/reward-point-setting-update', 'rewardPointSettingUpdate')->name('reward-point-setting.update');
+
+                // Commission Setting Routes
+                Route::get('/commission-settings', 'commissionSettingIndex')->name('commission-settings.index');
+                Route::get('/commission-settings-create', 'commissionSettingCreate')->name('commission-settings.create');
+                Route::post('/commission-settings-store', 'commissionSettingStore')->name('commission-settings.store');
+                Route::get('/commission-settings-edit/{id}', 'commissionSettingEdit')->name('commission-settings.edit');
+                Route::put('/commission-settings-update/{id}', 'commissionSettingUpdate')->name('commission-settings.update');
+                Route::delete('/commission-settings-destroy/{id}', 'destroyCommissionSetting')->name('commission-settings.destroy');
+                Route::delete('/commission-settings-destroy-by-selection', 'destroyCommissionSettingBySelection')->name('commission-settings.destroybyselection');
             });
 
         });

@@ -44,7 +44,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = ['avatar', 'added_at'];
+    protected $appends = ['avatar', 'added_at', 'reward_points'];
 
     /**
      * Get the attributes that should be cast.
@@ -62,6 +62,11 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function getAddedAtAttribute()
     {
         return $this->created_at->format('Y-m-d');
+    }
+
+    public function getRewardPointsAttribute()
+    {
+        return $this->reward_points()->sum('points');
     }
 
     public function getAvatarAttribute()
@@ -111,5 +116,10 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function distributor(): HasOne
     {
         return $this->hasOne(Distributor::class, 'user_id', 'id');
+    }
+
+    public function reward_points(): HasMany
+    {
+        return $this->hasMany(RewardPoint::class, 'user_id', 'id');
     }
 }

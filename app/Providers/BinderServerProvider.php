@@ -18,6 +18,8 @@ use App\Repositories\Inventories\Interface\IInventoryRepository;
 use App\Repositories\Inventories\Repository\InventoryRepository;
 use App\Repositories\Posts\Interface\IPostRepository;
 use App\Repositories\Posts\Repository\PostRepository;
+use App\Repositories\RewardPoints\Interface\IRewardPointRepository;
+use App\Repositories\RewardPoints\Repository\RewardPointRepository;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use App\Repositories\Settings\Repository\SettingRepository;
 use App\Repositories\SmartphoneForSales\Interface\ISmartphoneForSaleRepository;
@@ -50,6 +52,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ISmartphoneForSaleRepository::class, SmartphoneForSaleRepository::class);
         $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
         $this->app->bind(IDistributorRepository::class, DistributorRepository::class);
+        $this->app->bind(IRewardPointRepository::class, RewardPointRepository::class);
     }
 
     /**

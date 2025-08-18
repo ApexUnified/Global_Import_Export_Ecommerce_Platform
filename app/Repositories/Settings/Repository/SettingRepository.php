@@ -5,9 +5,11 @@ namespace App\Repositories\Settings\Repository;
 use App\Models\AdditionalFeeList;
 use App\Models\Capacity;
 use App\Models\Color;
+use App\Models\CommissionSetting;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\ModelName;
+use App\Models\RewardSetting;
 use App\Models\Role;
 use App\Models\SmtpSetting;
 use App\Models\StorageLocation;
@@ -27,7 +29,9 @@ class SettingRepository implements ISettingRepository
         private Capacity $capacity,
         private StorageLocation $storage_location,
         private Currency $currency,
-        private AdditionalFeeList $additional_fee_list
+        private AdditionalFeeList $additional_fee_list,
+        private RewardSetting $reward_setting,
+        private CommissionSetting $commission_setting
     ) {}
 
     // General Setting
@@ -1257,6 +1261,174 @@ class SettingRepository implements ISettingRepository
                 'message' => 'Additional Fee List Deleted Successfully',
             ];
         } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Reward Setting
+
+    public function getRewardPointSetting()
+    {
+        $reward_setting = $this->reward_setting->first();
+
+        return $reward_setting;
+    }
+
+    public function updateRewardPointSetting(Request $request)
+    {
+        $validated_req = $request->validate([
+            'reward_rate' => ['required', 'numeric', 'max:100'],
+        ]);
+
+        try {
+            if ($this->reward_setting->exists()) {
+                $this->reward_setting->first()->update($validated_req);
+            } else {
+                $this->reward_setting->create($validated_req);
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Reward Setting Saved Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getAllCommissionSettings()
+    {
+        $commission_settings = $this->commission_setting->latest()->paginate(10);
+
+        return $commission_settings;
+    }
+
+    public function getSingleCommissionSetting(string $id)
+    {
+        $commission_setting = $this->commission_setting->find($id);
+
+        return $commission_setting;
+    }
+
+    public function storeCommissionSetting(Request $request)
+    {
+        $validated_req = $request->validate([
+            'type' => ['required', 'in:collaborator,distributor,supplier', 'unique:commission_settings,type'],
+            'commission_rate' => ['required', 'numeric', 'min:1', 'max:100'],
+        ], [
+            'type.unique' => 'This Type Already Exists',
+            'type.in' => 'Type Must Be Collaborator, Distributor Or Supplier',
+        ]);
+
+        try {
+            $created = $this->commission_setting->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Commission Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Commission Setting Created Successfully',
+            ];
+        } catch (Exception$e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+    }
+
+    public function updateCommissionSetting(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'type' => ['required', 'in:collaborator,distributor,supplier', 'unique:commission_settings,type,'.$id],
+            'commission_rate' => ['required', 'numeric', 'min:1', 'max:100'],
+        ], [
+            'type.unique' => 'This Type Already Exists',
+            'type.in' => 'Type Must Be Collaborator, Distributor Or Supplier',
+        ]);
+
+        try {
+            $commission_setting = $this->getSingleCommissionSetting($id);
+
+            if (empty($commission_setting)) {
+                throw new Exception('Commission Setting Not Found');
+            }
+
+            $updated = $commission_setting->update($validated_req);
+
+            if (empty($updated)) {
+                throw new Exception('Something Went Wrong While Updating Commission Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Commission Setting Updated Successfully',
+            ];
+
+        } catch (Exception$e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCommissionSetting(string $id)
+    {
+        try {
+            $commission_setting = $this->getSingleCommissionSetting($id);
+
+            if (empty($commission_setting)) {
+                throw new Exception('Commission Setting Not Found');
+            }
+
+            $deleted = $commission_setting->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Commission Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Commission Setting Deleted Successfully',
+            ];
+        } catch (Exception$e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCommissionSettingBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Commission Setting');
+            }
+
+            $deleted = $this->commission_setting->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Commission Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Commission Settings Deleted Successfully',
+            ];
+        } catch (Exception$e) {
             return [
                 'status' => false,
                 'message' => $e->getMessage(),

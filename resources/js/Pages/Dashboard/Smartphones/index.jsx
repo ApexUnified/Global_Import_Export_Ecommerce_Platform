@@ -2,7 +2,7 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
@@ -33,10 +33,22 @@ export default function index({ smartphones }) {
     const { currency } = usePage().props;
 
     const [columns, setColumns] = useState([]);
-
+    const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'model_name.name', label: 'Model Name' },
+            {
+                label: 'Model Name',
+                render: (item) => {
+                    return (
+                        <Link
+                            href={route('dashboard.smartphones.show', item?.id)}
+                            className="cursor-pointer text-blue-500 underline"
+                        >
+                            {item.model_name.name}
+                        </Link>
+                    );
+                },
+            },
             {
                 key: 'category.name',
                 label: 'Category',
@@ -95,6 +107,15 @@ export default function index({ smartphones }) {
             { key: 'added_at', label: 'Added At' },
         ];
 
+        const customActions = [
+            {
+                label: 'View',
+                type: 'link',
+                href: (item) => route('dashboard.smartphones.show', item?.id),
+            },
+        ];
+
+        setActions(customActions);
         setColumns(columns);
     }, []);
 
@@ -153,6 +174,7 @@ export default function index({ smartphones }) {
                                 items={smartphones}
                                 props={props}
                                 columns={columns}
+                                customActions={actions}
                             />
                         </>
                     }

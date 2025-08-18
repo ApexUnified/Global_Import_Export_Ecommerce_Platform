@@ -157,6 +157,18 @@ export default function edit({ user }) {
                                                         )}
                                                     </div>
                                                 </div>
+
+                                                {/* Status */}
+                                                <div>
+                                                    <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-white/70">
+                                                        Reward Points
+                                                    </label>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-white">
+                                                            {user?.reward_points}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

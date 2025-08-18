@@ -16,7 +16,6 @@ export default function SelectInput({
     Multiple = false,
     Placeholder = true,
     isDisabled = false,
-    customPlaceHolder = false,
 }) {
     const [options, setOptions] = useState([]);
     const isDarkMode = useDarkMode();
@@ -57,6 +56,11 @@ export default function SelectInput({
             ...base,
             color: '#9ca3af',
         }),
+        menuList: (provided) => ({
+            ...provided,
+            maxHeight: '180px',
+            overflowY: 'auto',
+        }),
     };
     const lightStyles = {
         control: (base, state) => ({
@@ -94,6 +98,11 @@ export default function SelectInput({
             ...base,
             color: '#6b7280', // gray-500
         }),
+        menuList: (provided) => ({
+            ...provided,
+            maxHeight: '180px',
+            overflowY: 'auto',
+        }),
     };
 
     useEffect(() => {
@@ -122,13 +131,7 @@ export default function SelectInput({
                         inputId={Id}
                         options={options}
                         isDisabled={isDisabled}
-                        value={
-                            Multiple
-                                ? options.filter((opt) =>
-                                      Value.map(String).includes(String(opt.value)),
-                                  )
-                                : options.find((opt) => String(opt.value) === String(Value)) || null
-                        }
+                        value={options.find((opt) => opt.value === Value) || null}
                         onChange={(selectedOption) => {
                             if (Multiple) {
                                 Action(selectedOption?.map((opt) => opt.value));
@@ -140,8 +143,8 @@ export default function SelectInput({
                         isClearable={!Multiple}
                         isSearchable
                         required={Required}
-                        {...(!customPlaceHolder && {
-                            placeholder: `Select ${InputName} Or Search By its Name`,
+                        {...(Placeholder && {
+                            placeholder: ` ${InputName} `,
                         })}
                         styles={isDarkMode ? darkStyles : lightStyles}
                         className={`react-select-container ${isDisabled && 'opacity-30'}`}

@@ -7,7 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 
-export default function index({ posts }) {
+export default function index({ reward_points }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -34,50 +34,30 @@ export default function index({ posts }) {
     useEffect(() => {
         const columns = [
             {
-                label: 'Post Title',
+                label: 'User Name',
                 render: (item) => {
                     return (
                         <Link
-                            href={route('dashboard.posts.show', item?.slug)}
-                            className="cursor-pointer break-words text-blue-500 underline"
+                            className="text-blue-500 underline"
+                            href={route('dashboard.users.show', item?.user?.id)}
                         >
-                            {item.title}
+                            {item?.user?.name}
                         </Link>
                     );
                 },
             },
-            { key: 'location_name', label: 'Location Name' },
-            { key: 'floor.name', label: 'Floor' },
-            { key: 'tag', label: 'Tag' },
 
             {
-                label: 'Post Type',
-                render: (item) => {
-                    return (
-                        <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item.post_type.charAt(0).toUpperCase() +
-                                item.post_type.slice(1).toLowerCase()}
-                        </span>
-                    );
-                },
+                key: 'points',
+                label: 'Points',
+                badge: (value) => 'p-2 bg-blue-500 rounded-lg text-white',
             },
-
             {
-                label: 'Status',
-                render: (item) => {
-                    if (item.status === 1) {
-                        return (
-                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
-                        );
-                    } else {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
-                        );
-                    }
-                },
+                key: 'expires_at',
+                label: 'Expires At',
+                badge: (value) => 'p-2 bg-red-500 rounded-lg text-white',
             },
 
-            { key: 'user.name', label: 'Posted By' },
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -85,13 +65,7 @@ export default function index({ posts }) {
             {
                 label: 'View',
                 type: 'link',
-                href: (item) => route('dashboard.posts.show', item.slug),
-            },
-
-            {
-                label: 'Edit',
-                type: 'link',
-                href: (item) => route('dashboard.posts.edit', item.slug),
+                href: (item) => route('dashboard.users.show', item?.user?.id),
             },
         ];
 
@@ -102,13 +76,13 @@ export default function index({ posts }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Posts" />
+                <Head title="Reward Points" />
 
                 <BreadCrumb
-                    header={'Posts'}
+                    header={'Reward Points'}
                     parent={'Dashboard'}
                     parent_link={route('dashboard')}
-                    child={'Posts'}
+                    child={'Reward Points'}
                 />
 
                 <Card
@@ -116,8 +90,8 @@ export default function index({ posts }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Create Post'}
-                                    URL={route('dashboard.posts.create')}
+                                    Text={'Create Reward point'}
+                                    URL={route('dashboard.reward-points.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -145,14 +119,16 @@ export default function index({ posts }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.posts.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.posts.destroy'}
-                                SearchRoute={'dashboard.posts.index'}
-                                Search={false}
-                                items={posts}
+                                BulkDeleteRoute={'dashboard.reward-points.destroybyselection'}
+                                SingleDeleteRoute={'dashboard.reward-points.destroy'}
+                                EditRoute={'dashboard.reward-points.edit'}
+                                SearchRoute={'dashboard.reward-points.index'}
+                                Search={true}
+                                DefaultSearchInput={true}
+                                items={reward_points}
                                 props={props}
-                                columns={columns}
                                 customActions={actions}
+                                columns={columns}
                             />
                         </>
                     }

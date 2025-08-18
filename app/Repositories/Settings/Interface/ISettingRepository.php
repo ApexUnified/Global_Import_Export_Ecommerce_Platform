@@ -110,4 +110,24 @@ interface ISettingRepository
     public function destroyAdditionalFeeList(string $id);
 
     public function destroyAdditionalFeeListBySelection(Request $request);
+
+    // Reward Setting
+
+    public function getRewardPointSetting();
+
+    public function updateRewardPointSetting(Request $request);
+
+    // Commission Setting
+
+    public function getAllCommissionSettings();
+
+    public function getSingleCommissionSetting(string $id);
+
+    public function storeCommissionSetting(Request $request);
+
+    public function updateCommissionSetting(Request $request, string $id);
+
+    public function destroyCommissionSetting(string $id);
+
+    public function destroyCommissionSettingBySelection(Request $request);
 }

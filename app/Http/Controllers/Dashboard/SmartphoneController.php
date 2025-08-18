@@ -56,6 +56,8 @@ class SmartphoneController extends Controller
             return back()->with('error', 'SmartPhone not found');
         }
 
+        // return $smartphone->colors;
+
         return Inertia::render('Dashboard/Smartphones/show', compact('smartphone'));
     }
 

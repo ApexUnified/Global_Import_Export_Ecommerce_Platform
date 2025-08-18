@@ -51,7 +51,7 @@ class SmartphoneRepository implements ISmartphoneRepository
 
     public function getSingleSmartphone(string $id)
     {
-        $smartphone = $this->smartphone->with(['model_name', 'capacity'])->find($id);
+        $smartphone = $this->smartphone->with(['model_name', 'capacity', 'category', 'selling_info'])->find($id);
 
         return $smartphone;
     }

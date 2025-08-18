@@ -2,12 +2,11 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
-
 import { useEffect, useState } from 'react';
 
-export default function index({ posts }) {
+export default function index({ commission_settings }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -30,94 +29,45 @@ export default function index({ posts }) {
     });
 
     const [columns, setColumns] = useState([]);
-    const [actions, setActions] = useState([]);
     useEffect(() => {
         const columns = [
+            { key: 'type', label: 'Type' },
             {
-                label: 'Post Title',
-                render: (item) => {
-                    return (
-                        <Link
-                            href={route('dashboard.posts.show', item?.slug)}
-                            className="cursor-pointer break-words text-blue-500 underline"
-                        >
-                            {item.title}
-                        </Link>
-                    );
-                },
-            },
-            { key: 'location_name', label: 'Location Name' },
-            { key: 'floor.name', label: 'Floor' },
-            { key: 'tag', label: 'Tag' },
-
-            {
-                label: 'Post Type',
+                label: 'Commission Rate',
                 render: (item) => {
                     return (
                         <span className="rounded-lg bg-blue-500 p-2 text-white">
-                            {item.post_type.charAt(0).toUpperCase() +
-                                item.post_type.slice(1).toLowerCase()}
+                            {item.commission_rate}%
                         </span>
                     );
                 },
             },
 
-            {
-                label: 'Status',
-                render: (item) => {
-                    if (item.status === 1) {
-                        return (
-                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
-                        );
-                    } else {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
-                        );
-                    }
-                },
-            },
-
-            { key: 'user.name', label: 'Posted By' },
             { key: 'added_at', label: 'Added At' },
         ];
 
-        const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.posts.show', item.slug),
-            },
-
-            {
-                label: 'Edit',
-                type: 'link',
-                href: (item) => route('dashboard.posts.edit', item.slug),
-            },
-        ];
-
-        setActions(customActions);
         setColumns(columns);
     }, []);
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Posts" />
+                <Head title="Commission Settings" />
 
                 <BreadCrumb
-                    header={'Posts'}
-                    parent={'Dashboard'}
-                    parent_link={route('dashboard')}
-                    child={'Posts'}
+                    header={'Commission Settings'}
+                    parent={'Settings'}
+                    parent_link={route('dashboard.settings.index')}
+                    child={'Commission Settings'}
                 />
 
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            <div className="my-3 flex flex-wrap justify-end gap-4">
                                 <LinkButton
-                                    Text={'Create Post'}
-                                    URL={route('dashboard.posts.create')}
+                                    Text={'Create Commission Setting'}
+                                    URL={route('dashboard.settings.commission-settings.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -135,6 +85,27 @@ export default function index({ posts }) {
                                         </svg>
                                     }
                                 />
+
+                                <LinkButton
+                                    Text={'Back To Settings'}
+                                    URL={route('dashboard.settings.index')}
+                                    Icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                                            />
+                                        </svg>
+                                    }
+                                />
                             </div>
 
                             <Table
@@ -145,14 +116,17 @@ export default function index({ posts }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.posts.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.posts.destroy'}
-                                SearchRoute={'dashboard.posts.index'}
+                                BulkDeleteRoute={
+                                    'dashboard.settings.commission-settings.destroybyselection'
+                                }
+                                SingleDeleteRoute={'dashboard.settings.commission-settings.destroy'}
+                                EditRoute={'dashboard.settings.commission-settings.edit'}
+                                SearchRoute={'dashboard.settings.commission-settings.index'}
                                 Search={false}
-                                items={posts}
+                                DefaultSearchInput={false}
+                                items={commission_settings}
                                 props={props}
                                 columns={columns}
-                                customActions={actions}
                             />
                         </>
                     }
