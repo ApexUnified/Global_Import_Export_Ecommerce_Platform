@@ -16,6 +16,7 @@ export default function SelectInput({
     Multiple = false,
     Placeholder = true,
     isDisabled = false,
+    customPlaceHolder = false,
 }) {
     const [options, setOptions] = useState([]);
     const isDarkMode = useDarkMode();
@@ -131,7 +132,13 @@ export default function SelectInput({
                         inputId={Id}
                         options={options}
                         isDisabled={isDisabled}
-                        value={options.find((opt) => opt.value === Value) || null}
+                        value={
+                            Multiple
+                                ? options.filter((opt) =>
+                                      Value.map(String).includes(String(opt.value)),
+                                  )
+                                : options.find((opt) => String(opt.value) === String(Value)) || null
+                        }
                         onChange={(selectedOption) => {
                             if (Multiple) {
                                 Action(selectedOption?.map((opt) => opt.value));
@@ -143,8 +150,8 @@ export default function SelectInput({
                         isClearable={!Multiple}
                         isSearchable
                         required={Required}
-                        {...(Placeholder && {
-                            placeholder: ` ${InputName} `,
+                        {...(!customPlaceHolder && {
+                            placeholder: `Select ${InputName} Or Search By its Name`,
                         })}
                         styles={isDarkMode ? darkStyles : lightStyles}
                         className={`react-select-container ${isDisabled && 'opacity-30'}`}

@@ -23,6 +23,8 @@ export default function edit({ smartphone, colors, model_names, capacities, cate
         images: [],
     });
 
+    console.log(data.color_ids);
+
     // Submit Processing
     const [processing, setProcessing] = useState(false);
 
