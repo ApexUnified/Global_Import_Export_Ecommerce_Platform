@@ -9,7 +9,7 @@ import React from 'react';
 
 export default function index({ reward_point_setting }) {
     const { data, setData, errors, put, processing } = useForm({
-        reward_rate: reward_point_setting.reward_rate ?? '',
+        reward_rate: reward_point_setting?.reward_rate ?? '',
     });
 
     const submit = (e) => {
