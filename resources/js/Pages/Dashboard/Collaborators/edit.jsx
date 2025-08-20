@@ -20,7 +20,8 @@ export default function edit({ collaborator }) {
         type: collaborator?.type || '',
         address: collaborator?.address || '',
         bank_account_no: collaborator?.bank_account_no || '',
-        point_accumulation_rate: collaborator?.point_accumulation_rate || '',
+        point_accumulation_rate: collaborator?.point_accumulation_rate ?? '',
+        commission_rate: collaborator?.commission_rate ?? '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -240,6 +241,31 @@ export default function edit({ collaborator }) {
                                                     />
                                                 </div>
 
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={'%'}
+                                                        readOnly={true}
+                                                    />
+
+                                                    <Input
+                                                        InputName={'Commission Rate'}
+                                                        Error={errors.commission_rate}
+                                                        Id={'commission_rate'}
+                                                        Name={'commission_rate'}
+                                                        Value={data.commission_rate}
+                                                        Action={(e) =>
+                                                            setData(
+                                                                'commission_rate',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        Placeholder={'Enter Commission Rate'}
+                                                        Required={false}
+                                                        Type={'number'}
+                                                    />
+                                                </div>
+
                                                 <SelectInput
                                                     InputName={'Active Status'}
                                                     Id={'is_active'}
@@ -301,7 +327,9 @@ export default function edit({ collaborator }) {
                                                         data.password.trim() === '' &&
                                                         data.password_confirmation.trim() === '' &&
                                                         data.point_accumulation_rate ===
-                                                            collaborator?.point_accumulation_rate)
+                                                            collaborator?.point_accumulation_rate &&
+                                                        data.commission_rate ===
+                                                            collaborator?.commission_rate)
                                                 }
                                                 Spinner={processing}
                                                 Icon={

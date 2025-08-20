@@ -61,6 +61,21 @@ export default function index({ distributors }) {
             },
 
             {
+                label: 'Commission Rate',
+                render: (item) => {
+                    if (item.commission_rate) {
+                        return (
+                            <span className="rounded-lg bg-blue-500 p-2 text-white">
+                                {item.commission_rate}%
+                            </span>
+                        );
+                    } else {
+                        return 'Default';
+                    }
+                },
+            },
+
+            {
                 key: 'bank_account_no',
                 label: 'Distributor Bank Account No',
             },

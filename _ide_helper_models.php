@@ -156,6 +156,7 @@ namespace App\Models{
  * @property string $referral_code
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $commission_rate
  * @property-read mixed $added_at
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newModelQuery()
@@ -163,6 +164,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereBankAccountNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator wherePointAccumulationRate($value)
@@ -246,6 +248,7 @@ namespace App\Models{
  * @property string $bank_account_no
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $commission_rate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Category> $categories
  * @property-read int|null $categories_count
  * @property-read mixed $added_at
@@ -255,6 +258,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereBankAccountNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereUpdatedAt($value)

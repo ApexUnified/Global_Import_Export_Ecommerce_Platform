@@ -115,7 +115,7 @@ When an order is placed for a product in that category, the customer will instan
 Collaborator Bank Account: Only used internally for paying commissions; not shown to customers.
 Distributor Scope: Exclusive to the assigned category or region.
 Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.
-Commission Rates: Both distributor and collaborator commission rates will be configurable in the settings.
+Commission Rates: Both distributor and collaborator commission rates will be configurable in the settings And Also can be given commission Rates seprately.
 
 
 Additional Feature – Discount/Reward Points ✅

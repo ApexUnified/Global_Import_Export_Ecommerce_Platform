@@ -12,6 +12,7 @@ class Distributor extends Model
         'user_id',
         'address',
         'bank_account_no',
+        'commission_rate',
     ];
 
     protected $appends = ['added_at'];

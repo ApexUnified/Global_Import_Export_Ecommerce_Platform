@@ -19,6 +19,7 @@ export default function create() {
         is_active: 1,
         address: '',
         bank_account_no: '',
+        commission_rate: '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -194,6 +195,31 @@ export default function create() {
                                                         setTogglePasswordConfirmation
                                                     }
                                                 />
+
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={'%'}
+                                                        readOnly={true}
+                                                    />
+
+                                                    <Input
+                                                        InputName={'Commission Rate'}
+                                                        Error={errors.commission_rate}
+                                                        Id={'commission_rate'}
+                                                        Name={'commission_rate'}
+                                                        Value={data.commission_rate}
+                                                        Action={(e) =>
+                                                            setData(
+                                                                'commission_rate',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        Placeholder={'Enter Commission Rate'}
+                                                        Required={false}
+                                                        Type={'number'}
+                                                    />
+                                                </div>
 
                                                 <SelectInput
                                                     InputName={'Active Status'}

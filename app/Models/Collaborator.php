@@ -13,6 +13,7 @@ class Collaborator extends Model
         'address',
         'bank_account_no',
         'point_accumulation_rate',
+        'commission_rate',
     ];
 
     protected $appends = ['added_at'];

@@ -19,6 +19,7 @@ export default function edit({ distributor }) {
         is_active: distributor?.user?.is_active ?? 1,
         address: distributor?.address || '',
         bank_account_no: distributor?.bank_account_no || '',
+        commission_rate: distributor?.commission_rate ?? '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
@@ -195,6 +196,31 @@ export default function edit({ distributor }) {
                                                     }
                                                 />
 
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        CustomCss={'w-[40px] mt-5'}
+                                                        Value={'%'}
+                                                        readOnly={true}
+                                                    />
+
+                                                    <Input
+                                                        InputName={'Commission Rate'}
+                                                        Error={errors.commission_rate}
+                                                        Id={'commission_rate'}
+                                                        Name={'commission_rate'}
+                                                        Value={data.commission_rate}
+                                                        Action={(e) =>
+                                                            setData(
+                                                                'commission_rate',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        Placeholder={'Enter Commission Rate'}
+                                                        Required={false}
+                                                        Type={'number'}
+                                                    />
+                                                </div>
+
                                                 <SelectInput
                                                     InputName={'Active Status'}
                                                     Id={'is_active'}
@@ -251,7 +277,9 @@ export default function edit({ distributor }) {
                                                         data.is_active ===
                                                             distributor?.user?.is_active &&
                                                         data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '')
+                                                        data.password_confirmation.trim() === '' &&
+                                                        data.commission_rate ===
+                                                            distributor?.commission_rate)
                                                 }
                                                 Spinner={processing}
                                                 Icon={

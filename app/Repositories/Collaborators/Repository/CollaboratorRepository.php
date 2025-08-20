@@ -61,12 +61,21 @@ class CollaboratorRepository implements ICollaboratorRepository
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
             'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'type.required' => 'The Collaborator Type Field Is Required.',
             'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
+
+        if ($validated_req['commission_rate'] == 0) {
+            $validated_req['commission_rate'] = null;
+        }
+
+        if ($validated_req['point_accumulation_rate'] == 0) {
+            $validated_req['point_accumulation_rate'] = null;
+        }
 
         try {
 
@@ -93,6 +102,7 @@ class CollaboratorRepository implements ICollaboratorRepository
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
                 'point_accumulation_rate' => $validated_req['point_accumulation_rate'],
+                'commission_rate' => $validated_req['commission_rate'] ?? null,
             ]);
 
             if (empty($collaborator)) {
@@ -160,6 +170,7 @@ class CollaboratorRepository implements ICollaboratorRepository
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
             'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
@@ -167,7 +178,16 @@ class CollaboratorRepository implements ICollaboratorRepository
             'type.in' => 'The Collaborator Type Must Be Company Or Indivisual.',
         ]);
 
+        if ($validated_req['commission_rate'] == 0) {
+            $validated_req['commission_rate'] = null;
+        }
+
+        if ($validated_req['point_accumulation_rate'] == 0) {
+            $validated_req['point_accumulation_rate'] = null;
+        }
+
         try {
+
             DB::beginTransaction();
             $user_updated = $user->update([
                 'name' => $validated_req['name'],
@@ -186,6 +206,7 @@ class CollaboratorRepository implements ICollaboratorRepository
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
                 'point_accumulation_rate' => $validated_req['point_accumulation_rate'],
+                'commission_rate' => $validated_req['commission_rate'] ?? null,
 
             ]);
 

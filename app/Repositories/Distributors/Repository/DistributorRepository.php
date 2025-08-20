@@ -56,12 +56,17 @@ class DistributorRepository implements IDistributorRepository
             'password' => ['required', 'string', 'min:8', 'confirmed', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'is_active.required' => 'The Distributor Status Field Is Required.',
             'is_active.boolean' => 'The Distributor Status Must Be Active Or In-Active.',
         ]);
+
+        if ($validated_req['commission_rate'] == 0) {
+            $validated_req['commission_rate'] = null;
+        }
 
         try {
             DB::beginTransaction();
@@ -84,6 +89,7 @@ class DistributorRepository implements IDistributorRepository
                 'user_id' => $user->id,
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
+                'commission_rate' => $validated_req['commission_rate'] ?? null,
             ]);
 
             if (empty($distributor)) {
@@ -136,12 +142,17 @@ class DistributorRepository implements IDistributorRepository
             ...(($request->filled('password') || $request->filled('password_confirmation')) ? ['password' => ['required', 'string', 'min:8', 'confirmed', 'max:255']] : []),
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
             'is_active.required' => 'The Distributor Status Field Is Required.',
             'is_active.boolean' => 'The Distributor Status Must Be Active Or In-Active.',
         ]);
+
+        if ($validated_req['commission_rate'] == 0) {
+            $validated_req['commission_rate'] = null;
+        }
 
         try {
             DB::beginTransaction();
@@ -161,6 +172,7 @@ class DistributorRepository implements IDistributorRepository
             $distributor_updated = $distributor->update([
                 'address' => $validated_req['address'],
                 'bank_account_no' => $validated_req['bank_account_no'],
+                'commission_rate' => $validated_req['commission_rate'] ?? null,
             ]);
 
             if (! $distributor_updated) {
