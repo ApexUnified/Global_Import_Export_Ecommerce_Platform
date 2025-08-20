@@ -227,19 +227,7 @@ export default function index({ general_setting }) {
                                             processing ||
                                             data.app_name.trim() === '' ||
                                             data.contact_email.trim() === '' ||
-                                            data.contact_number.trim() === '' ||
-                                            (data.app_name.trim() ===
-                                                general_setting?.app_name.trim() &&
-                                                data.contact_email.trim() ===
-                                                    general_setting?.contact_email.trim() &&
-                                                data.contact_number.trim() ===
-                                                    general_setting?.contact_number.trim() &&
-                                                data.app_favicon === null &&
-                                                data.app_main_logo_dark === null &&
-                                                data.app_main_logo_light === null &&
-                                                !data.is_removed_app_favicon &&
-                                                !data.is_removed_app_main_logo_dark &&
-                                                !data.is_removed_app_main_logo_light)
+                                            data.contact_number.trim() === ''
                                         }
                                         Type={'submit'}
                                         Icon={

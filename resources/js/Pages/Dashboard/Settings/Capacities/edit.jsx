@@ -36,7 +36,7 @@ export default function edit({ capacity }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Capacities'}
                                     URL={route('dashboard.settings.capacities.index')}
@@ -100,9 +100,7 @@ export default function edit({ capacity }) {
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.is_active === '' ||
-                                                    (data.name.trim() === capacity.name &&
-                                                        data.is_active === capacity.is_active)
+                                                    data.is_active === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

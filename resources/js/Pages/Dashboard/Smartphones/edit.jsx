@@ -23,8 +23,6 @@ export default function edit({ smartphone, colors, model_names, capacities, cate
         images: [],
     });
 
-    console.log(data.color_ids);
-
     // Submit Processing
     const [processing, setProcessing] = useState(false);
 
@@ -292,15 +290,7 @@ export default function edit({ smartphone, colors, model_names, capacities, cate
                                                     data.color_ids.length === 0 ||
                                                     data.upc.trim() === '' ||
                                                     data?.images?.length === 0 ||
-                                                    data.category_id === '' ||
-                                                    (data.model_name_id ===
-                                                        smartphone.model_name_id &&
-                                                        data.capacity_id ===
-                                                            smartphone.capacity_id &&
-                                                        data.upc.trim() === smartphone.upc &&
-                                                        data.category_id ==
-                                                            smartphone.category_id &&
-                                                        !fileChanged)
+                                                    data.category_id === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

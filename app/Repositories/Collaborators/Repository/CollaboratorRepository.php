@@ -56,8 +56,8 @@ class CollaboratorRepository implements ICollaboratorRepository
             'type' => ['required', 'string', 'in:Indivisual,Company'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
+            'password' => ['required', 'string', 'min:8', 'max:50', 'confirmed'],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone', 'max:50'],
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
             'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -162,11 +162,11 @@ class CollaboratorRepository implements ICollaboratorRepository
                 $request->filled('password')
                 ||
                 $request->filled('password_confirmation')
-                ? ['password' => ['required', 'string', 'min:8', 'confirmed']]
+                ? ['password' => ['required', 'string', 'min:8', 'max:50', 'confirmed']]
                 :
                 []
             ),
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$user->id],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'max:50', 'unique:users,phone,'.$user->id],
             'address' => ['required', 'string', 'max:255'],
             'bank_account_no' => ['required', 'string', 'max:255'],
             'point_accumulation_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],

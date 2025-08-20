@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
 use App\Http\Controllers\Dashboard\CategoryController;
@@ -64,6 +65,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Distributor Routes
         Route::resource('/distributors', DistributorController::class);
         Route::delete('/distributors-destroy-by-selection', [DistributorController::class, 'destroyBySelection'])->name('distributors.destroybyselection');
+
+        // Customer Routes
+        Route::resource('/customers', CustomerController::class);
+        Route::delete('/customers-destroy-by-selection', [CustomerController::class, 'destroyBySelection'])->name('customers.destroybyselection');
 
         // Smart Phone Routes
         Route::resource('/smartphones', SmartphoneController::class);

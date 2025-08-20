@@ -39,7 +39,7 @@ export default function edit({ color }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Colors'}
                                     URL={route('dashboard.settings.colors.index')}
@@ -121,10 +121,7 @@ export default function edit({ color }) {
                                                     processing ||
                                                     data.name.trim() === '' ||
                                                     data.code.trim() === '' ||
-                                                    data.is_active === '' ||
-                                                    (data.name.trim() === color.name.trim() &&
-                                                        data.code.trim() === color.code.trim() &&
-                                                        data.is_active === color.is_active)
+                                                    data.is_active === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

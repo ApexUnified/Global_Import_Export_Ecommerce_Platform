@@ -65,7 +65,7 @@ export default function index({ inventories, batches, storage_locations, smartph
                         <span
                             className={`rounded-lg ${item.status == 'in_stock' && 'bg-green-500'} ${item.status == 'returned' && 'bg-red-500'} ${item.status == 'on_hold' && 'bg-yellow-500'} ${item.status == 'sold' && 'bg-blue-500'} p-2 text-white`}
                         >
-                            {item.status.toUpperCase()}
+                            {item.status}
                         </span>
                     );
                 },
@@ -74,7 +74,7 @@ export default function index({ inventories, batches, storage_locations, smartph
                 label: 'Unit Price',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-white">
                             {currency?.symbol}
                             {item.batch.final_unit_price}
                         </span>

@@ -309,27 +309,7 @@ export default function edit({ collaborator }) {
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() !== '' &&
                                                         data.password.trim() !==
-                                                            data.password_confirmation.trim()) ||
-                                                    (data.name.trim() ===
-                                                        collaborator?.user?.name.trim() &&
-                                                        data.address.trim() ===
-                                                            collaborator?.address.trim() &&
-                                                        data.bank_account_no.trim() ===
-                                                            collaborator?.bank_account_no.trim() &&
-                                                        data.email.trim() ===
-                                                            collaborator?.user?.email.trim() &&
-                                                        data.phone.trim() ===
-                                                            collaborator?.user?.phone.trim() &&
-                                                        data.is_active ===
-                                                            collaborator?.user?.is_active &&
-                                                        data.type.trim() ===
-                                                            collaborator.type.trim() &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.point_accumulation_rate ===
-                                                            collaborator?.point_accumulation_rate &&
-                                                        data.commission_rate ===
-                                                            collaborator?.commission_rate)
+                                                            data.password_confirmation.trim())
                                                 }
                                                 Spinner={processing}
                                                 Icon={

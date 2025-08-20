@@ -116,6 +116,7 @@ Collaborator Bank Account: Only used internally for paying commissions; not show
 Distributor Scope: Exclusive to the assigned category or region.
 Collaborator Role: Functions as a salesperson or sales company, assisting with orders but not handling customer payments directly.
 Commission Rates: Both distributor and collaborator commission rates will be configurable in the settings And Also can be given commission Rates seprately.
+Distributors: Predefined per category; no manual assignment needed initially.
 
 
 Additional Feature – Discount/Reward Points ✅
@@ -149,8 +150,21 @@ Order Flow Implications
 Order Creation & Payment: Customer places an order → admin confirms payment.
 Invoice Generation: After payment, invoice with QR can be generated and sent to the customer.
 Shipping Invoice: QR-enabled order form serves both customer use and internal management.
-Referral Code: Used only for collaborator identification for commissions.
-Distributors: Predefined per category; no manual assignment needed initially.
+Referral Code: Used only for collaborator identification for commissions And Points accumulation for the Customer If Referral Code Used Of Any Collaborator.
+
+
+Order Flow Migration Steps
+Order Creation & Payment – Customer places an order → Automatically shows Bank Details Of Smartphone Related Category Distributor And Than After Payment And Uploading Receipt By The User Admin confirms payment.
+
+Invoice Generation – After payment, an invoice with QR is generated and sent to the customer.
+Shipping Invoice – QR-enabled order form serves for both customer use and internal management.
+Referral Code Integration – Used only for collaborator identification, commissions, and customer points if applied.
+Courier Shipping Upload – Ability to upload courier shipping details for related orders.
+Courier Details Management – Courier company name, shipping date, and tracking number.
+Payment Receipt Upload (Customer) – Customers can upload proof of payment.
+Cash Collected Status Toggle – For internal tracking
+
+
 
 Additionally, customers will only earn points when a purchase is made with a collaborator’s referral code entered.
 The point accumulation rate can either be set by the super admin as a uniform rate applied to all collaborators, or as different rates per collaborator.

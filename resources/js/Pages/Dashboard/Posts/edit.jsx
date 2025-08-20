@@ -285,14 +285,7 @@ export default function edit({ post, floors }) {
                                                     data.title.trim() === '' ||
                                                     data.content.trim() === '' ||
                                                     data.post_type.trim() === '' ||
-                                                    data.status === '' ||
-                                                    (data.title === post.title &&
-                                                        data.content === post.content &&
-                                                        data.post_type === post.post_type &&
-                                                        data.status === post.status &&
-                                                        data.tag.trim() != '' &&
-                                                        data.tag.trim() == post.tag &&
-                                                        !fileChanged)
+                                                    data.status === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

@@ -10,6 +10,8 @@ use App\Repositories\Categories\Interface\ICategoryRepository;
 use App\Repositories\Categories\Repository\CategoryRepository;
 use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use App\Repositories\Collaborators\Repository\CollaboratorRepository;
+use App\Repositories\Customers\Interface\ICustomerRepository;
+use App\Repositories\Customers\Repository\CustomerRepository;
 use App\Repositories\Distributors\Interface\IDistributorRepository;
 use App\Repositories\Distributors\Repository\DistributorRepository;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
@@ -53,6 +55,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
         $this->app->bind(IDistributorRepository::class, DistributorRepository::class);
         $this->app->bind(IRewardPointRepository::class, RewardPointRepository::class);
+        $this->app->bind(ICustomerRepository::class, CustomerRepository::class);
     }
 
     /**

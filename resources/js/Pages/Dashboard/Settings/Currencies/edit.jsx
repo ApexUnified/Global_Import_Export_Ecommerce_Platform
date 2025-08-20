@@ -35,7 +35,7 @@ export default function edit({ currency }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Currencies'}
                                     URL={route('dashboard.settings.currencies.index')}
@@ -97,9 +97,7 @@ export default function edit({ currency }) {
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.symbol.trim() === '' ||
-                                                    (data.name.trim() === currency.name &&
-                                                        data.symbol.trim() === currency.symbol)
+                                                    data.symbol.trim() === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

@@ -114,10 +114,7 @@ export default function edit({ commission_setting }) {
                                                 Disabled={
                                                     processing ||
                                                     data.type == '' ||
-                                                    data.commission_rate == '' ||
-                                                    (data.type === commission_setting.type &&
-                                                        data.commission_rate ===
-                                                            commission_setting.commission_rate)
+                                                    data.commission_rate == ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

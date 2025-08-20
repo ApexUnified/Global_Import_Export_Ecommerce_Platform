@@ -170,22 +170,7 @@ export default function index({ smtp_setting }) {
                                             data.smtp_port.trim() === '' ||
                                             data.smtp_username.trim() === '' ||
                                             data.smtp_password.trim() === '' ||
-                                            data.smtp_mail_from_address.trim() === '' ||
-                                            (smtp_setting &&
-                                                data.smtp_mailer.trim() ===
-                                                    smtp_setting.smtp_mailer.trim() &&
-                                                data.smtp_scheme.trim() ===
-                                                    smtp_setting.smtp_scheme.trim() &&
-                                                data.smtp_host.trim() ===
-                                                    smtp_setting.smtp_host.trim() &&
-                                                data.smtp_port.trim() ===
-                                                    smtp_setting.smtp_port.trim() &&
-                                                data.smtp_username.trim() ===
-                                                    smtp_setting.smtp_username.trim() &&
-                                                data.smtp_password.trim() ===
-                                                    smtp_setting.smtp_password.trim() &&
-                                                data.smtp_mail_from_address.trim() ===
-                                                    smtp_setting.smtp_mail_from_address.trim())
+                                            data.smtp_mail_from_address.trim() === ''
                                         }
                                         Type={'submit'}
                                         Icon={

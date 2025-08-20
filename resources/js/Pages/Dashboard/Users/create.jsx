@@ -13,6 +13,7 @@ export default function create({ roles }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        phone: '',
         password: '',
         password_confirmation: '',
         role_id: '',
@@ -323,6 +324,7 @@ export default function create({ roles }) {
                                                     processing ||
                                                     data.name.trim() === '' ||
                                                     data.email.trim() === '' ||
+                                                    data.phone.trim() === '' ||
                                                     data.password.trim() === '' ||
                                                     data.password_confirmation.trim() === '' ||
                                                     data.role_id === '' ||

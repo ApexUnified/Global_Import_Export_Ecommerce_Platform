@@ -8,37 +8,42 @@ import { Head, useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 
-export default function edit({ supplier }) {
+export default function edit({ customer }) {
     // Create Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
-        name: supplier?.user?.name || '',
-        email: supplier?.user?.email || '',
-        phone: supplier?.user?.phone || '',
+        name: customer?.user?.name || '',
+        email: customer?.user?.email || '',
+        phone: customer?.user?.phone || '',
         password: '',
         password_confirmation: '',
-        is_active: supplier?.user?.is_active ?? 1,
-        company_name: supplier?.company_name || '',
+        is_active: customer?.user?.is_active ?? 1,
+        country: customer?.country || '',
+        state: customer?.state || '',
+        city: customer?.city || '',
+        postal_code: customer?.postal_code || '',
+        address_line1: customer?.address_line1 || '',
+        address_line2: customer?.address_line2 || '',
     });
 
     const [togglePassword, setTogglePassword] = useState(false);
     const [togglePasswordConfirmation, setTogglePasswordConfirmation] = useState(false);
 
-    // Edit Data Form Request
+    // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        put(route('dashboard.suppliers.update', supplier.id));
+        put(route('dashboard.customers.update', customer.id));
     };
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Suppliers" />
+                <Head title="Customers" />
 
                 <BreadCrumb
-                    header={'Edit Supplier'}
-                    parent={'Suppliers'}
-                    parent_link={route('dashboard.suppliers.index')}
-                    child={'Edit Supplier'}
+                    header={'Edit Customer'}
+                    parent={'Customers'}
+                    parent_link={route('dashboard.customers.index')}
+                    child={'Edit Customers'}
                 />
 
                 <Card
@@ -46,8 +51,8 @@ export default function edit({ supplier }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Suppliers'}
-                                    URL={route('dashboard.suppliers.index')}
+                                    Text={'Back To Customers'}
+                                    URL={route('dashboard.customers.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -73,11 +78,11 @@ export default function edit({ supplier }) {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Supplier Name'}
+                                                    InputName={'Customer Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Supplier Name'}
+                                                    Placeholder={'Enter Customer Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -85,11 +90,11 @@ export default function edit({ supplier }) {
                                                 />
 
                                                 <Input
-                                                    InputName={'Supplier Email'}
+                                                    InputName={'Customer Email'}
                                                     Error={errors.email}
                                                     Value={data.email}
                                                     Action={(e) => setData('email', e.target.value)}
-                                                    Placeholder={'Enter Supplier Email'}
+                                                    Placeholder={'Enter Customer Email'}
                                                     Id={'email'}
                                                     Name={'email'}
                                                     Type={'email'}
@@ -98,13 +103,13 @@ export default function edit({ supplier }) {
 
                                                 <div className="mb-5">
                                                     <Input
-                                                        InputName={'Supplier Phone'}
+                                                        InputName={'Customer Phone'}
                                                         Error={errors.phone}
                                                         Value={data.phone}
                                                         Action={(e) =>
                                                             setData('phone', e.target.value)
                                                         }
-                                                        Placeholder={'Enter Supplier Phone'}
+                                                        Placeholder={'Enter Customer Phone'}
                                                         Id={'phone'}
                                                         Name={'phone'}
                                                         Type={'text'}
@@ -113,37 +118,126 @@ export default function edit({ supplier }) {
                                                 </div>
 
                                                 <Input
-                                                    InputName={'Supplier Company Name'}
-                                                    Error={errors.company_name}
-                                                    Value={data.company_name}
+                                                    InputName={'Country'}
+                                                    Error={errors.country}
+                                                    Value={data.country}
                                                     Action={(e) =>
-                                                        setData('company_name', e.target.value)
+                                                        setData('country', e.target.value)
                                                     }
-                                                    Placeholder={'Enter Supplier Company Name'}
-                                                    Id={'company_name'}
-                                                    Name={'company_name'}
+                                                    Placeholder={'Enter Country'}
+                                                    Id={'country'}
+                                                    Name={'country'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
                                                 <Input
-                                                    InputName={'Supplier Password'}
+                                                    InputName={'City'}
+                                                    Error={errors.city}
+                                                    Value={data.city}
+                                                    Action={(e) => setData('city', e.target.value)}
+                                                    Placeholder={'Enter City'}
+                                                    Id={'city'}
+                                                    Name={'city'}
+                                                    Type={'text'}
+                                                    Required={true}
+                                                />
+
+                                                <Input
+                                                    InputName={'State'}
+                                                    Error={errors.state}
+                                                    Value={data.state}
+                                                    Action={(e) => setData('state', e.target.value)}
+                                                    Placeholder={'Enter State'}
+                                                    Id={'state'}
+                                                    Name={'state'}
+                                                    Type={'text'}
+                                                    Required={true}
+                                                />
+
+                                                <Input
+                                                    InputName={'Postal Code'}
+                                                    Error={errors.postal_code}
+                                                    Value={data.postal_code}
+                                                    Action={(e) =>
+                                                        setData('postal_code', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter Postal Code'}
+                                                    Id={'postal_code'}
+                                                    Name={'postal_code'}
+                                                    Type={'text'}
+                                                    Required={true}
+                                                />
+
+                                                <div>
+                                                    <label
+                                                        htmlFor="address_line1"
+                                                        className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                                                    >
+                                                        Address 1{' '}
+                                                        <span className="text-red-500 dark:text-white">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    <textarea
+                                                        id="address_line1"
+                                                        rows="3"
+                                                        className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
+                                                        placeholder="Enter Address 1 here..."
+                                                        value={data.address_line1}
+                                                        onChange={(e) =>
+                                                            setData('address_line1', e.target.value)
+                                                        }
+                                                    ></textarea>
+                                                    {errors.address_line1 && (
+                                                        <span className="ml-2 text-red-500 dark:text-white">
+                                                            {errors.address_line1}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <div>
+                                                    <label
+                                                        htmlFor="address_line2"
+                                                        className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                                                    >
+                                                        Address 2
+                                                    </label>
+                                                    <textarea
+                                                        id="address_line2"
+                                                        rows="3"
+                                                        className="dark:bg-dark-900 shadow-theme-xs focus:ring-3 focus:outline-hidden mb-2 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-transparent py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-blue-300 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-blue-800"
+                                                        placeholder="Enter Address 2 here..."
+                                                        value={data.address_line2}
+                                                        onChange={(e) =>
+                                                            setData('address_line2', e.target.value)
+                                                        }
+                                                    ></textarea>
+                                                    {errors.address_line2 && (
+                                                        <span className="ml-2 text-red-500 dark:text-white">
+                                                            {errors.address_line2}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <Input
+                                                    InputName={'Customer Password'}
                                                     Error={errors.password}
                                                     Value={data.password}
                                                     Action={(e) =>
                                                         setData('password', e.target.value)
                                                     }
-                                                    Placeholder={'Enter Supplier Password'}
+                                                    Placeholder={'Enter Customer Password'}
                                                     Id={'password'}
                                                     Name={'password'}
                                                     Type={'password'}
-                                                    Required={data.password_confirmation !== ''}
+                                                    Required={data.password_confirmation != ''}
                                                     ShowPasswordToggle={togglePassword}
                                                     setShowPasswordToggle={setTogglePassword}
                                                 />
 
                                                 <Input
-                                                    InputName={'Supplier Password Confirmation'}
+                                                    InputName={'Customer Password Confirmation'}
                                                     Error={errors.password_confirmation}
                                                     Value={data.password_confirmation}
                                                     Action={(e) =>
@@ -153,12 +247,12 @@ export default function edit({ supplier }) {
                                                         )
                                                     }
                                                     Placeholder={
-                                                        'Enter Supplier Password Confirmation'
+                                                        'Enter Customer Password Confirmation'
                                                     }
                                                     Id={'password_confirmation'}
                                                     Name={'password_confirmation'}
                                                     Type={'password'}
-                                                    Required={data.password !== ''}
+                                                    Required={data.password != ''}
                                                     ShowPasswordToggle={togglePasswordConfirmation}
                                                     setShowPasswordToggle={
                                                         setTogglePasswordConfirmation
@@ -189,16 +283,20 @@ export default function edit({ supplier }) {
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Update Supplier'}
+                                                Text={'Update Customer'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
                                                     data.email.trim() === '' ||
-                                                    data.is_active === '' ||
                                                     data.phone.trim() === '' ||
-                                                    data.company_name.trim() === '' ||
+                                                    data.is_active === '' ||
+                                                    data.country.trim() === '' ||
+                                                    data.state.trim() === '' ||
+                                                    data.city.trim() === '' ||
+                                                    data.postal_code.trim() === '' ||
+                                                    data.address_line1.trim() === '' ||
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() === '') ||
                                                     (data.password.trim() === '' &&

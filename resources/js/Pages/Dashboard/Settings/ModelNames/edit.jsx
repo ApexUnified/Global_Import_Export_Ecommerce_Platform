@@ -35,7 +35,7 @@ export default function edit({ model_name }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Model Names'}
                                     URL={route('dashboard.settings.model_names.index')}
@@ -99,9 +99,7 @@ export default function edit({ model_name }) {
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.is_active === '' ||
-                                                    (data.name.trim() === model_name.name &&
-                                                        data.is_active === model_name.is_active)
+                                                    data.is_active === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

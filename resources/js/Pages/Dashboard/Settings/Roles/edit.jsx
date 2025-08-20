@@ -94,16 +94,7 @@ export default function edit({ role }) {
                                                 Text={'Update Role'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
-                                                Disabled={
-                                                    processing ||
-                                                    data.name.trim() === '' ||
-                                                    (data.name.trim() === role.name.trim() &&
-                                                        ((role.description === null &&
-                                                            data.description.trim() === '') ||
-                                                            (role.description !== null &&
-                                                                data.description.trim() ===
-                                                                    role.description.trim())))
-                                                }
+                                                Disabled={processing || data.name.trim() === ''}
                                                 Spinner={processing}
                                                 Icon={
                                                     <svg

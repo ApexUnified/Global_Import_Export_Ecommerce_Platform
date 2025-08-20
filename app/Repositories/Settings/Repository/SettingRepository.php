@@ -992,8 +992,8 @@ class SettingRepository implements ISettingRepository
     public function updateCurrency(Request $request, string $id)
     {
         $validated_req = $request->validate([
-            'name' => ['required', 'max:100', 'string', 'unique:currencies,name'],
-            'symbol' => ['required', 'max:10', 'string', 'unique:currencies,symbol'],
+            'name' => ['required', 'max:100', 'string', 'unique:currencies,name,'.$id],
+            'symbol' => ['required', 'max:10', 'string', 'unique:currencies,symbol,'.$id],
         ], [
             'name.required' => 'Currency Name Is Required',
             'name.max' => 'Currency Name Must Not Exceed 100 Characters',

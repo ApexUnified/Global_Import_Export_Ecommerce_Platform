@@ -186,14 +186,7 @@ export default function edit({ category, distributors }) {
                                                     data.name.trim() == '' ||
                                                     data.short_description.trim() === '' ||
                                                     data.thumbnail === '' ||
-                                                    data.distributor_id === '' ||
-                                                    (data.name.trim() == category.name &&
-                                                        data.short_description.trim() ==
-                                                            category.short_description &&
-                                                        data.is_active == category.is_active &&
-                                                        data.thumbnail == category.thumbnail &&
-                                                        data.distributor_id ==
-                                                            category.distributor_id)
+                                                    data.distributor_id === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

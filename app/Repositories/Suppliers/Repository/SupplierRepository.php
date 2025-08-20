@@ -54,8 +54,8 @@ class SupplierRepository implements ISupplierRepository
             'company_name' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
+            'password' => ['required', 'string', 'min:8', 'max:50', 'confirmed'],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'max:50', 'unique:users,phone'],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
@@ -141,11 +141,11 @@ class SupplierRepository implements ISupplierRepository
                 $request->filled('password')
                 ||
                 $request->filled('password_confirmation')
-                ? ['password' => ['required', 'string', 'min:8', 'confirmed']]
+                ? ['password' => ['required', 'string', 'min:8', 'max:50', 'confirmed']]
                 :
                 []
             ),
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$user->id],
+            'phone' => ['required', 'regex:/^\+\d+$/',  'max:50', 'unique:users,phone,'.$user->id],
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',

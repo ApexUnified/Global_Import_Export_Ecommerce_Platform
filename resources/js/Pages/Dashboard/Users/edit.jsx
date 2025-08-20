@@ -335,6 +335,7 @@ export default function edit({ user, roles }) {
                                                     processing ||
                                                     data.name.trim() === '' ||
                                                     data.email.trim() === '' ||
+                                                    data.phone.trim() === '' ||
                                                     data.role_id === '' ||
                                                     data.is_active === '' ||
                                                     (data.role_id === 4 &&
@@ -359,45 +360,7 @@ export default function edit({ user, roles }) {
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() !== '' &&
                                                         data.password.trim() !==
-                                                            data.password_confirmation.trim()) ||
-                                                    // No changes for role 4
-                                                    (data.role_id === 4 &&
-                                                        data.name.trim() === user.name.trim() &&
-                                                        data.email.trim() === user.email.trim() &&
-                                                        data.phone.trim() === user.phone.trim() &&
-                                                        data.role_id === user.roles[0].id &&
-                                                        data.is_active === user.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.company_name.trim() ===
-                                                            user?.supplier?.company_name.trim()) ||
-                                                    // No changes for role 3
-                                                    (data.role_id === 3 &&
-                                                        data.name.trim() === user.name.trim() &&
-                                                        data.email.trim() === user.email.trim() &&
-                                                        data.phone.trim() === user.phone.trim() &&
-                                                        data.role_id === user.roles[0].id &&
-                                                        data.is_active === user.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.type.trim() ===
-                                                            user?.collaborator?.type.trim() &&
-                                                        data.address.trim() ==
-                                                            user?.collaborator?.address.trim() &&
-                                                        data.bank_account_no ==
-                                                            user?.collaborator?.bank_account_no) ||
-                                                    (data.role_id === 5 &&
-                                                        data.name.trim() === user.name.trim() &&
-                                                        data.email.trim() === user.email.trim() &&
-                                                        data.phone.trim() === user.phone.trim() &&
-                                                        data.role_id === user.roles[0].id &&
-                                                        data.is_active === user.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.address.trim() ==
-                                                            user?.distributor?.address.trim() &&
-                                                        data.bank_account_no ==
-                                                            user?.distributor?.bank_account_no)
+                                                            data.password_confirmation.trim())
                                                 }
                                                 Spinner={processing}
                                                 Icon={

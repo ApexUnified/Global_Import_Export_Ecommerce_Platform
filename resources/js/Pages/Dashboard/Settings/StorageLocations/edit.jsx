@@ -37,7 +37,7 @@ export default function edit({ storage_location }) {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Storage Locations'}
                                     URL={route('dashboard.settings.storage_locations.index')}
@@ -120,12 +120,7 @@ export default function edit({ storage_location }) {
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.is_active === '' ||
-                                                    (data.name.trim() === storage_location.name &&
-                                                        data.is_active ===
-                                                            storage_location.is_active &&
-                                                        data.address.trim() ===
-                                                            storage_location.address)
+                                                    data.is_active === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

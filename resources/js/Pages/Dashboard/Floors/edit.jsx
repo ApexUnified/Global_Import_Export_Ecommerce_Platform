@@ -79,11 +79,7 @@ export default function edit({ floor }) {
                                                 Text={'Update Floor'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
-                                                Disabled={
-                                                    processing ||
-                                                    data.name.trim() === '' ||
-                                                    data.name.trim() === floor.name
-                                                }
+                                                Disabled={processing || data.name.trim() === ''}
                                                 Spinner={processing}
                                                 Icon={
                                                     <svg

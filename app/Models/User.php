@@ -122,4 +122,9 @@ class User extends Authenticatable // implements MustVerifyEmail
     {
         return $this->hasMany(RewardPoint::class, 'user_id', 'id');
     }
+
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class, 'user_id', 'id');
+    }
 }

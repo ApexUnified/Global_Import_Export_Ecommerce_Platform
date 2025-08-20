@@ -98,9 +98,7 @@ export default function edit({ reward_point, users }) {
                                                 Disabled={
                                                     processing ||
                                                     data.user_id === '' ||
-                                                    data.points === '' ||
-                                                    (data.points === reward_point.points &&
-                                                        data.user_id === reward_point.user_id)
+                                                    data.points === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

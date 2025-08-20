@@ -263,23 +263,7 @@ export default function edit({ distributor }) {
                                                     (data.password.trim() !== '' &&
                                                         data.password_confirmation.trim() !== '' &&
                                                         data.password.trim() !==
-                                                            data.password_confirmation.trim()) ||
-                                                    (data.name.trim() ===
-                                                        distributor?.user?.name.trim() &&
-                                                        data.address.trim() ===
-                                                            distributor?.address.trim() &&
-                                                        data.bank_account_no.trim() ===
-                                                            distributor?.bank_account_no.trim() &&
-                                                        data.email.trim() ===
-                                                            distributor?.user?.email.trim() &&
-                                                        data.phone.trim() ===
-                                                            distributor?.user?.phone.trim() &&
-                                                        data.is_active ===
-                                                            distributor?.user?.is_active &&
-                                                        data.password.trim() === '' &&
-                                                        data.password_confirmation.trim() === '' &&
-                                                        data.commission_rate ===
-                                                            distributor?.commission_rate)
+                                                            data.password_confirmation.trim())
                                                 }
                                                 Spinner={processing}
                                                 Icon={

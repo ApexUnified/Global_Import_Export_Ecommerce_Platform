@@ -80,11 +80,7 @@ export default function index({ reward_point_setting }) {
                                 Text={'Save Reward Point Setting'}
                                 Type={'submit'}
                                 CustomClass={'w-[250px] '}
-                                Disabled={
-                                    processing ||
-                                    data.reward_rate === '' ||
-                                    data.reward_rate === reward_point_setting.reward_rate
-                                }
+                                Disabled={processing || data.reward_rate === ''}
                                 Spinner={processing}
                                 Icon={
                                     <svg

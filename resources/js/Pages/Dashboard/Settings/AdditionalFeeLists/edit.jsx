@@ -102,11 +102,7 @@ export default function edit({ additional_fee_list }) {
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.is_active === '' ||
-                                                    (data.name.trim() ===
-                                                        additional_fee_list.name &&
-                                                        data.is_active ===
-                                                            additional_fee_list.is_active)
+                                                    data.is_active === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

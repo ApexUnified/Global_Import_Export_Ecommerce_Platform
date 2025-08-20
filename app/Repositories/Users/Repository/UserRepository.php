@@ -28,9 +28,9 @@ class UserRepository implements IUserRepository
     public function updateProfile(Request $request)
     {
         $validated_req = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$request->user()->id,
-            'phone' => 'required|regex:/^\+\d+$/|unique:users,phone,'.$request->user()->id,
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users,email,'.$request->user()->id,
+            'phone' => 'required|regex:/^\+\d+$/|max:50|unique:users,phone,'.$request->user()->id,
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
@@ -76,9 +76,9 @@ class UserRepository implements IUserRepository
     public function updatePassword(Request $request)
     {
         $validated_req = $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => 'required|min:8',
-            'password_confirmation' => 'required|same:password',
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'min:8', 'max:50'],
+            'password_confirmation' => ['required', 'same:password'],
         ]);
 
         try {
@@ -117,7 +117,7 @@ class UserRepository implements IUserRepository
     public function destroyAccount(Request $request)
     {
         $request->validate([
-            'current_password' => 'required|current_password',
+            'current_password' => ['required', 'current_password'],
         ]);
 
         try {
@@ -172,8 +172,8 @@ class UserRepository implements IUserRepository
         $validated_req = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone', 'max:50'],
+            'password' => ['required', 'string', 'min:8', 'max:50', 'confirmed'],
             'role_id' => ['required', 'exists:roles,id'],
             'is_active' => ['required', 'boolean'],
         ], [
@@ -258,6 +258,14 @@ class UserRepository implements IUserRepository
             }
             // Distributor Logic
 
+            // Customer Logic
+
+            if ($role->name === 'Customer') {
+                $created->customer()->create();
+            }
+
+            // Customer Logic
+
             $created->syncRoles($role->name);
 
             DB::commit();
@@ -285,12 +293,12 @@ class UserRepository implements IUserRepository
         $validated_req = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
-            'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$id],
+            'phone' => ['required', 'regex:/^\+\d+$/', 'max:50', 'unique:users,phone,'.$id],
             ...(
                 $request->filled('password')
                 ||
                 $request->filled('password_confirmation')
-                ? ['password' => ['required', 'string', 'min:8', 'confirmed']]
+                ? ['password' => ['required', 'string', 'min:8', 'max:50', 'confirmed']]
                 :
                 []
             ),
@@ -401,6 +409,18 @@ class UserRepository implements IUserRepository
                 $user->distributor()->update(['address' => $request->input('address'), 'bank_account_no' => $request->input('bank_account_no')]);
             }
             // Distributor Logic
+
+            // Customer Logic
+
+            if ($role->name !== 'Customer' && $user->customer()->exists()) {
+                $user->customer()->delete();
+            }
+
+            if ($role->name === 'Customer' && ! $user->customer()->exists()) {
+                $user->customer()->create();
+            }
+
+            // Customer Logic
 
             $updated = $user->update($validated_req);
 
