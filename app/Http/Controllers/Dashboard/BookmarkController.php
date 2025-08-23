@@ -32,7 +32,7 @@ class BookmarkController extends Controller
 
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Bookmark ID Not found');

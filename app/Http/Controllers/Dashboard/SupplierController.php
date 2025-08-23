@@ -38,36 +38,39 @@ class SupplierController extends Controller
         return to_route('dashboard.suppliers.index')->with('success', $created['message']);
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Supplier ID Not Found');
+            return to_route('dashboard.suppliers.index')->with('error', 'Supplier ID Not Found');
         }
 
         $supplier = $this->supplier->getSingleSupplier($id);
         if (empty($supplier)) {
-            return back()->with('error', 'Supplier Not Found');
+            return to_route('dashboard.suppliers.index')->with('error', 'Supplier Not Found');
         }
 
         return Inertia::render('Dashboard/Suppliers/show', compact('supplier'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Supplier ID Not Found');
+            return to_route('dashboard.suppliers.index')->with('error', 'Supplier ID Not Found');
         }
 
         $supplier = $this->supplier->getSingleSupplier($id);
         if (empty($supplier)) {
-            return back()->with('error', 'Supplier Not Found');
+            return to_route('dashboard.suppliers.index')->with('error', 'Supplier Not Found');
         }
 
         return Inertia::render('Dashboard/Suppliers/edit', compact('supplier'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
+        if (empty($id)) {
+            return back()->with('error', 'Supplier ID Not Found');
+        }
         $updated = $this->supplier->updateSupplier($request, $id);
 
         if ($updated['status'] === false) {
@@ -77,7 +80,7 @@ class SupplierController extends Controller
         return to_route('dashboard.suppliers.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Supplier ID Not Found');

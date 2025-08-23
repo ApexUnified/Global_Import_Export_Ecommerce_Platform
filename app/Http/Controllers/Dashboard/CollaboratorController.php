@@ -37,37 +37,37 @@ class CollaboratorController extends Controller
         return to_route('dashboard.collaborators.index')->with('success', 'Collaborator created successfully');
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Collaborator ID not found');
+            return to_route('dashboard.collaborators.index')->with('error', 'Collaborator ID not found');
         }
 
         $collaborator = $this->collaborator->getSingleCollaborator($id);
 
         if (empty($collaborator)) {
-            return back()->with('error', 'Collaborator not found');
+            return to_route('dashboard.collaborators.index')->with('error', 'Collaborator not found');
         }
 
         return Inertia::render('Dashboard/Collaborators/show', compact('collaborator'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Collaborator ID not found');
+            return to_route('dashboard.collaborators.index')->with('error', 'Collaborator ID not found');
         }
 
         $collaborator = $this->collaborator->getSingleCollaborator($id);
 
         if (empty($collaborator)) {
-            return back()->with('error', 'Collaborator not found');
+            return to_route('dashboard.collaborators.index')->with('error', 'Collaborator not found');
         }
 
         return Inertia::render('Dashboard/Collaborators/edit', compact('collaborator'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Collaborator ID not found');
@@ -82,7 +82,7 @@ class CollaboratorController extends Controller
         return to_route('dashboard.collaborators.index')->with('success', 'Collaborator updated successfully');
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Collaborator ID not found');

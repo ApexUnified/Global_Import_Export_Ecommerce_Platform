@@ -40,23 +40,23 @@ class RewardPointController extends Controller
         return to_route('dashboard.reward-points.index')->with('success', $created['message']);
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Reward Point ID Not Found');
+            return to_route('dashboard.reward-points.index')->with('error', 'Reward Point ID Not Found');
         }
 
         $reward_point = $this->reward_point->getSingleRewardPoint($id);
 
         if (empty($reward_point)) {
-            return back()->with('error', 'Reward Point Not Found');
+            return to_route('dashboard.reward-points.index')->with('error', 'Reward Point Not Found');
         }
         $users = $this->reward_point->getUsers();
 
         return Inertia::render('Dashboard/RewardPoints/edit', compact('reward_point', 'users'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
         $updated = $this->reward_point->updateRewardPoint($request, $id);
 
@@ -67,7 +67,7 @@ class RewardPointController extends Controller
         return to_route('dashboard.reward-points.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Reward Point ID Not Found');

@@ -44,17 +44,17 @@ class SmartphoneForSaleController extends Controller
         return to_route('dashboard.smartphone-for-sales.index')->with('success', $created['message']);
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
 
         if (empty($id)) {
-            return back()->with('error', 'Smartphone For Sale ID Not Found');
+            return to_route('dashboard.smartphone-for-sales.index')->with('error', 'Smartphone For Sale ID Not Found');
         }
 
         $smartphone_for_sale = $this->smartphone_for_sale->getSingleSmartphoneForSale($id);
 
         if (empty($smartphone_for_sale)) {
-            return back()->with('error', 'Smartphone For Sale Not Found');
+            return to_route('dashboard.smartphone-for-sales.index')->with('error', 'Smartphone For Sale Not Found');
         }
 
         $smartphones = $this->inventory->getSmartphones();
@@ -63,7 +63,7 @@ class SmartphoneForSaleController extends Controller
         return Inertia::render('Dashboard/SmartphoneForSales/edit', compact('smartphones', 'smartphone_for_sale', 'additional_fee_lists'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
 
         if (empty($id)) {
@@ -79,7 +79,7 @@ class SmartphoneForSaleController extends Controller
         return to_route('dashboard.smartphone-for-sales.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
 
         if (empty($id)) {

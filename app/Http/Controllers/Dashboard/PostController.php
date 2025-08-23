@@ -42,31 +42,31 @@ class PostController extends Controller
         return to_route('dashboard.posts.index')->with('success', $created['message']);
     }
 
-    public function show(string $slug)
+    public function show(?string $slug = null)
     {
         if (empty($slug)) {
-            return back()->with('error', 'Slug Not Found');
+            return to_route('dashboard.posts.index')->with('error', 'Post Slug Not Found');
         }
 
         $post = $this->post->getSinglePostBySlug($slug);
 
         if (empty($post)) {
-            return back()->with('error', 'Post Not Found');
+            return to_route('dashboard.posts.index')->with('error', 'Post Not Found');
         }
 
         return Inertia::render('Dashboard/Posts/show', compact('post'));
     }
 
-    public function edit(string $slug)
+    public function edit(?string $slug = null)
     {
         if (empty($slug)) {
-            return back()->with('error', 'Slug Not Found');
+            return to_route('dashboard.posts.index')->with('error', 'Post Slug Not Found');
         }
 
         $post = $this->post->getSinglePostBySlug($slug);
 
         if (empty($post)) {
-            return back()->with('error', 'Post Not Found');
+            return to_route('dashboard.posts.index')->with('error', 'Post Not Found');
         }
 
         $floors = $this->floor->getAllWithoutPaginateFloors();
@@ -74,10 +74,10 @@ class PostController extends Controller
         return Inertia::render('Dashboard/Posts/edit', compact('post', 'floors'));
     }
 
-    public function update(Request $request, string $slug)
+    public function update(Request $request, ?string $slug = null)
     {
         if (empty($slug)) {
-            return back()->with('error', 'Slug Not Found');
+            return back()->with('error', 'Post Slug Not Found');
         }
 
         $updated = $this->post->updatePost($request, $slug);
@@ -89,7 +89,7 @@ class PostController extends Controller
         return to_route('dashboard.posts.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Post ID Not Found');

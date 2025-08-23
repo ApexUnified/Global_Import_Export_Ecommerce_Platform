@@ -17,6 +17,7 @@ class SmartphoneController extends Controller
     {
         $smartphones = $this->smartphone->getAllSmartphones($request);
 
+        // return $smartphones;
         $search = $request->input('search');
 
         return Inertia::render('Dashboard/Smartphones/index', compact('smartphones', 'search'));
@@ -45,15 +46,15 @@ class SmartphoneController extends Controller
 
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'SmartPhone Id not found');
+            return to_route('dashboard.smartphones.index')->with('error', 'SmartPhone Id not found');
         }
 
         $smartphone = $this->smartphone->getSingleSmartphone($id);
         if (empty($smartphone)) {
-            return back()->with('error', 'SmartPhone not found');
+            return to_route('dashboard.smartphones.index')->with('error', 'SmartPhone not found');
         }
 
         // return $smartphone->colors;
@@ -61,15 +62,15 @@ class SmartphoneController extends Controller
         return Inertia::render('Dashboard/Smartphones/show', compact('smartphone'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'SmartPhone Id not found');
+            return to_route('dashboard.smartphones.index')->with('error', 'SmartPhone Id not found');
         }
 
         $smartphone = $this->smartphone->getSingleSmartphone($id);
         if (empty($smartphone)) {
-            return back()->with('error', 'SmartPhone not found');
+            return to_route('dashboard.smartphones.index')->with('error', 'SmartPhone not found');
         }
 
         $colors = $this->smartphone->getColors();
@@ -80,7 +81,7 @@ class SmartphoneController extends Controller
         return Inertia::render('Dashboard/Smartphones/edit', compact('smartphone', 'colors', 'model_names', 'capacities', 'categories'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
 
         if (empty($id)) {
@@ -95,7 +96,7 @@ class SmartphoneController extends Controller
         return to_route('dashboard.smartphones.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'SmartPhone Id not found');

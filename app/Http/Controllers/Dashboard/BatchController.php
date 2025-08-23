@@ -43,16 +43,16 @@ class BatchController extends Controller
         return to_route('dashboard.batches.index')->with('success', $created['message']);
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Batch ID Not Found');
+            return to_route('dashboard.batches.index')->with('error', 'Batch ID Not Found');
         }
 
         $batch = $this->batch->getSingleFormatedBatchForEdit($id);
 
         if (empty($batch)) {
-            return back()->with('error', 'Batch Not Found');
+            return to_route('dashboard.batches.index')->with('error', 'Batch Not Found');
         }
 
         $suppliers = $this->batch->getSuppliers();
@@ -63,8 +63,11 @@ class BatchController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
+        if (empty($id)) {
+            return back()->with('error', 'Batch Id not found');
+        }
         $updated = $this->batch->updateBatch($request, $id);
 
         if ($updated['status'] === false) {
@@ -74,7 +77,7 @@ class BatchController extends Controller
         return to_route('dashboard.batches.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Batch ID Not Found');

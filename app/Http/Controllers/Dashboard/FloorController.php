@@ -39,22 +39,22 @@ class FloorController extends Controller
         return to_route('dashboard.floors.index')->with('success', $created['message']);
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Floor ID Not Found');
+            return to_route('dashboard.floors.index')->with('error', 'Floor ID Not Found');
         }
 
         $floor = $this->floor->getSingleFloor($id);
 
         if (empty($floor)) {
-            return back()->with('error', 'Floor Not Found');
+            return to_route('dashboard.floors.index')->with('error', 'Floor Not Found');
         }
 
         return Inertia::render('Dashboard/Floors/edit', compact('floor'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Floor ID Not Found');
@@ -69,7 +69,7 @@ class FloorController extends Controller
         return to_route('dashboard.floors.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Floor ID Not Found');

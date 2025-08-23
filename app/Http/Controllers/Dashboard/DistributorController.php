@@ -38,38 +38,42 @@ class DistributorController extends Controller
         return to_route('dashboard.distributors.index')->with('success', $created['message']);
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Distributor ID Not Found');
+            return to_route('dashboard.distributors.index')->with('error', 'Distributor ID Not Found');
         }
 
         $distributor = $this->distributor->getSingleDistributor($id);
 
         if (empty($distributor)) {
-            return back()->with('error', 'Distributor Not Found');
+            return to_route('dashboard.distributors.index')->with('error', 'Distributor Not Found');
         }
 
         return Inertia::render('Dashboard/Distributors/show', compact('distributor'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Distributor ID Not Found');
+            return to_route('dashboard.distributors.index')->with('error', 'Distributor ID Not Found');
         }
 
         $distributor = $this->distributor->getSingleDistributor($id);
 
         if (empty($distributor)) {
-            return back()->with('error', 'Distributor Not Found');
+            return to_route('dashboard.distributors.index')->with('error', 'Distributor Not Found');
         }
 
         return Inertia::render('Dashboard/Distributors/edit', compact('distributor'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
+
+        if (empty($id)) {
+            return back()->with('error', 'Distributor ID Not Found');
+        }
         $updated = $this->distributor->updateDistributor($request, $id);
 
         if ($updated['status'] === false) {
@@ -79,7 +83,7 @@ class DistributorController extends Controller
         return to_route('dashboard.distributors.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Distributor ID Not Found');

@@ -21,5 +21,15 @@ export default {
         },
     },
 
-    plugins: [forms,scrollbar],
+    plugins: [forms,scrollbar, function ({ addUtilities }) {
+      addUtilities({
+        '.page-break': {
+          'page-break-before': 'always',
+        },
+        '.no-break': {
+          'page-break-inside': 'avoid',
+          'break-inside': 'avoid',
+        },
+      });
+    },],
 };

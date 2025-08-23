@@ -2,6 +2,12 @@
 
 namespace App\Repositories\Settings\Repository;
 
+use App\Jobs\AppDarkLogoDestroyOnAWS;
+use App\Jobs\AppDarkLogoStoreOnAWS;
+use App\Jobs\AppFaviconDestroyOnAWS;
+use App\Jobs\AppFaviconStoreOnAWS;
+use App\Jobs\AppLightLogoDestroyOnAWS;
+use App\Jobs\AppLightLogoStoreOnAWS;
 use App\Models\AdditionalFeeList;
 use App\Models\Capacity;
 use App\Models\Color;
@@ -16,7 +22,8 @@ use App\Models\StorageLocation;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
 
 class SettingRepository implements ISettingRepository
 {
@@ -48,9 +55,9 @@ class SettingRepository implements ISettingRepository
             'app_name' => 'required|min:4|string|max:100',
             'contact_email' => 'required|email',
             'contact_number' => 'required|regex:/^\+\d+$/',
-            ...($request->hasFile('app_main_logo_dark') ? ['app_main_logo_dark' => 'nullable|mimes:png|max:2048'] : []),
-            ...($request->hasFile('app_main_logo_light') ? ['app_main_logo_light' => 'nullable|mimes:png|max:2048'] : []),
-            ...($request->hasFile('app_favicon') ? ['app_favicon' => 'nullable|mimes:jpg,jpeg,png|max:2048'] : []),
+            ...($request->hasFile('app_main_logo_dark') ? ['app_main_logo_dark' => 'nullable|image|max:2048'] : []),
+            ...($request->hasFile('app_main_logo_light') ? ['app_main_logo_light' => 'nullable|image|max:2048'] : []),
+            ...($request->hasFile('app_favicon') ? ['app_favicon' => 'nullable|image|max:2048'] : []),
         ], [
             'contact_number.regex' => 'The Contact Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
         ]);
@@ -58,81 +65,101 @@ class SettingRepository implements ISettingRepository
         try {
             $general_setting = $this->general_setting->first();
 
-            $directory = public_path('assets/images/Logo/');
-
-            if (! file_exists($directory)) {
-                File::makeDirectory($directory, 0755, true, true);
-            }
-
             if ($request->boolean('is_removed_app_main_logo_dark') && ! $request->hasFile('app_main_logo_dark')) {
                 if (! empty($general_setting->app_main_logo_dark)) {
-                    if (file_exists($directory.$general_setting->app_main_logo_dark)) {
-                        File::delete($directory.$general_setting->app_main_logo_dark);
-                        $validated_req['app_main_logo_dark'] = null;
-                    }
+                    dispatch(new AppDarkLogoDestroyOnAWS($general_setting->app_main_logo_dark));
+                    $validated_req['app_main_logo_dark'] = null;
                 }
             }
 
             if ($request->boolean('is_removed_app_main_logo_light') && ! $request->hasFile('app_main_logo_light')) {
 
                 if (! empty($general_setting->app_main_logo_light)) {
-                    if (file_exists($directory.$general_setting->app_main_logo_light)) {
-                        File::delete($directory.$general_setting->app_main_logo_light);
-                        $validated_req['app_main_logo_light'] = null;
-                    }
+                    dispatch(new AppLightLogoDestroyOnAWS($general_setting->app_main_logo_light));
+                    $validated_req['app_main_logo_light'] = null;
                 }
             }
 
             if ($request->boolean('is_removed_app_favicon') && ! $request->hasFile('app_favicon')) {
                 if (! empty($general_setting->app_favicon)) {
-                    if (file_exists($directory.$general_setting->app_favicon)) {
-                        File::delete($directory.$general_setting->app_favicon);
-                        $validated_req['app_favicon'] = null;
-                    }
+                    dispatch(new AppFaviconDestroyOnAWS($general_setting->app_favicon));
+                    $validated_req['app_favicon'] = null;
                 }
             }
 
             if ($request->hasFile('app_favicon')) {
 
                 if (! empty($general_setting->app_favicon)) {
-                    if (file_exists($directory.$general_setting->app_favicon)) {
-                        File::delete($directory.$general_setting->app_favicon);
-                    }
+                    dispatch(new AppFaviconDestroyOnAWS($general_setting->app_favicon));
                 }
 
                 $favicon = $request->file('app_favicon');
                 $new_favicon_name = time().uniqid().'.'.$favicon->getClientOriginalExtension();
-                $validated_req['app_favicon'] = $new_favicon_name;
-                $favicon->move($directory, $new_favicon_name);
+
+                $resizedImage = ImageManager::imagick()
+                    ->read($favicon)
+                    ->resize(512, 512)
+                    ->cover(512, 512)
+                    ->encodeByExtension('png', quality: 80);
+
+                $tempPath = 'temp/uploads/'.$new_favicon_name;
+                Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                $validated_req['app_favicon'] = null;
+
+                dispatch(new AppFaviconStoreOnAWS($tempPath, $general_setting));
 
             }
+
             if ($request->hasFile('app_main_logo_dark')) {
 
                 if (! empty($general_setting->app_main_logo_dark)) {
-                    if (file_exists($directory.$general_setting->app_main_logo_dark)) {
-                        File::delete($directory.$general_setting->app_main_logo_dark);
-                    }
+                    dispatch(new AppDarkLogoDestroyOnAWS($general_setting->app_main_logo_dark));
                 }
 
                 $app_main_logo_dark = $request->file('app_main_logo_dark');
+
                 $new_app_main_logo_dark_name = time().uniqid().'.'.$app_main_logo_dark->getClientOriginalExtension();
-                $validated_req['app_main_logo_dark'] = $new_app_main_logo_dark_name;
-                $app_main_logo_dark->move($directory, $new_app_main_logo_dark_name);
+
+                $resizedImage = ImageManager::imagick()
+                    ->read($app_main_logo_dark)
+                    ->resize(1280, 1080)
+                    ->cover(1280, 1080)
+                    ->encodeByExtension($app_main_logo_dark->getClientOriginalExtension(), quality: 80);
+
+                $tempPath = 'temp/uploads/'.$new_app_main_logo_dark_name;
+                Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                $validated_req['app_main_logo_dark'] = null;
+
+                dispatch(new AppDarkLogoStoreOnAWS($tempPath, $general_setting));
+
+                // $validated_req['app_main_logo_dark'] = $new_app_main_logo_dark_name;
+                // $app_main_logo_dark->move($directory, $new_app_main_logo_dark_name);
 
             }
 
             if ($request->hasFile('app_main_logo_light')) {
 
                 if (! empty($general_setting->app_main_logo_light)) {
-                    if (file_exists($directory.$general_setting->app_main_logo_light)) {
-                        File::delete($directory.$general_setting->app_main_logo_light);
-                    }
+                    dispatch(new AppLightLogoDestroyOnAWS($general_setting->app_main_logo_light));
                 }
 
                 $app_main_logo_light = $request->file('app_main_logo_light');
                 $new_app_main_logo_light_name = time().uniqid().'.'.$app_main_logo_light->getClientOriginalExtension();
-                $validated_req['app_main_logo_light'] = $new_app_main_logo_light_name;
-                $app_main_logo_light->move($directory, $new_app_main_logo_light_name);
+
+                $resizedImage = ImageManager::imagick()
+                    ->read($app_main_logo_light)
+                    ->resize(1280, 1080)
+                    ->cover(1280, 1080)
+                    ->encodeByExtension($app_main_logo_light->getClientOriginalExtension(), quality: 80);
+
+                $tempPath = 'temp/uploads/'.$new_app_main_logo_light_name;
+                Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                $validated_req['app_main_logo_light'] = null;
+
+                dispatch(new AppLightLogoStoreOnAWS($tempPath, $general_setting));
+
+                // $validated_req['app_main_logo_light'] = $new_app_main_logo_light_name;
+                // $app_main_logo_light->move($directory, $new_app_main_logo_light_name);
 
             }
 

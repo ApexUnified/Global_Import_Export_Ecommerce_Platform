@@ -125,54 +125,55 @@ Customers earn points based on purchase amount.
 Points can be used like cash within the site, valid for five years, and automatically deleted if unused.
 
 
-Invoice Management
+Invoice Management ✅
 Invoice Format: Design is flexible; I will implement it following the required flow and fields.
-Invoice Download: Only possible after payment is manually confirmed by the admin.
-Tracking Link: Each invoice will include a link at the bottom to dynamically track shipment status from the site.
+Invoice Download: Only possible after payment is manually confirmed by the admin. ✅
+Tracking Link: Each invoice will include a link at the bottom to dynamically track shipment status from the site. ✅
 
-Invoice Types
-Order Form: Basic order details (customer name, address, etc.).
-Order Form (+ QR): For domestic shipping in Korea and internal management.
-Can be downloaded/printed immediately after payment confirmation.
-Now merged with standard order form and sent to customers.
+Invoice Types ✅
+Order Form: Basic order details (customer name, address, etc.). ✅
+Order Form (+ QR): For domestic shipping in Korea and internal management. ✅
+Can be downloaded/printed immediately after payment confirmation. ✅
+Now merged with standard order form and sent to customers. ✅
 
-QR Code Usage:
-Customer: Can view only allowed order information.
-Admin: Can access internal management tools like delivery management and inventory status.
-Referral Code
-Added as an input field when placing an order, along with delivery info.
+QR Code Usage: ✅
+Customer: Can view only allowed order information. ✅
+Admin: Can access internal management tools like delivery management and inventory status. ✅
+Referral Code Added as an input field when placing an order, along with delivery info. ✅
+
 Purpose: Identifies the collaborator for commission purposes.
 Example: A collaborator promotes a product locally and shares their referral code. When used by a customer, the collaborator receives the predefined commission.
 
 
 
-Order Flow Implications
-Order Creation & Payment: Customer places an order → admin confirms payment.
-Invoice Generation: After payment, invoice with QR can be generated and sent to the customer.
-Shipping Invoice: QR-enabled order form serves both customer use and internal management.
-Referral Code: Used only for collaborator identification for commissions And Points accumulation for the Customer If Referral Code Used Of Any Collaborator.
+Order Flow Implications ✅
+Order Creation & Payment: Customer places an order → admin confirms payment. ✅
+Invoice Generation: After payment, invoice with QR can be generated and sent to the customer. ✅
+Shipping Invoice: QR-enabled order form serves both customer use and internal management. ✅
+Referral Code: Used only for collaborator identification for commissions And Points accumulation for the Customer If Referral Code Used Of Any Collaborator. ✅
 
 
 Order Flow Migration Steps
-Order Creation & Payment – Customer places an order → Automatically shows Bank Details Of Smartphone Related Category Distributor And Than After Payment And Uploading Receipt By The User Admin confirms payment.
+this is for Website -> Order Creation & Payment – Customer places an order → Automatically shows Bank Details Of Smartphone Related Category Distributor And Than After Payment And Uploading Receipt By The User Admin confirms payment.
+Cart CRUD in dashboard  -> will be use for website
 
-Invoice Generation – After payment, an invoice with QR is generated and sent to the customer.
-Shipping Invoice – QR-enabled order form serves for both customer use and internal management.
-Referral Code Integration – Used only for collaborator identification, commissions, and customer points if applied.
-Courier Shipping Upload – Ability to upload courier shipping details for related orders.
-Courier Details Management – Courier company name, shipping date, and tracking number.
-Payment Receipt Upload (Customer) – Customers can upload proof of payment.
-Cash Collected Status Toggle – For internal tracking
+Invoice Generation – After payment, an invoice with QR is generated and sent to the customer. ✅
+Shipping Invoice – QR-enabled order form serves for both customer use and internal management. ✅
+Referral Code Integration – Used only for collaborator identification, commissions, and customer points if applied. ✅
+Courier Shipping Upload – Ability to upload courier shipping details for related orders. ✅
+Courier Details Management – Courier company name, shipping date, and tracking number. ✅
+Payment Receipt Upload (Customer) – Customers can upload proof of payment. ✅
+Cash Collected Status Toggle – For internal tracking ✅
 
 
 
-Additionally, customers will only earn points when a purchase is made with a collaborator’s referral code entered.
-The point accumulation rate can either be set by the super admin as a uniform rate applied to all collaborators, or as different rates per collaborator.
+Additionally, customers will only earn points when a purchase is made with a collaborator’s referral code entered. ✅
+The point accumulation rate can either be set by the super admin as a uniform rate applied to all collaborators, or as different rates per collaborator. ✅
 
 Packaging Recordings -- Module {
 To clarify, the Packaging Recordings module is a straightforward feature: it records video in real time, allows us to assign the recording to the related order, and enables tracking of the viewed status along with the recording timestamp. I believe these are the main points we previously discussed.
 }
-Order items Module
+Order items Module ✅
 
 
 🔔 Push Notification Events (Email + Meta API: Messenger/Instagram)
@@ -188,3 +189,14 @@ Order items Module
 
 
 
+
+
+Routes Work
+Extract All edit , show routes from resource and make thier params optional to run controller logic that checks for params ✅
+
+
+Commission logic Remeaning It will be done when next milestone came
+
+
+For website Order Flow
+Restrict Multiple products With Multiple Distributors Adding in cart and also restrictiug while ordering [Dashboard This Logic Done]

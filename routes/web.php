@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\CollaboratorController;
+use App\Http\Controllers\Dashboard\CustomerController;
 use App\Http\Controllers\Dashboard\DistributorController;
 use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
@@ -17,7 +17,7 @@ use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
-use App\Models\Distributor;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -30,70 +30,195 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('/dashboard')->name('dashboard.')->group(function () {
 
         // Posts / Blogs Routes
-        Route::resource('/posts', PostController::class);
-        Route::delete('/posts-destroy-by-selection', [PostController::class, 'destroyBySelection'])->name('posts.destroybyselection');
+        Route::controller(PostController::class)->name('posts.')->group(function () {
+            Route::get('/posts', 'index')->name('index');
+            Route::get('/posts/create', 'create')->name('create');
+            Route::post('/posts-store', 'store')->name('store');
+            Route::get('/posts-edit/{slug?}', 'edit')->name('edit');
+            Route::put('/posts-update/{slug?}', 'update')->name('update');
+            Route::get('/post-view/{slug?}', 'show')->name('show');
+            Route::delete('/posts-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/posts-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
 
-        // Google Locaiton AutoCompletion Route  For Posts
-        Route::post('/posts-google-location-autocomplete', [PostController::class, 'googleLocationAutoComplete'])->name('posts.google.location.autocomplete');
-        Route::post('/posts-google-location-place-details', [PostController::class, 'googleLocationPlaceDetails'])->name('posts.google.location.placedetails');
+            // Google Locaiton AutoCompletion Route  For Posts
+            Route::post('/posts-google-location-autocomplete', 'googleLocationAutoComplete')->name('google.location.autocomplete');
+            Route::post('/posts-google-location-place-details', 'googleLocationPlaceDetails')->name('google.location.placedetails');
+        });
 
         // Floor Routes
-        Route::resource('/floors', FloorController::class)->except(['show']);
-        Route::delete('/floors-delete-by-selection', [FloorController::class, 'destroyBySelection'])->name('floors.destroybyselection');
+        Route::controller(FloorController::class)->name('floors.')->group(function () {
+
+            Route::get('/floors', 'index')->name('index');
+            Route::get('/floors-create', 'create')->name('create');
+            Route::post('/floors-store', 'store')->name('store');
+            Route::get('/floors-edit/{id?}', 'edit')->name('edit');
+            Route::put('/floors-update/{id?}', 'update')->name('update');
+            Route::delete('/floors-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/floors-delete-by-selection', 'destroyBySelection')->name('destroybyselection');
+
+        });
 
         // Bookmark Routes
-        Route::controller(BookmarkController::class)->group(function () {
-            Route::get('/bookmarks', 'index')->name('bookmarks.index');
-            Route::put('/bookmarks-toggle', 'toggleBookmark')->name('bookmarks.toggle');
-            Route::delete('/bookmarks-destroy/{id}', 'destroy')->name('bookmarks.destroy');
-            Route::delete('/bookmarks-delete-by-selection', 'destroyBySelection')->name('bookmarks.destroybyselection');
+        Route::controller(BookmarkController::class)->name('bookmarks.')->group(function () {
+            Route::get('/bookmarks', 'index')->name('index');
+            Route::put('/bookmarks-toggle', 'toggleBookmark')->name('toggle');
+            Route::delete('/bookmarks-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/bookmarks-delete-by-selection', 'destroyBySelection')->name('destroybyselection');
 
         });
 
         // User Routes
-        Route::resource('/users', UserController::class);
-        Route::delete('/users-destroy-by-selection', [UserController::class, 'destroyBySelection'])->name('users.destroybyselection');
+        Route::controller(UserController::class)->name('users.')->group(function () {
+            Route::get('/users', 'index')->name('index');
+            Route::get('/users-create', 'create')->name('create');
+            Route::post('/users-store', 'store')->name('store');
+            Route::get('/users-edit/{id?}', 'edit')->name('edit');
+            Route::put('/users-update/{id?}', 'update')->name('update');
+            Route::get('/users-view/{id?}', 'show')->name('show');
+            Route::delete('/users-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/users-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Supplier Routes
-        Route::resource('/suppliers', SupplierController::class);
-        Route::delete('/suppliers-destroy-by-selection', [SupplierController::class, 'destroyBySelection'])->name('suppliers.destroybyselection');
+        Route::controller(SupplierController::class)->name('suppliers.')->group(function () {
+
+            Route::get('/suppliers', 'index')->name('index');
+            Route::get('/suppliers-create', 'create')->name('create');
+            Route::post('/suppliers-store', 'store')->name('store');
+            Route::get('/suppliers-edit/{id?}', 'edit')->name('edit');
+            Route::put('/suppliers-update/{id?}', 'update')->name('update');
+            Route::get('/suppliers-view/{id?}', 'show')->name('show');
+            Route::delete('/suppliers-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/suppliers-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Collaborator Routes
-        Route::resource('/collaborators', CollaboratorController::class);
-        Route::delete('/collaborators-destroy-by-selection', [CollaboratorController::class, 'destroyBySelection'])->name('collaborators.destroybyselection');
+        Route::controller(CollaboratorController::class)->name('collaborators.')->group(function () {
+
+            Route::get('/collaborators', 'index')->name('index');
+            Route::get('/collaborators-create', 'create')->name('create');
+            Route::post('/collaborators-store', 'store')->name('store');
+            Route::get('/collaborators-edit/{id?}', 'edit')->name('edit');
+            Route::put('/collaborators-update/{id?}', 'update')->name('update');
+            Route::get('/collaborators-view/{id?}', 'show')->name('show');
+            Route::delete('/collaborators-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/collaborators-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Distributor Routes
-        Route::resource('/distributors', DistributorController::class);
-        Route::delete('/distributors-destroy-by-selection', [DistributorController::class, 'destroyBySelection'])->name('distributors.destroybyselection');
+
+        Route::controller(DistributorController::class)->name('distributors.')->group(function () {
+
+            Route::get('/distributors', 'index')->name('index');
+            Route::get('/distributors-create', 'create')->name('create');
+            Route::post('/distributors-store', 'store')->name('store');
+            Route::get('/distributors-edit/{id?}', 'edit')->name('edit');
+            Route::put('/distributors-update/{id?}', 'update')->name('update');
+            Route::get('/distributors-view/{id?}', 'show')->name('show');
+            Route::delete('/distributors-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/distributors-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Customer Routes
-        Route::resource('/customers', CustomerController::class);
-        Route::delete('/customers-destroy-by-selection', [CustomerController::class, 'destroyBySelection'])->name('customers.destroybyselection');
+        Route::controller(CustomerController::class)->name('customers.')->group(function () {
+
+            Route::get('/customers', 'index')->name('index');
+            Route::get('/customers-create', 'create')->name('create');
+            Route::post('/customers-store', 'store')->name('store');
+            Route::get('/customers-edit/{id?}', 'edit')->name('edit');
+            Route::put('/customers-update/{id?}', 'update')->name('update');
+            Route::get('/customers-view/{id?}', 'show')->name('show');
+            Route::delete('/customers-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/customers-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Smart Phone Routes
-        Route::resource('/smartphones', SmartphoneController::class);
-        Route::delete('/smartphones-destroy-by-selection', [SmartphoneController::class, 'destroyBySelection'])->name('smartphones.destroybyselection');
+        Route::controller(SmartphoneController::class)->name('smartphones.')->group(function () {
+
+            Route::get('/smartphones', 'index')->name('index');
+            Route::get('/smartphones-create', 'create')->name('create');
+            Route::post('/smartphones-store', 'store')->name('store');
+            Route::get('/smartphones-edit/{id?}', 'edit')->name('edit');
+            Route::put('/smartphones-update/{id?}', 'update')->name('update');
+            Route::get('/smartphones-view/{id?}', 'show')->name('show');
+            Route::delete('/smartphones-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/smartphones-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Batch Routes
-        Route::resource('/batches', BatchController::class)->except(['show']);
-        Route::delete('/batches-destroy-by-selection', [BatchController::class, 'destroyBySelection'])->name('batches.destroybyselection');
+        Route::controller(BatchController::class)->name('batches.')->group(function () {
+
+            Route::get('/batches', 'index')->name('index');
+            Route::get('/batches-create', 'create')->name('create');
+            Route::post('/batches-store', 'store')->name('store');
+            Route::get('/batches-edit/{id?}', 'edit')->name('edit');
+            Route::put('/batches-update/{id?}', 'update')->name('update');
+            Route::delete('/batches-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/batches-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+
+        });
 
         // Inventory Routes
-        Route::resource('/inventories', InventoryController::class)->except(['show', 'create', 'store']);
-        Route::get('/inventories-get-smart-phone-by-upc/{upc}', [InventoryController::class, 'getSmartPhoneByUpc'])->name('inventories.getsmartphonebyupc');
-        Route::delete('/inventories-destroy-by-selection', [InventoryController::class, 'destroyBySelection'])->name('inventories.destroybyselection');
+        Route::controller(InventoryController::class)->name('inventories.')->group(function () {
+
+            Route::get('/inventories', 'index')->name('index');
+            Route::get('/inventories-edit/{id?}', 'edit')->name('edit');
+            Route::put('/inventories-update/{id?}', 'update')->name('update');
+            Route::delete('/inventories-destroy/{id?}', 'destroy')->name('destroy');
+            Route::get('/inventories-get-smart-phone-by-upc/{upc}', 'getSmartPhoneByUpc')->name('getsmartphonebyupc');
+            Route::delete('/inventories-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
+
+        // Order Routes
+        Route::controller(OrderController::class)->name('orders.')->group(function () {
+
+            Route::get('/orders', 'index')->name('index');
+            Route::get('/orders-create', 'create')->name('create');
+            Route::post('/orders-store', 'store')->name('store');
+            Route::get('/orders-edit/{id?}', 'edit')->name('edit');
+            Route::put('/orders-update/{id?}', 'update')->name('update');
+            Route::get('/orders-view/{id?}', 'show')->name('show');
+            Route::delete('/orders-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/orders-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+            Route::put('/orders-update-cash-collected-status/{id?}', 'updateCashCollectedStatus')->name('updatecashcollectedstatus');
+        });
 
         // Smartphone For Sale Routes
-        Route::resource('/smartphone-for-sales', SmartphoneForSaleController::class)->except(['show']);
-        Route::delete('/smartphone-for-sales-destroy-by-selection', [SmartphoneForSaleController::class, 'destroyBySelection'])->name('smartphone-for-sales.destroybyselection');
+        Route::controller(SmartphoneForSaleController::class)->name('smartphone-for-sales.')->group(function () {
+
+            Route::get('/smartphone-for-sales', 'index')->name('index');
+            Route::get('/smartphone-for-sales-create', 'create')->name('create');
+            Route::post('/smartphone-for-sales-store', 'store')->name('store');
+            Route::get('/smartphone-for-sales-edit/{id?}', 'edit')->name('edit');
+            Route::put('/smartphone-for-sales-update/{id?}', 'update')->name('update');
+            Route::delete('/smartphone-for-sales-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/smartphone-for-sales-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Category Routes
-        Route::resource('/categories', CategoryController::class);
-        Route::delete('/categories-destroy-by-selection', [CategoryController::class, 'destroyBySelection'])->name('categories.destroybyselection');
+        Route::controller(CategoryController::class)->name('categories.')->group(function () {
+
+            Route::get('/categories', 'index')->name('index');
+            Route::get('/categories-create', 'create')->name('create');
+            Route::post('/categories-store', 'store')->name('store');
+            Route::get('/categories-edit/{id?}', 'edit')->name('edit');
+            Route::put('/categories-update/{id?}', 'update')->name('update');
+            Route::get('/categories-view/{id?}', 'show')->name('show');
+            Route::delete('/categories-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/categories-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Reward Point Routes
-        Route::resource('/reward-points', RewardPointController::class)->except(['show']);
-        Route::delete('/reward-points-destroy-by-selection', [RewardPointController::class, 'destroyBySelection'])->name('reward-points.destroybyselection');
+        Route::controller(RewardPointController::class)->name('reward-points.')->group(function () {
+
+            Route::get('/reward-points', 'index')->name('index');
+            Route::get('/reward-points-create', 'create')->name('create');
+            Route::post('/reward-points-store', 'store')->name('store');
+            Route::get('/reward-points-edit/{id?}', 'edit')->name('edit');
+            Route::put('/reward-points-update/{id?}', 'update')->name('update');
+            Route::delete('/reward-points-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/reward-points-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
 
         // Profile Routes
         Route::controller(ProfileController::class)->group(function () {
@@ -121,65 +246,65 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/roles', 'roleIndex')->name('roles.index');
                 Route::get('/roles-create', 'roleCreate')->name('roles.create');
                 Route::post('/roles-store', 'roleStore')->name('roles.store');
-                Route::get('/roles-edit/{id}', 'roleEdit')->name('roles.edit');
-                Route::put('/roles-update/{id}', 'roleUpdate')->name('roles.update');
-                Route::delete('/roles-destroy/{id}', 'roleDestroy')->name('roles.destroy');
+                Route::get('/roles-edit/{id?}', 'roleEdit')->name('roles.edit');
+                Route::put('/roles-update/{id?}', 'roleUpdate')->name('roles.update');
+                Route::delete('/roles-destroy/{id?}', 'roleDestroy')->name('roles.destroy');
                 Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
 
                 // Color Routes
                 Route::get('/colors', 'colorIndex')->name('colors.index');
                 Route::get('/colors-create', 'colorCreate')->name('colors.create');
                 Route::post('/colors-store', 'colorStore')->name('colors.store');
-                Route::get('/colors-edit/{id}', 'colorEdit')->name('colors.edit');
-                Route::put('/colors-update/{id}', 'colorUpdate')->name('colors.update');
-                Route::delete('/colors-destroy/{id}', 'colorDestroy')->name('colors.destroy');
+                Route::get('/colors-edit/{id?}', 'colorEdit')->name('colors.edit');
+                Route::put('/colors-update/{id?}', 'colorUpdate')->name('colors.update');
+                Route::delete('/colors-destroy/{id?}', 'colorDestroy')->name('colors.destroy');
                 Route::delete('/colors-destroy-by-selection', 'destroyColorBySelection')->name('colors.destroybyselection');
 
                 // Model Name Routes
                 Route::get('/model-names', 'modelNameIndex')->name('model_names.index');
                 Route::get('/model-names-create', 'modelNameCreate')->name('model_names.create');
                 Route::post('/model-names-store', 'modelNameStore')->name('model_names.store');
-                Route::get('/model-names-edit/{id}', 'modelNameEdit')->name('model_names.edit');
-                Route::put('/model-names-update/{id}', 'modelNameUpdate')->name('model_names.update');
-                Route::delete('/model-names-destroy/{id}', 'modelNameDestroy')->name('model_names.destroy');
+                Route::get('/model-names-edit/{id?}', 'modelNameEdit')->name('model_names.edit');
+                Route::put('/model-names-update/{id?}', 'modelNameUpdate')->name('model_names.update');
+                Route::delete('/model-names-destroy/{id?}', 'modelNameDestroy')->name('model_names.destroy');
                 Route::delete('/model-names-destroy-by-selection', 'destroyModelNameBySelection')->name('model_names.destroybyselection');
 
                 // Capcaity Routes
                 Route::get('/capacities', 'capacityIndex')->name('capacities.index');
                 Route::get('/capacities-create', 'capacityCreate')->name('capacities.create');
                 Route::post('/capacities-store', 'capacityStore')->name('capacities.store');
-                Route::get('/capacities-edit/{id}', 'capacityEdit')->name('capacities.edit');
-                Route::put('/capacities-update/{id}', 'capacityUpdate')->name('capacities.update');
-                Route::delete('/capacities-destroy/{id}', 'capacityDestroy')->name('capacities.destroy');
+                Route::get('/capacities-edit/{id?}', 'capacityEdit')->name('capacities.edit');
+                Route::put('/capacities-update/{id?}', 'capacityUpdate')->name('capacities.update');
+                Route::delete('/capacities-destroy/{id?}', 'capacityDestroy')->name('capacities.destroy');
                 Route::delete('/capacities-destroy-by-selection', 'destroyCapacityBySelection')->name('capacities.destroybyselection');
 
                 // Storage Location Routes
                 Route::get('/storage-locations', 'storageLocationIndex')->name('storage_locations.index');
                 Route::get('/storage-locations-create', 'storageLocationCreate')->name('storage_locations.create');
                 Route::post('/storage-locations-store', 'storageLocationStore')->name('storage_locations.store');
-                Route::get('/storage-locations-edit/{id}', 'storageLocationEdit')->name('storage_locations.edit');
-                Route::put('/storage-locations-update/{id}', 'storageLocationUpdate')->name('storage_locations.update');
-                Route::delete('/storage-locations-destroy/{id}', 'storageLocationDestroy')->name('storage_locations.destroy');
+                Route::get('/storage-locations-edit/{id?}', 'storageLocationEdit')->name('storage_locations.edit');
+                Route::put('/storage-locations-update/{id?}', 'storageLocationUpdate')->name('storage_locations.update');
+                Route::delete('/storage-locations-destroy/{id?}', 'storageLocationDestroy')->name('storage_locations.destroy');
                 Route::delete('/storage-locations-destroy-by-selection', 'destroyStorageLocationBySelection')->name('storage_locations.destroybyselection');
 
                 // Currency Routes
                 Route::get('/currencies', 'currencyIndex')->name('currencies.index');
                 Route::get('/currencies-create', 'currencyCreate')->name('currencies.create');
                 Route::post('/currencies-store', 'currencyStore')->name('currencies.store');
-                Route::get('/currencies-edit/{id}', 'currencyEdit')->name('currencies.edit');
-                Route::put('/currencies-update/{id}', 'currencyUpdate')->name('currencies.update');
-                Route::put('/currencies-toggle/{id}', 'toggleCurrencyStatus')->name('currencies.toggle');
-                Route::delete('/currencies-destroy/{id}', 'currencyDestroy')->name('currencies.destroy');
+                Route::get('/currencies-edit/{id?}', 'currencyEdit')->name('currencies.edit');
+                Route::put('/currencies-update/{id?}', 'currencyUpdate')->name('currencies.update');
+                Route::put('/currencies-toggle/{id?}', 'toggleCurrencyStatus')->name('currencies.toggle');
+                Route::delete('/currencies-destroy/{id?}', 'currencyDestroy')->name('currencies.destroy');
                 Route::delete('/currencies-destroy-by-selection', 'destroycurrencyBySelection')->name('currencies.destroybyselection');
 
                 // Additional Fee List Routes
                 Route::get('/additional-fee-lists', 'additionalFeeListIndex')->name('additional_fee_lists.index');
                 Route::get('/additional-fee-lists-create', 'additionalFeeListCreate')->name('additional_fee_lists.create');
                 Route::post('/additional-fee-lists-store', 'additionalFeeListStore')->name('additional_fee_lists.store');
-                Route::get('/additional-fee-lists-edit/{id}', 'additionalFeeListEdit')->name('additional_fee_lists.edit');
-                Route::put('/additional-fee-lists-update/{id}', 'additionalFeeListUpdate')->name('additional_fee_lists.update');
-                Route::put('/additional-fee-lists-toggle/{id}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
-                Route::delete('/additional-fee-lists-destroy/{id}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
+                Route::get('/additional-fee-lists-edit/{id?}', 'additionalFeeListEdit')->name('additional_fee_lists.edit');
+                Route::put('/additional-fee-lists-update/{id?}', 'additionalFeeListUpdate')->name('additional_fee_lists.update');
+                Route::put('/additional-fee-lists-toggle/{id?}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
+                Route::delete('/additional-fee-lists-destroy/{id?}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
                 Route::delete('/additional-fee-lists-destroy-by-selection', 'destroyAdditionalFeeListBySelection')->name('additional_fee_lists.destroybyselection');
 
                 // Reward Setting Routes
@@ -190,14 +315,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/commission-settings', 'commissionSettingIndex')->name('commission-settings.index');
                 Route::get('/commission-settings-create', 'commissionSettingCreate')->name('commission-settings.create');
                 Route::post('/commission-settings-store', 'commissionSettingStore')->name('commission-settings.store');
-                Route::get('/commission-settings-edit/{id}', 'commissionSettingEdit')->name('commission-settings.edit');
-                Route::put('/commission-settings-update/{id}', 'commissionSettingUpdate')->name('commission-settings.update');
-                Route::delete('/commission-settings-destroy/{id}', 'destroyCommissionSetting')->name('commission-settings.destroy');
+                Route::get('/commission-settings-edit/{id?}', 'commissionSettingEdit')->name('commission-settings.edit');
+                Route::put('/commission-settings-update/{id?}', 'commissionSettingUpdate')->name('commission-settings.update');
+                Route::delete('/commission-settings-destroy/{id?}', 'destroyCommissionSetting')->name('commission-settings.destroy');
                 Route::delete('/commission-settings-destroy-by-selection', 'destroyCommissionSettingBySelection')->name('commission-settings.destroybyselection');
             });
 
         });
     });
+
+    // Order Invoice Routes
+    Route::controller(OrderController::class)->name('orders.')->group(function () {
+        // Customer Order Invoice
+        Route::get('/orders-customer-order-invoice/{order_no?}', 'customerOrderInvoice')->name('customer-order-invoice');
+
+        // Shipping Invoice
+        Route::get('/orders-shipping-invoice/{order_no?}', 'shippingInvoice')->name('shipping-invoice');
+    });
+
 });
 
 require __DIR__.'/auth.php';

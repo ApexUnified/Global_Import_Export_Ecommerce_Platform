@@ -65,6 +65,11 @@ class Smartphone extends Model
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'smartphone_id', 'id');
+    }
+
     // Casting
     protected $casts = [
         'color_ids' => 'array',

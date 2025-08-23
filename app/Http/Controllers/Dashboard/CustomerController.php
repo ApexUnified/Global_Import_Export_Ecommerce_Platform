@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Repositories\Customers\Interface\ICustomerRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -37,40 +38,43 @@ class CustomerController extends Controller
         return to_route('dashboard.customers.index')->with('success', $created['message']);
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Customer ID Not Found');
+            return to_route('dashboard.customers.index')->with('error', 'Customer ID Not Found');
         }
 
         $customer = $this->customer->getSingleCustomer($id);
 
         if (empty($customer)) {
 
-            return back()->with('error', 'Customer Not Found');
+            return to_route('dashboard.customers.index')->with('error', 'Customer Not Found');
         }
 
         return Inertia::render('Dashboard/Customers/show', compact('customer'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Customer ID Not Found');
+            return to_route('dashboard.customers.index')->with('error', 'Customer ID Not Found');
         }
 
         $customer = $this->customer->getSingleCustomer($id);
 
         if (empty($customer)) {
 
-            return back()->with('error', 'Customer Not Found');
+            return to_route('dashboard.customers.index')->with('error', 'Customer Not Found');
         }
 
         return Inertia::render('Dashboard/Customers/edit', compact('customer'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
+        if (empty($id)) {
+            return back()->with('error', 'Customer ID Not Found');
+        }
         $updated = $this->customer->updateCustomer($request, $id);
 
         if ($updated['status'] === false) {
@@ -80,7 +84,7 @@ class CustomerController extends Controller
         return to_route('dashboard.customers.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Customer ID Not Found');

@@ -54,17 +54,17 @@ class InventoryController extends Controller
         return to_route('dashboard.inventories.index')->with('success', $created['message']);
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
 
         if (empty($id)) {
-            return back()->with('error', 'Inventory ID Not Found');
+            return to_route('dashboard.inventories.index')->with('error', 'Inventory ID Not Found');
         }
 
         $inventory = $this->inventory->getSingleInventory($id);
 
         if (empty($inventory)) {
-            return back()->with('error', 'Inventory Not Found');
+            return to_route('dashboard.inventories.index')->with('error', 'Inventory Not Found');
         }
 
         $batches = $this->inventory->getBatches();
@@ -75,7 +75,7 @@ class InventoryController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Inventory ID Not Found');
@@ -90,7 +90,7 @@ class InventoryController extends Controller
         return to_route('dashboard.inventories.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Inventory ID Not Found');
@@ -116,7 +116,7 @@ class InventoryController extends Controller
         return back()->with('success', $deleted['message']);
     }
 
-    public function getSmartPhoneByUpc(string $upc)
+    public function getSmartPhoneByUpc(?string $upc = null)
     {
         if (empty($upc)) {
             return response()->json([

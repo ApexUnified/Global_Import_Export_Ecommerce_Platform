@@ -39,31 +39,31 @@ class CategoryController extends Controller
         return to_route('dashboard.categories.index')->with('success', $created['message']);
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Category ID Not found');
+            return to_route('dashboard.categories.index')->with('error', 'Category ID Not found');
         }
 
         $category = $this->category->getSingleCategory($id);
 
         if (empty($category)) {
-            return back()->with('error', 'Category Not found');
+            return to_route('dashboard.categories.index')->with('error', 'Category Not found');
         }
 
         return Inertia::render('Dashboard/Categories/show', compact('category'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Category ID Not found');
+            return to_route('dashboard.categories.index')->with('error', 'Category ID Not found');
         }
 
         $category = $this->category->getSingleCategory($id);
 
         if (empty($category)) {
-            return back()->with('error', 'Category Not found');
+            return to_route('dashboard.categories.index')->with('error', 'Category Not found');
         }
 
         $distributors = $this->category->getDistributors();
@@ -71,7 +71,7 @@ class CategoryController extends Controller
         return Inertia::render('Dashboard/Categories/edit', compact('category', 'distributors'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Category ID Not found');
@@ -86,7 +86,7 @@ class CategoryController extends Controller
         return to_route('dashboard.categories.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Category ID Not found');

@@ -26,8 +26,8 @@ export default function GuestLayout({ children }) {
     // For Updating Application Logo
     useEffect(() => {
         // Assigning Application logos
-        if (generalSetting?.app_main_logo_light) {
-            setApplicationLogo(asset + 'assets/images/Logo/' + generalSetting?.app_main_logo_dark);
+        if (generalSetting?.app_main_logo_dark) {
+            setApplicationLogo(generalSetting.app_main_logo_dark);
         }
     }, []);
 

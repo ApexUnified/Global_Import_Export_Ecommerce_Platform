@@ -153,8 +153,8 @@ export default function index({ general_setting }) {
                                         }}
                                         Multiple={false}
                                         DefaultFile={
-                                            general_setting?.app_main_logo_dark_url && [
-                                                general_setting?.app_main_logo_dark_url,
+                                            general_setting?.app_main_logo_dark && [
+                                                general_setting?.app_main_logo_dark,
                                             ]
                                         }
                                     />
@@ -183,8 +183,8 @@ export default function index({ general_setting }) {
                                         }}
                                         Multiple={false}
                                         DefaultFile={
-                                            general_setting?.app_main_logo_light_url && [
-                                                general_setting?.app_main_logo_light_url,
+                                            general_setting?.app_main_logo_light && [
+                                                general_setting?.app_main_logo_light,
                                             ]
                                         }
                                     />
@@ -212,8 +212,8 @@ export default function index({ general_setting }) {
                                         }}
                                         Multiple={false}
                                         DefaultFile={
-                                            general_setting?.app_favicon_url && [
-                                                general_setting?.app_favicon_url,
+                                            general_setting?.app_favicon && [
+                                                general_setting?.app_favicon,
                                             ]
                                         }
                                     />

@@ -39,32 +39,32 @@ class UserController extends Controller
         return to_route('dashboard.users.index')->with('success', $created['message']);
     }
 
-    public function show(string $id)
+    public function show(?string $id = null)
     {
 
         if (empty($id)) {
-            return back()->with('error', 'User ID Not Found');
+            return to_route('dashboard.users.index')->with('error', 'User ID Not Found');
         }
 
         $user = $this->user->getSingleUser($id);
 
         if (empty($user)) {
-            return back()->with('error', 'User Not Found');
+            return to_route('dashboard.users.index')->with('error', 'User Not Found');
         }
 
         return Inertia::render('Dashboard/Users/show', compact('user'));
     }
 
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
 
         if (empty($id)) {
-            return back()->with('error', 'User ID Not Found');
+            return to_route('dashboard.users.index')->with('error', 'User ID Not Found');
         }
 
         $user = $this->user->getSingleUser($id);
         if (empty($user)) {
-            return back()->with('error', 'User Not Found');
+            return to_route('dashboard.users.index')->with('error', 'User Not Found');
         }
 
         $roles = $this->user->getAllRoles();
@@ -73,9 +73,8 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, ?string $id = null)
     {
-
         if (empty($id)) {
             return back()->with('error', 'User ID Not Found');
         }
@@ -89,7 +88,7 @@ class UserController extends Controller
         return to_route('dashboard.users.index')->with('success', $updated['message']);
     }
 
-    public function destroy(string $id)
+    public function destroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'User ID Not Found');

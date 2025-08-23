@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Collaborator extends Model
 {
@@ -27,6 +28,11 @@ class Collaborator extends Model
     // RelationShips
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'collaborator_id', 'id');
     }
 }

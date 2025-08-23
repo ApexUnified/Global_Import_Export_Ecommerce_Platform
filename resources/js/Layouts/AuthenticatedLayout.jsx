@@ -31,15 +31,11 @@ export default function AuthenticatedLayout({ children }) {
     useEffect(() => {
         // Assigning Application logos
         if (generalSetting?.app_main_logo_light) {
-            setApplicationLogoLight(
-                asset + 'assets/images/Logo/' + generalSetting?.app_main_logo_light,
-            );
+            setApplicationLogoLight(generalSetting.app_main_logo_light);
         }
 
         if (generalSetting?.app_main_logo_dark) {
-            setApplicationLogoDark(
-                asset + 'assets/images/Logo/' + generalSetting?.app_main_logo_dark,
-            );
+            setApplicationLogoDark(generalSetting.app_main_logo_dark);
         }
     }, []);
 

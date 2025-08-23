@@ -87,24 +87,29 @@ class SettingController extends Controller
         return to_route('dashboard.settings.roles.index')->with('success', $created['message']);
     }
 
-    public function roleEdit(string $id)
+    public function roleEdit(?string $id = null)
+    {
+
+        if (empty($id)) {
+            return to_route('dashboard.settings.roles.index')->with('error', 'Role ID not found');
+        }
+
+        $role = $this->setting->getSingleRole($id);
+
+        if (empty($role)) {
+            return to_route('dashboard.settings.roles.index')->with('error', 'Role not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Roles/edit', compact('role'));
+    }
+
+    public function roleUpdate(Request $request, ?string $id = null)
     {
 
         if (empty($id)) {
             return back()->with('error', 'Role ID not found');
         }
 
-        $role = $this->setting->getSingleRole($id);
-
-        if (empty($role)) {
-            return back()->with('error', 'Role not found');
-        }
-
-        return Inertia::render('Dashboard/Settings/Roles/edit', compact('role'));
-    }
-
-    public function roleUpdate(Request $request, string $id)
-    {
         $updated = $this->setting->updateRole($request, $id);
 
         if ($updated['status'] === false) {
@@ -114,8 +119,11 @@ class SettingController extends Controller
         return to_route('dashboard.settings.roles.index')->with('success', $updated['message']);
     }
 
-    public function roleDestroy(string $id)
+    public function roleDestroy(?string $id = null)
     {
+        if (empty($id)) {
+            return back()->with('error', 'Role ID not found');
+        }
         $deleted = $this->setting->destroyRole($id);
 
         if ($deleted['status'] === false) {
@@ -160,22 +168,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.colors.index')->with('success', $created['message']);
     }
 
-    public function colorEdit(string $id)
+    public function colorEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Color ID not found');
+            return to_route('dashboard.settings.colors.index')->with('error', 'Color ID not found');
         }
 
         $color = $this->setting->getSingleColor($id);
 
         if (empty($color)) {
-            return back()->with('error', 'Color not found');
+            return to_route('dashboard.settings.colors.index')->with('error', 'Color not found');
         }
 
         return Inertia::render('Dashboard/Settings/Colors/edit', compact('color'));
     }
 
-    public function colorUpdate(Request $request, string $id)
+    public function colorUpdate(Request $request, ?string $id = null)
     {
 
         if (empty($id)) {
@@ -191,7 +199,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.colors.index')->with('success', $updated['message']);
     }
 
-    public function colorDestroy(string $id)
+    public function colorDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Color ID not found');
@@ -242,22 +250,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.model_names.index')->with('success', $created['message']);
     }
 
-    public function modelNameEdit(string $id)
+    public function modelNameEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Model Name ID not found');
+            return to_route('dashboard.settings.model_names.index')->with('error', 'Model Name ID not found');
         }
 
         $model_name = $this->setting->getSingleModelName($id);
 
         if (empty($model_name)) {
-            return back()->with('error', 'Model Name not found');
+            return to_route('dashboard.settings.model_names.index')->with('error', 'Model Name not found');
         }
 
         return Inertia::render('Dashboard/Settings/ModelNames/edit', compact('model_name'));
     }
 
-    public function modelNameUpdate(Request $request, string $id)
+    public function modelNameUpdate(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Model Name ID not found');
@@ -272,7 +280,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.model_names.index')->with('success', $updated['message']);
     }
 
-    public function modelNameDestroy(string $id)
+    public function modelNameDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Model Name ID not found');
@@ -321,22 +329,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.capacities.index')->with('success', $created['message']);
     }
 
-    public function capacityEdit(string $id)
+    public function capacityEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Capacity ID not found');
+            return to_route('dashboard.settings.capacities.index')->with('error', 'Capacity ID not found');
         }
 
         $capacity = $this->setting->getSingleCapacity($id);
 
         if (empty($capacity)) {
-            return back()->with('error', 'Capacity not found');
+            return to_route('dashboard.settings.capacities.index')->with('error', 'Capacity not found');
         }
 
         return Inertia::render('Dashboard/Settings/Capacities/edit', compact('capacity'));
     }
 
-    public function capacityUpdate(Request $request, string $id)
+    public function capacityUpdate(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Capacity ID not found');
@@ -351,7 +359,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.capacities.index')->with('success', $updated['message']);
     }
 
-    public function capacityDestroy(string $id)
+    public function capacityDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Capacity ID not found');
@@ -401,22 +409,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.storage_locations.index')->with('success', $created['message']);
     }
 
-    public function storageLocationEdit(string $id)
+    public function storageLocationEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Storage Location ID not found');
+            return to_route('dashboard.settings.storage_locations.index')->with('error', 'Storage Location ID not found');
         }
 
         $storage_location = $this->setting->getSingleStorageLocation($id);
 
         if (empty($storage_location)) {
-            return back()->with('error', 'Storage Location not found');
+            return to_route('dashboard.settings.storage_locations.index')->with('error', 'Storage Location not found');
         }
 
         return Inertia::render('Dashboard/Settings/StorageLocations/edit', compact('storage_location'));
     }
 
-    public function storageLocationUpdate(Request $request, string $id)
+    public function storageLocationUpdate(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Storage Location ID not found');
@@ -431,7 +439,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.storage_locations.index')->with('success', $updated['message']);
     }
 
-    public function storageLocationDestroy(string $id)
+    public function storageLocationDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Storage Location ID not found');
@@ -482,22 +490,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.currencies.index')->with('success', $created['message']);
     }
 
-    public function currencyEdit(string $id)
+    public function currencyEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Currency ID not found');
+            return to_route('dashboard.settings.currencies.index')->with('error', 'Currency ID not found');
         }
 
         $currency = $this->setting->getSingleCurrency($id);
 
         if (empty($currency)) {
-            return back()->with('error', 'Currency not found');
+            return to_route('dashboard.settings.currencies.index')->with('error', 'Currency not found');
         }
 
         return Inertia::render('Dashboard/Settings/Currencies/edit', compact('currency'));
     }
 
-    public function currencyUpdate(Request $request, string $id)
+    public function currencyUpdate(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Currency ID not found');
@@ -512,7 +520,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.currencies.index')->with('success', $updated['message']);
     }
 
-    public function currencyDestroy(string $id)
+    public function currencyDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Currency ID not found');
@@ -538,7 +546,7 @@ class SettingController extends Controller
         return back()->with('success', $deleted['message']);
     }
 
-    public function toggleCurrencyStatus(string $id)
+    public function toggleCurrencyStatus(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Currency ID not found');
@@ -578,22 +586,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.additional_fee_lists.index')->with('success', $created['message']);
     }
 
-    public function additionalFeeListEdit(string $id)
+    public function additionalFeeListEdit(?string $id = null)
     {
         if (empty($id)) {
-            return back()->with('error', 'Additional Fee List ID not found');
+            return to_route('dashboard.settings.additional_fee_lists.index')->with('error', 'Additional Fee List ID not found');
         }
 
         $additional_fee_list = $this->setting->getSingleAdditionalFeeList($id);
 
         if (empty($additional_fee_list)) {
-            return back()->with('error', 'Additional Fee List not found');
+            return to_route('dashboard.settings.additional_fee_lists.index')->with('error', 'Additional Fee List not found');
         }
 
         return Inertia::render('Dashboard/Settings/AdditionalFeeLists/edit', compact('additional_fee_list'));
     }
 
-    public function additionalFeeListUpdate(Request $request, string $id)
+    public function additionalFeeListUpdate(Request $request, ?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Additional Fee List ID not found');
@@ -608,7 +616,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.additional_fee_lists.index')->with('success', $updated['message']);
     }
 
-    public function additionalFeeListDestroy(string $id)
+    public function additionalFeeListDestroy(?string $id = null)
     {
         if (empty($id)) {
             return back()->with('error', 'Additional Fee List ID not found');
@@ -679,22 +687,22 @@ class SettingController extends Controller
         return to_route('dashboard.settings.commission-settings.index')->with('success', $created['message']);
     }
 
-    public function commissionSettingEdit(string $id)
+    public function commissionSettingEdit(?string $id = null)
     {
 
         if (empty($id)) {
-            return back()->with('error', 'Commission Setting ID not found');
+            return to_route('dashboard.settings.commission-settings.index')->with('error', 'Commission Setting ID not found');
         }
 
         $commission_setting = $this->setting->getSingleCommissionSetting($id);
         if (empty($commission_setting)) {
-            return back()->with('error', 'Commission Setting not found');
+            return to_route('dashboard.settings.commission-settings.index')->with('error', 'Commission Setting not found');
         }
 
         return Inertia::render('Dashboard/Settings/CommissionSettings/edit', compact('commission_setting'));
     }
 
-    public function commissionSettingUpdate(Request $request, string $id)
+    public function commissionSettingUpdate(Request $request, ?string $id = null)
     {
 
         if (empty($id)) {
@@ -710,7 +718,7 @@ class SettingController extends Controller
         return to_route('dashboard.settings.commission-settings.index')->with('success', $updated['message']);
     }
 
-    public function destroyCommissionSetting(string $id)
+    public function destroyCommissionSetting(?string $id = null)
     {
 
         if (empty($id)) {
