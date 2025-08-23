@@ -72,6 +72,7 @@ class Order extends Model
                     RewardPoint::create([
                         'user_id' => $user_id,
                         'points' => $total_points,
+                        'expires_at' => now()->addYears(5),
                     ]);
                 } else {
                     $reward_point->points += round($total_points);

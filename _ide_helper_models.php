@@ -158,6 +158,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $commission_rate
  * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
+ * @property-read int|null $orders_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Collaborator newQuery()
@@ -238,6 +240,39 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Currency whereUpdatedAt($value)
  */
 	class Currency extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string|null $country
+ * @property string|null $state
+ * @property string|null $city
+ * @property string|null $postal_code
+ * @property string|null $address_line1
+ * @property string|null $address_line2
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
+ * @property-read int|null $orders_count
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereAddressLine1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereAddressLine2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer wherePostalCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereUserId($value)
+ */
+	class Customer extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -379,6 +414,76 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string|null $order_no
+ * @property int|null $customer_id
+ * @property string $amount
+ * @property string $status
+ * @property int|null $collaborator_id
+ * @property string|null $courier_company
+ * @property \Illuminate\Support\Carbon|null $shipping_date
+ * @property string|null $tracking_no
+ * @property string|null $courier_invoice
+ * @property string|null $payment_proof
+ * @property int $is_cash_collected
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Collaborator|null $collaborator
+ * @property-read \App\Models\Customer|null $customer
+ * @property-read mixed $added_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orderItems
+ * @property-read int|null $order_items_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCollaboratorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCourierCompany($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCourierInvoice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCustomerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereIsCashCollected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePaymentProof($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereShippingDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereTrackingNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUpdatedAt($value)
+ */
+	class Order extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int $smartphone_id
+ * @property int $quantity
+ * @property string $unit_price
+ * @property string $sub_total
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Order $order
+ * @property-read \App\Models\Smartphone $smartphone
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereSmartphoneId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereSubTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereUpdatedAt($value)
+ */
+	class OrderItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int|null $user_id
  * @property int|null $floor_id
  * @property string $title
@@ -514,6 +619,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Inventory> $inventory_items
  * @property-read int|null $inventory_items_count
  * @property-read \App\Models\ModelName|null $model_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orders
+ * @property-read int|null $orders_count
  * @property-read \App\Models\SmartphoneForSale|null $selling_info
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Smartphone newQuery()
@@ -647,6 +754,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $bookMarkedPosts
  * @property-read int|null $book_marked_posts_count
  * @property-read \App\Models\Collaborator|null $collaborator
+ * @property-read \App\Models\Customer|null $customer
  * @property-read \App\Models\Distributor|null $distributor
  * @property-read mixed $added_at
  * @property-read mixed $avatar
