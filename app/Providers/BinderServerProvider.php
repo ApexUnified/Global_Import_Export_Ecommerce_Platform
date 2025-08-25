@@ -20,6 +20,8 @@ use App\Repositories\Inventories\Interface\IInventoryRepository;
 use App\Repositories\Inventories\Repository\InventoryRepository;
 use App\Repositories\Orders\Interface\IOrderRepository;
 use App\Repositories\Orders\Repository\OrderRepository;
+use App\Repositories\PackageRecordings\Interface\IPackageRecordingsRepository;
+use App\Repositories\PackageRecordings\Repository\PackageRecordingsRepository;
 use App\Repositories\Posts\Interface\IPostRepository;
 use App\Repositories\Posts\Repository\PostRepository;
 use App\Repositories\RewardPoints\Interface\IRewardPointRepository;
@@ -59,6 +61,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(IRewardPointRepository::class, RewardPointRepository::class);
         $this->app->bind(ICustomerRepository::class, CustomerRepository::class);
         $this->app->bind(IOrderRepository::class, OrderRepository::class);
+        $this->app->bind(IPackageRecordingsRepository::class, PackageRecordingsRepository::class);
     }
 
     /**

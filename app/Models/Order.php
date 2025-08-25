@@ -46,6 +46,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 
+    public function orderPackageRecordings(): HasMany
+    {
+        return $this->hasMany(PackageRecording::class, 'order_id', 'id');
+    }
+
     // Static Booting
     public static function booted()
     {

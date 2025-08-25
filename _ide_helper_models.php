@@ -432,6 +432,8 @@ namespace App\Models{
  * @property-read mixed $added_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orderItems
  * @property-read int|null $order_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PackageRecording> $orderPackageRecordings
+ * @property-read int|null $order_package_recordings_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order query()
@@ -479,6 +481,31 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem whereUpdatedAt($value)
  */
 	class OrderItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property string|null $package_video
+ * @property int $is_opened
+ * @property \Illuminate\Support\Carbon|null $opened_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Order $order
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereIsOpened($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereOpenedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording wherePackageVideo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PackageRecording whereUpdatedAt($value)
+ */
+	class PackageRecording extends \Eloquent {}
 }
 
 namespace App\Models{

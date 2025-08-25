@@ -110,14 +110,17 @@ export default function ShippingInvoice({ order }) {
                         <div className="flex-1">
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg sm:h-14 sm:w-14">
                                 <img
+                                    crossOrigin="anonymous"
                                     src={
                                         generalSetting?.app_main_logo_dark
                                             ? generalSetting?.app_main_logo_dark
                                             : asset + 'assets/images/Logo/256w.png'
                                     }
-                                    alt="Logo"
                                     loading="eager"
-                                    crossOrigin="anonymous"
+                                    alt="Logo"
+                                    width={56}
+                                    height={56}
+                                    style={{ display: 'block' }}
                                 />
                             </div>
                             <h1 className="text-xl font-bold sm:text-2xl">
@@ -256,7 +259,7 @@ export default function ShippingInvoice({ order }) {
                 </div>
 
                 {/* Footer */}
-                <div className="page-break border-t bg-gray-100 p-4 text-center sm:p-6">
+                <div className="border-t bg-gray-100 p-4 text-center page-break sm:p-6">
                     <div className="flex flex-col items-center gap-4 lg:flex-row lg:justify-center">
                         <div className="flex flex-col items-center">
                             <QRCode

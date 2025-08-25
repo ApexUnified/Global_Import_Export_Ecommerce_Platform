@@ -53,6 +53,7 @@ class OrderRepository implements IOrderRepository
                 'collaborator',
                 'customer',
                 'customer.user',
+                'orderPackageRecordings',
                 'orderItems',
                 'orderItems.smartphone',
                 'orderItems.smartphone.model_name',

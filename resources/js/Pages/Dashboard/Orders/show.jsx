@@ -3,13 +3,14 @@ import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, usePage } from '@inertiajs/react';
-import React from 'react';
+import React, { useState } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Swal from 'sweetalert2';
 
 export default function show({ order }) {
     // Currency
     const { currency } = usePage().props;
+    const [downloading, setDownloading] = useState(false);
 
     const getStatusColor = (status) => {
         const colors = {
@@ -24,6 +25,7 @@ export default function show({ order }) {
 
     const handleFileDownload = async (fileName, fileUrl) => {
         try {
+            setDownloading(true);
             const response = await fetch(fileUrl, { mode: 'cors' });
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -44,6 +46,8 @@ export default function show({ order }) {
                     window.open(fileUrl, '_blank');
                 }
             });
+        } finally {
+            setDownloading(false);
         }
     };
 
@@ -81,15 +85,13 @@ export default function show({ order }) {
                                     <div className="flex flex-wrap gap-4 lg:flex-nowrap">
                                         {order.status !== 'pending' && (
                                             <>
-                                                <PrimaryButton
+                                                <LinkButton
                                                     CustomClass={'w-[250px] '}
                                                     Text={'Customer Invoice'}
-                                                    Action={() =>
-                                                        (window.location.href = route(
-                                                            'orders.customer-order-invoice',
-                                                            order.order_no,
-                                                        ))
-                                                    }
+                                                    URL={route(
+                                                        'orders.customer-order-invoice',
+                                                        order.order_no,
+                                                    )}
                                                     Icon={
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -108,15 +110,13 @@ export default function show({ order }) {
                                                     }
                                                 />
 
-                                                <PrimaryButton
+                                                <LinkButton
                                                     CustomClass={'w-[250px] '}
                                                     Text={'Shipping Invoice'}
-                                                    Action={() =>
-                                                        (window.location.href = route(
-                                                            'orders.shipping-invoice',
-                                                            order.order_no,
-                                                        ))
-                                                    }
+                                                    URL={route(
+                                                        'orders.shipping-invoice',
+                                                        order.order_no,
+                                                    )}
                                                     Icon={
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -497,6 +497,145 @@ export default function show({ order }) {
                                                         </p>
                                                         <p className="mt-1 text-xs text-gray-400 dark:text-white/50">
                                                             Invoice Upload Pending
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            />
+
+                            {/* Packaging Recordings */}
+                            <Card
+                                Content={
+                                    <div className="p-6">
+                                        <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white/90">
+                                            Packaging Videos
+                                        </h2>
+
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
+                                            {/* Packaging Videos */}
+                                            <div className="space-y-3">
+                                                <h3 className="flex items-center text-sm font-medium text-gray-700 dark:text-white/80">
+                                                    <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+                                                    Packaging Videos
+                                                </h3>
+
+                                                {order?.order_package_recordings.length > 0 ? (
+                                                    order?.order_package_recordings.map(
+                                                        (item, index) => {
+                                                            return (
+                                                                <div
+                                                                    key={index}
+                                                                    className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                                                                >
+                                                                    {/* File Icon */}
+                                                                    <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br from-red-50 to-red-100 dark:from-green-900/20 dark:to-red-800/20">
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            strokeWidth={1.5}
+                                                                            stroke="currentColor"
+                                                                            className="h-8 w-8 text-red-600 dark:text-red-400"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                                                                            />
+                                                                        </svg>
+                                                                    </div>
+
+                                                                    {/* File Info */}
+                                                                    <div className="mb-4 text-center">
+                                                                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white/90">
+                                                                            Packaging Video{' '}
+                                                                            {index + 1}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    {/* Action Buttons */}
+                                                                    <div className="flex justify-center space-x-2">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                (window.location.href =
+                                                                                    item.package_video)
+                                                                            }
+                                                                            className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                                                        >
+                                                                            <svg
+                                                                                className="h-4 w-4"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24"
+                                                                            >
+                                                                                <path
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    strokeWidth="2"
+                                                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                                                />
+                                                                                <path
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    strokeWidth="2"
+                                                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                                                />
+                                                                            </svg>
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleFileDownload(
+                                                                                    'Packaging Video',
+                                                                                    item.package_video,
+                                                                                )
+                                                                            }
+                                                                            className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                                                                        >
+                                                                            <svg
+                                                                                className="h-4 w-4"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24"
+                                                                            >
+                                                                                <path
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    strokeWidth="2"
+                                                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                                                />
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        },
+                                                    )
+                                                ) : (
+                                                    <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50/50 p-6 text-center dark:border-gray-700 dark:bg-gray-800/50">
+                                                        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                strokeWidth={1.5}
+                                                                stroke="currentColor"
+                                                                className="size-6 text-gray-400"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                        <p className="text-sm font-medium text-gray-500 dark:text-white/60">
+                                                            No Videos Found
+                                                        </p>
+                                                        <p className="mt-1 text-xs text-gray-400 dark:text-white/50">
+                                                            Packaging Videos Upload pending
                                                         </p>
                                                     </div>
                                                 )}
@@ -894,6 +1033,44 @@ export default function show({ order }) {
                         </div>
                     </div>
                 </div>
+
+                {/* Downloading Modal */}
+                {downloading && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+                        <div className="fixed inset-0 backdrop-blur-[32px]"></div>
+
+                        {/* Modal content */}
+                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
+                            <div className="text-center">
+                                <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+                                    Please Wait While We Are Dowloading File For You
+                                </h2>
+
+                                <div className="mt-5 flex items-center justify-center">
+                                    <div role="status">
+                                        <svg
+                                            aria-hidden="true"
+                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                            viewBox="0 0 100 101"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                fill="currentFill"
+                                            />
+                                        </svg>
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </AuthenticatedLayout>
         </>
     );

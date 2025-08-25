@@ -9,6 +9,8 @@ use App\Http\Controllers\Dashboard\DistributorController;
 use App\Http\Controllers\Dashboard\FloorController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\InventoryController;
+use App\Http\Controllers\Dashboard\OrderController;
+use App\Http\Controllers\Dashboard\PackageRecordingController;
 use App\Http\Controllers\Dashboard\PostController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\RewardPointController;
@@ -17,7 +19,6 @@ use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
-use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -175,12 +176,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/orders', 'index')->name('index');
             Route::get('/orders-create', 'create')->name('create');
             Route::post('/orders-store', 'store')->name('store');
-            Route::get('/orders-edit/{id?}', 'edit')->name('edit');
-            Route::put('/orders-update/{id?}', 'update')->name('update');
+            // Route::get('/orders-edit/{id?}', 'edit')->name('edit');
+            // Route::put('/orders-update/{id?}', 'update')->name('update');
             Route::get('/orders-view/{id?}', 'show')->name('show');
             Route::delete('/orders-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/orders-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
             Route::put('/orders-update-cash-collected-status/{id?}', 'updateCashCollectedStatus')->name('updatecashcollectedstatus');
+        });
+
+        // Package Recording Routes
+        Route::controller(PackageRecordingController::class)->name('package-recordings.')->group(function () {
+
+            Route::get('/package-recordings', 'index')->name('index');
+            Route::get('/package-recordings-create', 'create')->name('create');
+            Route::post('/package-recordings-store', 'store')->name('store');
+            Route::get('/package-recordings-edit/{id?}', 'edit')->name('edit');
+            Route::put('/package-recordings-update/{id?}', 'update')->name('update');
+            Route::delete('/package-recordings-destroy/{id?}', 'destroy')->name('destroy');
+            Route::delete('/package-recordings-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
         });
 
         // Smartphone For Sale Routes

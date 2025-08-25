@@ -1144,6 +1144,87 @@ export default function Sidebar({
                                 <li>
                                     <a
                                         onClick={() => {
+                                            if (selected === 'Package Recordings') {
+                                                setSelected(null);
+                                            } else {
+                                                setSelected('Package Recordings');
+                                            }
+                                        }}
+                                        className={`menu-item group cursor-pointer ${route().current().includes('dashboard.package-recordings.') || selected === 'Package Recordings' ? 'menu-item-active' : 'menu-item-inactive'} `}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                                            />
+                                        </svg>
+
+                                        <span
+                                            className={`menu-item-text ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                        >
+                                            Package Recordings
+                                        </span>
+
+                                        <svg
+                                            className={`menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current ${route().current().includes('dashboard.package-recordings.') || (selected === 'Package Recordings' && 'menu-item-arrow-active')} ${sidebarToggle ? 'lg:hidden' : ''}`}
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                                                stroke=""
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <div
+                                        className={`translate transform overflow-hidden ${selected === 'Package Recordings' ? 'block' : 'hidden'}`}
+                                    >
+                                        <ul
+                                            className={`menu-dropdown mt-2 flex flex-col gap-1 pl-9 ${sidebarToggle ? 'lg:hidden' : 'flex'} `}
+                                        >
+                                            <li>
+                                                <Link
+                                                    href={route(
+                                                        'dashboard.package-recordings.index',
+                                                    )}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.package-recordings.index' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Package Recordings List
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link
+                                                    href={route(
+                                                        'dashboard.package-recordings.create',
+                                                    )}
+                                                    className={`menu-dropdown-item group ${route().current() === 'dashboard.package-recordings.create' ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'}`}
+                                                >
+                                                    Create Package Recording
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a
+                                        onClick={() => {
                                             if (selected === 'Smartphone For Sales') {
                                                 setSelected(null);
                                             } else {

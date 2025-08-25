@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Console\Commands\CheckRewardPointExpiry;
+use App\Console\Commands\ClearPreviousOrderPackageRecordings;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +23,6 @@ class SchedularServiceProvider extends ServiceProvider
     public function boot(Schedule $schedule): void
     {
         $schedule->command(CheckRewardPointExpiry::class)->hourly();
+        $schedule->command(ClearPreviousOrderPackageRecordings::class)->hourly();
     }
 }

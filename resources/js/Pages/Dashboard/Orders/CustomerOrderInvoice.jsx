@@ -111,14 +111,17 @@ export default function CustomerOrderInvoice({ order }) {
                         <div className="flex-1">
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg sm:h-14 sm:w-14">
                                 <img
+                                    crossOrigin="anonymous"
                                     src={
                                         generalSetting?.app_main_logo_dark
                                             ? generalSetting?.app_main_logo_dark
                                             : asset + 'assets/images/Logo/256w.png'
                                     }
-                                    alt="Logo"
                                     loading="eager"
-                                    crossOrigin="anonymous"
+                                    alt="Logo"
+                                    width={56}
+                                    height={56}
+                                    style={{ display: 'block' }}
                                 />
                             </div>
                             <h1 className="break-words text-xl font-bold sm:text-2xl">
@@ -289,7 +292,7 @@ export default function CustomerOrderInvoice({ order }) {
                 </div>
 
                 {/* Footer */}
-                <div className="page-break border-t bg-gray-50 p-4 text-center sm:p-6 lg:p-8">
+                <div className="border-t bg-gray-50 p-4 text-center page-break sm:p-6 lg:p-8">
                     {/* QR Code Section */}
                     <div className="mb-6 mt-8 flex justify-center sm:mb-8 sm:mt-12">
                         <div className="text-center">
