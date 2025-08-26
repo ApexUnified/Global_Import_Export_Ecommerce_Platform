@@ -71,12 +71,14 @@ export default function create({ orders }) {
         const strategies = [
             // Strategy 1: Basic constraints (most compatible)
             {
+                facingMode: 'environment',
                 video: true,
                 audio: true,
             },
 
             // Strategy 2: Just video, no audio
             {
+                facingMode: 'environment',
                 video: true,
                 audio: false,
             },
@@ -84,6 +86,7 @@ export default function create({ orders }) {
             // Strategy 3: Specific device constraints
             {
                 video: {
+                    facingMode: 'environment',
                     width: { min: 320, ideal: 640, max: 1920 },
                     height: { min: 240, ideal: 480, max: 1080 },
                 },
@@ -154,8 +157,6 @@ export default function create({ orders }) {
                             chunks.push(event.data);
                         }
                     };
-
-                    console.log(chunks);
 
                     recorder.onstop = () => {
                         const blob = new Blob(chunks, { type: mimeType });
@@ -235,7 +236,6 @@ export default function create({ orders }) {
                 type: blob.type,
             });
 
-            console.log('File created:', file);
             setData('package_video', file); // Your save logic
 
             handleClose();
