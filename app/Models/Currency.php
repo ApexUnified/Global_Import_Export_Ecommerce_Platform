@@ -24,11 +24,11 @@ class Currency extends Model
     public static function booted()
     {
         static::created(function () {
-            Cache::forget('currencies');
+            Cache::forget('currency');
         });
 
         static::updated(function () {
-            Cache::forget('currencies');
+            Cache::forget('currency');
         });
     }
 }

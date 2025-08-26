@@ -176,8 +176,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/orders', 'index')->name('index');
             Route::get('/orders-create', 'create')->name('create');
             Route::post('/orders-store', 'store')->name('store');
-            // Route::get('/orders-edit/{id?}', 'edit')->name('edit');
-            // Route::put('/orders-update/{id?}', 'update')->name('update');
+            Route::get('/orders-edit/{id?}', 'edit')->name('edit');
+            Route::put('/orders-update/{id?}', 'update')->name('update');
             Route::get('/orders-view/{id?}', 'show')->name('show');
             Route::delete('/orders-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/orders-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');

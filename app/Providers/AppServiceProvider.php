@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if (Schema::hasTable('currencies')) {
-                Cache::rememberForever('currencies', fn () => Currency::where('is_active', true)->first() ?? null);
+                Cache::rememberForever('currency', fn () => Currency::where('is_active', true)->first() ?? null);
             }
 
         } catch (Exception $e) {

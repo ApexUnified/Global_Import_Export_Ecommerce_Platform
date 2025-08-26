@@ -249,7 +249,7 @@ export default function ShippingInvoice({ order }) {
                                         </td>
                                         <td className="border px-4 py-2 text-right font-semibold text-gray-900">
                                             {currency?.symbol}
-                                            {item.sub_total * item.quantity}
+                                            {item.sub_total}
                                         </td>
                                     </tr>
                                 ))}

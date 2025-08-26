@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use App\Notifications\OrderStatusArrivedLocallyNotification;
+use App\Notifications\OrderStatusDeliveredNotification;
+use App\Notifications\OrderStatusPaidNotification;
+use App\Notifications\OrderStatusPendingNotification;
+use App\Notifications\OrderStatusShippedNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Order extends Model
 {
@@ -85,12 +91,43 @@ class Order extends Model
                 }
             }
 
+            if (Cache::has('smtp_config') && $order->status === 'pending') {
+                $order->customer->user->notify(new OrderStatusPendingNotification($order));
+            }
+
             $order->save();
+        });
+
+        static::updated(function ($order) {
+
+            if (! Cache::has('smtp_config')) {
+                return;
+            }
+
+            if (! $order->wasChanged('status')) {
+                return;
+            }
+
+            if ($order->status === 'paid') {
+                $order->customer->user->notify(new OrderStatusPaidNotification($order));
+            } elseif ($order->status === 'shipped') {
+                $order->customer->user->notify(new OrderStatusShippedNotification($order));
+            } elseif ($order->status === 'arrived_locally') {
+                $order->customer->user->notify(new OrderStatusArrivedLocallyNotification($order));
+            } elseif ($order->status === 'delivered') {
+                $order->customer->user->notify(new OrderStatusDeliveredNotification($order));
+            }
+
         });
     }
 
     // Casting
     protected $casts = [
         'shipping_date' => 'date:Y-m-d',
+    ];
+
+    // Attributes
+    protected $attributes = [
+        'status' => 'pending',
     ];
 }
