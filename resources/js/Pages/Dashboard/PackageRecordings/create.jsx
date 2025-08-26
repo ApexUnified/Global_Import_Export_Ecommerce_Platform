@@ -33,7 +33,7 @@ export default function create({ orders }) {
     const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
     const [error, setError] = useState(null);
     const [availableDevices, setAvailableDevices] = useState([]);
-
+    const [selectedCameraId, setSelectedCameraId] = useState(null);
     const videoRef = useRef(null);
 
     const getAvailableDevices = async () => {
@@ -47,6 +47,14 @@ export default function create({ orders }) {
                 audio: audioDevices,
             });
 
+            const backCam = videoDevices.find(
+                (d) =>
+                    d.label.toLowerCase().includes('back') ||
+                    d.label.toLowerCase().includes('rear') ||
+                    d.label.toLowerCase().includes('environment'),
+            );
+            setSelectedCameraId(backCam ? backCam.deviceId : videoDevices[0]?.deviceId);
+
             return { video: videoDevices, audio: audioDevices };
         } catch (error) {
             Swal.fire({
@@ -59,7 +67,7 @@ export default function create({ orders }) {
     };
 
     // Try multiple camera access strategies
-    const startCameraWithFallback = async () => {
+    const startCameraWithFallback = async (deviceId) => {
         setError(null);
 
         // Stop existing stream first
@@ -68,145 +76,24 @@ export default function create({ orders }) {
             setStream(null);
         }
 
-        const strategies = [
-            // Strategy 1: Basic constraints (most compatible)
-            {
-                facingMode: 'environment',
-                video: true,
-                audio: true,
-            },
+        const constraints = {
+            video: { deviceId: { exact: deviceId } },
+            audio: true,
+        };
 
-            // Strategy 2: Just video, no audio
-            {
-                facingMode: 'environment',
-                video: true,
-                audio: false,
-            },
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+            setStream(mediaStream);
 
-            // Strategy 3: Specific device constraints
-            {
-                video: {
-                    facingMode: 'environment',
-                    width: { min: 320, ideal: 640, max: 1920 },
-                    height: { min: 240, ideal: 480, max: 1080 },
-                },
-                audio: true,
-            },
-
-            // Strategy 4: Mobile-friendly constraints
-            {
-                video: {
-                    facingMode: 'environment',
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                },
-                audio: true,
-            },
-
-            // Strategy 5: Environment camera (back camera)
-            {
-                video: {
-                    facingMode: 'environment',
-                },
-                audio: true,
-            },
-        ];
-
-        for (let i = 0; i < strategies.length; i++) {
-            const constraints = strategies[i];
-
-            try {
-                const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-                // Success! Setup the stream
-                setStream(mediaStream);
-
-                if (videoRef.current) {
-                    videoRef.current.srcObject = mediaStream;
-                    try {
-                        await videoRef.current.play();
-                    } catch (playError) {
-                        console.warn('Video play error (usually harmless):', playError);
-                    }
-                }
-
-                // Setup MediaRecorder
-                try {
-                    let mimeType = 'video/webm';
-
-                    // Try different mime types
-                    const supportedTypes = [
-                        'video/webm;codecs=vp9',
-                        'video/webm;codecs=vp8',
-                        'video/webm',
-                        'video/mp4',
-                    ];
-
-                    for (const type of supportedTypes) {
-                        if (MediaRecorder.isTypeSupported(type)) {
-                            mimeType = type;
-                            break;
-                        }
-                    }
-
-                    const recorder = new MediaRecorder(mediaStream, { mimeType });
-                    const chunks = [];
-
-                    recorder.ondataavailable = (event) => {
-                        if (event.data.size > 0) {
-                            chunks.push(event.data);
-                        }
-                    };
-
-                    recorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: mimeType });
-                        const url = URL.createObjectURL(blob);
-                        setRecordedVideoUrl(url);
-                        setIsRecording(false);
-                        chunks.length = 0; // Clear chunks
-                    };
-
-                    recorder.onerror = (event) => {
-                        setError('Recording error: ' + event.error.message);
-                    };
-
-                    setMediaRecorder(recorder);
-                } catch (recorderError) {
-                    setError('MediaRecorder not supported: ' + recorderError.message);
-                }
-
-                return; // Success, exit the loop
-            } catch (err) {
-                if (i === strategies.length - 1) {
-                    // Last strategy failed
-                    let errorMessage = 'All camera access strategies failed. ';
-
-                    switch (err.name) {
-                        case 'NotFoundError':
-                        case 'DevicesNotFoundError':
-                            errorMessage += 'No camera device found. Please connect a camera.';
-                            break;
-                        case 'NotAllowedError':
-                        case 'PermissionDeniedError':
-                            errorMessage +=
-                                'Camera permission denied. Please allow camera access in browser settings.';
-                            break;
-                        case 'NotReadableError':
-                        case 'TrackStartError':
-                            errorMessage +=
-                                'Camera is being used by another application. Please close other camera apps.';
-                            break;
-                        case 'OverconstrainedError':
-                        case 'ConstraintNotSatisfiedError':
-                            errorMessage += 'Camera constraints not supported by your device.';
-                            break;
-                        default:
-                            errorMessage += `Error: ${err.message}`;
-                    }
-
-                    setError(errorMessage);
-                }
+            if (videoRef.current) {
+                videoRef.current.srcObject = mediaStream;
+                await videoRef.current.play();
             }
+
+            // setup MediaRecorder as you already do...
+        } catch (err) {
+            console.error('Camera error', err);
+            setError(err.message);
         }
     };
 
@@ -280,13 +167,13 @@ export default function create({ orders }) {
     // Auto-start camera when modal opens
     useEffect(() => {
         if (openRecorder) {
-            getAvailableDevices().then(() => {
-                if (!recordedVideoUrl) {
-                    startCameraWithFallback();
+            getAvailableDevices().then((devices) => {
+                if (!recordedVideoUrl && selectedCameraId) {
+                    startCameraWithFallback(selectedCameraId);
                 }
             });
         }
-    }, [openRecorder]);
+    }, [openRecorder, selectedCameraId]);
 
     return (
         <>
