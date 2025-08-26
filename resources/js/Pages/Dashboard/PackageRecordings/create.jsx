@@ -72,15 +72,17 @@ export default function create({ orders }) {
         const strategies = [
             // Strategy 1: Basic constraints (most compatible)
             {
-                facingMode: useFrontCamera ? 'user' : 'environment',
-                video: true,
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
                 audio: true,
             },
 
             // Strategy 2: Just video, no audio
             {
-                facingMode: useFrontCamera ? 'user' : 'environment',
-                video: true,
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
                 audio: false,
             },
 
