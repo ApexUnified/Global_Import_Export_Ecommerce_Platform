@@ -99,7 +99,7 @@ class SettingRepository implements ISettingRepository
                 $resizedImage = ImageManager::imagick()
                     ->read($favicon)
                     ->resize(512, 512)
-                    ->cover(512, 512)
+                    ->contain(512, 512)
                     ->encodeByExtension('png', quality: 80);
 
                 $tempPath = 'temp/uploads/'.$new_favicon_name;
@@ -122,8 +122,8 @@ class SettingRepository implements ISettingRepository
 
                 $resizedImage = ImageManager::imagick()
                     ->read($app_main_logo_dark)
-                    ->resize(1280, 1080)
-                    ->cover(1280, 1080)
+                    ->resize(512, 512)
+                    ->contain(512, 512)
                     ->encodeByExtension($app_main_logo_dark->getClientOriginalExtension(), quality: 80);
 
                 $tempPath = 'temp/uploads/'.$new_app_main_logo_dark_name;
@@ -148,8 +148,8 @@ class SettingRepository implements ISettingRepository
 
                 $resizedImage = ImageManager::imagick()
                     ->read($app_main_logo_light)
-                    ->resize(1280, 1080)
-                    ->cover(1280, 1080)
+                    ->resize(512, 512)
+                    ->contain(512, 512)
                     ->encodeByExtension($app_main_logo_light->getClientOriginalExtension(), quality: 80);
 
                 $tempPath = 'temp/uploads/'.$new_app_main_logo_light_name;

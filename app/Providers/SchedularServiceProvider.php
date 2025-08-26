@@ -22,7 +22,7 @@ class SchedularServiceProvider extends ServiceProvider
      */
     public function boot(Schedule $schedule): void
     {
-        $schedule->command(CheckRewardPointExpiry::class)->hourly();
-        $schedule->command(ClearPreviousOrderPackageRecordings::class)->hourly();
+        $schedule->command(CheckRewardPointExpiry::class)->daily();
+        $schedule->command(ClearPreviousOrderPackageRecordings::class)->daily();
     }
 }

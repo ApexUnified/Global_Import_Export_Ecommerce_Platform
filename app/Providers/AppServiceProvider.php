@@ -67,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
                         'mail.mailers.smtp.username' => $smtp->smtp_username,
                         'mail.mailers.smtp.password' => $smtp->smtp_password,
                         'mail.from.address' => $smtp->smtp_mail_from_address,
+                        'mail.from.name' => Cache::get('general_config')?->app_name ?? config('app.name'),
                     ]);
                 }
             }

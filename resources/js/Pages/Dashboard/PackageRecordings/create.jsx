@@ -215,9 +215,18 @@ export default function create({ orders }) {
 
     const handleStartRecording = () => {
         if (mediaRecorder && mediaRecorder.state === 'inactive') {
-            setRecordedVideoUrl(null);
-            mediaRecorder.start(1000);
-            setIsRecording(true);
+            try {
+                mediaRecorder.start(1000);
+                setIsRecording(true);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.message || 'Something went wrong',
+                });
+            } finally {
+                setRecordedVideoUrl(null);
+            }
         }
     };
 
@@ -239,8 +248,7 @@ export default function create({ orders }) {
                 type: blob.type,
             });
 
-            setData('package_video', file); // Your save logic
-
+            setData('package_video', file);
             handleClose();
         } catch (err) {
             console.error('Save error:', err);

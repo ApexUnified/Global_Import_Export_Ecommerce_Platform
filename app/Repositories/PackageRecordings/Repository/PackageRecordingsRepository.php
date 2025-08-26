@@ -23,6 +23,16 @@ class PackageRecordingsRepository implements IPackageRecordingsRepository
     {
         $package_recordings = $this->package_recording
             ->with(['order', 'order.customer.user'])
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->whereHas('order', function ($query) use ($request) {
+                        $query->where('order_no', 'like', '%'.$request->input('search').'%');
+                    })
+                        ->orWhereHas('order.customer.user', function ($q) use ($request) {
+                            $q->where('name', 'like', '%'.$request->input('search').'%');
+                        });
+                });
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

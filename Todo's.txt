@@ -170,9 +170,11 @@ Cash Collected Status Toggle – For internal tracking ✅
 Additionally, customers will only earn points when a purchase is made with a collaborator’s referral code entered. ✅
 The point accumulation rate can either be set by the super admin as a uniform rate applied to all collaborators, or as different rates per collaborator. ✅
 
-Packaging Recordings -- Module {
+Packaging Recordings ✅ -- Module {
 To clarify, the Packaging Recordings module is a straightforward feature: it records video in real time, allows us to assign the recording to the related order, and enables tracking of the viewed status along with the recording timestamp. I believe these are the main points we previously discussed.
+Also added cleanup schedular runs after 30 Days
 }
+
 Order items Module ✅
 
 
@@ -200,3 +202,17 @@ Commission logic Remeaning It will be done when next milestone came
 
 For website Order Flow
 Restrict Multiple products With Multiple Distributors Adding in cart and also restrictiug while ordering [Dashboard This Logic Done]
+
+
+Cart Item Remeaning
+Shcema
+Schema::create('cart_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('smartphone_id')->constrained('smartphones')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('distributor_id')->constrained('distributors')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->integer('quantity')->default(1);
+            $table->decimal('unit_price', 30, 2)->default(1);
+            $table->decimal('total_price', 30, 2)->default(1);
+            $table->timestamps();
+        });
