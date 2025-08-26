@@ -287,7 +287,7 @@ export default function create({ orders }) {
                 }
             });
         }
-    }, [openRecorder]);
+    }, [openRecorder, useFrontCamera]);
 
     return (
         <>
