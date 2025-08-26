@@ -33,7 +33,8 @@ export default function create({ orders }) {
     const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
     const [error, setError] = useState(null);
     const [availableDevices, setAvailableDevices] = useState([]);
-    const [selectedCameraId, setSelectedCameraId] = useState(null);
+    const [useFrontCamera, setUseFrontCamera] = useState(false);
+
     const videoRef = useRef(null);
 
     const getAvailableDevices = async () => {
@@ -47,14 +48,6 @@ export default function create({ orders }) {
                 audio: audioDevices,
             });
 
-            const backCam = videoDevices.find(
-                (d) =>
-                    d.label.toLowerCase().includes('back') ||
-                    d.label.toLowerCase().includes('rear') ||
-                    d.label.toLowerCase().includes('environment'),
-            );
-            setSelectedCameraId(backCam ? backCam.deviceId : videoDevices[0]?.deviceId);
-
             return { video: videoDevices, audio: audioDevices };
         } catch (error) {
             Swal.fire({
@@ -67,7 +60,7 @@ export default function create({ orders }) {
     };
 
     // Try multiple camera access strategies
-    const startCameraWithFallback = async (deviceId) => {
+    const startCameraWithFallback = async () => {
         setError(null);
 
         // Stop existing stream first
@@ -76,24 +69,145 @@ export default function create({ orders }) {
             setStream(null);
         }
 
-        const constraints = {
-            video: { deviceId: { exact: deviceId } },
-            audio: true,
-        };
+        const strategies = [
+            // Strategy 1: Basic constraints (most compatible)
+            {
+                facingMode: useFrontCamera ? 'user' : 'environment',
+                video: true,
+                audio: true,
+            },
 
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-            setStream(mediaStream);
+            // Strategy 2: Just video, no audio
+            {
+                facingMode: useFrontCamera ? 'user' : 'environment',
+                video: true,
+                audio: false,
+            },
 
-            if (videoRef.current) {
-                videoRef.current.srcObject = mediaStream;
-                await videoRef.current.play();
+            // Strategy 3: Specific device constraints
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                    width: { min: 320, ideal: 640, max: 1920 },
+                    height: { min: 240, ideal: 480, max: 1080 },
+                },
+                audio: true,
+            },
+
+            // Strategy 4: Mobile-friendly constraints
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                },
+                audio: true,
+            },
+
+            // Strategy 5: Environment camera (back camera)
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
+                audio: true,
+            },
+        ];
+
+        for (let i = 0; i < strategies.length; i++) {
+            const constraints = strategies[i];
+
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                // Success! Setup the stream
+                setStream(mediaStream);
+
+                if (videoRef.current) {
+                    videoRef.current.srcObject = mediaStream;
+                    try {
+                        await videoRef.current.play();
+                    } catch (playError) {
+                        console.warn('Video play error (usually harmless):', playError);
+                    }
+                }
+
+                // Setup MediaRecorder
+                try {
+                    let mimeType = 'video/webm';
+
+                    // Try different mime types
+                    const supportedTypes = [
+                        'video/webm;codecs=vp9',
+                        'video/webm;codecs=vp8',
+                        'video/webm',
+                        'video/mp4',
+                    ];
+
+                    for (const type of supportedTypes) {
+                        if (MediaRecorder.isTypeSupported(type)) {
+                            mimeType = type;
+                            break;
+                        }
+                    }
+
+                    const recorder = new MediaRecorder(mediaStream, { mimeType });
+                    const chunks = [];
+
+                    recorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: mimeType });
+                        const url = URL.createObjectURL(blob);
+                        setRecordedVideoUrl(url);
+                        setIsRecording(false);
+                        chunks.length = 0; // Clear chunks
+                    };
+
+                    recorder.onerror = (event) => {
+                        setError('Recording error: ' + event.error.message);
+                    };
+
+                    setMediaRecorder(recorder);
+                } catch (recorderError) {
+                    setError('MediaRecorder not supported: ' + recorderError.message);
+                }
+
+                return; // Success, exit the loop
+            } catch (err) {
+                if (i === strategies.length - 1) {
+                    // Last strategy failed
+                    let errorMessage = 'All camera access strategies failed. ';
+
+                    switch (err.name) {
+                        case 'NotFoundError':
+                        case 'DevicesNotFoundError':
+                            errorMessage += 'No camera device found. Please connect a camera.';
+                            break;
+                        case 'NotAllowedError':
+                        case 'PermissionDeniedError':
+                            errorMessage +=
+                                'Camera permission denied. Please allow camera access in browser settings.';
+                            break;
+                        case 'NotReadableError':
+                        case 'TrackStartError':
+                            errorMessage +=
+                                'Camera is being used by another application. Please close other camera apps.';
+                            break;
+                        case 'OverconstrainedError':
+                        case 'ConstraintNotSatisfiedError':
+                            errorMessage += 'Camera constraints not supported by your device.';
+                            break;
+                        default:
+                            errorMessage += `Error: ${err.message}`;
+                    }
+
+                    setError(errorMessage);
+                }
             }
-
-            // setup MediaRecorder as you already do...
-        } catch (err) {
-            console.error('Camera error', err);
-            setError(err.message);
         }
     };
 
@@ -167,13 +281,13 @@ export default function create({ orders }) {
     // Auto-start camera when modal opens
     useEffect(() => {
         if (openRecorder) {
-            getAvailableDevices().then((devices) => {
-                if (!recordedVideoUrl && selectedCameraId) {
-                    startCameraWithFallback(selectedCameraId);
+            getAvailableDevices().then(() => {
+                if (!recordedVideoUrl) {
+                    startCameraWithFallback();
                 }
             });
         }
-    }, [openRecorder, selectedCameraId]);
+    }, [openRecorder]);
 
     return (
         <>
@@ -385,6 +499,28 @@ export default function create({ orders }) {
                                     <div className="absolute left-4 top-4 flex items-center space-x-2 rounded-full bg-red-600 px-3 py-1 text-white">
                                         <div className="h-3 w-3 animate-pulse rounded-full bg-white"></div>
                                         <span className="text-sm font-medium">Recording</span>
+                                    </div>
+                                )}
+
+                                {!isRecording && !recordedVideoUrl && (
+                                    <div
+                                        onClick={() => setUseFrontCamera(!useFrontCamera)}
+                                        className="absolute right-4 top-4 flex cursor-pointer items-center space-x-2 rounded-full bg-blue-600 px-3 py-1 text-white"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3"
+                                            />
+                                        </svg>
                                     </div>
                                 )}
 
