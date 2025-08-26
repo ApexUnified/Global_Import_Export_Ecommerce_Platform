@@ -93,7 +93,7 @@ export default function create({ orders }) {
             // Strategy 4: Mobile-friendly constraints
             {
                 video: {
-                    facingMode: 'user',
+                    facingMode: 'environment',
                     width: { ideal: 640 },
                     height: { ideal: 480 },
                 },
