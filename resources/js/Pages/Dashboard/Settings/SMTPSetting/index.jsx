@@ -121,7 +121,7 @@ export default function index({ smtp_setting }) {
                                             Placeholder={'Enter SMTP Username'}
                                             Name={'smtp_username'}
                                             Id={'smtp_username'}
-                                            Type={'email'}
+                                            Type={'text'}
                                             Required={true}
                                             Action={(e) => setData('smtp_username', e.target.value)}
                                             Value={data.smtp_username}

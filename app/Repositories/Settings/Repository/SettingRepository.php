@@ -52,9 +52,9 @@ class SettingRepository implements ISettingRepository
     public function updateGeneralSetting(Request $request)
     {
         $validated_req = $request->validate([
-            'app_name' => 'required|min:4|string|max:100',
-            'contact_email' => 'required|email',
-            'contact_number' => 'required|regex:/^\+\d+$/',
+            'app_name' => ['required', 'min:4', 'string', 'max:100'],
+            'contact_email' => ['required', 'email', 'max:255'],
+            'contact_number' => ['required', 'regex:/^\+\d+$/'],
             ...($request->hasFile('app_main_logo_dark') ? ['app_main_logo_dark' => 'nullable|image|max:2048'] : []),
             ...($request->hasFile('app_main_logo_light') ? ['app_main_logo_light' => 'nullable|image|max:2048'] : []),
             ...($request->hasFile('app_favicon') ? ['app_favicon' => 'nullable|image|max:2048'] : []),
@@ -198,13 +198,13 @@ class SettingRepository implements ISettingRepository
     public function updateSmtpSetting(Request $request)
     {
         $validated_req = $request->validate([
-            'smtp_mailer' => 'required|min:4',
-            'smtp_scheme' => 'required|min:4',
-            'smtp_host' => 'required',
-            'smtp_port' => 'required|numeric',
-            'smtp_username' => 'required|email',
-            'smtp_password' => 'required',
-            'smtp_mail_from_address' => 'required|email',
+            'smtp_mailer' => ['required', 'min:4'],
+            'smtp_scheme' => ['required', 'min:4'],
+            'smtp_host' => ['required', 'string', 'max:255'],
+            'smtp_port' => ['required', 'numeric'],
+            'smtp_username' => ['required', 'string', 'max:255'],
+            'smtp_password' => ['required', 'string', 'max:255'],
+            'smtp_mail_from_address' => ['required', 'email', 'max:255'],
         ]);
 
         try {
