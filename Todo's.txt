@@ -60,7 +60,7 @@ Milestone 2: Supplier, Collaborator, and Smartphone Management, posts management
 22: In Posts View Section Adjust The Swiper Slider So It Wont Show Empty Spaces In Top and bottom ✅
 
 
-23: Users Module
+23: Users Module✅
     - CRUD For Users
     - User Active And In-Active Status To Prevent Accessing On Dashboard
 
@@ -178,7 +178,7 @@ Also added cleanup schedular runs after 30 Days
 Order items Module ✅
 
 
-🔔 Push Notification Events (Email + Meta API: Messenger/Instagram)
+🔔 Push Notification Events (Email ✅ + Meta API: Messenger/Instagram)
 
 - Triggered at key status updates:
 

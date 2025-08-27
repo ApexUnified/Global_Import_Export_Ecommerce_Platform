@@ -135,7 +135,9 @@ export default function SelectInput({
                         value={
                             Multiple
                                 ? options.filter((opt) =>
-                                      Value.map(String).includes(String(opt.value)),
+                                      (Array.isArray(Value) ? Value : [])
+                                          .map(String)
+                                          .includes(String(opt.value)),
                                   )
                                 : options.find((opt) => String(opt.value) === String(Value)) || null
                         }
@@ -151,7 +153,7 @@ export default function SelectInput({
                         isSearchable
                         required={Required}
                         {...(!customPlaceHolder && {
-                            placeholder: `Select ${InputName} Or Search By its Name`,
+                            placeholder: `Select ${InputName}`,
                         })}
                         styles={isDarkMode ? darkStyles : lightStyles}
                         className={`react-select-container ${isDisabled && 'opacity-30'}`}

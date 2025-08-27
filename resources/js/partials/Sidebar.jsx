@@ -1,6 +1,6 @@
-import { Link } from '@inertiajs/react';
-import React, { useState, useRef, useEffect } from 'react';
 import useWindowSize from '@/Hooks/useWindowSize';
+import { Link } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function Sidebar({
     sidebarToggle,
@@ -10,29 +10,13 @@ export default function Sidebar({
 }) {
     // For Managing Sidebar Navlinks Selection State
     const [selected, setSelected] = useState(null);
+    const [accountSetupSelected, setAccountSetupSelected] = useState(null);
 
     const { width } = useWindowSize();
 
     const isLargeScreen = width >= 1025;
     const prevIsLargeScreenRef = useRef(isLargeScreen);
 
-    // Always read from localStorage on initial load
-    useEffect(() => {
-        const saved = localStorage.getItem('sidebarToggle');
-        if (saved !== null) {
-            setSidebarToggle(JSON.parse(saved));
-        } else {
-            setSidebarToggle(false);
-            localStorage.setItem('sidebarToggle', JSON.stringify(false));
-        }
-    }, []);
-
-    // Save sidebarToggle to localStorage on change
-    useEffect(() => {
-        localStorage.setItem('sidebarToggle', JSON.stringify(sidebarToggle));
-    }, [sidebarToggle]);
-
-    // Hide sidebar when resizing to small screen
     useEffect(() => {
         if (prevIsLargeScreenRef.current && !isLargeScreen && sidebarToggle) {
             setSidebarToggle(false);
@@ -40,6 +24,23 @@ export default function Sidebar({
         prevIsLargeScreenRef.current = isLargeScreen;
     }, [isLargeScreen, sidebarToggle]);
 
+    useEffect(() => {
+        if (isLargeScreen) {
+            const saved = localStorage.getItem('sidebarToggle');
+            if (saved === null) {
+                setSidebarToggle(false);
+                localStorage.setItem('sidebarToggle', JSON.stringify(false));
+            } else {
+                setSidebarToggle(JSON.parse(saved));
+            }
+        }
+    }, [isLargeScreen]);
+
+    useEffect(() => {
+        if (isLargeScreen) {
+            localStorage.setItem('sidebarToggle', JSON.stringify(sidebarToggle));
+        }
+    }, [sidebarToggle, isLargeScreen]);
     return (
         <>
             <aside
@@ -88,7 +89,7 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto duration-300 ease-linear">
+                <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
                     <nav>
                         <div>
                             <h3 className="mb-4 text-xs uppercase leading-[20px] text-gray-400">
@@ -109,7 +110,7 @@ export default function Sidebar({
                                 </svg>
                             </h3>
 
-                            <ul className="mb-6 flex flex-col gap-4">
+                            <ul className="flex flex-col gap-4 mb-6">
                                 <li>
                                     <Link
                                         href={route('dashboard')}
