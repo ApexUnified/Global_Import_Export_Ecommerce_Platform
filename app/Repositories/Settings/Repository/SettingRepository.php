@@ -198,8 +198,8 @@ class SettingRepository implements ISettingRepository
     public function updateSmtpSetting(Request $request)
     {
         $validated_req = $request->validate([
-            'smtp_mailer' => ['required', 'min:4'],
-            'smtp_scheme' => ['required', 'min:4'],
+            'smtp_mailer' => ['required', 'string', 'max:100'],
+            'smtp_scheme' => ['required', 'string', 'max:100'],
             'smtp_host' => ['required', 'string', 'max:255'],
             'smtp_port' => ['required', 'numeric'],
             'smtp_username' => ['required', 'string', 'max:255'],
