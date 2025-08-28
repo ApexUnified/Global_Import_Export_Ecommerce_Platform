@@ -86,7 +86,7 @@ export default function index({ smtp_setting }) {
                                             Name={'smtp_scheme'}
                                             Id={'smtp_scheme'}
                                             Type={'text'}
-                                            Required={true}
+                                            Required={false}
                                             Action={(e) => setData('smtp_scheme', e.target.value)}
                                             Value={data.smtp_scheme}
                                             Error={errors.smtp_scheme}
@@ -98,7 +98,7 @@ export default function index({ smtp_setting }) {
                                             Name={'smtp_host'}
                                             Id={'smtp_host'}
                                             Type={'text'}
-                                            Required={true}
+                                            Required={false}
                                             Action={(e) => setData('smtp_host', e.target.value)}
                                             Value={data.smtp_host}
                                             Error={errors.smtp_host}
@@ -110,7 +110,7 @@ export default function index({ smtp_setting }) {
                                             Name={'smtp_port'}
                                             Id={'smtp_port'}
                                             Type={'text'}
-                                            Required={true}
+                                            Required={false}
                                             Action={(e) => setData('smtp_port', e.target.value)}
                                             Value={data.smtp_port}
                                             Error={errors.smtp_port}
@@ -122,7 +122,7 @@ export default function index({ smtp_setting }) {
                                             Name={'smtp_username'}
                                             Id={'smtp_username'}
                                             Type={'text'}
-                                            Required={true}
+                                            Required={false}
                                             Action={(e) => setData('smtp_username', e.target.value)}
                                             Value={data.smtp_username}
                                             Error={errors.smtp_username}
@@ -134,7 +134,7 @@ export default function index({ smtp_setting }) {
                                             Name={'smtp_password'}
                                             Id={'smtp_password'}
                                             Type={'password'}
-                                            Required={true}
+                                            Required={false}
                                             Action={(e) => setData('smtp_password', e.target.value)}
                                             Value={data.smtp_password}
                                             Error={errors.smtp_password}
@@ -165,11 +165,11 @@ export default function index({ smtp_setting }) {
                                         Disabled={
                                             processing ||
                                             data.smtp_mailer.trim() === '' ||
-                                            data.smtp_scheme.trim() === '' ||
-                                            data.smtp_host.trim() === '' ||
-                                            data.smtp_port.trim() === '' ||
-                                            data.smtp_username.trim() === '' ||
-                                            data.smtp_password.trim() === '' ||
+                                            // data.smtp_scheme.trim() === '' ||
+                                            // data.smtp_host.trim() === '' ||
+                                            // data.smtp_port.trim() === '' ||
+                                            // data.smtp_username.trim() === '' ||
+                                            // data.smtp_password.trim() === '' ||
                                             data.smtp_mail_from_address.trim() === ''
                                         }
                                         Type={'submit'}

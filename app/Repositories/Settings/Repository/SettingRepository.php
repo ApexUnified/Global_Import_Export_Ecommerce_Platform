@@ -199,11 +199,11 @@ class SettingRepository implements ISettingRepository
     {
         $validated_req = $request->validate([
             'smtp_mailer' => ['required', 'string', 'max:100'],
-            'smtp_scheme' => ['required', 'string', 'max:100'],
-            'smtp_host' => ['required', 'string', 'max:255'],
-            'smtp_port' => ['required', 'numeric'],
-            'smtp_username' => ['required', 'string', 'max:255'],
-            'smtp_password' => ['required', 'string', 'max:255'],
+            'smtp_scheme' => ['nullable', 'string', 'max:100'],
+            'smtp_host' => ['nullable', 'string', 'max:255'],
+            'smtp_port' => ['nullable', 'numeric'],
+            'smtp_username' => ['nullable', 'string', 'max:255'],
+            'smtp_password' => ['nullable', 'string', 'max:255'],
             'smtp_mail_from_address' => ['required', 'email', 'max:255'],
         ]);
 

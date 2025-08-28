@@ -62,11 +62,11 @@ class AppServiceProvider extends ServiceProvider
                     Config::set([
                         'mail.default' => $smtp->smtp_mailer,
                         'mail.mailers.smtp.scheme' => $smtp->smtp_scheme,
-                        'mail.mailers.smtp.host' => $smtp->smtp_host,
-                        'mail.mailers.smtp.port' => $smtp->smtp_port,
-                        'mail.mailers.smtp.username' => $smtp->smtp_username,
-                        'mail.mailers.smtp.password' => $smtp->smtp_password,
-                        'mail.from.address' => $smtp->smtp_mail_from_address,
+                        'mail.mailers.smtp.host' => $smtp?->smtp_host,
+                        'mail.mailers.smtp.port' => $smtp?->smtp_port,
+                        'mail.mailers.smtp.username' => $smtp?->smtp_username,
+                        'mail.mailers.smtp.password' => $smtp?->smtp_password,
+                        'mail.from.address' => $smtp?->smtp_mail_from_address,
                         'mail.from.name' => Cache::get('general_config')?->app_name ?? config('app.name'),
                     ]);
                 }
