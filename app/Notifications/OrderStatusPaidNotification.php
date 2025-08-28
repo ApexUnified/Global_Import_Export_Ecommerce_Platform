@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -34,7 +33,7 @@ class OrderStatusPaidNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
 
-        $pdf = Pdf::loadView('invoices.order_customer_invoice', [
+        $pdf = \PDF::loadView('invoices.order_customer_invoice', [
             'order' => $this->order,
             'currency' => Cache::get('currency'),
             'generalSetting' => Cache::get('general_config'),

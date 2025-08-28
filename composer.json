@@ -7,7 +7,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "barryvdh/laravel-dompdf": "^3.1",
         "doctrine/dbal": "^4.3",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image-laravel": "^1.5",
@@ -16,6 +15,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "misterspelik/laravel-pdf": "^2.2",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.21",
         "tightenco/ziggy": "^2.0"

@@ -16,7 +16,6 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $orders = $this->order->getAllOrders($request);
-
         $search = $request->input('search');
 
         return Inertia::render('Dashboard/Orders/index', compact('orders', 'search'));
