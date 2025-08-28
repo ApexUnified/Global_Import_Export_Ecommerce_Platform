@@ -91,7 +91,7 @@ class Order extends Model
                 }
             }
 
-            if ( /* Cache::has('smtp_config') && */ $order->status === 'pending') {
+            if (Cache::has('smtp_config') && $order->status === 'pending') {
                 $order->customer->user->notify(new OrderStatusPendingNotification($order));
             }
 
@@ -100,9 +100,9 @@ class Order extends Model
 
         static::updated(function ($order) {
 
-            // if (! Cache::has('smtp_config')) {
-            //     return;
-            // }
+            if (! Cache::has('smtp_config')) {
+                return;
+            }
 
             if (! $order->wasChanged('status')) {
                 return;

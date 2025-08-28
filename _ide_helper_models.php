@@ -694,11 +694,11 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $smtp_mailer
- * @property string $smtp_scheme
- * @property string $smtp_host
- * @property string $smtp_port
- * @property string $smtp_username
- * @property string $smtp_password
+ * @property string|null $smtp_scheme
+ * @property string|null $smtp_host
+ * @property string|null $smtp_port
+ * @property string|null $smtp_username
+ * @property string|null $smtp_password
  * @property string $smtp_mail_from_address
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
