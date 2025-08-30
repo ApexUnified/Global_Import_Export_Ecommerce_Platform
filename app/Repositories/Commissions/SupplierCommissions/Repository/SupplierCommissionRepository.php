@@ -19,6 +19,20 @@ class SupplierCommissionRepository implements ISupplierCommissionRepository
     {
         $supplier_commissions = $this->supplier_commission
             ->with(['order', 'supplier', 'supplier.user'])
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+
+                $query->whereHas('order', function ($subQuery) use ($request) {
+                    $subQuery->where('order_no', 'like', '%'.$request->input('search').'%');
+                })
+                    ->orWhereHas('supplier', function ($subQuery) use ($request) {
+                        $subQuery->whereHas('user', function ($subSubQuery) use ($request) {
+                            $subSubQuery->where('name', 'like', '%'.$request->input('search').'%');
+                        });
+                    });
+            })
+            ->when(! empty($request->input('status')), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

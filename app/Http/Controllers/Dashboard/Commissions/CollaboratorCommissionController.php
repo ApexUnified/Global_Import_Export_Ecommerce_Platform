@@ -18,8 +18,9 @@ class CollaboratorCommissionController extends Controller
         $collaborator_commissions = $this->collaborator_commission->getAllCollaboratorCommissions($request);
 
         $search = $request->input('search');
+        $status = $request->input('status');
 
-        return Inertia::render('Dashboard/Commissions/CollaboratorCommissions/index', compact('collaborator_commissions', 'search'));
+        return Inertia::render('Dashboard/Commissions/CollaboratorCommissions/index', compact('collaborator_commissions', 'search', 'status'));
 
     }
 

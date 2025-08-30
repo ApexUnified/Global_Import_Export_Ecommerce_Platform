@@ -216,3 +216,10 @@ Schema::create('cart_items', function (Blueprint $table) {
             $table->decimal('total_price', 30, 2)->default(1);
             $table->timestamps();
         });
+
+
+
+After Dashboard Completion I will Add This Logic As well with the Role Permission Restriction
+Collaborator read-only earnings list
+Supplier read-only earnings list
+Distributor read-only earnings list

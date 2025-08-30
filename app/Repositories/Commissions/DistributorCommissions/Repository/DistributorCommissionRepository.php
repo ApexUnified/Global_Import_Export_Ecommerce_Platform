@@ -17,6 +17,20 @@ class DistributorCommissionRepository implements IDistributorCommissionRepositor
     {
         $distributor_commissions = $this->distributor_commission
             ->with('order', 'distributor', 'distributor.user')
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+
+                $query->whereHas('order', function ($subQuery) use ($request) {
+                    $subQuery->where('order_no', 'like', '%'.$request->input('search').'%');
+                })
+                    ->orWhereHas('distributor', function ($subQuery) use ($request) {
+                        $subQuery->whereHas('user', function ($subSubQuery) use ($request) {
+                            $subSubQuery->where('name', 'like', '%'.$request->input('search').'%');
+                        });
+                    });
+            })
+            ->when(! empty($request->input('status')), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

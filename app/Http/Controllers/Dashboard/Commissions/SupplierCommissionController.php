@@ -18,8 +18,10 @@ class SupplierCommissionController extends Controller
         $supplier_commissions = $this->supplier_commission->getAllSupplierCommissions($request);
 
         $search = $request->input('search');
+        $status = $request->input('status');
 
-        return Inertia::render('Dashboard/Commissions/SupplierCommissions/index', compact('supplier_commissions', 'search'));
+        return Inertia::render('Dashboard/Commissions/SupplierCommissions/index', compact('supplier_commissions', 'search',
+            'status'));
 
     }
 

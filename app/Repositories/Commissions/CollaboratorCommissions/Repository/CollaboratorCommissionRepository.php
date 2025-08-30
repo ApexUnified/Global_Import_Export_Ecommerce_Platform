@@ -17,6 +17,20 @@ class CollaboratorCommissionRepository implements ICollaboratorCommissionReposit
     {
         $collaborator_commissions = $this->collaborator_commission
             ->with(['collaborator', 'collaborator.user', 'order'])
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+
+                $query->whereHas('order', function ($subQuery) use ($request) {
+                    $subQuery->where('order_no', 'like', '%'.$request->input('search').'%');
+                })
+                    ->orWhereHas('collaborator', function ($subQuery) use ($request) {
+                        $subQuery->whereHas('user', function ($subSubQuery) use ($request) {
+                            $subSubQuery->where('name', 'like', '%'.$request->input('search').'%');
+                        });
+                    });
+            })
+            ->when(! empty($request->input('status')), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

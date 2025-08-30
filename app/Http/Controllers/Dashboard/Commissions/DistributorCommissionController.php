@@ -18,8 +18,9 @@ class DistributorCommissionController extends Controller
         $distributor_commissions = $this->distributor_commission->getAllDistributorCommissions($request);
 
         $search = $request->input('search');
+        $status = $request->input('status');
 
-        return Inertia::render('Dashboard/Commissions/DistributorCommissions/index', compact('distributor_commissions', 'search'));
+        return Inertia::render('Dashboard/Commissions/DistributorCommissions/index', compact('distributor_commissions', 'search', 'status'));
 
     }
 

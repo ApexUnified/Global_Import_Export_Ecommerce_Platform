@@ -5,6 +5,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import SelectInput from '@/Components/SelectInput';
 
 export default function index({ distributor_commissions }) {
     // Bulk Delete Form Data
@@ -28,6 +29,9 @@ export default function index({ distributor_commissions }) {
     } = useForm({
         id: null,
     });
+
+    const [status, setStatus] = useState(props.status ?? '');
+    const [parentSearched, setParentSearched] = useState(false);
 
     const [columns, setColumns] = useState([]);
     const [actions, setActions] = useState([]);
@@ -139,6 +143,27 @@ export default function index({ distributor_commissions }) {
                                 props={props}
                                 customActions={actions}
                                 columns={columns}
+                                searchProps={{ status: status }}
+                                ParentSearched={parentSearched}
+                                customSearch={
+                                    <>
+                                        <div className="relative">
+                                            <SelectInput
+                                                InputName={'Status'}
+                                                items={[
+                                                    { id: 'paid', name: 'Paid' },
+                                                    { id: 'unpaid', name: 'Un-Paid' },
+                                                ]}
+                                                itemKey={'name'}
+                                                Value={status}
+                                                Action={(value) => {
+                                                    setStatus(value);
+                                                    setParentSearched(true);
+                                                }}
+                                            />
+                                        </div>
+                                    </>
+                                }
                             />
                         </>
                     }
