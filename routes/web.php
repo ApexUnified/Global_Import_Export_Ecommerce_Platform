@@ -4,6 +4,9 @@ use App\Http\Controllers\Dashboard\BatchController;
 use App\Http\Controllers\Dashboard\BookmarkController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\CollaboratorController;
+use App\Http\Controllers\Dashboard\Commissions\CollaboratorCommissionController;
+use App\Http\Controllers\Dashboard\Commissions\DistributorCommissionController;
+use App\Http\Controllers\Dashboard\Commissions\SupplierCommissionController;
 use App\Http\Controllers\Dashboard\CustomerController;
 use App\Http\Controllers\Dashboard\DistributorController;
 use App\Http\Controllers\Dashboard\FloorController;
@@ -231,6 +234,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/reward-points-update/{id?}', 'update')->name('update');
             Route::delete('/reward-points-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/reward-points-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+        });
+
+        // Commision Routes Group
+        Route::prefix('/commissions')->name('commissions.')->group(function () {
+
+            // Supplier Commission Route Group
+            Route::controller(SupplierCommissionController::class)->name('supplier-commissions.')->group(function () {
+                Route::get('/supplier-commissions', 'index')->name('index');
+                Route::get('/supplier-commissions/{id?}', 'edit')->name('edit');
+                Route::put('/supplier-commissions/{id?}', 'update')->name('update');
+                Route::delete('/supplier-commissions/{id?}', 'destroy')->name('destroy');
+                Route::delete('/supplier-commissions-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+            });
+
+            // Collaborator Commission Route Group
+            Route::controller(CollaboratorCommissionController::class)->name('collaborator-commissions.')->group(function () {
+                Route::get('/collaborator-commissions', 'index')->name('index');
+                Route::get('/collaborator-commissions/{id?}', 'edit')->name('edit');
+                Route::put('/collaborator-commissions/{id?}', 'update')->name('update');
+                Route::delete('/collaborator-commissions/{id?}', 'destroy')->name('destroy');
+                Route::delete('/collaborator-commissions-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+            });
+
+            // Distributor Commission Route Group
+            Route::controller(DistributorCommissionController::class)->name('distributor-commissions.')->group(function () {
+                Route::get('/distributor-commissions', 'index')->name('index');
+                Route::get('/distributor-commissions/{id?}', 'edit')->name('edit');
+                Route::put('/distributor-commissions/{id?}', 'update')->name('update');
+                Route::delete('/distributor-commissions/{id?}', 'destroy')->name('destroy');
+                Route::delete('/distributor-commissions-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
+            });
         });
 
         // Profile Routes

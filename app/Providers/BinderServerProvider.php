@@ -10,6 +10,12 @@ use App\Repositories\Categories\Interface\ICategoryRepository;
 use App\Repositories\Categories\Repository\CategoryRepository;
 use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use App\Repositories\Collaborators\Repository\CollaboratorRepository;
+use App\Repositories\Commissions\CollaboratorCommissions\Interface\ICollaboratorCommissionRepository;
+use App\Repositories\Commissions\CollaboratorCommissions\Repository\CollaboratorCommissionRepository;
+use App\Repositories\Commissions\DistributorCommissions\Interface\IDistributorCommissionRepository;
+use App\Repositories\Commissions\DistributorCommissions\Repository\DistributorCommissionRepository;
+use App\Repositories\Commissions\SupplierCommissions\Interface\ISupplierCommissionRepository;
+use App\Repositories\Commissions\SupplierCommissions\Repository\SupplierCommissionRepository;
 use App\Repositories\Customers\Interface\ICustomerRepository;
 use App\Repositories\Customers\Repository\CustomerRepository;
 use App\Repositories\Distributors\Interface\IDistributorRepository;
@@ -62,6 +68,9 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ICustomerRepository::class, CustomerRepository::class);
         $this->app->bind(IOrderRepository::class, OrderRepository::class);
         $this->app->bind(IPackageRecordingsRepository::class, PackageRecordingsRepository::class);
+        $this->app->bind(ISupplierCommissionRepository::class, SupplierCommissionRepository::class);
+        $this->app->bind(ICollaboratorCommissionRepository::class, CollaboratorCommissionRepository::class);
+        $this->app->bind(IDistributorCommissionRepository::class, DistributorCommissionRepository::class);
     }
 
     /**

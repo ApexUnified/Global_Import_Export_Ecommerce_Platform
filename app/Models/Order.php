@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Jobs\CollaboratorCommissionSet;
+use App\Jobs\DistributorCommissionSet;
+use App\Jobs\SupplierCommissionSet;
 use App\Notifications\OrderStatusArrivedLocallyNotification;
 use App\Notifications\OrderStatusDeliveredNotification;
 use App\Notifications\OrderStatusPaidNotification;
@@ -57,6 +60,16 @@ class Order extends Model
         return $this->hasMany(PackageRecording::class, 'order_id', 'id');
     }
 
+    public function supplierCommissions(): HasMany
+    {
+        return $this->hasMany(SupplierCommission::class, 'order_id', 'id');
+    }
+
+    public function collaboratorCommissions(): HasMany
+    {
+        return $this->hasMany(CollaboratorCommission::class, 'order_id', 'id');
+    }
+
     // Static Booting
     public static function booted()
     {
@@ -89,11 +102,19 @@ class Order extends Model
                     $reward_point->points += round($total_points);
                     $reward_point->save();
                 }
+                // Collaborator Commission Set Event
+                dispatch(new CollaboratorCommissionSet($order));
             }
 
             if (Cache::has('smtp_config') && $order->status === 'pending') {
                 $order->customer->user->notify(new OrderStatusPendingNotification($order));
             }
+
+            // Distributor Commission Set Event
+            dispatch(new DistributorCommissionSet($order));
+
+            // Supplier Commission Set Event
+            dispatch(new SupplierCommissionSet($order));
 
             $order->save();
         });

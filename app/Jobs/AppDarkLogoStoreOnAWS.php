@@ -27,7 +27,18 @@ class AppDarkLogoStoreOnAWS implements ShouldQueue
         $fullLocalPath = Storage::disk('local')->path($this->file);
         $extension = pathinfo($this->file, PATHINFO_EXTENSION);
         $new_name = time().uniqid().'-'.Str::random(10).'.'.$extension;
-        Storage::disk('s3')->put($this->general_setting_dir.$new_name, file_get_contents($fullLocalPath));
+
+        $mime_type = mime_content_type($fullLocalPath);
+
+        Storage::disk('s3')
+            ->put($this->general_setting_dir.$new_name, file_get_contents($fullLocalPath));
+
+        //  Storage::disk('s3')
+        //     ->put($this->general_setting_dir.$new_name, file_get_contents($fullLocalPath), [
+        //         'ContentType' => $mime_type,
+        //         'ACL' => 'public-read',
+        //     ]);
+
         Storage::disk('local')->delete($this->file);
 
         $url = Storage::disk('s3')->url($this->general_setting_dir.$new_name);

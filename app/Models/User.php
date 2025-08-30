@@ -127,4 +127,14 @@ class User extends Authenticatable // implements MustVerifyEmail
     {
         return $this->hasOne(Customer::class, 'user_id', 'id');
     }
+
+    public function supplierCommissionUsers(): HasMany
+    {
+        return $this->hasMany(SupplierCommission::class, 'user_id', 'id');
+    }
+
+    public function collaboratorCommissionUsers(): HasMany
+    {
+        return $this->hasMany(CollaboratorCommission::class, 'user_id', 'id');
+    }
 }
