@@ -497,40 +497,47 @@ export default function show({ order }) {
                                                 order.order_items.map((item) => (
                                                     <div
                                                         key={item.id}
-                                                        className="flex items-center space-x-4 rounded-lg border bg-gray-50 p-4 dark:bg-gray-900"
+                                                        className="flex flex-col gap-4 rounded-lg border bg-gray-50 p-4 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between"
                                                     >
-                                                        <img
-                                                            src={
-                                                                item?.smartphone
-                                                                    ?.smartphone_image_urls[0]
-                                                            }
-                                                            alt="Smartphone"
-                                                            className="h-[100px] w-[100px] rounded-lg object-cover"
-                                                        />
-                                                        <div className="min-w-0 flex-1">
-                                                            <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white/90">
-                                                                {item?.smartphone?.model_name
-                                                                    ?.name || 'N/A'}
-                                                            </h3>
-                                                            <p className="text-sm text-gray-500 dark:text-white/90">
-                                                                UPC/EAN:{' '}
-                                                                {item?.smartphone?.upc || 'N/A'}
-                                                            </p>
+                                                        {/* Left side: image + details */}
+                                                        <div className="flex items-center gap-4">
+                                                            <img
+                                                                src={
+                                                                    item?.smartphone
+                                                                        ?.smartphone_image_urls[0]
+                                                                }
+                                                                alt="Smartphone"
+                                                                className="h-[100px] w-[100px] rounded-lg object-cover"
+                                                            />
+                                                            <div className="min-w-0">
+                                                                <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white/90">
+                                                                    {item?.smartphone?.model_name
+                                                                        ?.name || 'N/A'}
+                                                                </h3>
+                                                                <p className="text-sm text-gray-500 dark:text-white/70">
+                                                                    UPC/EAN:{' '}
+                                                                    {item?.smartphone?.upc || 'N/A'}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        <div className="my-3 text-right">
-                                                            <p className="text-sm font-medium text-gray-900 dark:text-white/90">
-                                                                {currency?.symbol}
-                                                                {item.unit_price ?? 0}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500 dark:text-white/90">
-                                                                Qty: {item.quantity ?? 0}
-                                                            </p>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <p className="text-sm font-semibold text-gray-900 dark:text-white/90">
-                                                                {currency?.symbol}
-                                                                {item.sub_total ?? 0}
-                                                            </p>
+
+                                                        {/* Right side: price info */}
+                                                        <div className="flex w-full justify-between text-right sm:w-auto sm:justify-end sm:gap-8">
+                                                            <div>
+                                                                <p className="text-sm font-medium text-gray-900 dark:text-white/90">
+                                                                    {currency?.symbol}
+                                                                    {item.unit_price ?? 0}
+                                                                </p>
+                                                                <p className="text-sm text-gray-500 dark:text-white/70">
+                                                                    Qty: {item.quantity ?? 0}
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-gray-900 dark:text-white/90">
+                                                                    {currency?.symbol}
+                                                                    {item.sub_total ?? 0}
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))
@@ -1131,7 +1138,7 @@ export default function show({ order }) {
                                                 </svg>
                                                 Shipping Address 1
                                             </h3>
-                                            <address className="text-sm not-italic text-gray-600 dark:text-white/90">
+                                            <address className="whitespace-normal break-all text-sm not-italic text-gray-600 dark:text-white/90">
                                                 {order?.customer?.state || 'N/A'},{' '}
                                                 {order?.customer?.city || 'N/A'}
                                                 <br />
@@ -1164,7 +1171,7 @@ export default function show({ order }) {
                                                     </svg>
                                                     Shipping Address 2
                                                 </h3>
-                                                <address className="text-sm not-italic text-gray-600 dark:text-white/90">
+                                                <address className="whitespace-normal break-all text-sm not-italic text-gray-600 dark:text-white/90">
                                                     {order?.customer?.state || 'N/A'},{' '}
                                                     {order?.customer?.city || 'N/A'}
                                                     <br />
