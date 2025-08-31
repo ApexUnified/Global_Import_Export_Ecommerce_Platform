@@ -373,8 +373,8 @@ export default function create({ orders }) {
                                                             setData('package_video', null);
                                                         }
                                                     }}
-                                                    MaxFiles={5}
-                                                    Multiple={true}
+                                                    MaxFiles={1}
+                                                    Multiple={false}
                                                     Required={true}
                                                     DefaultFile={
                                                         data.package_video && [data.package_video]
