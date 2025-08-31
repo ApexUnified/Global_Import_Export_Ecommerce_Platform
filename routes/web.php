@@ -182,6 +182,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/orders-edit/{id?}', 'edit')->name('edit');
             Route::put('/orders-update/{id?}', 'update')->name('update');
             Route::get('/orders-view/{id?}', 'show')->name('show');
+            Route::post('/order-package-recordings-store', 'packageRecordingStore')->name('packagerecordingstore');
             Route::delete('/orders-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/orders-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
             Route::put('/orders-update-cash-collected-status/{id?}', 'updateCashCollectedStatus')->name('updatecashcollectedstatus');
@@ -193,8 +194,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/package-recordings', 'index')->name('index');
             Route::get('/package-recordings-create', 'create')->name('create');
             Route::post('/package-recordings-store', 'store')->name('store');
-            Route::get('/package-recordings-edit/{id?}', 'edit')->name('edit');
-            Route::put('/package-recordings-update/{id?}', 'update')->name('update');
+            // Route::get('/package-recordings-edit/{id?}', 'edit')->name('edit');
+            // Route::put('/package-recordings-update/{id?}', 'update')->name('update');
             Route::delete('/package-recordings-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/package-recordings-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
         });

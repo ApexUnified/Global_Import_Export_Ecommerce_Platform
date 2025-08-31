@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Jobs\CollaboratorCommissionSet;
 use App\Jobs\DistributorCommissionSet;
+use App\Jobs\NotifyAdminAboutOrderPlaced;
 use App\Jobs\SupplierCommissionSet;
 use App\Notifications\OrderStatusArrivedLocallyNotification;
 use App\Notifications\OrderStatusDeliveredNotification;
@@ -117,6 +118,9 @@ class Order extends Model
             dispatch(new SupplierCommissionSet($order));
 
             $order->save();
+
+            // Notify Admin About Order
+            dispatch(new NotifyAdminAboutOrderPlaced($order));
         });
 
         static::updated(function ($order) {

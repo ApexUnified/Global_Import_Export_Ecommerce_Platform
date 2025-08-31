@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Orders\Interface\IOrderRepository;
+use App\Repositories\PackageRecordings\Interface\IPackageRecordingsRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
     public function __construct(
-        private IOrderRepository $order
+        private IOrderRepository $order,
+        private IPackageRecordingsRepository $package_recording,
     ) {}
 
     public function index(Request $request)
@@ -169,5 +171,16 @@ class OrderController extends Controller
         $order = $response['order'];
 
         return Inertia::render('Dashboard/Orders/ShippingInvoice', compact('order'));
+    }
+
+    public function packageRecordingStore(Request $request)
+    {
+        $created = $this->package_recording->storePackageRecording($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return back()->with('success', $created['message']);
     }
 }

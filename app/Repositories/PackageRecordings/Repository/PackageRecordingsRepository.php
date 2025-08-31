@@ -70,7 +70,7 @@ class PackageRecordingsRepository implements IPackageRecordingsRepository
                 ->create($validated_req);
 
             if (empty($created)) {
-                throw new Exception('Something Went Wrong While Creating Package Recording');
+                throw new Exception('Something Went Wrong While Uploading Package Recording');
             }
 
             $video = $request->file('package_video');
@@ -83,7 +83,7 @@ class PackageRecordingsRepository implements IPackageRecordingsRepository
 
             return [
                 'status' => true,
-                'message' => 'Package Recording Created Successfully',
+                'message' => 'Package Recording Uploaded Succesfully',
             ];
 
         } catch (Exception $e) {

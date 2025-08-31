@@ -33,7 +33,6 @@ class PackageRecordingController extends Controller
     public function store(Request $request)
     {
         $created = $this->package_recording->storePackageRecording($request);
-
         if ($created['status'] === false) {
             return back()->with('error', $created['message']);
         }

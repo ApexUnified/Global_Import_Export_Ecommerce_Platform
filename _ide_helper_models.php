@@ -181,6 +181,36 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int|null $order_id
+ * @property int $collaborator_id
+ * @property string $commission_rate
+ * @property string $commission_amount
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Collaborator $collaborator
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Order|null $order
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereCollaboratorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereCommissionAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereCommissionRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CollaboratorCommission whereUpdatedAt($value)
+ */
+	class CollaboratorCommission extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $code
  * @property int $is_active
@@ -300,6 +330,36 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Distributor whereUserId($value)
  */
 	class Distributor extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int|null $order_id
+ * @property int $distributor_id
+ * @property string $commission_rate
+ * @property string $commission_amount
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Distributor $distributor
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Order|null $order
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereCommissionAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereCommissionRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereDistributorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DistributorCommission whereUpdatedAt($value)
+ */
+	class DistributorCommission extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -428,12 +488,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Collaborator|null $collaborator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CollaboratorCommission> $collaboratorCommissions
+ * @property-read int|null $collaborator_commissions_count
  * @property-read \App\Models\Customer|null $customer
  * @property-read mixed $added_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orderItems
  * @property-read int|null $order_items_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PackageRecording> $orderPackageRecordings
  * @property-read int|null $order_package_recordings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SupplierCommission> $supplierCommissions
+ * @property-read int|null $supplier_commissions_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order query()
@@ -769,6 +833,36 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int|null $order_id
+ * @property int $supplier_id
+ * @property string $commission_rate
+ * @property string $commission_amount
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\Supplier $supplier
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereCommissionAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereCommissionRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SupplierCommission whereUpdatedAt($value)
+ */
+	class SupplierCommission extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $phone
@@ -781,6 +875,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $bookMarkedPosts
  * @property-read int|null $book_marked_posts_count
  * @property-read \App\Models\Collaborator|null $collaborator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CollaboratorCommission> $collaboratorCommissionUsers
+ * @property-read int|null $collaborator_commission_users_count
  * @property-read \App\Models\Customer|null $customer
  * @property-read \App\Models\Distributor|null $distributor
  * @property-read mixed $added_at
@@ -796,6 +892,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \App\Models\Supplier|null $supplier
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SupplierCommission> $supplierCommissionUsers
+ * @property-read int|null $supplier_commission_users_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()

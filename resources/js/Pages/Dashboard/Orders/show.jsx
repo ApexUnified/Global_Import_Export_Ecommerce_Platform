@@ -2,16 +2,19 @@ import Card from '@/Components/Card';
 import LinkButton from '@/Components/LinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, usePage } from '@inertiajs/react';
-import React, { useState } from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Swal from 'sweetalert2';
+import Toast from '@/Components/Toast';
 
 export default function show({ order }) {
     // Currency
     const { currency } = usePage().props;
     const [downloading, setDownloading] = useState(false);
 
+    // Error State
+    const [ValidationErrors, setValidationErrors] = useState({});
     const getStatusColor = (status) => {
         const colors = {
             pending: 'bg-yellow-500 text-yellow-800 ',
@@ -51,6 +54,314 @@ export default function show({ order }) {
         }
     };
 
+    // Package Recording Logic
+
+    const {
+        data: package_video,
+        setData: setPackageVideo,
+        processing: packageVideoProcessing,
+        post: postPackageVideo,
+        errors: packageVideoErrors,
+    } = useForm({ package_video: '', order_id: order.id });
+
+    const fileInputRef = useRef(null);
+    const [openRecorder, setOpenRecorder] = useState(false);
+    const [recordingSaving, setRecordingSaving] = useState(false);
+    const [stream, setStream] = useState(null);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
+    const [error, setError] = useState(null);
+    const [availableDevices, setAvailableDevices] = useState([]);
+    const [useFrontCamera, setUseFrontCamera] = useState(false);
+
+    const videoRef = useRef(null);
+
+    const getAvailableDevices = async () => {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+            const audioDevices = devices.filter((device) => device.kind === 'audioinput');
+
+            setAvailableDevices({
+                video: videoDevices,
+                audio: audioDevices,
+            });
+
+            return { video: videoDevices, audio: audioDevices };
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Something went wrong',
+            });
+            return { video: [], audio: [] };
+        }
+    };
+
+    // Try multiple camera access strategies
+    const startCameraWithFallback = async () => {
+        setError(null);
+
+        // Stop existing stream first
+        if (stream) {
+            stream.getTracks().forEach((track) => track.stop());
+            setStream(null);
+        }
+
+        const strategies = [
+            // Strategy 1: Basic constraints (most compatible)
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
+                audio: true,
+            },
+
+            // Strategy 2: Just video, no audio
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
+                audio: false,
+            },
+
+            // Strategy 3: Specific device constraints
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                    width: { min: 320, ideal: 640, max: 1920 },
+                    height: { min: 240, ideal: 480, max: 1080 },
+                },
+                audio: true,
+            },
+
+            // Strategy 4: Mobile-friendly constraints
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                },
+                audio: true,
+            },
+
+            // Strategy 5: Environment camera (back camera)
+            {
+                video: {
+                    facingMode: useFrontCamera ? 'user' : 'environment',
+                },
+                audio: true,
+            },
+        ];
+
+        for (let i = 0; i < strategies.length; i++) {
+            const constraints = strategies[i];
+
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                // Success! Setup the stream
+                setStream(mediaStream);
+
+                if (videoRef.current) {
+                    videoRef.current.srcObject = mediaStream;
+                    try {
+                        await videoRef.current.play();
+                    } catch (playError) {
+                        console.warn('Video play error (usually harmless):', playError);
+                    }
+                }
+
+                // Setup MediaRecorder
+                try {
+                    let mimeType = 'video/webm';
+
+                    // Try different mime types
+                    const supportedTypes = [
+                        'video/webm;codecs=vp9',
+                        'video/webm;codecs=vp8',
+                        'video/webm',
+                        'video/mp4',
+                    ];
+
+                    for (const type of supportedTypes) {
+                        if (MediaRecorder.isTypeSupported(type)) {
+                            mimeType = type;
+                            break;
+                        }
+                    }
+
+                    const recorder = new MediaRecorder(mediaStream, { mimeType });
+                    const chunks = [];
+
+                    recorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: mimeType });
+                        const url = URL.createObjectURL(blob);
+                        setRecordedVideoUrl(url);
+                        setIsRecording(false);
+                        chunks.length = 0; // Clear chunks
+                    };
+
+                    recorder.onerror = (event) => {
+                        setError('Recording error: ' + event.error.message);
+                    };
+
+                    setMediaRecorder(recorder);
+                } catch (recorderError) {
+                    setError('MediaRecorder not supported: ' + recorderError.message);
+                }
+
+                return; // Success, exit the loop
+            } catch (err) {
+                if (i === strategies.length - 1) {
+                    // Last strategy failed
+                    let errorMessage = 'All camera access strategies failed. ';
+
+                    switch (err.name) {
+                        case 'NotFoundError':
+                        case 'DevicesNotFoundError':
+                            errorMessage += 'No camera device found. Please connect a camera.';
+                            break;
+                        case 'NotAllowedError':
+                        case 'PermissionDeniedError':
+                            errorMessage +=
+                                'Camera permission denied. Please allow camera access in browser settings.';
+                            break;
+                        case 'NotReadableError':
+                        case 'TrackStartError':
+                            errorMessage +=
+                                'Camera is being used by another application. Please close other camera apps.';
+                            break;
+                        case 'OverconstrainedError':
+                        case 'ConstraintNotSatisfiedError':
+                            errorMessage += 'Camera constraints not supported by your device.';
+                            break;
+                        default:
+                            errorMessage += `Error: ${err.message}`;
+                    }
+
+                    setError(errorMessage);
+                }
+            }
+        }
+    };
+
+    const handleStartRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'inactive') {
+            try {
+                mediaRecorder.start(1000);
+                setIsRecording(true);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.message || 'Something went wrong',
+                });
+            } finally {
+                setRecordedVideoUrl(null);
+            }
+        }
+    };
+
+    const handleStopRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+    };
+
+    const handleSave = async () => {
+        if (!recordedVideoUrl) return;
+
+        setRecordingSaving(true);
+
+        try {
+            const response = await fetch(recordedVideoUrl);
+            const blob = await response.blob();
+            const file = new File([blob], `recording-${Date.now()}.webm`, {
+                type: blob.type,
+            });
+
+            setPackageVideo('package_video', file);
+            handleClose();
+        } catch (err) {
+            console.error('Save error:', err);
+            setError(`Save error: ${err.message}`);
+        } finally {
+            setRecordingSaving(false);
+        }
+    };
+
+    const handleRetake = () => {
+        if (recordedVideoUrl) {
+            URL.revokeObjectURL(recordedVideoUrl);
+        }
+        setRecordedVideoUrl(null);
+        // Restart camera
+        startCameraWithFallback();
+    };
+
+    const handleClose = () => {
+        if (stream) {
+            stream.getTracks().forEach((track) => track.stop());
+            setStream(null);
+        }
+
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+
+        if (recordedVideoUrl) {
+            URL.revokeObjectURL(recordedVideoUrl);
+        }
+
+        setMediaRecorder(null);
+        setRecordedVideoUrl(null);
+        setIsRecording(false);
+        setError(null);
+        setOpenRecorder(false);
+    };
+
+    // Auto-start camera when modal opens
+    useEffect(() => {
+        if (openRecorder) {
+            getAvailableDevices().then(() => {
+                if (!recordedVideoUrl) {
+                    startCameraWithFallback();
+                }
+            });
+        }
+    }, [openRecorder, useFrontCamera]);
+
+    // Auto Upload If File Found
+    useEffect(() => {
+        if (package_video && package_video.package_video) {
+            postPackageVideo(route('dashboard.orders.packagerecordingstore'), {
+                forceFormData: true,
+
+                onError: (error) => {
+                    setValidationErrors(error);
+
+                    const timeout = setTimeout(() => {
+                        setValidationErrors({});
+                    }, 5000);
+
+                    return () => clearTimeout(timeout);
+                },
+
+                onFinish: () => {
+                    setPackageVideo('package_video', null);
+                },
+            });
+        }
+    }, [package_video]);
+
     return (
         <>
             <AuthenticatedLayout>
@@ -62,6 +373,14 @@ export default function show({ order }) {
                     parent_link={route('dashboard.orders.index')}
                     child={'View Order'}
                 />
+
+                {Object.keys(ValidationErrors).length > 0 && (
+                    <Toast
+                        flash={{
+                            error: Object.values(ValidationErrors)[0],
+                        }}
+                    />
+                )}
 
                 <div className="space-y-6">
                     <Card
@@ -517,10 +836,77 @@ export default function show({ order }) {
                                         <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
                                             {/* Packaging Videos */}
                                             <div className="space-y-3">
-                                                <h3 className="flex items-center text-sm font-medium text-gray-700 dark:text-white/80">
-                                                    <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
-                                                    Packaging Videos
-                                                </h3>
+                                                <div className="flex flex-wrap items-center justify-between text-sm font-medium text-gray-700 dark:text-white/80">
+                                                    <div className="flex items-center">
+                                                        <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+                                                        <h3>Packaging Videos</h3>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-auto lg:w-[200px]">
+                                                            <PrimaryButton
+                                                                Text={'Record Video'}
+                                                                Icon={
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="none"
+                                                                        viewBox="0 0 24 24"
+                                                                        strokeWidth={1.5}
+                                                                        stroke="currentColor"
+                                                                        className="size-6"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                                                                        />
+                                                                    </svg>
+                                                                }
+                                                                Type={'button'}
+                                                                Action={() => setOpenRecorder(true)}
+                                                            />
+                                                        </div>
+                                                        <div className="w-auto lg:w-[200px]">
+                                                            <PrimaryButton
+                                                                Text={'Upload Video'}
+                                                                Icon={
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="none"
+                                                                        viewBox="0 0 24 24"
+                                                                        strokeWidth={1.5}
+                                                                        stroke="currentColor"
+                                                                        className="size-6"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                                                                        />
+                                                                    </svg>
+                                                                }
+                                                                Type={'button'}
+                                                                Action={() =>
+                                                                    fileInputRef.current?.click()
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Hidden File Input */}
+                                                <input
+                                                    type="file"
+                                                    accept="video/*"
+                                                    ref={fileInputRef}
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => {
+                                                        if (e.target.files.length > 0) {
+                                                            const file = e.target.files[0];
+                                                            setPackageVideo('package_video', file);
+                                                        }
+                                                    }}
+                                                />
 
                                                 {order?.order_package_recordings.length > 0 ? (
                                                     order?.order_package_recordings.map(
@@ -1067,6 +1453,199 @@ export default function show({ order }) {
                                         <span className="sr-only">Loading...</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Package Recording Uploading Modal */}
+                {packageVideoProcessing && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+                        <div className="fixed inset-0 backdrop-blur-[32px]"></div>
+
+                        {/* Modal content */}
+                        <div className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8">
+                            <div className="text-center">
+                                <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+                                    Please Wait While We Are Uploading Package Video
+                                </h2>
+
+                                <div className="mt-5 flex items-center justify-center">
+                                    <div role="status">
+                                        <svg
+                                            aria-hidden="true"
+                                            className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                            viewBox="0 0 100 101"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                fill="currentFill"
+                                            />
+                                        </svg>
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Recording Save Loading Modal */}
+                {openRecorder && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+                        <div className="fixed inset-0 bg-black/50" onClick={handleClose} />
+
+                        <div className="relative z-10 max-h-screen w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 text-gray-900 shadow-xl dark:bg-gray-800 dark:text-white/80 sm:p-8">
+                            {/* Header */}
+                            <div className="mb-4 flex items-center justify-between border-b pb-4">
+                                <h3 className="text-lg font-semibold">Video Recorder</h3>
+                            </div>
+
+                            {/* Error display */}
+                            {error && (
+                                <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
+                                    <div className="mb-2 text-sm text-red-800">{error}</div>
+                                    <button
+                                        onClick={startCameraWithFallback}
+                                        className="rounded bg-red-100 px-3 py-1 text-sm text-red-800 hover:bg-red-200"
+                                    >
+                                        Retry Camera
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Device info */}
+                            {availableDevices.video && availableDevices.video.length > 0 && (
+                                <div className="mb-4 text-sm text-gray-600 dark:text-white/80">
+                                    Found {availableDevices.video.length} camera(s) and{' '}
+                                    {availableDevices.audio?.length || 0} microphone(s)
+                                </div>
+                            )}
+
+                            {/* Video display */}
+                            <div
+                                className="relative mb-4 overflow-hidden rounded-lg bg-black"
+                                style={{ aspectRatio: '16/9' }}
+                            >
+                                {!recordedVideoUrl ? (
+                                    <video
+                                        ref={videoRef}
+                                        autoPlay
+                                        muted
+                                        playsInline
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <video
+                                        key={recordedVideoUrl}
+                                        src={recordedVideoUrl}
+                                        controls
+                                        className="h-full w-full object-cover"
+                                        onLoadedMetadata={(e) => {
+                                            // ensure it actually starts
+                                            try {
+                                                e.currentTarget.play();
+                                            } catch {}
+                                        }}
+                                    />
+                                )}
+
+                                {/* Recording indicator */}
+                                {isRecording && (
+                                    <div className="absolute left-4 top-4 flex items-center space-x-2 rounded-full bg-red-600 px-3 py-1 text-white">
+                                        <div className="h-3 w-3 animate-pulse rounded-full bg-white"></div>
+                                        <span className="text-sm font-medium">Recording</span>
+                                    </div>
+                                )}
+
+                                {!isRecording && !recordedVideoUrl && (
+                                    <div
+                                        onClick={() => setUseFrontCamera(!useFrontCamera)}
+                                        className="absolute right-4 top-4 flex cursor-pointer items-center space-x-2 rounded-full bg-blue-600 px-3 py-1 text-white"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3"
+                                            />
+                                        </svg>
+                                    </div>
+                                )}
+
+                                {/* Status overlay when no stream */}
+                                {!stream && !recordedVideoUrl && (
+                                    <div className="absolute inset-0 flex items-center justify-center text-center text-white">
+                                        <div>
+                                            <div className="mb-2 text-lg font-medium">
+                                                Connecting to camera...
+                                            </div>
+                                            <div className="text-sm opacity-75">
+                                                Please allow camera access if prompted
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Controls */}
+                            <div className="flex justify-center space-x-3">
+                                {!recordedVideoUrl ? (
+                                    <>
+                                        <button
+                                            onClick={handleStartRecording}
+                                            disabled={!stream || isRecording}
+                                            className="rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {isRecording ? 'Recording...' : 'Start Recording'}
+                                        </button>
+
+                                        <button
+                                            onClick={handleStopRecording}
+                                            disabled={!isRecording}
+                                            className="rounded-lg bg-red-600 px-6 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            Stop Recording
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={recordingSaving}
+                                            className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                                        >
+                                            {recordingSaving ? 'Saving...' : 'Upload Video'}
+                                        </button>
+
+                                        <button
+                                            onClick={handleRetake}
+                                            className="rounded-lg bg-amber-500 px-6 py-2 text-white hover:bg-amber-600"
+                                        >
+                                            Retake
+                                        </button>
+                                    </>
+                                )}
+
+                                <button
+                                    onClick={handleClose}
+                                    className="rounded-lg bg-gray-500 px-6 py-2 text-white hover:bg-gray-600"
+                                >
+                                    Close
+                                </button>
                             </div>
                         </div>
                     </div>
