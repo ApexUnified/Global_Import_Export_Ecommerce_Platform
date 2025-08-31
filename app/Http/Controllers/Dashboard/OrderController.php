@@ -17,8 +17,9 @@ class OrderController extends Controller
     {
         $orders = $this->order->getAllOrders($request);
         $search = $request->input('search');
+        $status = $request->input('status');
 
-        return Inertia::render('Dashboard/Orders/index', compact('orders', 'search'));
+        return Inertia::render('Dashboard/Orders/index', compact('orders', 'search', 'status'));
     }
 
     public function create()

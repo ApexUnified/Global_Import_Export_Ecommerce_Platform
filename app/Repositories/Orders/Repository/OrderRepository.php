@@ -39,6 +39,9 @@ class OrderRepository implements IOrderRepository
                         ->orWhere('phone', 'like', '%'.$request->input('search').'%');
                 });
             })
+            ->when(! empty($request->input('status')), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
