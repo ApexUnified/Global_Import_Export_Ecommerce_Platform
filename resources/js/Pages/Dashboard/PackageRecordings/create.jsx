@@ -300,7 +300,7 @@ export default function create({ orders }) {
     }, [openRecorder, useFrontCamera]);
 
     useEffect(() => {
-        alert(data);
+        alert(data.package_video);
     }, [data]);
 
     return (
