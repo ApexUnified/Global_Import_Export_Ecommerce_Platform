@@ -873,7 +873,7 @@ export default function show({ order }) {
                                                                 Action={() => setOpenRecorder(true)}
                                                             />
                                                         </div>
-                                                        <div className="w-auto lg:w-[200px]">
+                                                        {/* <div className="w-auto lg:w-[200px]">
                                                             <PrimaryButton
                                                                 Text={'Upload Video'}
                                                                 Icon={
@@ -897,7 +897,7 @@ export default function show({ order }) {
                                                                     fileInputRef.current?.click()
                                                                 }
                                                             />
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </div>
 

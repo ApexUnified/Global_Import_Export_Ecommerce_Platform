@@ -356,7 +356,50 @@ export default function create({ orders }) {
                                                     Action={(value) => setData('order_id', value)}
                                                 />
 
-                                                <FileUploaderInput
+                                                {data.package_video != '' && (
+                                                    <div className="flex max-w-sm items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:bg-gray-800">
+                                                        {/* Left side - Video icon */}
+                                                        <div className="flex items-center">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                strokeWidth={1.5}
+                                                                stroke="currentColor"
+                                                                className="size-6"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+
+                                                        {/* Right side - X icon */}
+                                                        <div
+                                                            className="flex items-center"
+                                                            onClick={setData('package_video', '')}
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                strokeWidth={1.5}
+                                                                stroke="currentColor"
+                                                                className="size-6"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="M6 18 18 6M6 6l12 12"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* <FileUploaderInput
                                                     key={data.package_video}
                                                     Label={
                                                         'Drag & Drop your Package Video or <span class="filepond--label-action">Browse</span>'
@@ -379,7 +422,7 @@ export default function create({ orders }) {
                                                     DefaultFile={
                                                         data.package_video && [data.package_video]
                                                     }
-                                                />
+                                                /> */}
                                             </div>
 
                                             <div className="flex flex-wrap items-center gap-4">
