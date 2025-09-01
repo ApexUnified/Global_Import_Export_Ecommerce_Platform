@@ -249,7 +249,6 @@ export default function create({ orders }) {
             });
 
             setData('package_video', file);
-            alert(!!data.package_video);
             handleClose();
         } catch (err) {
             console.error('Save error:', err);
@@ -299,6 +298,10 @@ export default function create({ orders }) {
             });
         }
     }, [openRecorder, useFrontCamera]);
+
+    useEffect(() => {
+        alert(data);
+    }, [data]);
 
     return (
         <>
