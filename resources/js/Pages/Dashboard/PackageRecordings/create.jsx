@@ -357,7 +357,10 @@ export default function create({ orders }) {
                                                 />
 
                                                 {data.package_video != '' && (
-                                                    <div className="flex max-w-sm items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:bg-gray-800">
+                                                    <div
+                                                        key={data.package_video}
+                                                        className="flex max-w-sm items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:bg-gray-800"
+                                                    >
                                                         {/* Left side - Video icon */}
                                                         <div className="flex items-center">
                                                             <svg
