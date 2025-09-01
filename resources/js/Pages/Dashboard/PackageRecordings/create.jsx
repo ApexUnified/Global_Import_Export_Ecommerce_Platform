@@ -249,7 +249,7 @@ export default function create({ orders }) {
             });
 
             setData('package_video', file);
-            alert(data.package_video);
+            alert(!!data.package_video);
             handleClose();
         } catch (err) {
             console.error('Save error:', err);
