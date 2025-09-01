@@ -248,6 +248,7 @@ export default function create({ orders }) {
                 type: blob.type,
             });
 
+            alert('File: ' + file);
             setData('package_video', file);
             handleClose();
         } catch (err) {
@@ -298,10 +299,6 @@ export default function create({ orders }) {
             });
         }
     }, [openRecorder, useFrontCamera]);
-
-    useEffect(() => {
-        alert(data.package_video);
-    }, [data]);
 
     return (
         <>
