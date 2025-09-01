@@ -248,7 +248,7 @@ export default function create({ orders }) {
                 type: blob.type,
             });
 
-            alert('File: ' + file);
+            // alert('File: ' + file);
             setData('package_video', file);
             handleClose();
         } catch (err) {
@@ -258,6 +258,10 @@ export default function create({ orders }) {
             setRecordingSaving(false);
         }
     };
+
+    useEffect(() => {
+        alert(!!data.package_video);
+    }, []);
 
     const handleRetake = () => {
         if (recordedVideoUrl) {
