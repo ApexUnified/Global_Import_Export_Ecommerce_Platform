@@ -261,7 +261,7 @@ export default function create({ orders }) {
 
     useEffect(() => {
         alert(!!data.package_video);
-    }, []);
+    }, [data]);
 
     const handleRetake = () => {
         if (recordedVideoUrl) {
