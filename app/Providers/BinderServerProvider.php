@@ -71,6 +71,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ISupplierCommissionRepository::class, SupplierCommissionRepository::class);
         $this->app->bind(ICollaboratorCommissionRepository::class, CollaboratorCommissionRepository::class);
         $this->app->bind(IDistributorCommissionRepository::class, DistributorCommissionRepository::class);
+
     }
 
     /**

@@ -367,6 +367,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/commission-settings-update/{id?}', 'commissionSettingUpdate')->name('commission-settings.update');
                 Route::delete('/commission-settings-destroy/{id?}', 'destroyCommissionSetting')->name('commission-settings.destroy');
                 Route::delete('/commission-settings-destroy-by-selection', 'destroyCommissionSettingBySelection')->name('commission-settings.destroybyselection');
+
+                // Country Routes
+                Route::get('/countries', 'countryIndex')->name('countries.index');
+                Route::get('/countries-create', 'countryCreate')->name('countries.create');
+                Route::post('/countries-store', 'countryStore')->name('countries.store');
+                Route::get('/countries-edit/{id?}', 'countryEdit')->name('countries.edit');
+                Route::put('/countries-update/{id?}', 'countryUpdate')->name('countries.update');
+                Route::delete('/countries-destroy/{id?}', 'countryDestroy')->name('countries.destroy');
+                Route::delete('/countries-destroy-by-selection', 'countryDestroyBySelection')->name('countries.destroybyselection');
+
+                // Special Country Routes
+                Route::get('/special-countries', 'specialCountryIndex')->name('special-countries.index');
+                Route::get('/special-countries-create', 'specialCountryCreate')->name('special-countries.create');
+                Route::post('/special-countries-store', 'specialCountryStore')->name('special-countries.store');
+                Route::delete('/special-countries-destroy/{id?}', 'specialCountryDestroy')->name('special-countries.destroy');
+                Route::delete('/special-countries-destroy-by-selection', 'specialCountryDestroyBySelection')->name('special-countries.destroybyselection');
             });
 
         });

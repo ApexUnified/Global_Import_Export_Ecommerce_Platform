@@ -189,21 +189,84 @@ Order items Module ✅
 - Delivered – Order delivered to recipient
 - Meta API will be integrated to send push messages for the above events using customer-authorized Messenger/Instagram accounts.
 
-
-
-
-
 Routes Work
 Extract All edit , show routes from resource and make thier params optional to run controller logic that checks for params ✅
 
 
-Commission logic Remeaning It will be done when next milestone came
+Milestone 5: (Collaborator, Supplier, Distributor) + Settlement Module
+- Settlement logic for collaborator And Suppliers And Distributor ✅
+- Supplier Margin table ✅
+- collaborator margin table ✅
+- Distrubutor margin table ✅
+- Admin view + mark as paid ✅
+- Collaborator read-only earnings list
+- Supplier read-only earnings list
+- Distributor read-only earnings list
+- Filters for settlements ✅
 
+
+
+
+
+
+
+Milestone 6: Global Settings Module
+This milestone includes all dynamic settings and global configuration features required for maintaining and scaling the platform effectively.
+
+1. General System Settings ✅
+
+- System name, support email, contact info
+- Logo, favicon upload
+
+2. SMTP Configuration ✅
+
+- Dynamic SMTP setup for outgoing emails
+- Ability to update provider settings (host, port, encryption, username/password) from Dashboard
+
+3. Special Countries (OAuth Eligibility) ✅
+
+- Add/remove countries allowed to use Meta OAuth Consent
+- Used to fetch Messenger/Instagram USER_IDs for sending push notifications (Redunt)
+
+4. Role & Permission Management
+
+- CRUD for Roles
+- Dynamic permission assignment per role
+- Secure all system routes, pages, and features based on user roles
+- Integrate Spatie
+- Integrate role-based access control using Spatie Permissions
+
+5. Meta API Credentials
+- Update and store Meta (Facebook/Instagram) credentials dynamically
+- No hardcoded client_id, client_secret – all editable from the Dashboard
+
+6. AWS Dynamic Credentials Setup
+
+7. Google Maps Credentials Setup
+
+8. Future-Proofing for More Settings
+- Clean, extendable module structure to add new system-wide configurations later without code refactoring
+
+9. Countries Settings Module Where We Can Define Countries That will be Used In Our System Such as When Customer
+   Registering or Selecting Special Countries We will shows these countries there to select ✅
+
+💰 Suggested Budget: $500
+⏱ Time Estimate: 5 - 7 Days
+
+
+
+
+
+
+
+
+Remeanni8ng
+
+Customer Country Section will be changes into countries table foreign id and than we will assign country id to
+customer country section  and fetch country using Relation
 
 For website Order Flow
 Restrict Multiple products With Multiple Distributors Adding in cart and also restrictiug while ordering [Dashboard This Logic Done]
-
-
 Cart Item Remeaning
 Shcema
 Schema::create('cart_items', function (Blueprint $table) {

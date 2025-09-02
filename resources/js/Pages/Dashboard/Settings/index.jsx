@@ -703,6 +703,123 @@ export default function index() {
                                     </>
                                 }
                             />
+
+                            <Card
+                                CustomCss={
+                                    'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
+                                }
+                                Content={
+                                    <>
+                                        <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-9 dark:border-white`}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <h2 className="mb-2 text-center text-xl font-semibold text-gray-800 dark:text-white">
+                                            Countries
+                                        </h2>
+
+                                        <p className="mb-6 text-center leading-relaxed text-gray-600 dark:text-white">
+                                            Easily manage and configure and create Countries across
+                                            your application to control Countries In The System.
+                                        </p>
+
+                                        <LinkButton
+                                            URL={route('dashboard.settings.countries.index')}
+                                            Text={'Manage Countries'}
+                                            CustomClass="w-full md:w-[300px] mt-10 "
+                                            Icon={
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+                                                    />
+                                                </svg>
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
+
+                            <Card
+                                CustomCss={
+                                    'flex justify-center items-center flex-col max-w-lg mx-auto min-h-[400px]'
+                                }
+                                Content={
+                                    <>
+                                        <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-9 dark:border-white`}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <h2 className="mb-2 text-center text-xl font-semibold text-gray-800 dark:text-white">
+                                            Special Countries
+                                        </h2>
+
+                                        <p className="mb-6 text-center leading-relaxed text-gray-600 dark:text-white">
+                                            Easily manage and configure, create Special Countries
+                                            across your application to control Meta OAUTH For Push
+                                            Notifications Outside Of The System.
+                                        </p>
+
+                                        <LinkButton
+                                            URL={route(
+                                                'dashboard.settings.special-countries.index',
+                                            )}
+                                            Text={'Manage Special Countries'}
+                                            CustomClass="w-full md:w-[300px] mt-10 "
+                                            Icon={
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+                                                    />
+                                                </svg>
+                                            }
+                                        />
+                                    </>
+                                }
+                            />
                         </div>
                     </>
                 }

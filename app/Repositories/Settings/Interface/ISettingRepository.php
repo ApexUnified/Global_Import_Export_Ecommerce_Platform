@@ -130,4 +130,30 @@ interface ISettingRepository
     public function destroyCommissionSetting(string $id);
 
     public function destroyCommissionSettingBySelection(Request $request);
+
+    // COuntries Setting
+    public function getAllCountries(Request $request);
+
+    public function getSingleCountry(string $id);
+
+    public function storeCountry(Request $request);
+
+    public function updateCountry(Request $request, string $id);
+
+    public function destroyCountry(string $id);
+
+    public function destroyCountryBySelection(Request $request);
+
+    // Special Country Settings
+    public function getAllSpecialCountries(Request $request);
+
+    public function getSingleSpecialCountry(string $id);
+
+    public function storeSpecialCountry(Request $request);
+
+    public function destroySpecialCountry(string $id);
+
+    public function destroySpecialCountryBySelection(Request $request);
+
+    public function getCountries();
 }

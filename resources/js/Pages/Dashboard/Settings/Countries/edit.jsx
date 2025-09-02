@@ -5,44 +5,42 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React from 'react';
 import SelectInput from '@/Components/SelectInput';
-import { HexColorPicker } from 'react-colorful';
 
-export default function edit({ color }) {
-    // Create Data Form Data
+export default function edit({ country }) {
+    // Edit Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
-        name: color.name || '',
-        code: color.code || '',
-        is_active: color.is_active ?? 1,
+        name: country.name || '',
+        iso_code: country.iso_code || '',
+        is_active: country.is_active ?? 1,
     });
 
     // Edit Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        put(route('dashboard.settings.colors.update', color.id));
+        put(route('dashboard.settings.countries.update', country.id));
     };
-    const [customcolor, setCustomColor] = useState(color.code ?? '#aabbcc');
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="Countries" />
 
                 <BreadCrumb
-                    header={'Edit Color'}
-                    parent={'Colors'}
-                    parent_link={route('dashboard.settings.colors.index')}
-                    child={'Edit Color'}
+                    header={'Edit Country'}
+                    parent={'Countries'}
+                    parent_link={route('dashboard.settings.countries.index')}
+                    child={'Edit Country'}
                 />
 
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Colors'}
-                                    URL={route('dashboard.settings.colors.index')}
+                                    Text={'Back To Countries'}
+                                    URL={route('dashboard.settings.countries.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -68,11 +66,11 @@ export default function edit({ color }) {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Color Name'}
+                                                    InputName={'Country Name'}
                                                     Error={errors.name}
                                                     Value={data.name}
                                                     Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Color Name'}
+                                                    Placeholder={'Enter Country Name'}
                                                     Id={'name'}
                                                     Name={'name'}
                                                     Type={'text'}
@@ -80,19 +78,21 @@ export default function edit({ color }) {
                                                 />
 
                                                 <Input
-                                                    InputName={'Color Code'}
-                                                    Error={errors.code}
-                                                    Value={data.code}
-                                                    Action={(e) => setData('code', e.target.value)}
-                                                    Placeholder={'Enter Color Code'}
-                                                    Id={'code'}
-                                                    Name={'code'}
+                                                    InputName={'Country ISO Code'}
+                                                    Error={errors.iso_code}
+                                                    Value={data.iso_code}
+                                                    Action={(e) =>
+                                                        setData('iso_code', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter Country ISO Code'}
+                                                    Id={'iso_code'}
+                                                    Name={'iso_code'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
                                                 <SelectInput
-                                                    InputName={'Color Status'}
+                                                    InputName={'Country Status'}
                                                     Id={'is_active'}
                                                     Name={'is_active'}
                                                     Value={data.is_active}
@@ -103,24 +103,19 @@ export default function edit({ color }) {
                                                         { id: 0, name: 'In-Active' },
                                                     ]}
                                                     itemKey={'name'}
-                                                    Placeholder={'Select Color Status'}
+                                                    Placeholder={'Select Country Status'}
                                                     Required={true}
-                                                />
-
-                                                <HexColorPicker
-                                                    color={customcolor}
-                                                    onChange={(code) => setData('code', code)}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Update Color'}
+                                                Text={'Update Country'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
                                                 Disabled={
                                                     processing ||
                                                     data.name.trim() === '' ||
-                                                    data.code.trim() === '' ||
+                                                    data.iso_code.trim() === '' ||
                                                     data.is_active === ''
                                                 }
                                                 Spinner={processing}

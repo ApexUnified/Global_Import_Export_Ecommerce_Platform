@@ -254,6 +254,28 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $name
+ * @property string $iso_code
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereIsoCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Country whereUpdatedAt($value)
+ */
+	class Country extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $name
  * @property string $symbol
  * @property int $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -781,6 +803,25 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmtpSetting whereUpdatedAt($value)
  */
 	class SmtpSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $country_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Country $country
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry whereCountryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialCountry whereUpdatedAt($value)
+ */
+	class SpecialCountry extends \Eloquent {}
 }
 
 namespace App\Models{

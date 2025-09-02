@@ -745,4 +745,138 @@ class SettingController extends Controller
         return back()->with('success', $deleted['message']);
 
     }
+
+    // Countries
+    public function countryIndex(Request $request)
+    {
+        $countries = $this->setting->getAllCountries($request);
+        $search = $request->input('search');
+
+        return Inertia::render('Dashboard/Settings/Countries/index', compact('countries', 'search'));
+    }
+
+    public function countryCreate()
+    {
+        return Inertia::render('Dashboard/Settings/Countries/create');
+    }
+
+    public function countryStore(Request $request)
+    {
+        $created = $this->setting->storeCountry($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.countries.index')->with('success', $created['message']);
+    }
+
+    public function countryEdit(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.countries.index')->with('error', 'Country ID not found');
+        }
+
+        $country = $this->setting->getSingleCountry($id);
+        if (empty($country)) {
+            return to_route('dashboard.settings.countries.index')->with('error', 'Country not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Countries/edit', compact('country'));
+    }
+
+    public function countryUpdate(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.countries.index')->with('error', 'Country ID not found');
+        }
+
+        $updated = $this->setting->updateCountry($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.countries.index')->with('success', $updated['message']);
+    }
+
+    public function countryDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Country ID not found');
+        }
+
+        $deleted = $this->setting->destroyCountry($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function countryDestroyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyCountryBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    // Special Country
+    public function specialCountryIndex(Request $request)
+    {
+        $special_countries = $this->setting->getAllSpecialCountries($request);
+        $search = $request->input('search');
+
+        return Inertia::render('Dashboard/Settings/SpecialCountries/index', compact('special_countries', 'search'));
+
+    }
+
+    public function specialCountryCreate()
+    {
+        $countries = $this->setting->getCountries();
+
+        return Inertia::render('Dashboard/Settings/SpecialCountries/create', compact('countries'));
+    }
+
+    public function specialCountryStore(Request $request)
+    {
+        $created = $this->setting->storeSpecialCountry($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.special-countries.index')->with('success', $created['message']);
+    }
+
+    public function specialCountryDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Special Country ID Not Found');
+        }
+
+        $deleted = $this->setting->destroySpecialCountry($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function specialCountryDestroyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroySpecialCountryBySelection($request);
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+
+    }
 }

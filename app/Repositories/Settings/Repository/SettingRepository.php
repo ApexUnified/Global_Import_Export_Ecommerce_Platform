@@ -12,12 +12,14 @@ use App\Models\AdditionalFeeList;
 use App\Models\Capacity;
 use App\Models\Color;
 use App\Models\CommissionSetting;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\ModelName;
 use App\Models\RewardSetting;
 use App\Models\Role;
 use App\Models\SmtpSetting;
+use App\Models\SpecialCountry;
 use App\Models\StorageLocation;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use Exception;
@@ -38,7 +40,9 @@ class SettingRepository implements ISettingRepository
         private Currency $currency,
         private AdditionalFeeList $additional_fee_list,
         private RewardSetting $reward_setting,
-        private CommissionSetting $commission_setting
+        private CommissionSetting $commission_setting,
+        private Country $country,
+        private SpecialCountry $special_country,
     ) {}
 
     // General Setting
@@ -1461,5 +1465,259 @@ class SettingRepository implements ISettingRepository
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    // COuntries Setting
+    public function getAllCountries(Request $request)
+    {
+        $countries = $this->country
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('name', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('iso_code', 'like', '%'.$request->input('search').'%');
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return $countries;
+    }
+
+    public function getSingleCountry(string $id)
+    {
+        $country = $this->country->find($id);
+
+        return $country;
+    }
+
+    public function storeCountry(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:100', 'unique:countries,name'],
+            'iso_code' => ['required', 'max:2', 'unique:countries,iso_code'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+            $created = $this->country->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Country Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateCountry(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:100', 'unique:countries,name,'.$id],
+            'iso_code' => ['required', 'max:2', 'unique:countries,iso_code,'.$id],
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        try {
+
+            $country = $this->getSingleCountry($id);
+
+            if (empty($country)) {
+                throw new Exception('Country Not Found');
+            }
+
+            $updated = $country->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Country Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCountry(string $id)
+    {
+        try {
+            $country = $this->getSingleCountry($id);
+
+            if (empty($country)) {
+                throw new Exception('Country Not Found');
+            }
+
+            $deleted = $country->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Country Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyCountryBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Country');
+            }
+
+            $deleted = $this->country->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Countries Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Special Country Settings
+    public function getAllSpecialCountries(Request $request)
+    {
+        $special_countries = $this->special_country
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->whereHas('country', function ($subQuery) use ($request) {
+                    $subQuery->where('name', 'like', '%'.$request->input('search').'%')
+                        ->orWhere('iso_code', 'like', '%'.$request->input('search').'%');
+                });
+            })
+            ->with('country')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return $special_countries;
+    }
+
+    public function getSingleSpecialCountry(string $id)
+    {
+        $special_country = $this->special_country->find($id);
+
+        return $special_country;
+    }
+
+    public function storeSpecialCountry(Request $request)
+    {
+        $validated_req = $request->validate([
+            'country_id' => ['required', 'exists:countries,id', 'unique:special_countries,country_id'],
+        ], [
+            'country_id.required' => 'Country Is Required',
+            'country_id.exists' => 'The Selected Country Is not Exists',
+            'country_id.unique' => 'Selected Country Is Already Exists in Special Countries',
+        ]);
+
+        try {
+            $created = $this->special_country->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something went wrong while creating Special Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Special Country created successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroySpecialCountry(string $id)
+    {
+        try {
+            $special_country = $this->special_country->find($id);
+
+            if (empty($special_country)) {
+                throw new Exception('Special Country not found');
+            }
+
+            $deleted = $special_country->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something went wrong while deleting Special Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Special Country deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroySpecialCountryBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Special Country');
+            }
+
+            $deleted = $this->special_country->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                throw new Exception('Something Went Wrong While Deleting Special Country');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Special Countries deleted successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getCountries()
+    {
+        return $this->country->where('is_active', true)->get();
     }
 }
