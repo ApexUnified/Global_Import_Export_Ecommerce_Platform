@@ -240,15 +240,19 @@ This milestone includes all dynamic settings and global configuration features r
 - Update and store Meta (Facebook/Instagram) credentials dynamically
 - No hardcoded client_id, client_secret – all editable from the Dashboard
 
-6. AWS Dynamic Credentials Setup
+6. AWS Dynamic Credentials Setup ✅
 
-7. Google Maps Credentials Setup
+7. Google Maps Credentials Setup ✅
 
-8. Future-Proofing for More Settings
+8. Future-Proofing for More Settings ✅
 - Clean, extendable module structure to add new system-wide configurations later without code refactoring
 
 9. Countries Settings Module Where We Can Define Countries That will be Used In Our System Such as When Customer
    Registering or Selecting Special Countries We will shows these countries there to select ✅
+
+10. Customer Country Section will be changes into countries table foreign id and than we will assign country id to
+    customer country section  and fetch country using Relation  ✅
+
 
 💰 Suggested Budget: $500
 ⏱ Time Estimate: 5 - 7 Days
@@ -262,8 +266,6 @@ This milestone includes all dynamic settings and global configuration features r
 
 Remeanni8ng
 
-Customer Country Section will be changes into countries table foreign id and than we will assign country id to
-customer country section  and fetch country using Relation
 
 For website Order Flow
 Restrict Multiple products With Multiple Distributors Adding in cart and also restrictiug while ordering [Dashboard This Logic Done]

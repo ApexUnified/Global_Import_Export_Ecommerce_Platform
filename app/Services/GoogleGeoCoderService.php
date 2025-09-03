@@ -12,7 +12,10 @@ class GoogleGeoCoderService
     public function __construct(
 
     ) {
-        $this->apiKey = config('services.google_maps_api_key');
+        $this->apiKey = config('services.google_maps_api_key') ?? '';
+        if ($this->apiKey == '') {
+            session()->flash('error', 'Google Maps API Key is not set Please Configure Your Google Map Api Key');
+        }
     }
 
     public function getLocationNameFromLatLng(string $lat, string $lng)

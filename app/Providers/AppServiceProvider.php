@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\AwsSetting;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
+use App\Models\GoogleMapSetting;
 use App\Models\SmtpSetting;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -74,6 +76,34 @@ class AppServiceProvider extends ServiceProvider
 
             if (Schema::hasTable('currencies')) {
                 Cache::rememberForever('currency', fn () => Currency::where('is_active', true)->first() ?? null);
+            }
+
+            if (Schema::hasTable('aws_settings')) {
+                $aws_setting = Cache::rememberForever('aws_setting', fn () => AwsSetting::where('is_active', true)->first() ?? null);
+
+                if (! empty($aws_setting)) {
+                    Config::set([
+                        'filesystems.disks.s3.key' => $aws_setting?->aws_access_key_id,
+                        'filesystems.disks.s3.secret' => $aws_setting?->aws_secret_access_key,
+                        'filesystems.disks.s3.region' => $aws_setting?->aws_region,
+                        'filesystems.disks.s3.bucket' => $aws_setting?->aws_bucket,
+                        'services.ses.key' => $aws_setting?->aws_access_key_id,
+                        'services.ses.secret' => $aws_setting?->aws_secret_access_key,
+                        'services.ses.region' => $aws_setting?->aws_region,
+                    ]);
+                }
+
+            }
+
+            if (Schema::hasTable('google_map_settings')) {
+                $google_map_setting = Cache::rememberForever('google_map_setting', fn () => GoogleMapSetting::where('is_active', true)->first() ?? null);
+
+                if (! empty($google_map_setting)) {
+                    Config::set([
+                        'services.google_maps_api_key' => $google_map_setting?->google_map_api_key,
+                    ]);
+                }
+
             }
 
         } catch (Exception $e) {

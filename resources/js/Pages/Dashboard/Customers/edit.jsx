@@ -8,7 +8,7 @@ import { Head, useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 
-export default function edit({ customer }) {
+export default function edit({ customer, countries }) {
     // Create Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
         name: customer?.user?.name || '',
@@ -17,7 +17,7 @@ export default function edit({ customer }) {
         password: '',
         password_confirmation: '',
         is_active: customer?.user?.is_active ?? 1,
-        country: customer?.country || '',
+        country_id: customer?.country_id || '',
         state: customer?.state || '',
         city: customer?.city || '',
         postal_code: customer?.postal_code || '',
@@ -117,17 +117,17 @@ export default function edit({ customer }) {
                                                     />
                                                 </div>
 
-                                                <Input
+                                                <SelectInput
                                                     InputName={'Country'}
-                                                    Error={errors.country}
-                                                    Value={data.country}
-                                                    Action={(e) =>
-                                                        setData('country', e.target.value)
-                                                    }
+                                                    Error={errors.country_id}
+                                                    Value={data.country_id}
+                                                    Action={(value) => setData('country_id', value)}
                                                     Placeholder={'Enter Country'}
-                                                    Id={'country'}
-                                                    Name={'country'}
-                                                    Type={'text'}
+                                                    Id={'country_id'}
+                                                    Name={'country_id'}
+                                                    items={countries}
+                                                    itemKey={'name'}
+                                                    Multiple={false}
                                                     Required={true}
                                                 />
 
@@ -292,7 +292,7 @@ export default function edit({ customer }) {
                                                     data.email.trim() === '' ||
                                                     data.phone.trim() === '' ||
                                                     data.is_active === '' ||
-                                                    data.country.trim() === '' ||
+                                                    data.country_id === '' ||
                                                     data.state.trim() === '' ||
                                                     data.city.trim() === '' ||
                                                     data.postal_code.trim() === '' ||

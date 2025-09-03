@@ -123,7 +123,7 @@ export default function edit({ customer }) {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={customer?.country ?? 'N/A'}
+                                                    value={customer?.country?.name ?? 'N/A'}
                                                     readOnly
                                                     className="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                                                 />

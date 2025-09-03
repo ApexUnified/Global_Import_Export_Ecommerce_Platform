@@ -34,6 +34,32 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $aws_access_key_id
+ * @property string $aws_secret_access_key
+ * @property string $aws_region
+ * @property string $aws_bucket
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereAwsAccessKeyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereAwsBucket($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereAwsRegion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereAwsSecretAccessKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AwsSetting whereUpdatedAt($value)
+ */
+	class AwsSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $batch_name
  * @property int $total_quantity
  * @property string $base_purchase_unit_price
@@ -298,7 +324,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $user_id
- * @property string|null $country
+ * @property int|null $country_id
  * @property string|null $state
  * @property string|null $city
  * @property string|null $postal_code
@@ -306,6 +332,7 @@ namespace App\Models{
  * @property string|null $address_line2
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Country|null $country
  * @property-read mixed $added_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
  * @property-read int|null $orders_count
@@ -316,7 +343,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereAddressLine1($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereAddressLine2($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCity($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCountryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer wherePostalCode($value)
@@ -437,6 +464,28 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $google_map_api_key
+ * @property string $google_map_id
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereGoogleMapApiKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereGoogleMapId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GoogleMapSetting whereUpdatedAt($value)
+ */
+	class GoogleMapSetting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $smartphone_id
  * @property int $batch_id
  * @property int|null $storage_location_id
@@ -469,6 +518,28 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory whereUpdatedAt($value)
  */
 	class Inventory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $meta_app_id
+ * @property string $meta_app_secret
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $added_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereMetaAppId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereMetaAppSecret($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MetaSetting whereUpdatedAt($value)
+ */
+	class MetaSetting extends \Eloquent {}
 }
 
 namespace App\Models{

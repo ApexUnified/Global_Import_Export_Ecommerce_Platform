@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
 
             'generalSetting' => Cache::get('general_config'),
             'currency' => Cache::get('currency'),
+            'googleMapSetting' => Cache::get('google_map_setting'),
             'asset' => asset(''),
         ];
     }

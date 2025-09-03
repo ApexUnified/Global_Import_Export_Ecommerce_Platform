@@ -879,4 +879,186 @@ class SettingController extends Controller
         return back()->with('success', $deleted['message']);
 
     }
+
+    // AWS Settings
+    public function awsSettingsIndex()
+    {
+        $aws_settings = $this->setting->getAllAwsSettings();
+
+        return Inertia::render('Dashboard/Settings/AwsSettings/index', compact('aws_settings'));
+    }
+
+    public function awsSettingCreate()
+    {
+        return Inertia::render('Dashboard/Settings/AwsSettings/create');
+    }
+
+    public function awsSettingStore(Request $request)
+    {
+        $created = $this->setting->storeAwsSetting($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.aws-settings.index')->with('success', $created['message']);
+    }
+
+    public function awsSettingEdit(?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.aws-settings.index')->with('error', 'Aws Setting ID not found');
+        }
+
+        $aws_setting = $this->setting->getSingleAwsSetting($id);
+
+        return Inertia::render('Dashboard/Settings/AwsSettings/edit', compact('aws_setting'));
+    }
+
+    public function awsSettingUpdate(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.aws-settings.index')->with('error', 'Aws Setting ID not found');
+        }
+
+        $updated = $this->setting->updateAwsSetting($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.aws-settings.index')->with('success', $updated['message']);
+    }
+
+    public function awsSettingDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Aws Setting ID not found');
+        }
+
+        $deleted = $this->setting->destroyAwsSetting($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function awsSettingDestroyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyAwsSettingBySelection($request);
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function awsSettingToggleStatus(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Aws Setting ID not found');
+        }
+
+        $updated = $this->setting->toggleAwsSettingStatus($id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return back()->with('success', $updated['message']);
+    }
+
+    // Google Map Setting
+
+    public function googleMapSettingsIndex()
+    {
+        $google_map_settings = $this->setting->getAllGoogleMapSettings();
+
+        return Inertia::render('Dashboard/Settings/GoogleMapSettings/index', compact('google_map_settings'));
+    }
+
+    public function googleMapSettingCreate()
+    {
+        return Inertia::render('Dashboard/Settings/GoogleMapSettings/create');
+    }
+
+    public function googleMapSettingStore(Request $request)
+    {
+        $created = $this->setting->storeGoogleMapSetting($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.google-map-settings.index')->with('success', $created['message']);
+    }
+
+    public function googleMapSettingEdit(?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.google-map-settings.index')->with('error', 'Google Map Setting ID not found');
+        }
+
+        $google_map_setting = $this->setting->getSingleGoogleMapSetting($id);
+
+        return Inertia::render('Dashboard/Settings/GoogleMapSettings/edit', compact('google_map_setting'));
+    }
+
+    public function googleMapSettingUpdate(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.google-map-settings.index')->with('error', 'Google Map Setting ID not found');
+        }
+
+        $updated = $this->setting->updateGoogleMapSetting($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.google-map-settings.index')->with('success', $updated['message']);
+    }
+
+    public function googleMapSettingDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Google Map Setting ID not found');
+        }
+
+        $deleted = $this->setting->destroyGoogleMapSetting($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function googleMapSettingDestroyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyGoogleMapSettingBySelection($request);
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function googleMapSettingToggleStatus(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Google Map Setting ID not found');
+        }
+
+        $updated = $this->setting->toggleGoogleMapSettingStatus($id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return back()->with('success', $updated['message']);
+
+    }
 }

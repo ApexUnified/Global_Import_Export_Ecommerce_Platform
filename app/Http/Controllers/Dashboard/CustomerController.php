@@ -24,7 +24,9 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return Inertia::render('Dashboard/Customers/create');
+        $countries = $this->customer->getCountries();
+
+        return Inertia::render('Dashboard/Customers/create', compact('countries'));
     }
 
     public function store(Request $request)
@@ -66,8 +68,9 @@ class CustomerController extends Controller
 
             return to_route('dashboard.customers.index')->with('error', 'Customer Not Found');
         }
+        $countries = $this->customer->getCountries();
 
-        return Inertia::render('Dashboard/Customers/edit', compact('customer'));
+        return Inertia::render('Dashboard/Customers/edit', compact('customer', 'countries'));
     }
 
     public function update(Request $request, ?string $id = null)

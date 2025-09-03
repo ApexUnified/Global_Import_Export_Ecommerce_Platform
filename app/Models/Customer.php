@@ -10,7 +10,7 @@ class Customer extends Model
 {
     protected $fillable = [
         'user_id',
-        'country',
+        'country_id',
         'state',
         'city',
         'postal_code',
@@ -36,5 +36,10 @@ class Customer extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'customer_id', 'id');
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
     }
 }

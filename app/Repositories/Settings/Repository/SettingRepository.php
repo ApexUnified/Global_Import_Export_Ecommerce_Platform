@@ -9,12 +9,14 @@ use App\Jobs\AppFaviconStoreOnAWS;
 use App\Jobs\AppLightLogoDestroyOnAWS;
 use App\Jobs\AppLightLogoStoreOnAWS;
 use App\Models\AdditionalFeeList;
+use App\Models\AwsSetting;
 use App\Models\Capacity;
 use App\Models\Color;
 use App\Models\CommissionSetting;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
+use App\Models\GoogleMapSetting;
 use App\Models\ModelName;
 use App\Models\RewardSetting;
 use App\Models\Role;
@@ -24,6 +26,7 @@ use App\Models\StorageLocation;
 use App\Repositories\Settings\Interface\ISettingRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 
@@ -43,6 +46,8 @@ class SettingRepository implements ISettingRepository
         private CommissionSetting $commission_setting,
         private Country $country,
         private SpecialCountry $special_country,
+        private AwsSetting $aws_setting,
+        private GoogleMapSetting $google_map_setting,
     ) {}
 
     // General Setting
@@ -1719,5 +1724,365 @@ class SettingRepository implements ISettingRepository
     public function getCountries()
     {
         return $this->country->where('is_active', true)->get();
+    }
+
+    // AWS Settings
+    public function getAllAwsSettings()
+    {
+        $aws_settings = $this->aws_setting->latest()->paginate(10);
+
+        return $aws_settings;
+    }
+
+    public function getSingleAwsSetting(string $id)
+    {
+        $aws_setting = $this->aws_setting->find($id);
+
+        return $aws_setting;
+    }
+
+    public function storeAwsSetting(Request $request)
+    {
+        $validated_req = $request->validate([
+            'aws_access_key_id' => ['required', 'string', 'max:255', 'unique:aws_settings,aws_access_key_id'],
+            'aws_secret_access_key' => ['required', 'string', 'max:255', 'unique:aws_settings,aws_secret_access_key'],
+            'aws_region' => ['required', 'string', 'max:50'],
+            'aws_bucket' => ['required', 'string', 'min:3', 'max:63', 'unique:aws_settings,aws_bucket'],
+        ]);
+
+        try {
+
+            if ($this->aws_setting->doesntExist()) {
+                $validated_req['is_active'] = true;
+            }
+
+            $created = $this->aws_setting->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something went wrong while creating Aws Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Aws Setting created successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateAwsSetting(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'aws_access_key_id' => ['required', 'string', 'max:255', 'unique:aws_settings,aws_access_key_id,'.$id],
+            'aws_secret_access_key' => ['required', 'string', 'max:255', 'unique:aws_settings,aws_secret_access_key,'.$id],
+            'aws_region' => ['required', 'string', 'max:50'],
+            'aws_bucket' => ['required', 'string', 'min:3', 'max:63', 'unique:aws_settings,aws_bucket,'.$id],
+        ]);
+
+        try {
+            $aws_setting = $this->getSingleAwsSetting($id);
+
+            if (empty($aws_setting)) {
+                throw new Exception('Aws Setting Not Found');
+            }
+
+            $updated = $aws_setting->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something went wrong while updating Aws Setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Aws Setting updated successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyAwsSetting(string $id)
+    {
+        try {
+            $aws_setting = $this->getSingleAwsSetting($id);
+
+            if (empty($aws_setting)) {
+                throw new Exception('Aws Setting Not Found');
+            }
+
+            DB::transaction(function () use ($aws_setting, $id) {
+
+                if ($aws_setting->is_active && $this->aws_setting->count() > 1) {
+                    $this->aws_setting->whereNot('id', $id)->first()->update(['is_active' => true]);
+                }
+
+                $deleted = $aws_setting->delete();
+
+                if (! $deleted) {
+                    throw new Exception('Something Went Wrong While Deleting Aws Setting');
+                }
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Aws Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyAwsSettingBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Aws Setting');
+            }
+
+            foreach ($ids as $id) {
+                $response = $this->destroyAwsSetting($id);
+
+                if ($response['status'] === false) {
+                    throw new Exception($response['message']);
+                }
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Aws Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function toggleAwsSettingStatus(string $id)
+    {
+        try {
+
+            $aws_setting = $this->getSingleAwsSetting($id);
+
+            if (empty($aws_setting)) {
+                throw new Exception('Aws Setting Not Found');
+            }
+
+            $already_active_setting = $this->aws_setting->where('is_active', true)->first();
+            if (empty($already_active_setting)) {
+                throw new Exception('Something Went Wrong While Activating Aws Setting Status');
+            }
+
+            if ($aws_setting->is($already_active_setting)) {
+                throw new Exception('This  Aws Setting Already Active. And Cannot Be Deactivated Until Another Aws Setting Is Activated');
+            }
+
+            DB::transaction(function () use ($aws_setting, $already_active_setting) {
+                $already_active_setting->update(['is_active' => false]);
+                $aws_setting->update(['is_active' => true]);
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Aws Setting Activated Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Google Map Settings
+    public function getAllGoogleMapSettings()
+    {
+        $google_map_settings = $this->google_map_setting->latest()->paginate(10);
+
+        return $google_map_settings;
+    }
+
+    public function getSingleGoogleMapSetting(string $id)
+    {
+        $google_map_setting = $this->google_map_setting->find($id);
+
+        return $google_map_setting;
+    }
+
+    public function storeGoogleMapSetting(Request $request)
+    {
+        $validated_req = $request->validate([
+            'google_map_api_key' => ['required', 'string', 'max:255', 'unique:google_map_settings,google_map_api_key'],
+            'google_map_id' => ['required', 'string', 'max:255', 'unique:google_map_settings,google_map_id'],
+        ]);
+
+        try {
+            if ($this->google_map_setting->count() == 0) {
+                $validated_req['is_active'] = true;
+            }
+
+            $created = $this->google_map_setting->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something went wrong while creating google map setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Google Map Setting Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateGoogleMapSetting(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'google_map_api_key' => ['required', 'string', 'max:255', 'unique:google_map_settings,google_map_api_key,'.$id],
+            'google_map_id' => ['required', 'string', 'max:255', 'unique:google_map_settings,google_map_id,'.$id],
+        ]);
+
+        try {
+            $google_map_setting = $this->getSingleGoogleMapSetting($id);
+
+            if (empty($google_map_setting)) {
+                throw new Exception('Google Map Setting Not Found');
+            }
+
+            $updated = $google_map_setting->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something went wrong while updating google map setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Google Map Setting Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyGoogleMapSetting(string $id)
+    {
+        try {
+            $google_map_setting = $this->getSingleGoogleMapSetting($id);
+
+            if (empty($google_map_setting)) {
+                throw new Exception('Google Map Setting Not Found');
+            }
+
+            DB::transaction(function () use ($google_map_setting, $id) {
+
+                if ($google_map_setting->is_active && $this->google_map_setting->count() > 1) {
+                    $this->google_map_setting->whereNot('id', $id)->first()->update(['is_active' => true]);
+                }
+
+                $deleted = $google_map_setting->delete();
+
+                if (! $deleted) {
+                    throw new Exception('Something Went Wrong While Deleting Google Map Setting');
+                }
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Google Map Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyGoogleMapSettingBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Google Map Setting');
+            }
+
+            foreach ($ids as $id) {
+                $response = $this->destroyGoogleMapSetting($id);
+
+                if ($response['status'] === false) {
+                    throw new Exception($response['message']);
+                }
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Google Map Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function toggleGoogleMapSettingStatus(string $id)
+    {
+        try {
+
+            $google_map_setting = $this->getSingleGoogleMapSetting($id);
+
+            if (empty($google_map_setting)) {
+                throw new Exception('Google Map Setting Not Found');
+            }
+
+            $already_active_setting = $this->google_map_setting->where('is_active', true)->first();
+            if (empty($already_active_setting)) {
+                throw new Exception('Something Went Wrong While Activating Google Map Setting Status');
+            }
+
+            if ($google_map_setting->is($already_active_setting)) {
+                throw new Exception('This Google Map Setting Already Active. And Cannot Be Deactivated Until Another Google Map Setting Is Activated');
+            }
+
+            DB::transaction(function () use ($google_map_setting, $already_active_setting) {
+                $already_active_setting->update(['is_active' => false]);
+                $google_map_setting->update(['is_active' => true]);
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Google Map Setting Activated Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
     }
 }

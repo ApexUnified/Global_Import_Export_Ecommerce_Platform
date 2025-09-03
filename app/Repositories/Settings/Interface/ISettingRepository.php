@@ -156,4 +156,34 @@ interface ISettingRepository
     public function destroySpecialCountryBySelection(Request $request);
 
     public function getCountries();
+
+    // AWS Settings
+    public function getAllAwsSettings();
+
+    public function getSingleAwsSetting(string $id);
+
+    public function storeAwsSetting(Request $request);
+
+    public function updateAwsSetting(Request $request, string $id);
+
+    public function destroyAwsSetting(string $id);
+
+    public function destroyAwsSettingBySelection(Request $request);
+
+    public function toggleAwsSettingStatus(string $id);
+
+    // Google Map Settings
+    public function getAllGoogleMapSettings();
+
+    public function getSingleGoogleMapSetting(string $id);
+
+    public function storeGoogleMapSetting(Request $request);
+
+    public function updateGoogleMapSetting(Request $request, string $id);
+
+    public function destroyGoogleMapSetting(string $id);
+
+    public function destroyGoogleMapSettingBySelection(Request $request);
+
+    public function toggleGoogleMapSettingStatus(string $id);
 }

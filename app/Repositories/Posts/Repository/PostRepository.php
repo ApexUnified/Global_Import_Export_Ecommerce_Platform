@@ -145,7 +145,7 @@ class PostRepository implements IPostRepository
                     $resizedImage = ImageManager::imagick()
                         ->read($image)
                         ->resize(1920, 1080)
-                        ->cover(1920, 1080)
+                        ->contain(1920, 1080)
                         ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
 
                     $tempPath = 'temp/uploads/'.$new_name;
@@ -320,7 +320,7 @@ class PostRepository implements IPostRepository
                     $resizedImage = ImageManager::imagick()
                         ->read($image)
                         ->resize(1920, 1080)
-                        ->cover(1920, 1080)
+                        ->contain(1920, 1080)
                         ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
 
                     $tempPath = 'temp/uploads/'.$new_name;

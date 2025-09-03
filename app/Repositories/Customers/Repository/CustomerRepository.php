@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Customers\Repository;
 
+use App\Models\Country;
 use App\Models\Customer;
 use App\Models\User;
 use App\Repositories\Customers\Interface\ICustomerRepository;
@@ -13,16 +14,19 @@ class CustomerRepository implements ICustomerRepository
 {
     public function __construct(
         private Customer $customer,
-        private User $user
+        private User $user,
+        private Country $country
     ) {}
 
     public function getAllCustomers(Request $request)
     {
         $customers = $this->customer
-            ->with(['user'])
+            ->with(['user', 'country'])
             ->when(! empty($request->input('search')), function ($query) use ($request) {
                 $query->where(function ($subQ) use ($request) {
-                    $subQ->where('country', 'like', '%'.$request->input('search').'%')
+                    $subQ->whereHas('country', function ($subQQ) use ($request) {
+                        $subQQ->where('name', 'like', '%'.$request->input('search').'%');
+                    })
                         ->orWhere('state', 'like', '%'.$request->input('search').'%')
                         ->orWhere('city', 'like', '%'.$request->input('search').'%')
                         ->orWhere('postal_code', 'like', '%'.$request->input('search').'%')
@@ -43,7 +47,7 @@ class CustomerRepository implements ICustomerRepository
 
     public function getSingleCustomer(string $id)
     {
-        $customer = $this->customer->with(['user', 'user.roles'])->find($id);
+        $customer = $this->customer->with(['user', 'user.roles', 'country'])->find($id);
 
         return $customer;
     }
@@ -55,7 +59,7 @@ class CustomerRepository implements ICustomerRepository
             'email' => ['required', 'string', 'email', 'unique:users,email', 'max:255'],
             'phone' => ['required', 'regex:/^\+\d+$/', 'max:50', 'unique:users,phone'],
             'password' => ['required', 'min:8', 'max:50', 'confirmed'],
-            'country' => ['required', 'string', 'max:255'],
+            'country_id' => ['required', 'exists:countries,id'],
             'state' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:255'],
@@ -64,7 +68,10 @@ class CustomerRepository implements ICustomerRepository
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
-            'is_active' => 'Customer Status Must Be in Active Or In-Active',
+            'is_active.required ' => 'Customer Status Is Required',
+            'is_active.boolean' => 'Customer Status Must Be in Active Or In-Active',
+            'country_id.required' => 'Country Is Required',
+            'country_id.exists' => 'Selected Country Is Not Exists',
         ]);
 
         try {
@@ -85,7 +92,7 @@ class CustomerRepository implements ICustomerRepository
 
             $customer_created = $this->customer->create([
                 'user_id' => $user_created->id,
-                'country' => $validated_req['country'],
+                'country_id' => $validated_req['country_id'],
                 'state' => $validated_req['state'],
                 'city' => $validated_req['city'],
                 'postal_code' => $validated_req['postal_code'],
@@ -134,7 +141,7 @@ class CustomerRepository implements ICustomerRepository
             'email' => ['required', 'string', 'email', 'unique:users,email,'.$customer->user_id, 'max:255'],
             'phone' => ['required', 'regex:/^\+\d+$/', 'unique:users,phone,'.$customer->user_id, 'max:50'],
             ...(($request->filled('password') || $request->filled('password_confirmation')) ? ['password' => ['required', 'min:8', 'max:50', 'confirmed']] : []),
-            'country' => ['required', 'string', 'max:255'],
+            'country_id' => ['required', 'exists:countries,id'],
             'state' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:255'],
@@ -143,7 +150,10 @@ class CustomerRepository implements ICustomerRepository
             'is_active' => ['required', 'boolean'],
         ], [
             'phone.regex' => 'The Number Accepted With + Country Code - Example: +8801xxxxxxxxx',
-            'is_active' => 'Customer Status Must Be in Active Or In-Active',
+            'is_active.required ' => 'Customer Status Is Required',
+            'is_active.boolean' => 'Customer Status Must Be in Active Or In-Active',
+            'country_id.required' => 'Country Is Required',
+            'country_id.exists' => 'Selected Country Is Not Exists',
         ]);
 
         try {
@@ -168,7 +178,7 @@ class CustomerRepository implements ICustomerRepository
             }
 
             $customer_updated = $customer->update([
-                'country' => $validated_req['country'],
+                'country_id' => $validated_req['country_id'],
                 'state' => $validated_req['state'],
                 'city' => $validated_req['city'],
                 'postal_code' => $validated_req['postal_code'],
@@ -256,5 +266,10 @@ class CustomerRepository implements ICustomerRepository
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public function getCountries()
+    {
+        return $this->country->where('is_active', true)->get();
     }
 }

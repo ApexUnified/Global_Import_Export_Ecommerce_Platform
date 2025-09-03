@@ -48,7 +48,7 @@ export default function index({ customers }) {
             },
             { key: 'user.email', label: 'Customer Email' },
             { key: 'user.phone', label: 'Customer Phone' },
-            { key: 'country', label: 'Country' },
+            { key: 'country.name', label: 'Country' },
             { key: 'city', label: 'City' },
             { key: 'state', label: 'State' },
             { key: 'postal_code', label: 'Postal Code' },

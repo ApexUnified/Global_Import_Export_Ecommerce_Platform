@@ -8,7 +8,7 @@ import { Head, useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 
-export default function create() {
+export default function create({ countries }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
@@ -17,7 +17,7 @@ export default function create() {
         password: '',
         password_confirmation: '',
         is_active: 1,
-        country: '',
+        country_id: '',
         state: '',
         city: '',
         postal_code: '',
@@ -117,17 +117,17 @@ export default function create() {
                                                     />
                                                 </div>
 
-                                                <Input
+                                                <SelectInput
                                                     InputName={'Country'}
-                                                    Error={errors.country}
-                                                    Value={data.country}
-                                                    Action={(e) =>
-                                                        setData('country', e.target.value)
-                                                    }
+                                                    Error={errors.country_id}
+                                                    Value={data.country_id}
+                                                    Action={(value) => setData('country_id', value)}
                                                     Placeholder={'Enter Country'}
-                                                    Id={'country'}
-                                                    Name={'country'}
-                                                    Type={'text'}
+                                                    Id={'country_id'}
+                                                    Name={'country_id'}
+                                                    items={countries}
+                                                    itemKey={'name'}
+                                                    Multiple={false}
                                                     Required={true}
                                                 />
 
@@ -296,7 +296,7 @@ export default function create() {
                                                     data.is_active === '' ||
                                                     data.password.trim() !==
                                                         data.password_confirmation.trim() ||
-                                                    data.country.trim() === '' ||
+                                                    data.country_id === '' ||
                                                     data.state.trim() === '' ||
                                                     data.city.trim() === '' ||
                                                     data.postal_code.trim() === '' ||

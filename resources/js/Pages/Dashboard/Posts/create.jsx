@@ -4,7 +4,7 @@ import LinkButton from '@/Components/LinkButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import FileUploaderInput from '@/Components/FileUploaderInput';
@@ -29,6 +29,9 @@ export default function create({ floors }) {
         status: 1,
         location_name: '',
     });
+
+    // Taking Out MapID From Cache
+    const { googleMapSetting } = usePage().props;
 
     // Location Get Success state
     const [LocationGotSuccessMessage, setLocationGotSuccessMessage] = useState(null);
@@ -263,7 +266,7 @@ export default function create({ floors }) {
             const map = new google.maps.Map(mapRef.current, {
                 center: { lat, lng },
                 zoom: 12,
-                mapId: 'd57c9f8663e69c6fcacbee1f',
+                mapId: googleMapSetting?.google_map_id || 'd57c9f8663e69c6fcacbee1f',
             });
 
             let marker = new AdvancedMarkerElement({

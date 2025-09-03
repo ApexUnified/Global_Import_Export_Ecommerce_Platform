@@ -5,35 +5,31 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
-import SelectInput from '@/Components/SelectInput';
-import { HexColorPicker } from 'react-colorful';
+import React from 'react';
 
-export default function edit({ color }) {
-    // Create Data Form Data
+export default function edit({ google_map_setting }) {
+    // Edit Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
-        name: color.name || '',
-        code: color.code || '',
-        is_active: color.is_active ?? 1,
+        google_map_api_key: google_map_setting?.google_map_api_key || '',
+        google_map_id: google_map_setting?.google_map_id || '',
     });
 
     // Edit Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        put(route('dashboard.settings.colors.update', color.id));
+        put(route('dashboard.settings.google-map-settings.update', google_map_setting?.id));
     };
-    const [customcolor, setCustomColor] = useState(color.code ?? '#aabbcc');
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="Google Map Settings" />
 
                 <BreadCrumb
-                    header={'Edit Color'}
-                    parent={'Colors'}
-                    parent_link={route('dashboard.settings.colors.index')}
-                    child={'Edit Color'}
+                    header={'Edit Google Map Setting'}
+                    parent={'Google Map Settings'}
+                    parent_link={route('dashboard.settings.google-map-settings.index')}
+                    child={'Edit Google Map Setting'}
                 />
 
                 <Card
@@ -41,8 +37,8 @@ export default function edit({ color }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Colors'}
-                                    URL={route('dashboard.settings.colors.index')}
+                                    Text={'Back To Google Map Settings'}
+                                    URL={route('dashboard.settings.google-map-settings.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -68,60 +64,45 @@ export default function edit({ color }) {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Color Name'}
-                                                    Error={errors.name}
-                                                    Value={data.name}
-                                                    Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Color Name'}
-                                                    Id={'name'}
-                                                    Name={'name'}
+                                                    InputName={'Google Map API Key'}
+                                                    Error={errors.google_map_api_key}
+                                                    Value={data.google_map_api_key}
+                                                    Action={(e) =>
+                                                        setData(
+                                                            'google_map_api_key',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    Placeholder={'Enter Google Map API Key'}
+                                                    Id={'google_map_api_key'}
+                                                    Name={'google_map_api_key'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
                                                 <Input
-                                                    InputName={'Color Code'}
-                                                    Error={errors.code}
-                                                    Value={data.code}
-                                                    Action={(e) => setData('code', e.target.value)}
-                                                    Placeholder={'Enter Color Code'}
-                                                    Id={'code'}
-                                                    Name={'code'}
+                                                    InputName={'Google Map ID'}
+                                                    Error={errors.google_map_id}
+                                                    Value={data.google_map_id}
+                                                    Action={(e) =>
+                                                        setData('google_map_id', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter Google Map ID'}
+                                                    Id={'google_map_id'}
+                                                    Name={'google_map_id'}
                                                     Type={'text'}
                                                     Required={true}
-                                                />
-
-                                                <SelectInput
-                                                    InputName={'Color Status'}
-                                                    Id={'is_active'}
-                                                    Name={'is_active'}
-                                                    Value={data.is_active}
-                                                    Error={errors.is_active}
-                                                    Action={(value) => setData('is_active', value)}
-                                                    items={[
-                                                        { id: 1, name: 'Active' },
-                                                        { id: 0, name: 'In-Active' },
-                                                    ]}
-                                                    itemKey={'name'}
-                                                    Placeholder={'Select Color Status'}
-                                                    Required={true}
-                                                />
-
-                                                <HexColorPicker
-                                                    color={customcolor}
-                                                    onChange={(code) => setData('code', code)}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Update Color'}
+                                                Text={'Update Google Map Setting'}
                                                 Type={'submit'}
-                                                CustomClass={'w-[200px] '}
+                                                CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
-                                                    data.name.trim() === '' ||
-                                                    data.code.trim() === '' ||
-                                                    data.is_active === ''
+                                                    data.google_map_api_key == '' ||
+                                                    data.google_map_id == ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

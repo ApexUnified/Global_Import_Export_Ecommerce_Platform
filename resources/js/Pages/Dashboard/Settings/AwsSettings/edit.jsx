@@ -5,35 +5,34 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React from 'react';
 import SelectInput from '@/Components/SelectInput';
-import { HexColorPicker } from 'react-colorful';
 
-export default function edit({ color }) {
-    // Create Data Form Data
+export default function edit({ aws_setting }) {
+    // Edit Data Form Data
     const { data, setData, put, processing, errors, reset } = useForm({
-        name: color.name || '',
-        code: color.code || '',
-        is_active: color.is_active ?? 1,
+        aws_access_key_id: aws_setting?.aws_access_key_id || '',
+        aws_secret_access_key: aws_setting?.aws_secret_access_key || '',
+        aws_region: aws_setting?.aws_region || '',
+        aws_bucket: aws_setting?.aws_bucket || '',
     });
 
     // Edit Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        put(route('dashboard.settings.colors.update', color.id));
+        put(route('dashboard.settings.aws-settings.update', aws_setting?.id));
     };
-    const [customcolor, setCustomColor] = useState(color.code ?? '#aabbcc');
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="AWS Settings" />
 
                 <BreadCrumb
-                    header={'Edit Color'}
-                    parent={'Colors'}
-                    parent_link={route('dashboard.settings.colors.index')}
-                    child={'Edit Color'}
+                    header={'Edit AWS Setting'}
+                    parent={'AWS Settings'}
+                    parent_link={route('dashboard.settings.aws-settings.index')}
+                    child={'Edit AWS Setting'}
                 />
 
                 <Card
@@ -41,8 +40,8 @@ export default function edit({ color }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
-                                    Text={'Back To Colors'}
-                                    URL={route('dashboard.settings.colors.index')}
+                                    Text={'Back To AWS Settings'}
+                                    URL={route('dashboard.settings.aws-settings.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -68,60 +67,75 @@ export default function edit({ color }) {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'Color Name'}
-                                                    Error={errors.name}
-                                                    Value={data.name}
-                                                    Action={(e) => setData('name', e.target.value)}
-                                                    Placeholder={'Enter Color Name'}
-                                                    Id={'name'}
-                                                    Name={'name'}
+                                                    InputName={'AWS Access Key ID'}
+                                                    Error={errors.aws_access_key_id}
+                                                    Value={data.aws_access_key_id}
+                                                    Action={(e) =>
+                                                        setData('aws_access_key_id', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter AWS Access Key ID'}
+                                                    Id={'aws_access_key_id'}
+                                                    Name={'aws_access_key_id'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
                                                 <Input
-                                                    InputName={'Color Code'}
-                                                    Error={errors.code}
-                                                    Value={data.code}
-                                                    Action={(e) => setData('code', e.target.value)}
-                                                    Placeholder={'Enter Color Code'}
-                                                    Id={'code'}
-                                                    Name={'code'}
+                                                    InputName={'AWS Secret Access Key'}
+                                                    Error={errors.aws_secret_access_key}
+                                                    Value={data.aws_secret_access_key}
+                                                    Action={(e) =>
+                                                        setData(
+                                                            'aws_secret_access_key',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    Placeholder={'Enter AWS Secret Access Key'}
+                                                    Id={'aws_secret_access_key'}
+                                                    Name={'aws_secret_access_key'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
-                                                <SelectInput
-                                                    InputName={'Color Status'}
-                                                    Id={'is_active'}
-                                                    Name={'is_active'}
-                                                    Value={data.is_active}
-                                                    Error={errors.is_active}
-                                                    Action={(value) => setData('is_active', value)}
-                                                    items={[
-                                                        { id: 1, name: 'Active' },
-                                                        { id: 0, name: 'In-Active' },
-                                                    ]}
-                                                    itemKey={'name'}
-                                                    Placeholder={'Select Color Status'}
+                                                <Input
+                                                    InputName={'AWS Region'}
+                                                    Error={errors.aws_region}
+                                                    Value={data.aws_region}
+                                                    Action={(e) =>
+                                                        setData('aws_region', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter AWS Region'}
+                                                    Id={'aws_region'}
+                                                    Name={'aws_region'}
+                                                    Type={'text'}
                                                     Required={true}
                                                 />
 
-                                                <HexColorPicker
-                                                    color={customcolor}
-                                                    onChange={(code) => setData('code', code)}
+                                                <Input
+                                                    InputName={'AWS Bucket'}
+                                                    Error={errors.aws_bucket}
+                                                    Value={data.aws_bucket}
+                                                    Action={(e) =>
+                                                        setData('aws_bucket', e.target.value)
+                                                    }
+                                                    Placeholder={'Enter AWS Bucket'}
+                                                    Id={'aws_bucket'}
+                                                    Name={'aws_bucket'}
+                                                    Type={'text'}
+                                                    Required={true}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Update Color'}
+                                                Text={'Update AWS Setting'}
                                                 Type={'submit'}
                                                 CustomClass={'w-[200px] '}
                                                 Disabled={
                                                     processing ||
-                                                    data.name.trim() === '' ||
-                                                    data.code.trim() === '' ||
-                                                    data.is_active === ''
+                                                    data.aws_access_key_id === '' ||
+                                                    data.aws_secret_access_key === '' ||
+                                                    data.aws_region === '' ||
+                                                    data.aws_bucket === ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

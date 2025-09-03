@@ -1145,7 +1145,7 @@ export default function show({ order }) {
                                                 {order?.customer?.address_line1},{' '}
                                                 {order?.customer?.postal_code || ''}
                                                 <br />
-                                                {order?.customer?.country || ''}
+                                                {order?.customer?.country?.name || ''}
                                             </address>
                                         </div>
                                     }
@@ -1178,7 +1178,7 @@ export default function show({ order }) {
                                                     {order?.customer?.address_line2},{' '}
                                                     {order?.customer?.postal_code || ''}
                                                     <br />
-                                                    {order?.customer?.country || ''}
+                                                    {order?.customer?.country?.name || ''}
                                                 </address>
                                             </div>
                                         }

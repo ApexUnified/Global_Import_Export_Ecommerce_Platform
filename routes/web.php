@@ -383,6 +383,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/special-countries-store', 'specialCountryStore')->name('special-countries.store');
                 Route::delete('/special-countries-destroy/{id?}', 'specialCountryDestroy')->name('special-countries.destroy');
                 Route::delete('/special-countries-destroy-by-selection', 'specialCountryDestroyBySelection')->name('special-countries.destroybyselection');
+
+                // AWS Setting Routes
+                Route::get('/aws-settings', 'awsSettingsIndex')->name('aws-settings.index');
+                Route::get('/aws-settings-create', 'awsSettingCreate')->name('aws-settings.create');
+                Route::post('/aws-settings-store', 'awsSettingStore')->name('aws-settings.store');
+                Route::get('/aws-settings-edit/{id?}', 'awsSettingEdit')->name('aws-settings.edit');
+                Route::put('/aws-settings-update/{id?}', 'awsSettingUpdate')->name('aws-settings.update');
+                Route::put('/aws-settings-toggle-status/{id?}', 'awsSettingToggleStatus')->name('aws-settings.toggle-status');
+                Route::delete('/aws-settings-destroy/{id?}', 'awsSettingDestroy')->name('aws-settings.destroy');
+                Route::delete('/aws-settings-destroy-by-selection', 'awsSettingDestroyBySelection')->name('aws-settings.destroybyselection');
+
+                // Google Map Setting Routes
+                Route::get('/google-map-settings', 'googleMapSettingsIndex')->name('google-map-settings.index');
+                Route::get('/google-map-settings-create', 'googleMapSettingCreate')->name('google-map-settings.create');
+                Route::post('/google-map-settings-store', 'googleMapSettingStore')->name('google-map-settings.store');
+                Route::get('/google-map-settings-edit/{id?}', 'googleMapSettingEdit')->name('google-map-settings.edit');
+                Route::put('/google-map-settings-update/{id?}', 'googleMapSettingUpdate')->name('google-map-settings.update');
+                Route::put('/google-map-settings-toggle-status/{id?}', 'googleMapSettingToggleStatus')->name('google-map-settings.toggle-status');
+                Route::delete('/google-map-settings-destroy/{id?}', 'googleMapSettingDestroy')->name('google-map-settings.destroy');
+                Route::delete('/google-map-settings-destroy-by-selection', 'googleMapSettingDestroyBySelection')->name('google-map-settings.destroybyselection');
             });
 
         });

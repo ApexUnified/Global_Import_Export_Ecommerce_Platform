@@ -17,4 +17,6 @@ interface ICustomerRepository
     public function destroyCustomer(string $id);
 
     public function destroyCustomerBySelection(Request $request);
+
+    public function getCountries();
 }
