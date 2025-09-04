@@ -52,10 +52,10 @@ export default function index({ commission_settings }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Commission Settings" />
+                <Head title="Settings - Commission Settings" />
 
                 <BreadCrumb
-                    header={'Commission Settings'}
+                    header={'Settings - Commission Settings'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Commission Settings'}

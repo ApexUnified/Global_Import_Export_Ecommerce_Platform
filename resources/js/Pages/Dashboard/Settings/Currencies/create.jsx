@@ -23,10 +23,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Currencies" />
+                <Head title="Settings - Currencies" />
 
                 <BreadCrumb
-                    header={'Create Currency'}
+                    header={'Settings - Create Currency'}
                     parent={'Currencies'}
                     parent_link={route('dashboard.settings.currencies.index')}
                     child={'Create Currency'}
@@ -35,7 +35,7 @@ export default function create() {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Currencies'}
                                     URL={route('dashboard.settings.currencies.index')}

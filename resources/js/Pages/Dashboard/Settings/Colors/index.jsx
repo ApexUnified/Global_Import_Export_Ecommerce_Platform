@@ -71,10 +71,10 @@ export default function index({ colors }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="Settings - Colors" />
 
                 <BreadCrumb
-                    header={'Colors'}
+                    header={'Settings - Colors'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Colors'}

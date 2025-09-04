@@ -9,6 +9,7 @@
     "dependencies": {
         "@alpinejs/persist": "^3.14.1",
         "@googlemaps/js-api-loader": "^1.16.10",
+        "@heroicons/react": "^2.2.0",
         "@tiptap/extension-bold": "^3.0.9",
         "@tiptap/extension-color": "^3.0.9",
         "@tiptap/extension-font-family": "^3.0.9",

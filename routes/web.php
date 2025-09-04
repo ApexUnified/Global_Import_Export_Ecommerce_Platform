@@ -299,6 +299,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::delete('/roles-destroy/{id?}', 'roleDestroy')->name('roles.destroy');
                 Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
 
+                Route::get('/permissions', 'permissionsIndex')->name('permissions.index');
+                Route::get('/permissions-create', 'permissionCreate')->name('permissions.create');
+                Route::post('/permissions-store', 'permissionStore')->name('permissions.store');
+                Route::get('/permissions-manage/{id?}', 'permissionManage')->name('permissions.manage');
+                Route::put('/permissions-sync/{id?}', 'permissionSync')->name('permissions.sync');
+                Route::get('/permissions-edit/{id?}', 'permissionEdit')->name('permissions.edit');
+                Route::put('/permissions-update/{id?}', 'permissionUpdate')->name('permissions.update');
+                Route::delete('/permissions-destroy/{id?}', 'permissionDestroy')->name('permissions.destroy');
+                Route::delete('/permissions-destroy-by-selection', 'destroyPermissionBySelection')->name('permissions.destroybyselection');
+
                 // Color Routes
                 Route::get('/colors', 'colorIndex')->name('colors.index');
                 Route::get('/colors-create', 'colorCreate')->name('colors.create');
@@ -403,6 +413,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/google-map-settings-toggle-status/{id?}', 'googleMapSettingToggleStatus')->name('google-map-settings.toggle-status');
                 Route::delete('/google-map-settings-destroy/{id?}', 'googleMapSettingDestroy')->name('google-map-settings.destroy');
                 Route::delete('/google-map-settings-destroy-by-selection', 'googleMapSettingDestroyBySelection')->name('google-map-settings.destroybyselection');
+
+                // Meta Setting Routes
+                Route::get('/meta-settings', 'metaSettingsIndex')->name('meta-settings.index');
+                Route::get('/meta-settings-create', 'metaSettingCreate')->name('meta-settings.create');
+                Route::post('/meta-settings-store', 'metaSettingStore')->name('meta-settings.store');
+                Route::get('/meta-settings-edit/{id?}', 'metaSettingEdit')->name('meta-settings.edit');
+                Route::put('/meta-settings-update/{id?}', 'metaSettingUpdate')->name('meta-settings.update');
+                Route::put('/meta-settings-toggle-status/{id?}', 'metaSettingToggleStatus')->name('meta-settings.toggle-status');
+                Route::delete('/meta-settings-destroy/{id?}', 'metaSettingDestroy')->name('meta-settings.destroy');
+                Route::delete('/meta-settings-destroy-by-selection', 'metaSettingDestroyBySelection')->name('meta-settings.destroybyselection');
+
             });
 
         });

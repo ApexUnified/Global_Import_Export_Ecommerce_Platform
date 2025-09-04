@@ -30,10 +30,10 @@ export default function index({ smtp_setting }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="SMTP Setting" />
+                <Head title="Settings - SMTP Setting" />
 
                 <BreadCrumb
-                    header={'SMTP Setting'}
+                    header={'Settings - SMTP Setting'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'SMTP Setting'}

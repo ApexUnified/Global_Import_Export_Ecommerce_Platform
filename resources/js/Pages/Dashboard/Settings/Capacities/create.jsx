@@ -24,10 +24,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Capacities" />
+                <Head title="Settings - Capacities" />
 
                 <BreadCrumb
-                    header={'Create Capacity'}
+                    header={'Settings - Create Capacity'}
                     parent={'Capacities'}
                     parent_link={route('dashboard.settings.capacities.index')}
                     child={'Create Capacity'}

@@ -25,10 +25,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Countries" />
+                <Head title="Settings - Countries" />
 
                 <BreadCrumb
-                    header={'Create Country'}
+                    header={'Settings - Create Country'}
                     parent={'Countries'}
                     parent_link={route('dashboard.settings.countries.index')}
                     child={'Create Country'}

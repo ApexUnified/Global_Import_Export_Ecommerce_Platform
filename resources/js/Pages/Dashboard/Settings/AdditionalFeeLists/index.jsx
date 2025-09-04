@@ -56,10 +56,10 @@ export default function index({ additional_fee_lists }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Additional Fee Lists" />
+                <Head title="Settings - Additional Fee Lists" />
 
                 <BreadCrumb
-                    header={'Additional Fee Lists'}
+                    header={'Settings - Additional Fee Lists'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Additional Fee Lists'}

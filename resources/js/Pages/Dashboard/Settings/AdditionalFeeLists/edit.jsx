@@ -24,10 +24,10 @@ export default function edit({ additional_fee_list }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Capacities" />
+                <Head title="Settings - Additional Fee List" />
 
                 <BreadCrumb
-                    header={'Edit Additional Fee List'}
+                    header={'Settings - Edit Additional Fee List'}
                     parent={'Additional Fee Lists'}
                     parent_link={route('dashboard.settings.additional_fee_lists.index')}
                     child={'Edit Additional Fee List'}

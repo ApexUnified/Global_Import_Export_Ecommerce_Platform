@@ -95,10 +95,10 @@ export default function index({ currencies }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Currencies" />
+                <Head title="Settings - Currencies" />
 
                 <BreadCrumb
-                    header={'Currencies'}
+                    header={'Settings - Currencies'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Currencies'}

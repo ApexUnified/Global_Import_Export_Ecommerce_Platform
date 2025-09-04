@@ -24,10 +24,10 @@ export default function edit({ commission_setting }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Commission Settings" />
+                <Head title="Settings - Commission Settings" />
 
                 <BreadCrumb
-                    header={'Create Commission Setting'}
+                    header={'Settings - Create Commission Setting'}
                     parent={'Commission Settings'}
                     parent_link={route('dashboard.settings.commission-settings.index')}
                     child={'Create Commission Setting'}

@@ -4,9 +4,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
+import * as HeroIcons from '@heroicons/react/24/outline';
+
 import { useEffect, useState } from 'react';
 
-export default function index({ capacities }) {
+export default function index({ permissions }) {
     // Bulk Delete Form Data
     const { props } = usePage();
     const {
@@ -31,22 +33,16 @@ export default function index({ capacities }) {
     const [columns, setColumns] = useState([]);
     useEffect(() => {
         const columns = [
-            { key: 'name', label: 'Capacity' },
+            { key: 'name', label: 'Permission Name' },
             {
-                label: 'Capacity Status',
+                label: 'Permission ICON',
                 render: (item) => {
-                    if (item.is_active === 1) {
-                        return (
-                            <span className="rounded-lg bg-green-500 p-3 text-white">Active</span>
-                        );
-                    } else {
-                        return (
-                            <span className="rounded-lg bg-red-500 p-2 text-white">In Active</span>
-                        );
-                    }
+                    const Icon = HeroIcons[item.icon];
+                    return <div>{Icon ? <Icon className="h-6 w-6 text-blue-500" /> : null}</div>;
                 },
             },
 
+            { key: 'parent_name', label: 'Parent Name' },
             { key: 'added_at', label: 'Added At' },
         ];
 
@@ -56,13 +52,13 @@ export default function index({ capacities }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Settings - Capacities" />
+                <Head title="Settings - Permissions" />
 
                 <BreadCrumb
-                    header={'Settings - Capacities'}
+                    header={'Settings - Permissions'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
-                    child={'Capacities'}
+                    child={'Permissions'}
                 />
 
                 <Card
@@ -70,8 +66,8 @@ export default function index({ capacities }) {
                         <>
                             <div className="my-3 flex flex-wrap justify-end gap-4">
                                 <LinkButton
-                                    Text={'Create Capacity'}
-                                    URL={route('dashboard.settings.capacities.create')}
+                                    Text={'Create Permission'}
+                                    URL={route('dashboard.settings.permissions.create')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -85,6 +81,27 @@ export default function index({ capacities }) {
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                                 d="M12 4.5v15m7.5-7.5h-15"
+                                            />
+                                        </svg>
+                                    }
+                                />
+
+                                <LinkButton
+                                    Text={'Back To Roles'}
+                                    URL={route('dashboard.settings.roles.index')}
+                                    Icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
                                             />
                                         </svg>
                                     }
@@ -120,13 +137,15 @@ export default function index({ capacities }) {
                                 resetSingleSelectedId={resetSingleSelectedId}
                                 BulkDeleteMethod={BulkDelete}
                                 SingleDeleteMethod={SingleDelete}
-                                BulkDeleteRoute={'dashboard.settings.capacities.destroybyselection'}
-                                SingleDeleteRoute={'dashboard.settings.capacities.destroy'}
-                                EditRoute={'dashboard.settings.capacities.edit'}
-                                SearchRoute={'dashboard.settings.capacities.index'}
-                                Search={false}
-                                DefaultSearchInput={false}
-                                items={capacities}
+                                EditRoute={'dashboard.settings.permissions.edit'}
+                                BulkDeleteRoute={
+                                    'dashboard.settings.permissions.destroybyselection'
+                                }
+                                SearchRoute={'dashboard.settings.permissions.index'}
+                                SingleDeleteRoute={'dashboard.settings.permissions.destroy'}
+                                Search={true}
+                                DefaultSearchInput={true}
+                                items={permissions}
                                 props={props}
                                 columns={columns}
                             />

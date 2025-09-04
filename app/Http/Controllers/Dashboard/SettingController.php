@@ -144,6 +144,118 @@ class SettingController extends Controller
         return to_route('dashboard.settings.roles.index')->with('success', $deleted['message']);
     }
 
+    // Permission Methods
+    public function permissionsIndex(Request $request)
+    {
+        $permissions = $this->setting->getAllPermissions($request);
+        $search = $request->input('search');
+
+        return Inertia::render('Dashboard/Settings/Permissions/index', compact('permissions', 'search'));
+
+    }
+
+    public function permissionCreate()
+    {
+        return Inertia::render('Dashboard/Settings/Permissions/create');
+    }
+
+    public function permissionStore(Request $request)
+    {
+        $created = $this->setting->storePermission($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.permissions.index')->with('success', $created['message']);
+    }
+
+    public function permissionEdit(?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.permissions.index')->with('error', 'Permission ID not found');
+        }
+
+        $permission = $this->setting->getSinglePermission($id);
+
+        if (empty($permission)) {
+            return to_route('dashboard.settings.permissions.index')->with('error', 'Permission not found');
+        }
+
+        return Inertia::render('Dashboard/Settings/Permissions/edit', compact('permission'));
+    }
+
+    public function permissionUpdate(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Permission ID not found');
+        }
+
+        $updated = $this->setting->updatePermission($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.permissions.index')->with('success', $updated['message']);
+    }
+
+    public function permissionDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Permission ID not found');
+        }
+
+        $deleted = $this->setting->destroyPermission($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function destroyPermissionBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyPermissionBySelection($request);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function permissionManage(?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.roles.index')->with('error', 'Role ID not found');
+        }
+
+        $data = $this->setting->getManageblePermissions($id);
+
+        $all_permissions = $data['all_permissions'];
+        $assigned_permissions = $data['assigned_permissions'];
+        $role_id = $data['role_id'];
+
+        return Inertia::render('Dashboard/Settings/Permissions/manage', compact('all_permissions', 'assigned_permissions', 'role_id'));
+    }
+
+    public function permissionSync(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Role ID not found');
+        }
+
+        $synced = $this->setting->syncPermissions($request, $id);
+
+        if ($synced['status'] === false) {
+            return back()->with('error', $synced['message']);
+        }
+
+        return back()->with('success', $synced['message']);
+    }
+
     // Color Methods
     public function colorIndex()
     {
@@ -1053,6 +1165,98 @@ class SettingController extends Controller
         }
 
         $updated = $this->setting->toggleGoogleMapSettingStatus($id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return back()->with('success', $updated['message']);
+
+    }
+
+    // Meta Setting
+
+    public function metaSettingsIndex()
+    {
+        $meta_settings = $this->setting->getAllMetaSettings();
+
+        return Inertia::render('Dashboard/Settings/MetaSettings/index', compact('meta_settings'));
+    }
+
+    public function metaSettingCreate()
+    {
+        return Inertia::render('Dashboard/Settings/MetaSettings/create');
+    }
+
+    public function metaSettingStore(Request $request)
+    {
+        $created = $this->setting->storeMetaSetting($request);
+
+        if ($created['status'] === false) {
+            return back()->with('error', $created['message']);
+        }
+
+        return to_route('dashboard.settings.meta-settings.index')->with('success', $created['message']);
+    }
+
+    public function metaSettingEdit(?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.meta-settings.index')->with('error', 'Meta Setting ID not found');
+        }
+
+        $meta_setting = $this->setting->getSingleMetaSetting($id);
+
+        return Inertia::render('Dashboard/Settings/MetaSettings/edit', compact('meta_setting'));
+    }
+
+    public function metaSettingUpdate(Request $request, ?string $id = null)
+    {
+        if (empty($id)) {
+            return to_route('dashboard.settings.meta-settings.index')->with('error', 'Meta Setting ID not found');
+        }
+
+        $updated = $this->setting->updateMetaSetting($request, $id);
+
+        if ($updated['status'] === false) {
+            return back()->with('error', $updated['message']);
+        }
+
+        return to_route('dashboard.settings.meta-settings.index')->with('success', $updated['message']);
+    }
+
+    public function metaSettingDestroy(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Meta Setting ID not found');
+        }
+
+        $deleted = $this->setting->destroyMetaSetting($id);
+
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function metaSettingDestroyBySelection(Request $request)
+    {
+        $deleted = $this->setting->destroyMetaSettingBySelection($request);
+        if ($deleted['status'] === false) {
+            return back()->with('error', $deleted['message']);
+        }
+
+        return back()->with('success', $deleted['message']);
+    }
+
+    public function metaSettingToggleStatus(?string $id = null)
+    {
+        if (empty($id)) {
+            return back()->with('error', 'Meta Setting ID not found');
+        }
+
+        $updated = $this->setting->toggleMetaSettingStatus($id);
 
         if ($updated['status'] === false) {
             return back()->with('error', $updated['message']);

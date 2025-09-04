@@ -26,7 +26,7 @@ export default function create() {
                 <Head title="Settings - Roles" />
 
                 <BreadCrumb
-                    header={'Create Role'}
+                    header={'Settings - Create Role'}
                     parent={'Roles'}
                     parent_link={route('dashboard.settings.roles.index')}
                     child={'Create Role'}

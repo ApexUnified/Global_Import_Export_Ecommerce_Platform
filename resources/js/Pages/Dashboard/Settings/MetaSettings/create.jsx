@@ -6,42 +6,39 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm } from '@inertiajs/react';
 import React from 'react';
-import SelectInput from '@/Components/SelectInput';
 
 export default function create() {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
-        aws_access_key_id: '',
-        aws_secret_access_key: '',
-        aws_region: '',
-        aws_bucket: '',
+        meta_app_id: '',
+        meta_app_secret: '',
     });
 
     // Create Data Form Request
     const submit = (e) => {
         e.preventDefault();
-        post(route('dashboard.settings.aws-settings.store'));
+        post(route('dashboard.settings.meta-settings.store'));
     };
 
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Settings - AWS Settings" />
+                <Head title="Settings - Meta Settings" />
 
                 <BreadCrumb
-                    header={'Settings - Create AWS Setting'}
-                    parent={'AWS Settings'}
-                    parent_link={route('dashboard.settings.aws-settings.index')}
-                    child={'Create AWS Setting'}
+                    header={'Settings - Create Meta Setting'}
+                    parent={'Meta Settings'}
+                    parent_link={route('dashboard.settings.meta-settings.index')}
+                    child={'Create Meta Setting'}
                 />
 
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
-                                    Text={'Back To AWS Settings'}
-                                    URL={route('dashboard.settings.aws-settings.index')}
+                                    Text={'Back To Meta Settings'}
+                                    URL={route('dashboard.settings.meta-settings.index')}
                                     Icon={
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -67,75 +64,42 @@ export default function create() {
                                         <>
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 <Input
-                                                    InputName={'AWS Access Key ID'}
-                                                    Error={errors.aws_access_key_id}
-                                                    Value={data.aws_access_key_id}
+                                                    InputName={'Meta APP ID'}
+                                                    Error={errors.meta_app_id}
+                                                    Value={data.meta_app_id}
                                                     Action={(e) =>
-                                                        setData('aws_access_key_id', e.target.value)
+                                                        setData('meta_app_id', e.target.value)
                                                     }
-                                                    Placeholder={'Enter AWS Access Key ID'}
-                                                    Id={'aws_access_key_id'}
-                                                    Name={'aws_access_key_id'}
+                                                    Placeholder={'Enter Meta APP ID'}
+                                                    Id={'meta_app_id'}
+                                                    Name={'meta_app_id'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
 
                                                 <Input
-                                                    InputName={'AWS Secret Access Key'}
-                                                    Error={errors.aws_secret_access_key}
-                                                    Value={data.aws_secret_access_key}
+                                                    InputName={'Meta APP Secret'}
+                                                    Error={errors.meta_app_secret}
+                                                    Value={data.meta_app_secret}
                                                     Action={(e) =>
-                                                        setData(
-                                                            'aws_secret_access_key',
-                                                            e.target.value,
-                                                        )
+                                                        setData('meta_app_secret', e.target.value)
                                                     }
-                                                    Placeholder={'Enter AWS Secret Access Key'}
-                                                    Id={'aws_secret_access_key'}
-                                                    Name={'aws_secret_access_key'}
-                                                    Type={'text'}
-                                                    Required={true}
-                                                />
-
-                                                <Input
-                                                    InputName={'AWS Region'}
-                                                    Error={errors.aws_region}
-                                                    Value={data.aws_region}
-                                                    Action={(e) =>
-                                                        setData('aws_region', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter AWS Region'}
-                                                    Id={'aws_region'}
-                                                    Name={'aws_region'}
-                                                    Type={'text'}
-                                                    Required={true}
-                                                />
-
-                                                <Input
-                                                    InputName={'AWS Bucket'}
-                                                    Error={errors.aws_bucket}
-                                                    Value={data.aws_bucket}
-                                                    Action={(e) =>
-                                                        setData('aws_bucket', e.target.value)
-                                                    }
-                                                    Placeholder={'Enter AWS Bucket'}
-                                                    Id={'aws_bucket'}
-                                                    Name={'aws_bucket'}
+                                                    Placeholder={'Enter Meta APP Secret'}
+                                                    Id={'meta_app_secret'}
+                                                    Name={'meta_app_secret'}
                                                     Type={'text'}
                                                     Required={true}
                                                 />
                                             </div>
 
                                             <PrimaryButton
-                                                Text={'Create AWS Setting'}
+                                                Text={'Create Meta Setting'}
                                                 Type={'submit'}
-                                                CustomClass={'w-[200px] '}
+                                                CustomClass={'w-[250px] '}
                                                 Disabled={
                                                     processing ||
-                                                    data.aws_access_key_id === '' ||
-                                                    data.aws_secret_access_key === '' ||
-                                                    data.aws_region === '' ||
-                                                    data.aws_bucket === ''
+                                                    data.meta_app_id == '' ||
+                                                    data.meta_app_secret == ''
                                                 }
                                                 Spinner={processing}
                                                 Icon={

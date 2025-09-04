@@ -25,10 +25,10 @@ export default function edit({ storage_location }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Storage Locations" />
+                <Head title="Settings - Storage Locations" />
 
                 <BreadCrumb
-                    header={'Edit Storage Location'}
+                    header={'Settings - Edit Storage Location'}
                     parent={'Storage Locations'}
                     parent_link={route('dashboard.settings.storage_locations.index')}
                     child={'Edit Storage Location'}

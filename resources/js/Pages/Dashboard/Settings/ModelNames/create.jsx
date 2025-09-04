@@ -23,10 +23,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Model Names" />
+                <Head title="Settings - Model Names" />
 
                 <BreadCrumb
-                    header={'Create Model Name'}
+                    header={'Settings - Create Model Name'}
                     parent={'Model Names'}
                     parent_link={route('dashboard.settings.model_names.index')}
                     child={'Create Model Name'}
@@ -35,7 +35,7 @@ export default function create() {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Model Names'}
                                     URL={route('dashboard.settings.model_names.index')}

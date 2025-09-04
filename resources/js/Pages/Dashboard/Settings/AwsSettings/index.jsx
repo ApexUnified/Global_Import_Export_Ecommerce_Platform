@@ -93,10 +93,10 @@ export default function index({ aws_settings }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="AWS Settings" />
+                <Head title="Settings - AWS Settings" />
 
                 <BreadCrumb
-                    header={'AWS Settings'}
+                    header={'Settings - AWS Settings'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'AWS Settings'}

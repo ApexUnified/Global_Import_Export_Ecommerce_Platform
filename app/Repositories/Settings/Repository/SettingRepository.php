@@ -17,7 +17,9 @@ use App\Models\Country;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\GoogleMapSetting;
+use App\Models\MetaSetting;
 use App\Models\ModelName;
+use App\Models\Permission;
 use App\Models\RewardSetting;
 use App\Models\Role;
 use App\Models\SmtpSetting;
@@ -36,6 +38,7 @@ class SettingRepository implements ISettingRepository
         private GeneralSetting $general_setting,
         private SmtpSetting $smtp_setting,
         private Role $role,
+        private Permission $permission,
         private Color $color,
         private ModelName $model_name,
         private Capacity $capacity,
@@ -48,6 +51,8 @@ class SettingRepository implements ISettingRepository
         private SpecialCountry $special_country,
         private AwsSetting $aws_setting,
         private GoogleMapSetting $google_map_setting,
+        private MetaSetting $meta_setting,
+
     ) {}
 
     // General Setting
@@ -375,6 +380,200 @@ class SettingRepository implements ISettingRepository
             return [
                 'status' => true,
                 'message' => 'Role Deleted Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Permission Settings
+    public function getAllPermissions(Request $request)
+    {
+        $permissions = $this->permission
+            ->when(! empty($request->input('search')), function ($query) use ($request) {
+                $query->where('name', 'like', '%'.$request->input('search').'%');
+            })
+            ->latest()
+            ->paginate(10);
+
+        return $permissions;
+    }
+
+    public function getSinglePermission($id)
+    {
+        $permission = $this->permission->find($id);
+
+        return $permission;
+    }
+
+    public function storePermission(Request $request)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:permissions,name'],
+            'icon' => ['required', 'max:100'],
+            'parent_name' => ['required', 'max:255'],
+        ]);
+
+        try {
+            $created = $this->permission->create(array_merge($validated_req, ['guard_name' => 'web']));
+
+            if (empty($created)) {
+                throw new Exception('Something Went Wrong While Creating Permission');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Permission Created Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updatePermission(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'name' => ['required', 'max:255', 'unique:permissions,name,'.$id],
+            'icon' => ['required', 'max:100'],
+            'parent_name' => ['required', 'max:255'],
+        ]);
+
+        try {
+            $permission = $this->getSinglePermission($id);
+
+            if (empty($permission)) {
+                throw new Exception('Permission Not Found');
+            }
+
+            $updated = $permission->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something Went Wrong While Updating Permission');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Permission Updated Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyPermission(string $id)
+    {
+        try {
+            $permission = $this->getSinglePermission($id);
+            if (empty($permission)) {
+                throw new Exception('Permission Not Found');
+            }
+
+            $deleted = $permission->delete();
+
+            if (! $deleted) {
+                throw new Exception('Something Went Wrong While Deleting Permission');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Permission Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyPermissionBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please Select Atleast One Permission');
+            }
+
+            $deleted = $this->permission->destroy($ids);
+
+            if ($deleted !== count($ids)) {
+                return [
+                    'status' => false,
+                    'message' => 'Something Went Wrong While Deleting Permission',
+                ];
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Permission Deleted Successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function getManageblePermissions(string $id)
+    {
+        $all_permissions = $this->permission
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->groupBy('parent_name')
+            ->map(function ($permissions) {
+                return [
+                    'icon' => $permissions->first()->icon,
+                    'parent_name' => $permissions->first()->parent_name,
+                    'items' => $permissions,
+                ];
+            });
+
+        $role = $this->getSingleRole($id);
+
+        if (empty($role)) {
+            throw new Exception('Role Not Found');
+        }
+
+        $assigned_permissions = $role->permissions()->pluck('id')->toArray();
+
+        return [
+            'all_permissions' => $all_permissions,
+            'assigned_permissions' => $assigned_permissions,
+            'role_id' => $id,
+        ];
+    }
+
+    public function syncPermissions(Request $request, string $id)
+    {
+
+        $request->validate([
+            'permission_ids' => ['nullable', 'array'],
+        ]);
+
+        try {
+            $role = $this->getSingleRole($id);
+
+            if (empty($role)) {
+                throw new Exception('Role Not Found');
+            }
+
+            $role->permissions()->sync($request->array('permission_ids'));
+
+            return [
+                'status' => true,
+                'message' => 'Permissions Synced Successfully',
             ];
 
         } catch (Exception $e) {
@@ -2076,6 +2275,184 @@ class SettingRepository implements ISettingRepository
             return [
                 'status' => true,
                 'message' => 'Google Map Setting Activated Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    // Meta Settings
+    public function getAllMetaSettings()
+    {
+        $meta_settings = $this->meta_setting->latest()->paginate(10);
+
+        return $meta_settings;
+    }
+
+    public function getSingleMetaSetting(string $id)
+    {
+        $meta_setting = $this->meta_setting->find($id);
+
+        return $meta_setting;
+    }
+
+    public function storeMetaSetting(Request $request)
+    {
+        $validated_req = $request->validate([
+            'meta_app_id' => ['required', 'string', 'max:255', 'unique:meta_settings,meta_app_id'],
+            'meta_app_secret' => ['required', 'string', 'max:255', 'unique:meta_settings,meta_app_secret'],
+        ]);
+
+        try {
+            if ($this->meta_setting->count() == 0) {
+                $validated_req['is_active'] = true;
+            }
+
+            $created = $this->meta_setting->create($validated_req);
+
+            if (empty($created)) {
+                throw new Exception('Something went wrong while creating meta setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Meta Setting Created Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function updateMetaSetting(Request $request, string $id)
+    {
+        $validated_req = $request->validate([
+            'meta_app_id' => ['required', 'string', 'max:255', 'unique:meta_settings,meta_app_id,'.$id],
+            'meta_app_secret' => ['required', 'string', 'max:255', 'unique:meta_settings,meta_app_secret,'.$id],
+        ]);
+
+        try {
+            $meta_setting = $this->getSingleMetaSetting($id);
+
+            if (empty($meta_setting)) {
+                throw new Exception('Meta Setting Not Found');
+            }
+
+            $updated = $meta_setting->update($validated_req);
+
+            if (! $updated) {
+                throw new Exception('Something went wrong while updating meta setting');
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Meta Setting Updated Successfully',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyMetaSetting(string $id)
+    {
+        try {
+            $meta_setting = $this->getSingleMetaSetting($id);
+
+            if (empty($meta_setting)) {
+                throw new Exception('Meta Setting Not Found');
+            }
+
+            DB::transaction(function () use ($meta_setting, $id) {
+
+                if ($meta_setting->is_active && $this->meta_setting->count() > 1) {
+                    $this->meta_setting->whereNot('id', $id)->first()->update(['is_active' => true]);
+                }
+
+                $deleted = $meta_setting->delete();
+
+                if (! $deleted) {
+                    throw new Exception('Something Went Wrong While Deleting Meta Setting');
+                }
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Meta Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function destroyMetaSettingBySelection(Request $request)
+    {
+        try {
+            $ids = $request->array('ids');
+
+            if (blank($ids)) {
+                throw new Exception('Please select at least one meta setting');
+            }
+
+            foreach ($ids as $id) {
+                $response = $this->destroyMetaSetting($id);
+                if ($response['status'] == false) {
+                    throw new Exception($response['message']);
+                }
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Meta Setting deleted successfully',
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function toggleMetaSettingStatus(string $id)
+    {
+        try {
+
+            $meta_setting = $this->getSingleMetaSetting($id);
+
+            if (empty($meta_setting)) {
+                throw new Exception('Meta Setting Not Found');
+            }
+
+            $already_active_setting = $this->meta_setting->where('is_active', true)->first();
+            if (empty($already_active_setting)) {
+                throw new Exception('Something Went Wrong While Activating Meta Setting Status');
+            }
+
+            if ($meta_setting->is($already_active_setting)) {
+                throw new Exception('This Meta Setting Already Active. And Cannot Be Deactivated Until Another Meta Setting Is Activated');
+            }
+
+            DB::transaction(function () use ($meta_setting, $already_active_setting) {
+                $already_active_setting->update(['is_active' => false]);
+                $meta_setting->update(['is_active' => true]);
+            });
+
+            return [
+                'status' => true,
+                'message' => 'Meta Setting Activated Successfully',
             ];
 
         } catch (Exception $e) {

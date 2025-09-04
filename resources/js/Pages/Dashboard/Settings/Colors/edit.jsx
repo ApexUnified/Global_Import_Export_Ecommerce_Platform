@@ -27,10 +27,10 @@ export default function edit({ color }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="Settings - Colors" />
 
                 <BreadCrumb
-                    header={'Edit Color'}
+                    header={'Settings - Edit Color'}
                     parent={'Colors'}
                     parent_link={route('dashboard.settings.colors.index')}
                     child={'Edit Color'}
@@ -39,7 +39,7 @@ export default function edit({ color }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
+                            <div className="flex flex-wrap justify-end my-3">
                                 <LinkButton
                                     Text={'Back To Colors'}
                                     URL={route('dashboard.settings.colors.index')}

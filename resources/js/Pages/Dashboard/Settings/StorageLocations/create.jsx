@@ -25,10 +25,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Storage Locations" />
+                <Head title="Settings - Storage Locations" />
 
                 <BreadCrumb
-                    header={'Create Storage Location'}
+                    header={'Settings - Create Storage Location'}
                     parent={'Storage Locations'}
                     parent_link={route('dashboard.settings.storage_locations.index')}
                     child={'Create Storage Location'}

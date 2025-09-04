@@ -29,6 +29,23 @@ interface ISettingRepository
 
     public function destroyRoleBySelection(Request $request);
 
+    // Permission Settings
+    public function getAllPermissions(Request $request);
+
+    public function getSinglePermission($id);
+
+    public function storePermission(Request $request);
+
+    public function updatePermission(Request $request, string $id);
+
+    public function destroyPermission(string $id);
+
+    public function destroyPermissionBySelection(Request $request);
+
+    public function getManageblePermissions(string $id);
+
+    public function syncPermissions(Request $request, string $id);
+
     // Colors
     public function getAllColors();
 
@@ -186,4 +203,19 @@ interface ISettingRepository
     public function destroyGoogleMapSettingBySelection(Request $request);
 
     public function toggleGoogleMapSettingStatus(string $id);
+
+    // Meta Settings
+    public function getAllMetaSettings();
+
+    public function getSingleMetaSetting(string $id);
+
+    public function storeMetaSetting(Request $request);
+
+    public function updateMetaSetting(Request $request, string $id);
+
+    public function destroyMetaSetting(string $id);
+
+    public function destroyMetaSettingBySelection(Request $request);
+
+    public function toggleMetaSettingStatus(string $id);
 }

@@ -6,6 +6,7 @@ use App\Models\AwsSetting;
 use App\Models\Currency;
 use App\Models\GeneralSetting;
 use App\Models\GoogleMapSetting;
+use App\Models\MetaSetting;
 use App\Models\SmtpSetting;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -103,6 +104,18 @@ class AppServiceProvider extends ServiceProvider
                         'services.google_maps_api_key' => $google_map_setting?->google_map_api_key,
                     ]);
                 }
+
+            }
+
+            if (Schema::hasTable('meta_settings')) {
+                $meta_setting = Cache::rememberForever('meta_setting', fn () => MetaSetting::where('is_active', true)->first() ?? null);
+
+                // For Later
+                // if (! empty($google_map_setting)) {
+                //     Config::set([
+                //         'services.google_maps_api_key' => $google_map_setting?->google_map_api_key,
+                //     ]);
+                // }
 
             }
 

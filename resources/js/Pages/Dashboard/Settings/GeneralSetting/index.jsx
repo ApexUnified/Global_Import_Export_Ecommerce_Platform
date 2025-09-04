@@ -58,10 +58,10 @@ export default function index({ general_setting }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="General Setting" />
+                <Head title="Settings - General Setting" />
 
                 <BreadCrumb
-                    header={'General Setting'}
+                    header={'Settings - General Setting'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'General Setting'}

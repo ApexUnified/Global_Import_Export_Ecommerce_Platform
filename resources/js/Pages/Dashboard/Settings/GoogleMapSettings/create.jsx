@@ -23,10 +23,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Google Map Settings" />
+                <Head title="Settings - Google Map Settings" />
 
                 <BreadCrumb
-                    header={'Create Google Map Setting'}
+                    header={'Settings - Create Google Map Setting'}
                     parent={'Google Map Settings'}
                     parent_link={route('dashboard.settings.google-map-settings.index')}
                     child={'Create Google Map Setting'}

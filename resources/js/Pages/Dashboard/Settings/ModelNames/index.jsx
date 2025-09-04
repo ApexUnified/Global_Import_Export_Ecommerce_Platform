@@ -57,10 +57,10 @@ export default function index({ model_names }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Model Names" />
+                <Head title="Settings - Model Names" />
 
                 <BreadCrumb
-                    header={'Model Names'}
+                    header={'Settings - Model Names'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Model Names'}

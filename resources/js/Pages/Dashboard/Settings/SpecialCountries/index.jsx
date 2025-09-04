@@ -47,10 +47,10 @@ export default function index({ special_countries }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Special Countries" />
+                <Head title="Settings - Special Countries" />
 
                 <BreadCrumb
-                    header={'Special Countries'}
+                    header={'Settings - Special Countries'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Special Countries'}

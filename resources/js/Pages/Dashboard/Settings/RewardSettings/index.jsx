@@ -19,10 +19,10 @@ export default function index({ reward_point_setting }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Reward Settings" />
+            <Head title="Settings - Reward Settings" />
 
             <BreadCrumb
-                header={'Reward Settings'}
+                header={'Settings - Reward Settings'}
                 parent={'Settings'}
                 parent_link={route('dashboard.settings.index')}
                 child={'Reward Settings'}

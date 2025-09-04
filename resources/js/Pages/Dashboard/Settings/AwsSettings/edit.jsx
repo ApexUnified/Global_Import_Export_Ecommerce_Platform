@@ -26,10 +26,10 @@ export default function edit({ aws_setting }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="AWS Settings" />
+                <Head title="Settings - AWS Settings" />
 
                 <BreadCrumb
-                    header={'Edit AWS Setting'}
+                    header={'Settings - Edit AWS Setting'}
                     parent={'AWS Settings'}
                     parent_link={route('dashboard.settings.aws-settings.index')}
                     child={'Edit AWS Setting'}

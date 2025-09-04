@@ -25,10 +25,10 @@ export default function edit({ country }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Countries" />
+                <Head title="Settings - Countries" />
 
                 <BreadCrumb
-                    header={'Edit Country'}
+                    header={'Settings - Edit Country'}
                     parent={'Countries'}
                     parent_link={route('dashboard.settings.countries.index')}
                     child={'Edit Country'}

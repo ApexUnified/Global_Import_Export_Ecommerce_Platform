@@ -23,10 +23,10 @@ export default function edit({ google_map_setting }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Google Map Settings" />
+                <Head title="Settings - Google Map Settings" />
 
                 <BreadCrumb
-                    header={'Edit Google Map Setting'}
+                    header={'Settings - Edit Google Map Setting'}
                     parent={'Google Map Settings'}
                     parent_link={route('dashboard.settings.google-map-settings.index')}
                     child={'Edit Google Map Setting'}

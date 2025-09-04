@@ -24,10 +24,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Additional Fee Lists" />
+                <Head title="Settings - Additional Fee Lists" />
 
                 <BreadCrumb
-                    header={'Create Additional Fee List'}
+                    header={'Settings - Create Additional Fee List'}
                     parent={'Additional Fee Lists'}
                     parent_link={route('dashboard.settings.additional_fee_lists.index')}
                     child={'Create Additional Fee List'}

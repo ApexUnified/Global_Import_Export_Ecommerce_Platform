@@ -26,7 +26,7 @@ export default function edit({ role }) {
                 <Head title="Settings - Roles" />
 
                 <BreadCrumb
-                    header={'Edit Role'}
+                    header={'Settings - Edit Role'}
                     parent={'Roles'}
                     parent_link={route('dashboard.settings.roles.index')}
                     child={'Edit Role'}

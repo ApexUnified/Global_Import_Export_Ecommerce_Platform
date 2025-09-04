@@ -57,10 +57,10 @@ export default function index({ storage_locations }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Storage Locations" />
+                <Head title="Settings - Storage Locations" />
 
                 <BreadCrumb
-                    header={'Storage Locations'}
+                    header={'Settings - Storage Locations'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Storage Locations'}

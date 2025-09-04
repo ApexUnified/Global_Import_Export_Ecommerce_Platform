@@ -27,10 +27,10 @@ export default function create() {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Colors" />
+                <Head title="Settings - Colors" />
 
                 <BreadCrumb
-                    header={'Create Color'}
+                    header={'Settings - Create Color'}
                     parent={'Colors'}
                     parent_link={route('dashboard.settings.colors.index')}
                     child={'Create Color'}
@@ -39,7 +39,7 @@ export default function create() {
                 <Card
                     Content={
                         <>
-                            <div className="flex flex-wrap justify-end my-3">
+                            <div className="my-3 flex flex-wrap justify-end">
                                 <LinkButton
                                     Text={'Back To Colors'}
                                     URL={route('dashboard.settings.colors.index')}

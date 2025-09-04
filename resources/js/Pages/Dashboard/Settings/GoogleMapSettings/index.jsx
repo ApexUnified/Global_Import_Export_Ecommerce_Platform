@@ -91,10 +91,10 @@ export default function index({ google_map_settings }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Google Map Settings" />
+                <Head title="Settings - Google Map Settings" />
 
                 <BreadCrumb
-                    header={'Google Map Settings'}
+                    header={'Settings - Google Map Settings'}
                     parent={'Settings'}
                     parent_link={route('dashboard.settings.index')}
                     child={'Google Map Settings'}

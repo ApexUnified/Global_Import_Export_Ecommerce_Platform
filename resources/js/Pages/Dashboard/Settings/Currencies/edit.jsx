@@ -23,10 +23,10 @@ export default function edit({ currency }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Currencies" />
+                <Head title="Settings - Currencies" />
 
                 <BreadCrumb
-                    header={'Edit Currency'}
+                    header={'Settings - Edit Currency'}
                     parent={'Currencies'}
                     parent_link={route('dashboard.settings.currencies.index')}
                     child={'Edit Currency'}
