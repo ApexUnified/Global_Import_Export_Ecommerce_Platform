@@ -33,7 +33,14 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? array_merge(
+                    $request->user()->toArray(),
+                    [
+                        'role' => $request->user()->roles()->pluck('name')->implode(''),
+                        'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+                    ],
+
+                ) : [],
             ],
 
             'flash' => function () {
@@ -47,6 +54,7 @@ class HandleInertiaRequests extends Middleware
             'generalSetting' => Cache::get('general_config'),
             'currency' => Cache::get('currency'),
             'googleMapSetting' => Cache::get('google_map_setting'),
+
             'asset' => asset(''),
         ];
     }

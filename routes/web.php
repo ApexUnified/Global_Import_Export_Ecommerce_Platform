@@ -36,11 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Posts / Blogs Routes
         Route::controller(PostController::class)->name('posts.')->group(function () {
             Route::get('/posts', 'index')->name('index');
-            Route::get('/posts/create', 'create')->name('create');
+            Route::get('/posts-create', 'create')->name('create');
             Route::post('/posts-store', 'store')->name('store');
             Route::get('/posts-edit/{slug?}', 'edit')->name('edit');
             Route::put('/posts-update/{slug?}', 'update')->name('update');
-            Route::get('/post-view/{slug?}', 'show')->name('show');
+            Route::get('/posts-view/{slug?}', 'show')->name('show');
+            Route::put('/posts-bookmarks-toggle', 'toggleBookmark')->name('bookmarks.toggle');
             Route::delete('/posts-destroy/{id?}', 'destroy')->name('destroy');
             Route::delete('/posts-destroy-by-selection', 'destroyBySelection')->name('destroybyselection');
 
@@ -277,156 +278,158 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         // Setting Routes
-        Route::controller(SettingController::class)->as('settings.')->group(function () {
-            Route::get('/settings', 'index')->name('index');
+        Route::controller(SettingController::class)->as('settings.')
+            ->middleware(['permission:Settings View'])
+            ->group(function () {
+                Route::get('/settings', 'index')->name('index');
 
-            // Prefixed As /settings On Grouped Routes
-            Route::prefix('/settings')->group(function () {
-                // General Setting Routess
-                Route::get('/general-settings', 'generalSetting')->name('general.setting');
-                Route::put('/settings/general-settings-update', 'updateGeneralSetting')->name('general.setting.update');
+                // Prefixed As /settings On Grouped Routes
+                Route::prefix('/settings')->group(function () {
+                    // General Setting Routess
+                    Route::get('/general-settings', 'generalSetting')->name('general.setting');
+                    Route::put('/settings/general-settings-update', 'updateGeneralSetting')->name('general.setting.update');
 
-                // SMTP Setting Routes
-                Route::get('/smtp-settings', 'smtpSetting')->name('smtp.setting');
-                Route::put('/smtp-settings-update', 'updateSmtpSetting')->name('smtp.setting.update');
+                    // SMTP Setting Routes
+                    Route::get('/smtp-settings', 'smtpSetting')->name('smtp.setting');
+                    Route::put('/smtp-settings-update', 'updateSmtpSetting')->name('smtp.setting.update');
 
-                // Role Setting Routes
-                Route::get('/roles', 'roleIndex')->name('roles.index');
-                Route::get('/roles-create', 'roleCreate')->name('roles.create');
-                Route::post('/roles-store', 'roleStore')->name('roles.store');
-                Route::get('/roles-edit/{id?}', 'roleEdit')->name('roles.edit');
-                Route::put('/roles-update/{id?}', 'roleUpdate')->name('roles.update');
-                Route::delete('/roles-destroy/{id?}', 'roleDestroy')->name('roles.destroy');
-                Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
+                    // Role Setting Routes
+                    Route::get('/roles', 'roleIndex')->name('roles.index');
+                    Route::get('/roles-create', 'roleCreate')->name('roles.create');
+                    Route::post('/roles-store', 'roleStore')->name('roles.store');
+                    Route::get('/roles-edit/{id?}', 'roleEdit')->name('roles.edit');
+                    Route::put('/roles-update/{id?}', 'roleUpdate')->name('roles.update');
+                    Route::delete('/roles-destroy/{id?}', 'roleDestroy')->name('roles.destroy');
+                    Route::delete('/roles-destroy-by-selection', 'destroyRoleBySelection')->name('roles.destroybyselection');
 
-                Route::get('/permissions', 'permissionsIndex')->name('permissions.index');
-                Route::get('/permissions-create', 'permissionCreate')->name('permissions.create');
-                Route::post('/permissions-store', 'permissionStore')->name('permissions.store');
-                Route::get('/permissions-manage/{id?}', 'permissionManage')->name('permissions.manage');
-                Route::put('/permissions-sync/{id?}', 'permissionSync')->name('permissions.sync');
-                Route::get('/permissions-edit/{id?}', 'permissionEdit')->name('permissions.edit');
-                Route::put('/permissions-update/{id?}', 'permissionUpdate')->name('permissions.update');
-                Route::delete('/permissions-destroy/{id?}', 'permissionDestroy')->name('permissions.destroy');
-                Route::delete('/permissions-destroy-by-selection', 'destroyPermissionBySelection')->name('permissions.destroybyselection');
+                    Route::get('/permissions', 'permissionsIndex')->name('permissions.index');
+                    Route::get('/permissions-create', 'permissionCreate')->name('permissions.create');
+                    Route::post('/permissions-store', 'permissionStore')->name('permissions.store');
+                    Route::get('/permissions-manage/{id?}', 'permissionManage')->name('permissions.manage');
+                    Route::put('/permissions-sync/{id?}', 'permissionSync')->name('permissions.sync');
+                    Route::get('/permissions-edit/{id?}', 'permissionEdit')->name('permissions.edit');
+                    Route::put('/permissions-update/{id?}', 'permissionUpdate')->name('permissions.update');
+                    Route::delete('/permissions-destroy/{id?}', 'permissionDestroy')->name('permissions.destroy');
+                    Route::delete('/permissions-destroy-by-selection', 'destroyPermissionBySelection')->name('permissions.destroybyselection');
 
-                // Color Routes
-                Route::get('/colors', 'colorIndex')->name('colors.index');
-                Route::get('/colors-create', 'colorCreate')->name('colors.create');
-                Route::post('/colors-store', 'colorStore')->name('colors.store');
-                Route::get('/colors-edit/{id?}', 'colorEdit')->name('colors.edit');
-                Route::put('/colors-update/{id?}', 'colorUpdate')->name('colors.update');
-                Route::delete('/colors-destroy/{id?}', 'colorDestroy')->name('colors.destroy');
-                Route::delete('/colors-destroy-by-selection', 'destroyColorBySelection')->name('colors.destroybyselection');
+                    // Color Routes
+                    Route::get('/colors', 'colorIndex')->name('colors.index');
+                    Route::get('/colors-create', 'colorCreate')->name('colors.create');
+                    Route::post('/colors-store', 'colorStore')->name('colors.store');
+                    Route::get('/colors-edit/{id?}', 'colorEdit')->name('colors.edit');
+                    Route::put('/colors-update/{id?}', 'colorUpdate')->name('colors.update');
+                    Route::delete('/colors-destroy/{id?}', 'colorDestroy')->name('colors.destroy');
+                    Route::delete('/colors-destroy-by-selection', 'destroyColorBySelection')->name('colors.destroybyselection');
 
-                // Model Name Routes
-                Route::get('/model-names', 'modelNameIndex')->name('model_names.index');
-                Route::get('/model-names-create', 'modelNameCreate')->name('model_names.create');
-                Route::post('/model-names-store', 'modelNameStore')->name('model_names.store');
-                Route::get('/model-names-edit/{id?}', 'modelNameEdit')->name('model_names.edit');
-                Route::put('/model-names-update/{id?}', 'modelNameUpdate')->name('model_names.update');
-                Route::delete('/model-names-destroy/{id?}', 'modelNameDestroy')->name('model_names.destroy');
-                Route::delete('/model-names-destroy-by-selection', 'destroyModelNameBySelection')->name('model_names.destroybyselection');
+                    // Model Name Routes
+                    Route::get('/model-names', 'modelNameIndex')->name('model_names.index');
+                    Route::get('/model-names-create', 'modelNameCreate')->name('model_names.create');
+                    Route::post('/model-names-store', 'modelNameStore')->name('model_names.store');
+                    Route::get('/model-names-edit/{id?}', 'modelNameEdit')->name('model_names.edit');
+                    Route::put('/model-names-update/{id?}', 'modelNameUpdate')->name('model_names.update');
+                    Route::delete('/model-names-destroy/{id?}', 'modelNameDestroy')->name('model_names.destroy');
+                    Route::delete('/model-names-destroy-by-selection', 'destroyModelNameBySelection')->name('model_names.destroybyselection');
 
-                // Capcaity Routes
-                Route::get('/capacities', 'capacityIndex')->name('capacities.index');
-                Route::get('/capacities-create', 'capacityCreate')->name('capacities.create');
-                Route::post('/capacities-store', 'capacityStore')->name('capacities.store');
-                Route::get('/capacities-edit/{id?}', 'capacityEdit')->name('capacities.edit');
-                Route::put('/capacities-update/{id?}', 'capacityUpdate')->name('capacities.update');
-                Route::delete('/capacities-destroy/{id?}', 'capacityDestroy')->name('capacities.destroy');
-                Route::delete('/capacities-destroy-by-selection', 'destroyCapacityBySelection')->name('capacities.destroybyselection');
+                    // Capcaity Routes
+                    Route::get('/capacities', 'capacityIndex')->name('capacities.index');
+                    Route::get('/capacities-create', 'capacityCreate')->name('capacities.create');
+                    Route::post('/capacities-store', 'capacityStore')->name('capacities.store');
+                    Route::get('/capacities-edit/{id?}', 'capacityEdit')->name('capacities.edit');
+                    Route::put('/capacities-update/{id?}', 'capacityUpdate')->name('capacities.update');
+                    Route::delete('/capacities-destroy/{id?}', 'capacityDestroy')->name('capacities.destroy');
+                    Route::delete('/capacities-destroy-by-selection', 'destroyCapacityBySelection')->name('capacities.destroybyselection');
 
-                // Storage Location Routes
-                Route::get('/storage-locations', 'storageLocationIndex')->name('storage_locations.index');
-                Route::get('/storage-locations-create', 'storageLocationCreate')->name('storage_locations.create');
-                Route::post('/storage-locations-store', 'storageLocationStore')->name('storage_locations.store');
-                Route::get('/storage-locations-edit/{id?}', 'storageLocationEdit')->name('storage_locations.edit');
-                Route::put('/storage-locations-update/{id?}', 'storageLocationUpdate')->name('storage_locations.update');
-                Route::delete('/storage-locations-destroy/{id?}', 'storageLocationDestroy')->name('storage_locations.destroy');
-                Route::delete('/storage-locations-destroy-by-selection', 'destroyStorageLocationBySelection')->name('storage_locations.destroybyselection');
+                    // Storage Location Routes
+                    Route::get('/storage-locations', 'storageLocationIndex')->name('storage_locations.index');
+                    Route::get('/storage-locations-create', 'storageLocationCreate')->name('storage_locations.create');
+                    Route::post('/storage-locations-store', 'storageLocationStore')->name('storage_locations.store');
+                    Route::get('/storage-locations-edit/{id?}', 'storageLocationEdit')->name('storage_locations.edit');
+                    Route::put('/storage-locations-update/{id?}', 'storageLocationUpdate')->name('storage_locations.update');
+                    Route::delete('/storage-locations-destroy/{id?}', 'storageLocationDestroy')->name('storage_locations.destroy');
+                    Route::delete('/storage-locations-destroy-by-selection', 'destroyStorageLocationBySelection')->name('storage_locations.destroybyselection');
 
-                // Currency Routes
-                Route::get('/currencies', 'currencyIndex')->name('currencies.index');
-                Route::get('/currencies-create', 'currencyCreate')->name('currencies.create');
-                Route::post('/currencies-store', 'currencyStore')->name('currencies.store');
-                Route::get('/currencies-edit/{id?}', 'currencyEdit')->name('currencies.edit');
-                Route::put('/currencies-update/{id?}', 'currencyUpdate')->name('currencies.update');
-                Route::put('/currencies-toggle/{id?}', 'toggleCurrencyStatus')->name('currencies.toggle');
-                Route::delete('/currencies-destroy/{id?}', 'currencyDestroy')->name('currencies.destroy');
-                Route::delete('/currencies-destroy-by-selection', 'destroycurrencyBySelection')->name('currencies.destroybyselection');
+                    // Currency Routes
+                    Route::get('/currencies', 'currencyIndex')->name('currencies.index');
+                    Route::get('/currencies-create', 'currencyCreate')->name('currencies.create');
+                    Route::post('/currencies-store', 'currencyStore')->name('currencies.store');
+                    Route::get('/currencies-edit/{id?}', 'currencyEdit')->name('currencies.edit');
+                    Route::put('/currencies-update/{id?}', 'currencyUpdate')->name('currencies.update');
+                    Route::put('/currencies-toggle/{id?}', 'toggleCurrencyStatus')->name('currencies.toggle');
+                    Route::delete('/currencies-destroy/{id?}', 'currencyDestroy')->name('currencies.destroy');
+                    Route::delete('/currencies-destroy-by-selection', 'destroycurrencyBySelection')->name('currencies.destroybyselection');
 
-                // Additional Fee List Routes
-                Route::get('/additional-fee-lists', 'additionalFeeListIndex')->name('additional_fee_lists.index');
-                Route::get('/additional-fee-lists-create', 'additionalFeeListCreate')->name('additional_fee_lists.create');
-                Route::post('/additional-fee-lists-store', 'additionalFeeListStore')->name('additional_fee_lists.store');
-                Route::get('/additional-fee-lists-edit/{id?}', 'additionalFeeListEdit')->name('additional_fee_lists.edit');
-                Route::put('/additional-fee-lists-update/{id?}', 'additionalFeeListUpdate')->name('additional_fee_lists.update');
-                Route::put('/additional-fee-lists-toggle/{id?}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
-                Route::delete('/additional-fee-lists-destroy/{id?}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
-                Route::delete('/additional-fee-lists-destroy-by-selection', 'destroyAdditionalFeeListBySelection')->name('additional_fee_lists.destroybyselection');
+                    // Additional Fee List Routes
+                    Route::get('/additional-fee-lists', 'additionalFeeListIndex')->name('additional_fee_lists.index');
+                    Route::get('/additional-fee-lists-create', 'additionalFeeListCreate')->name('additional_fee_lists.create');
+                    Route::post('/additional-fee-lists-store', 'additionalFeeListStore')->name('additional_fee_lists.store');
+                    Route::get('/additional-fee-lists-edit/{id?}', 'additionalFeeListEdit')->name('additional_fee_lists.edit');
+                    Route::put('/additional-fee-lists-update/{id?}', 'additionalFeeListUpdate')->name('additional_fee_lists.update');
+                    Route::put('/additional-fee-lists-toggle/{id?}', 'toggleAdditionalFeeListStatus')->name('additional_fee_lists.toggle');
+                    Route::delete('/additional-fee-lists-destroy/{id?}', 'additionalFeeListDestroy')->name('additional_fee_lists.destroy');
+                    Route::delete('/additional-fee-lists-destroy-by-selection', 'destroyAdditionalFeeListBySelection')->name('additional_fee_lists.destroybyselection');
 
-                // Reward Setting Routes
-                Route::get('/reward-point-setting', 'rewardPointSettingIndex')->name('reward-point-setting.index');
-                Route::put('/reward-point-setting-update', 'rewardPointSettingUpdate')->name('reward-point-setting.update');
+                    // Reward Setting Routes
+                    Route::get('/reward-point-setting', 'rewardPointSettingIndex')->name('reward-point-setting.index');
+                    Route::put('/reward-point-setting-update', 'rewardPointSettingUpdate')->name('reward-point-setting.update');
 
-                // Commission Setting Routes
-                Route::get('/commission-settings', 'commissionSettingIndex')->name('commission-settings.index');
-                Route::get('/commission-settings-create', 'commissionSettingCreate')->name('commission-settings.create');
-                Route::post('/commission-settings-store', 'commissionSettingStore')->name('commission-settings.store');
-                Route::get('/commission-settings-edit/{id?}', 'commissionSettingEdit')->name('commission-settings.edit');
-                Route::put('/commission-settings-update/{id?}', 'commissionSettingUpdate')->name('commission-settings.update');
-                Route::delete('/commission-settings-destroy/{id?}', 'destroyCommissionSetting')->name('commission-settings.destroy');
-                Route::delete('/commission-settings-destroy-by-selection', 'destroyCommissionSettingBySelection')->name('commission-settings.destroybyselection');
+                    // Commission Setting Routes
+                    Route::get('/commission-settings', 'commissionSettingIndex')->name('commission-settings.index');
+                    Route::get('/commission-settings-create', 'commissionSettingCreate')->name('commission-settings.create');
+                    Route::post('/commission-settings-store', 'commissionSettingStore')->name('commission-settings.store');
+                    Route::get('/commission-settings-edit/{id?}', 'commissionSettingEdit')->name('commission-settings.edit');
+                    Route::put('/commission-settings-update/{id?}', 'commissionSettingUpdate')->name('commission-settings.update');
+                    Route::delete('/commission-settings-destroy/{id?}', 'destroyCommissionSetting')->name('commission-settings.destroy');
+                    Route::delete('/commission-settings-destroy-by-selection', 'destroyCommissionSettingBySelection')->name('commission-settings.destroybyselection');
 
-                // Country Routes
-                Route::get('/countries', 'countryIndex')->name('countries.index');
-                Route::get('/countries-create', 'countryCreate')->name('countries.create');
-                Route::post('/countries-store', 'countryStore')->name('countries.store');
-                Route::get('/countries-edit/{id?}', 'countryEdit')->name('countries.edit');
-                Route::put('/countries-update/{id?}', 'countryUpdate')->name('countries.update');
-                Route::delete('/countries-destroy/{id?}', 'countryDestroy')->name('countries.destroy');
-                Route::delete('/countries-destroy-by-selection', 'countryDestroyBySelection')->name('countries.destroybyselection');
+                    // Country Routes
+                    Route::get('/countries', 'countryIndex')->name('countries.index');
+                    Route::get('/countries-create', 'countryCreate')->name('countries.create');
+                    Route::post('/countries-store', 'countryStore')->name('countries.store');
+                    Route::get('/countries-edit/{id?}', 'countryEdit')->name('countries.edit');
+                    Route::put('/countries-update/{id?}', 'countryUpdate')->name('countries.update');
+                    Route::delete('/countries-destroy/{id?}', 'countryDestroy')->name('countries.destroy');
+                    Route::delete('/countries-destroy-by-selection', 'countryDestroyBySelection')->name('countries.destroybyselection');
 
-                // Special Country Routes
-                Route::get('/special-countries', 'specialCountryIndex')->name('special-countries.index');
-                Route::get('/special-countries-create', 'specialCountryCreate')->name('special-countries.create');
-                Route::post('/special-countries-store', 'specialCountryStore')->name('special-countries.store');
-                Route::delete('/special-countries-destroy/{id?}', 'specialCountryDestroy')->name('special-countries.destroy');
-                Route::delete('/special-countries-destroy-by-selection', 'specialCountryDestroyBySelection')->name('special-countries.destroybyselection');
+                    // Special Country Routes
+                    Route::get('/special-countries', 'specialCountryIndex')->name('special-countries.index');
+                    Route::get('/special-countries-create', 'specialCountryCreate')->name('special-countries.create');
+                    Route::post('/special-countries-store', 'specialCountryStore')->name('special-countries.store');
+                    Route::delete('/special-countries-destroy/{id?}', 'specialCountryDestroy')->name('special-countries.destroy');
+                    Route::delete('/special-countries-destroy-by-selection', 'specialCountryDestroyBySelection')->name('special-countries.destroybyselection');
 
-                // AWS Setting Routes
-                Route::get('/aws-settings', 'awsSettingsIndex')->name('aws-settings.index');
-                Route::get('/aws-settings-create', 'awsSettingCreate')->name('aws-settings.create');
-                Route::post('/aws-settings-store', 'awsSettingStore')->name('aws-settings.store');
-                Route::get('/aws-settings-edit/{id?}', 'awsSettingEdit')->name('aws-settings.edit');
-                Route::put('/aws-settings-update/{id?}', 'awsSettingUpdate')->name('aws-settings.update');
-                Route::put('/aws-settings-toggle-status/{id?}', 'awsSettingToggleStatus')->name('aws-settings.toggle-status');
-                Route::delete('/aws-settings-destroy/{id?}', 'awsSettingDestroy')->name('aws-settings.destroy');
-                Route::delete('/aws-settings-destroy-by-selection', 'awsSettingDestroyBySelection')->name('aws-settings.destroybyselection');
+                    // AWS Setting Routes
+                    Route::get('/aws-settings', 'awsSettingsIndex')->name('aws-settings.index');
+                    Route::get('/aws-settings-create', 'awsSettingCreate')->name('aws-settings.create');
+                    Route::post('/aws-settings-store', 'awsSettingStore')->name('aws-settings.store');
+                    Route::get('/aws-settings-edit/{id?}', 'awsSettingEdit')->name('aws-settings.edit');
+                    Route::put('/aws-settings-update/{id?}', 'awsSettingUpdate')->name('aws-settings.update');
+                    Route::put('/aws-settings-toggle-status/{id?}', 'awsSettingToggleStatus')->name('aws-settings.toggle-status');
+                    Route::delete('/aws-settings-destroy/{id?}', 'awsSettingDestroy')->name('aws-settings.destroy');
+                    Route::delete('/aws-settings-destroy-by-selection', 'awsSettingDestroyBySelection')->name('aws-settings.destroybyselection');
 
-                // Google Map Setting Routes
-                Route::get('/google-map-settings', 'googleMapSettingsIndex')->name('google-map-settings.index');
-                Route::get('/google-map-settings-create', 'googleMapSettingCreate')->name('google-map-settings.create');
-                Route::post('/google-map-settings-store', 'googleMapSettingStore')->name('google-map-settings.store');
-                Route::get('/google-map-settings-edit/{id?}', 'googleMapSettingEdit')->name('google-map-settings.edit');
-                Route::put('/google-map-settings-update/{id?}', 'googleMapSettingUpdate')->name('google-map-settings.update');
-                Route::put('/google-map-settings-toggle-status/{id?}', 'googleMapSettingToggleStatus')->name('google-map-settings.toggle-status');
-                Route::delete('/google-map-settings-destroy/{id?}', 'googleMapSettingDestroy')->name('google-map-settings.destroy');
-                Route::delete('/google-map-settings-destroy-by-selection', 'googleMapSettingDestroyBySelection')->name('google-map-settings.destroybyselection');
+                    // Google Map Setting Routes
+                    Route::get('/google-map-settings', 'googleMapSettingsIndex')->name('google-map-settings.index');
+                    Route::get('/google-map-settings-create', 'googleMapSettingCreate')->name('google-map-settings.create');
+                    Route::post('/google-map-settings-store', 'googleMapSettingStore')->name('google-map-settings.store');
+                    Route::get('/google-map-settings-edit/{id?}', 'googleMapSettingEdit')->name('google-map-settings.edit');
+                    Route::put('/google-map-settings-update/{id?}', 'googleMapSettingUpdate')->name('google-map-settings.update');
+                    Route::put('/google-map-settings-toggle-status/{id?}', 'googleMapSettingToggleStatus')->name('google-map-settings.toggle-status');
+                    Route::delete('/google-map-settings-destroy/{id?}', 'googleMapSettingDestroy')->name('google-map-settings.destroy');
+                    Route::delete('/google-map-settings-destroy-by-selection', 'googleMapSettingDestroyBySelection')->name('google-map-settings.destroybyselection');
 
-                // Meta Setting Routes
-                Route::get('/meta-settings', 'metaSettingsIndex')->name('meta-settings.index');
-                Route::get('/meta-settings-create', 'metaSettingCreate')->name('meta-settings.create');
-                Route::post('/meta-settings-store', 'metaSettingStore')->name('meta-settings.store');
-                Route::get('/meta-settings-edit/{id?}', 'metaSettingEdit')->name('meta-settings.edit');
-                Route::put('/meta-settings-update/{id?}', 'metaSettingUpdate')->name('meta-settings.update');
-                Route::put('/meta-settings-toggle-status/{id?}', 'metaSettingToggleStatus')->name('meta-settings.toggle-status');
-                Route::delete('/meta-settings-destroy/{id?}', 'metaSettingDestroy')->name('meta-settings.destroy');
-                Route::delete('/meta-settings-destroy-by-selection', 'metaSettingDestroyBySelection')->name('meta-settings.destroybyselection');
+                    // Meta Setting Routes
+                    Route::get('/meta-settings', 'metaSettingsIndex')->name('meta-settings.index');
+                    Route::get('/meta-settings-create', 'metaSettingCreate')->name('meta-settings.create');
+                    Route::post('/meta-settings-store', 'metaSettingStore')->name('meta-settings.store');
+                    Route::get('/meta-settings-edit/{id?}', 'metaSettingEdit')->name('meta-settings.edit');
+                    Route::put('/meta-settings-update/{id?}', 'metaSettingUpdate')->name('meta-settings.update');
+                    Route::put('/meta-settings-toggle-status/{id?}', 'metaSettingToggleStatus')->name('meta-settings.toggle-status');
+                    Route::delete('/meta-settings-destroy/{id?}', 'metaSettingDestroy')->name('meta-settings.destroy');
+                    Route::delete('/meta-settings-destroy-by-selection', 'metaSettingDestroyBySelection')->name('meta-settings.destroybyselection');
+
+                });
 
             });
-
-        });
     });
 
     // Order Invoice Routes

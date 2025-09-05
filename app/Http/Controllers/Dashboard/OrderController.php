@@ -6,10 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Orders\Interface\IOrderRepository;
 use App\Repositories\PackageRecordings\Interface\IPackageRecordingsRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class OrderController extends Controller
+class OrderController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Orders View', ['only' => 'index']),
+            new Middleware('permission:Orders View', ['only' => 'show']),
+            new Middleware('permission:Orders Create', ['only' => 'create']),
+            new Middleware('permission:Orders Create', ['only' => 'store']),
+            new Middleware('permission:Orders Edit', ['only' => 'edit']),
+            new Middleware('permission:Orders Edit', ['only' => 'update']),
+            new Middleware('permission:Orders Delete', ['only' => 'destroy']),
+            new Middleware('permission:Orders Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IOrderRepository $order,
         private IPackageRecordingsRepository $package_recording,

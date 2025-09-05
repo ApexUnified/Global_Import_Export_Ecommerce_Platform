@@ -6,6 +6,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
+import can from '@/Hooks/can';
 
 export default function index({ distributor_commissions }) {
     // Bulk Delete Form Data
@@ -30,6 +31,8 @@ export default function index({ distributor_commissions }) {
         id: null,
     });
 
+    const canView = can('Distributors View');
+
     const [status, setStatus] = useState(props.status ?? '');
     const [parentSearched, setParentSearched] = useState(false);
 
@@ -41,12 +44,21 @@ export default function index({ distributor_commissions }) {
                 label: 'Distributor Name',
                 render: (item) => {
                     return (
-                        <Link
-                            className="text-blue-500 underline"
-                            href={route('dashboard.distributors.show', item.distributor?.id)}
-                        >
-                            {item.distributor?.user?.name}
-                        </Link>
+                        <div key={item.id}>
+                            {canView ? (
+                                <Link
+                                    className="text-blue-500 underline"
+                                    href={route(
+                                        'dashboard.distributors.show',
+                                        item.distributor?.id,
+                                    )}
+                                >
+                                    {item.distributor?.user?.name}
+                                </Link>
+                            ) : (
+                                item.distributor?.user?.name
+                            )}
+                        </div>
                     );
                 },
             },
@@ -59,7 +71,7 @@ export default function index({ distributor_commissions }) {
                 label: 'Commission Rate',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {item.commission_rate}%
                         </span>
                     );
@@ -70,7 +82,7 @@ export default function index({ distributor_commissions }) {
                 label: 'Commission Amount',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {currency?.symbol} {item.commission_amount}
                         </span>
                     );
@@ -95,11 +107,16 @@ export default function index({ distributor_commissions }) {
         ];
 
         const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.distributors.show', item?.distributor?.id),
-            },
+            ...(canView
+                ? [
+                      {
+                          label: 'View',
+                          type: 'link',
+                          href: (item) =>
+                              route('dashboard.distributors.show', item?.distributor?.id),
+                      },
+                  ]
+                : []),
         ];
 
         setActions(customActions);
@@ -135,7 +152,11 @@ export default function index({ distributor_commissions }) {
                                 SingleDeleteRoute={
                                     'dashboard.commissions.distributor-commissions.destroy'
                                 }
-                                EditRoute={'dashboard.commissions.distributor-commissions.edit'}
+                                EditRoute={
+                                    can('Distributor Commissions Edit')
+                                        ? 'dashboard.commissions.distributor-commissions.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.commissions.distributor-commissions.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -145,6 +166,8 @@ export default function index({ distributor_commissions }) {
                                 columns={columns}
                                 searchProps={{ status: status }}
                                 ParentSearched={parentSearched}
+                                DeleteAction={can('Distributor Commissions Delete')}
+                                canSelect={can('Distributor Commissions Delete')}
                                 customSearch={
                                     <>
                                         <div className="relative">

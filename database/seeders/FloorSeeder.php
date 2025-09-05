@@ -12,7 +12,7 @@ class FloorSeeder extends Seeder
      */
     public function run(): void
     {
-        if (! Floor::exists()) {
+        if (Floor::doesntExist()) {
             $floors = [
                 'B15', 'B14', 'B13', 'B12', 'B11', 'B10', 'B9', 'B8', 'B7', 'B6', 'B5', 'B4', 'B3', 'B2', 'B1',
                 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'F13', 'F14', 'F15',

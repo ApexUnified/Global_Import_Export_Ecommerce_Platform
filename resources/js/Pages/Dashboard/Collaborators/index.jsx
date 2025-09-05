@@ -6,6 +6,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ collaborators }) {
     // Bulk Delete Form Data
@@ -146,28 +147,30 @@ export default function index({ collaborators }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Collaborator'}
-                                    URL={route('dashboard.collaborators.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Collaborators Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Collaborator'}
+                                        URL={route('dashboard.collaborators.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -179,8 +182,14 @@ export default function index({ collaborators }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.collaborators.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.collaborators.destroy'}
-                                EditRoute={'dashboard.collaborators.edit'}
+                                EditRoute={
+                                    can('Collaborators Edit')
+                                        ? 'dashboard.collaborators.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.collaborators.index'}
+                                DeleteAction={can('Collaborators Delete')}
+                                canSelect={can('Collaborators Delete')}
                                 Search={true}
                                 DefaultSearchInput={true}
                                 items={collaborators}

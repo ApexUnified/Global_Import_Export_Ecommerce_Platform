@@ -6,10 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Inventories\Interface\IInventoryRepository;
 use App\Repositories\SmartphoneForSales\Interface\ISmartphoneForSaleRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class SmartphoneForSaleController extends Controller
+class SmartphoneForSaleController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Smartphone For Sales View', ['only' => 'index']),
+            new Middleware('permission:Smartphone For Sales Create', ['only' => 'create']),
+            new Middleware('permission:Smartphone For Sales Create', ['only' => 'store']),
+            new Middleware('permission:Smartphone For Sales Edit', ['only' => 'edit']),
+            new Middleware('permission:Smartphone For Sales Edit', ['only' => 'update']),
+            new Middleware('permission:Smartphone For Sales Delete', ['only' => 'destroy']),
+            new Middleware('permission:Smartphone For Sales Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private ISmartphoneForSaleRepository $smartphone_for_sale,
         private IInventoryRepository $inventory

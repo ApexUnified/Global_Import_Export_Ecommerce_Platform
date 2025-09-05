@@ -7,6 +7,7 @@ import Table from '@/Components/Table';
 import { useEffect, useState } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SelectInput from '@/Components/SelectInput';
+import can from '@/Hooks/can';
 
 export default function index({ inventories, batches, storage_locations, smartphones }) {
     // Bulk Delete Form Data
@@ -136,7 +137,9 @@ export default function index({ inventories, batches, storage_locations, smartph
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.inventories.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.inventories.destroy'}
-                                EditRoute={'dashboard.inventories.edit'}
+                                EditRoute={
+                                    can('Inventories Edit') ? 'dashboard.inventories.edit' : null
+                                }
                                 SearchRoute={'dashboard.inventories.index'}
                                 Search={true}
                                 DefaultSearchInput={false}
@@ -150,6 +153,8 @@ export default function index({ inventories, batches, storage_locations, smartph
                                     status: status,
                                 }}
                                 columns={columns}
+                                DeleteAction={can('Inventories Delete')}
+                                canSelect={can('Inventories Delete')}
                                 customSearch={
                                     <>
                                         <div className="relative mb-2 w-[200px]">

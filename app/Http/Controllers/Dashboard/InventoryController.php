@@ -5,10 +5,23 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Inventories\Interface\IInventoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class InventoryController extends Controller
+class InventoryController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Inventories View', ['only' => 'index']),
+            new Middleware('permission:Inventories Edit', ['only' => 'edit']),
+            new Middleware('permission:Inventories Edit', ['only' => 'update']),
+            new Middleware('permission:Inventories Delete', ['only' => 'destroy']),
+            new Middleware('permission:Inventories Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IInventoryRepository $inventory
     ) {}

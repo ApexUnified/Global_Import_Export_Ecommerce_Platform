@@ -5,10 +5,25 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\RewardPoints\Interface\IRewardPointRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class RewardPointController extends Controller
+class RewardPointController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Reward Points View', ['only' => 'index']),
+            new Middleware('permission:Reward Points Create', ['only' => 'create']),
+            new Middleware('permission:Reward Points Create', ['only' => 'store']),
+            new Middleware('permission:Reward Points Edit', ['only' => 'edit']),
+            new Middleware('permission:Reward Points Edit', ['only' => 'update']),
+            new Middleware('permission:Reward Points Delete', ['only' => 'destroy']),
+            new Middleware('permission:Reward Points Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IRewardPointRepository $reward_point
     ) {}

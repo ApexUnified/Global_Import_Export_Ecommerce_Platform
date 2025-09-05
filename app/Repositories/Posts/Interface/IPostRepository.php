@@ -23,4 +23,6 @@ interface IPostRepository
     public function autoCompleteLocations(Request $request);
 
     public function placeDetails(string $placeId);
+
+    public function toggleBookmark(Request $request);
 }

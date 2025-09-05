@@ -6,6 +6,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
+import can from '@/Hooks/can';
 
 export default function index({ supplier_commissions }) {
     // Bulk Delete Form Data
@@ -30,6 +31,8 @@ export default function index({ supplier_commissions }) {
         id: null,
     });
 
+    const canView = can('Suppliers View');
+
     const [columns, setColumns] = useState([]);
     const [actions, setActions] = useState([]);
 
@@ -42,12 +45,18 @@ export default function index({ supplier_commissions }) {
                 label: 'Supplier Name',
                 render: (item) => {
                     return (
-                        <Link
-                            className="text-blue-500 underline"
-                            href={route('dashboard.suppliers.show', item.supplier?.id)}
-                        >
-                            {item.supplier?.user?.name}
-                        </Link>
+                        <div key={item.id}>
+                            {canView ? (
+                                <Link
+                                    className="text-blue-500 underline"
+                                    href={route('dashboard.suppliers.show', item.supplier?.id)}
+                                >
+                                    {item.supplier?.user?.name}
+                                </Link>
+                            ) : (
+                                item.supplier?.user?.name
+                            )}
+                        </div>
                     );
                 },
             },
@@ -60,7 +69,7 @@ export default function index({ supplier_commissions }) {
                 label: 'Commission Rate',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {item.commission_rate}%
                         </span>
                     );
@@ -71,7 +80,7 @@ export default function index({ supplier_commissions }) {
                 label: 'Commission Amount',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {currency?.symbol} {item.commission_amount}
                         </span>
                     );
@@ -96,11 +105,15 @@ export default function index({ supplier_commissions }) {
         ];
 
         const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.suppliers.show', item?.supplier?.id),
-            },
+            ...(canView
+                ? [
+                      {
+                          label: 'View',
+                          type: 'link',
+                          href: (item) => route('dashboard.suppliers.show', item?.supplier?.id),
+                      },
+                  ]
+                : []),
         ];
 
         setActions(customActions);
@@ -136,7 +149,11 @@ export default function index({ supplier_commissions }) {
                                 SingleDeleteRoute={
                                     'dashboard.commissions.supplier-commissions.destroy'
                                 }
-                                EditRoute={'dashboard.commissions.supplier-commissions.edit'}
+                                EditRoute={
+                                    can('Supplier Commissions Edit')
+                                        ? 'dashboard.commissions.supplier-commissions.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.commissions.supplier-commissions.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -146,6 +163,8 @@ export default function index({ supplier_commissions }) {
                                 columns={columns}
                                 searchProps={{ status: status }}
                                 ParentSearched={parentSearched}
+                                DeleteAction={can('Supplier Commissions Delete')}
+                                canSelect={can('Supplier Commissions Delete')}
                                 customSearch={
                                     <>
                                         <div className="relative">

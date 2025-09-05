@@ -480,4 +480,39 @@ class PostRepository implements IPostRepository
             ];
         }
     }
+
+    public function toggleBookmark(Request $request)
+    {
+
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        try {
+            $user = $request->user();
+            $post_id = $request->input('post_id');
+
+            if ($user->bookMarkedPosts()->where('post_id', $post_id)->exists()) {
+                $user->bookMarkedPosts()->detach($post_id);
+
+                return [
+                    'status' => true,
+                    'message' => 'Post Removed Successfully from bookmarks',
+                ];
+            }
+
+            $user->bookMarkedPosts()->attach($post_id);
+
+            return [
+                'status' => true,
+                'message' => 'Post Added Successfully to bookmarks',
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 }

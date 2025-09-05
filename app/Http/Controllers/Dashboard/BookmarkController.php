@@ -5,10 +5,22 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Bookmarks\Interface\IBookmarkRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class BookmarkController extends Controller
+class BookmarkController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Bookmarks View', ['only' => 'index']),
+            new Middleware('permission:Bookmarks View', ['only' => 'toggleBookmark']),
+            new Middleware('permission:Bookmarks Delete', ['only' => 'destroy']),
+            new Middleware('permission:Bookmarks Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IBookmarkRepository $bookmark
     ) {}

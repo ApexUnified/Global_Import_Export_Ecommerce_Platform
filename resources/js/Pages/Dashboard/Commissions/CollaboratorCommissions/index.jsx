@@ -6,6 +6,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
+import can from '@/Hooks/can';
 
 export default function index({ collaborator_commissions }) {
     // Bulk Delete Form Data
@@ -30,23 +31,35 @@ export default function index({ collaborator_commissions }) {
         id: null,
     });
 
+    const canView = can('Collaborators View');
+
     const [status, setStatus] = useState(props.status ?? '');
     const [parentSearched, setParentSearched] = useState(false);
 
     const [columns, setColumns] = useState([]);
     const [actions, setActions] = useState([]);
+
     useEffect(() => {
         const columns = [
             {
                 label: 'Collaborator Name',
                 render: (item) => {
                     return (
-                        <Link
-                            className="text-blue-500 underline"
-                            href={route('dashboard.collaborators.show', item.collaborator?.id)}
-                        >
-                            {item.collaborator?.user?.name}
-                        </Link>
+                        <div key={item.id}>
+                            {canView ? (
+                                <Link
+                                    className="text-blue-500 underline"
+                                    href={route(
+                                        'dashboard.collaborators.show',
+                                        item.collaborator?.id,
+                                    )}
+                                >
+                                    {item.collaborator?.user?.name}
+                                </Link>
+                            ) : (
+                                item.collaborator?.user?.name
+                            )}
+                        </div>
                     );
                 },
             },
@@ -59,7 +72,7 @@ export default function index({ collaborator_commissions }) {
                 label: 'Commission Rate',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {item.commission_rate}%
                         </span>
                     );
@@ -70,7 +83,7 @@ export default function index({ collaborator_commissions }) {
                 label: 'Commission Amount',
                 render: (item) => {
                     return (
-                        <span className="p-2 text-sm text-white bg-blue-500 rounded-lg">
+                        <span className="rounded-lg bg-blue-500 p-2 text-sm text-white">
                             {currency?.symbol} {item.commission_amount}
                         </span>
                     );
@@ -95,11 +108,16 @@ export default function index({ collaborator_commissions }) {
         ];
 
         const customActions = [
-            {
-                label: 'View',
-                type: 'link',
-                href: (item) => route('dashboard.collaborators.show', item?.collaborator?.id),
-            },
+            ...(canView
+                ? [
+                      {
+                          label: 'View',
+                          type: 'link',
+                          href: (item) =>
+                              route('dashboard.collaborators.show', item?.collaborator?.id),
+                      },
+                  ]
+                : []),
         ];
 
         setActions(customActions);
@@ -135,7 +153,11 @@ export default function index({ collaborator_commissions }) {
                                 SingleDeleteRoute={
                                     'dashboard.commissions.collaborator-commissions.destroy'
                                 }
-                                EditRoute={'dashboard.commissions.collaborator-commissions.edit'}
+                                EditRoute={
+                                    can('Collaborator Commissions Edit')
+                                        ? 'dashboard.commissions.collaborator-commissions.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.commissions.collaborator-commissions.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -145,6 +167,8 @@ export default function index({ collaborator_commissions }) {
                                 columns={columns}
                                 searchProps={{ status: status }}
                                 ParentSearched={parentSearched}
+                                DeleteAction={can('Collaborator Commissions Delete')}
+                                canSelect={can('Collaborator Commissions Delete')}
                                 customSearch={
                                     <>
                                         <div className="relative">

@@ -228,15 +228,27 @@ This milestone includes all dynamic settings and global configuration features r
 - Add/remove countries allowed to use Meta OAuth Consent
 - Used to fetch Messenger/Instagram USER_IDs for sending push notifications (Redunt)
 
-4. Role & Permission Management
+4. Role & Permission Management ✅
 
-- CRUD for Roles
-- Dynamic permission assignment per role
+- CRUD for Roles ✅
+- Dynamic permission assignment per role ✅
 - Secure all system routes, pages, and features based on user roles
-- Integrate Spatie
-- Integrate role-based access control using Spatie Permissions
+- Integrate Spatie ✅
+- Integrate role-based access control using Spatie Permissions ✅
+- Setup Permission Seeders  ✅
+- Protected System Behalf of permissions
+    -> backend Protection  ✅
+    -> Frontend (
+        Hook For Permission Checker Setup Done ✅
+        Sidebar Items Show Hide According To Permissions Done ✅
+        All Pages Protection Behalf Of Permissions  ✅
+        If Suppliers Collaborators Distributors Have Permission To View Commissions they will see Thiers ✅
 
-5. Meta API Credentials
+    )
+
+6. Charts Setup on Dashboard's Home Page
+
+5. Meta API Credentials ✅
 - Update and store Meta (Facebook/Instagram) credentials dynamically
 - No hardcoded client_id, client_secret – all editable from the Dashboard
 

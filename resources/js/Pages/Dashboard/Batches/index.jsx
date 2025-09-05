@@ -5,6 +5,7 @@ import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ batches }) {
     // Bulk Delete Form Data
@@ -96,28 +97,30 @@ export default function index({ batches }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create batch'}
-                                    URL={route('dashboard.batches.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Batches Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create batch'}
+                                        URL={route('dashboard.batches.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -129,13 +132,15 @@ export default function index({ batches }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.batches.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.batches.destroy'}
-                                EditRoute={'dashboard.batches.edit'}
+                                EditRoute={can('Batches Edit') ? 'dashboard.batches.edit' : null}
                                 SearchRoute={'dashboard.batches.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
                                 items={batches}
                                 props={props}
                                 columns={columns}
+                                DeleteAction={can('Batches Delete')}
+                                canSelect={can('Batches Delete')}
                             />
                         </>
                     }

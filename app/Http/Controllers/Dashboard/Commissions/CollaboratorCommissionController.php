@@ -5,10 +5,23 @@ namespace App\Http\Controllers\Dashboard\Commissions;
 use App\Http\Controllers\Controller;
 use App\Repositories\Commissions\CollaboratorCommissions\Interface\ICollaboratorCommissionRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class CollaboratorCommissionController extends Controller
+class CollaboratorCommissionController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Collaborator Commissions View', ['only' => 'index']),
+            new Middleware('permission:Collaborator Commissions Edit', ['only' => 'edit']),
+            new Middleware('permission:Collaborator Commissions Edit', ['only' => 'update']),
+            new Middleware('permission:Collaborator Commissions Delete', ['only' => 'destroy']),
+            new Middleware('permission:Collaborator Commissions Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private ICollaboratorCommissionRepository $collaborator_commission
     ) {}

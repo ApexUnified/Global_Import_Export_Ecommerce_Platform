@@ -29,6 +29,7 @@ export default function Table({
     ParentSearched = false,
     RouteParameterKey,
     DefaultSearchInput,
+    canSelect = true,
 }) {
     // State and logic remain unchanged from your original code
     const [search, setSearch] = useState(props?.search ?? '');
@@ -325,7 +326,7 @@ export default function Table({
                         <table className="min-h-[200px] min-w-full">
                             <thead className="border-y border-gray-100 py-3 dark:border-gray-800">
                                 <tr>
-                                    {BulkDeleteMethod && (
+                                    {BulkDeleteMethod && canSelect && (
                                         <th className="whitespace-nowrap py-3 pr-5 font-normal sm:pr-6">
                                             <div className="me-4 flex items-center">
                                                 <input
@@ -368,7 +369,7 @@ export default function Table({
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                 {items?.data?.map((item, index) => (
                                     <tr key={index} className="relative">
-                                        {BulkDeleteMethod && (
+                                        {BulkDeleteMethod && canSelect && (
                                             <td className="whitespace-nowrap py-3 pr-5 sm:pr-5">
                                                 <div className="col-span-3 flex items-center">
                                                     <div className="me-4 flex items-center">

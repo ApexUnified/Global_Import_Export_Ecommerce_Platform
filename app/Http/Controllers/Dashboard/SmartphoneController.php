@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Smartphones\Interface\ISmartphoneRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class SmartphoneController extends Controller
+class SmartphoneController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Smartphones View', ['only' => 'index']),
+            new Middleware('permission:Smartphones View', ['only' => 'show']),
+            new Middleware('permission:Smartphones Create', ['only' => 'create']),
+            new Middleware('permission:Smartphones Create', ['only' => 'store']),
+            new Middleware('permission:Smartphones Edit', ['only' => 'edit']),
+            new Middleware('permission:Smartphones Edit', ['only' => 'update']),
+            new Middleware('permission:Smartphones Delete', ['only' => 'destroy']),
+            new Middleware('permission:Smartphones Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private ISmartphoneRepository $smartphone
     ) {}

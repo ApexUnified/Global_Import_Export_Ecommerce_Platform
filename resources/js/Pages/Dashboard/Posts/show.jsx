@@ -246,7 +246,7 @@ export default function view({ post }) {
                                                                             e.stopPropagation();
                                                                             router.put(
                                                                                 route(
-                                                                                    'dashboard.bookmarks.toggle',
+                                                                                    'dashboard.posts.bookmarks.toggle',
                                                                                     post?.id,
                                                                                 ),
                                                                                 {

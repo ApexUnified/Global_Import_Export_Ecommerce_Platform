@@ -6,10 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
 use App\Repositories\Posts\Interface\IPostRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class PostController extends Controller
+class PostController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Posts View', ['only' => 'index']),
+            new Middleware('permission:Posts View', ['only' => 'show']),
+            new Middleware('permission:Posts View', ['only' => 'toggleBookmark']),
+            new Middleware('permission:Posts Create', ['only' => 'create']),
+            new Middleware('permission:Posts Create', ['only' => 'store']),
+            new Middleware('permission:Posts Edit', ['only' => 'edit']),
+            new Middleware('permission:Posts Edit', ['only' => 'update']),
+            new Middleware('permission:Posts Delete', ['only' => 'destroy']),
+            new Middleware('permission:Posts Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private IPostRepository $post,
         private IFloorRepostitory $floor
@@ -142,5 +160,17 @@ class PostController extends Controller
         }
 
         return response()->json(['status' => true, 'data' => $response['data']], 200);
+    }
+
+    public function toggleBookmark(Request $request)
+    {
+        $toggled = $this->post->toggleBookmark($request);
+
+        if ($toggled['status'] === false) {
+            return back()->with('error', $toggled['message']);
+        }
+
+        return back()->with('success', $toggled['message']);
+
     }
 }

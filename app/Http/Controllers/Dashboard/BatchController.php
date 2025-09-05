@@ -6,10 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Batches\Interface\IBatchRepository;
 use App\Repositories\Inventories\Repository\InventoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class BatchController extends Controller
+class BatchController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Batches View', ['only' => 'index']),
+            new Middleware('permission:Batches Create', ['only' => 'create']),
+            new Middleware('permission:Batches Create', ['only' => 'store']),
+            new Middleware('permission:Batches Edit', ['only' => 'edit']),
+            new Middleware('permission:Batches Edit', ['only' => 'update']),
+            new Middleware('permission:Batches Delete', ['only' => 'destroy']),
+            new Middleware('permission:Batches Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private IBatchRepository $batch,
         private InventoryRepository $inventory,

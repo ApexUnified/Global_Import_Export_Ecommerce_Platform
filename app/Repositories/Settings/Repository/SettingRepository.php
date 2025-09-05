@@ -530,6 +530,7 @@ class SettingRepository implements ISettingRepository
     {
         $all_permissions = $this->permission
             ->orderBy('created_at', 'asc')
+
             ->get()
             ->groupBy('parent_name')
             ->map(function ($permissions) {
@@ -546,7 +547,7 @@ class SettingRepository implements ISettingRepository
             throw new Exception('Role Not Found');
         }
 
-        $assigned_permissions = $role->permissions()->pluck('id')->toArray();
+        $assigned_permissions = $role->getAllPermissions()->pluck('id')->toArray();
 
         return [
             'all_permissions' => $all_permissions,
@@ -569,7 +570,7 @@ class SettingRepository implements ISettingRepository
                 throw new Exception('Role Not Found');
             }
 
-            $role->permissions()->sync($request->array('permission_ids'));
+            $role->syncPermissions($request->input('permission_ids'));
 
             return [
                 'status' => true,

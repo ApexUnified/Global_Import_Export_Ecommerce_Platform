@@ -6,6 +6,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ users }) {
     // Bulk Delete Form Data
@@ -101,28 +102,30 @@ export default function index({ users }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create User'}
-                                    URL={route('dashboard.users.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Users Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create User'}
+                                        URL={route('dashboard.users.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -134,7 +137,9 @@ export default function index({ users }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.users.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.users.destroy'}
-                                EditRoute={'dashboard.users.edit'}
+                                EditRoute={can('Users Edit') ? 'dashboard.users.edit' : null}
+                                DeleteAction={can('Users Delete')}
+                                canSelect={can('Users Delete')}
                                 SearchRoute={'dashboard.users.index'}
                                 Search={true}
                                 DefaultSearchInput={true}

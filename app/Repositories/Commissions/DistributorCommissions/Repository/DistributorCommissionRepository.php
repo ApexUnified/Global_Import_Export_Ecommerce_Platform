@@ -31,6 +31,11 @@ class DistributorCommissionRepository implements IDistributorCommissionRepositor
             ->when(! empty($request->input('status')), function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
+            ->when(! $request->user()->hasRole('Admin'), function ($query) use ($request) {
+                $query->whereHas('distributor.user', function ($subQuery) use ($request) {
+                    $subQuery->where('id', $request->user()->id);
+                });
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

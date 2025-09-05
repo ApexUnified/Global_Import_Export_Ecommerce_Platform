@@ -6,10 +6,12 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ posts }) {
     // Bulk Delete Form Data
     const { props } = usePage();
+    const canEdit = can('Posts Edit');
     const {
         data: BulkselectedIds,
         setData: setBulkSelectedIds,
@@ -88,11 +90,15 @@ export default function index({ posts }) {
                 href: (item) => route('dashboard.posts.show', item.slug),
             },
 
-            {
-                label: 'Edit',
-                type: 'link',
-                href: (item) => route('dashboard.posts.edit', item.slug),
-            },
+            ...(canEdit
+                ? [
+                      {
+                          label: 'Edit',
+                          type: 'link',
+                          href: (item) => route('dashboard.posts.edit', item.slug),
+                      },
+                  ]
+                : []),
         ];
 
         setActions(customActions);
@@ -114,28 +120,30 @@ export default function index({ posts }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Post'}
-                                    URL={route('dashboard.posts.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Posts Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Post'}
+                                        URL={route('dashboard.posts.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -148,6 +156,8 @@ export default function index({ posts }) {
                                 BulkDeleteRoute={'dashboard.posts.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.posts.destroy'}
                                 SearchRoute={'dashboard.posts.index'}
+                                DeleteAction={can('Posts Delete')}
+                                canSelect={can('Posts Edit')}
                                 Search={false}
                                 items={posts}
                                 props={props}

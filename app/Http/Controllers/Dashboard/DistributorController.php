@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Distributors\Interface\IDistributorRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class DistributorController extends Controller
+class DistributorController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Distributors View', ['only' => 'index']),
+            new Middleware('permission:Distributors View', ['only' => 'show']),
+            new Middleware('permission:Distributors Create', ['only' => 'create']),
+            new Middleware('permission:Distributors Create', ['only' => 'store']),
+            new Middleware('permission:Distributors Edit', ['only' => 'edit']),
+            new Middleware('permission:Distributors Edit', ['only' => 'update']),
+            new Middleware('permission:Distributors Delete', ['only' => 'destroy']),
+            new Middleware('permission:Distributors Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private IDistributorRepository $distributor
     ) {}

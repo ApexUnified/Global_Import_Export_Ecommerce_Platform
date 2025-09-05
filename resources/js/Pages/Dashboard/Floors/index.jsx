@@ -6,6 +6,7 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ floors }) {
     // Bulk Delete Form Data
@@ -54,28 +55,30 @@ export default function index({ floors }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Floor'}
-                                    URL={route('dashboard.floors.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Floors Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Floor'}
+                                        URL={route('dashboard.floors.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -87,8 +90,10 @@ export default function index({ floors }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.floors.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.floors.destroy'}
-                                EditRoute={'dashboard.floors.edit'}
+                                EditRoute={can('Floors Edit') ? 'dashboard.floors.edit' : null}
                                 SearchRoute={'dashboard.floors.index'}
+                                DeleteAction={can('Floors Delete')}
+                                canSelect={can('Floors Delete')}
                                 Search={true}
                                 DefaultSearchInput={true}
                                 items={floors}

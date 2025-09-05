@@ -5,10 +5,25 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class FloorController extends Controller
+class FloorController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Floors View', ['only' => 'index']),
+            new Middleware('permission:Floors Create', ['only' => 'create']),
+            new Middleware('permission:Floors Create', ['only' => 'store']),
+            new Middleware('permission:Floors Edit', ['only' => 'edit']),
+            new Middleware('permission:Floors Edit', ['only' => 'update']),
+            new Middleware('permission:Floors Delete', ['only' => 'destroy']),
+            new Middleware('permission:Floors Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IFloorRepostitory $floor
     ) {}

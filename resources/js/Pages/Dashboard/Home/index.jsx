@@ -12,18 +12,13 @@ export default function Dashboard() {
             <Card
                 Content={
                     <>
-
-                        <div className="grid grid-cols-1 gap-5 my-10 sm:grid-cols-2 md:grid-cols-4">
-
+                        <div className="my-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
                             <Card
                                 Content={
                                     <>
-
-                                        <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[200px]">
+                                        <div className="relative min-h-[200px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                             <PlaceholderPattern />
                                         </div>
-
-
                                     </>
                                 }
                                 CustomCss="w-full p-3 min-h-[200px] bg-gray-900/10 dark:bg-gray-800"
@@ -31,12 +26,9 @@ export default function Dashboard() {
                             <Card
                                 Content={
                                     <>
-
-                                        <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[200px]">
+                                        <div className="relative min-h-[200px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                             <PlaceholderPattern />
                                         </div>
-
-
                                     </>
                                 }
                                 CustomCss="w-full p-3 min-h-[200px] bg-gray-900/10 dark:bg-gray-800"
@@ -45,12 +37,9 @@ export default function Dashboard() {
                             <Card
                                 Content={
                                     <>
-
-                                        <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[200px]">
+                                        <div className="relative min-h-[200px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                             <PlaceholderPattern />
                                         </div>
-
-
                                     </>
                                 }
                                 CustomCss="w-full p-3 min-h-[200px] bg-gray-900/10 dark:bg-gray-800"
@@ -59,24 +48,19 @@ export default function Dashboard() {
                             <Card
                                 Content={
                                     <>
-
-                                        <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[200px]">
+                                        <div className="relative min-h-[200px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                             <PlaceholderPattern />
                                         </div>
-
-
                                     </>
                                 }
                                 CustomCss="w-full p-3 min-h-[200px] bg-gray-900/10 dark:bg-gray-800"
                             />
-
-
 
                             <div className="md:col-span-2">
                                 <Card
                                     Content={
                                         <>
-                                            <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[300px]">
+                                            <div className="relative min-h-[300px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                                 <PlaceholderPattern />
                                             </div>
                                         </>
@@ -85,12 +69,11 @@ export default function Dashboard() {
                                 />
                             </div>
 
-
                             <div className="md:col-span-2">
                                 <Card
                                     Content={
                                         <>
-                                            <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[300px]">
+                                            <div className="relative min-h-[300px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                                 <PlaceholderPattern />
                                             </div>
                                         </>
@@ -98,14 +81,12 @@ export default function Dashboard() {
                                     CustomCss="w-full p-3 min-h-[300px] bg-gray-900/10 dark:bg-gray-800"
                                 />
                             </div>
-
-
 
                             <div className="md:col-span-4">
                                 <Card
                                     Content={
                                         <>
-                                            <div className="relative overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 p-6 min-h-[500px]">
+                                            <div className="relative min-h-[500px] overflow-hidden rounded-lg bg-gray-200 p-6 dark:bg-gray-900">
                                                 <PlaceholderPattern />
                                             </div>
                                         </>
@@ -114,8 +95,6 @@ export default function Dashboard() {
                                 />
                             </div>
                         </div>
-
-
                     </>
                 }
             />

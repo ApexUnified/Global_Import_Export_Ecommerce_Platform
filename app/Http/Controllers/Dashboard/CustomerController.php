@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Customers\Interface\ICustomerRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class CustomerController extends Controller
+class CustomerController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Customers View', ['only' => 'index']),
+            new Middleware('permission:Customers View', ['only' => 'show']),
+            new Middleware('permission:Customers Create', ['only' => 'create']),
+            new Middleware('permission:Customers Create', ['only' => 'store']),
+            new Middleware('permission:Customers Edit', ['only' => 'edit']),
+            new Middleware('permission:Customers Edit', ['only' => 'update']),
+            new Middleware('permission:Customers Delete', ['only' => 'destroy']),
+            new Middleware('permission:Customers Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private ICustomerRepository $customer
     ) {}

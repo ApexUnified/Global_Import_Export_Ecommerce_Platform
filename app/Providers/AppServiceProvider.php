@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
@@ -122,6 +123,10 @@ class AppServiceProvider extends ServiceProvider
         } catch (Exception $e) {
             info($e->getMessage());
         }
+
+        Gate::before(function ($user) {
+            return $user->roles()->pluck('name')->implode('') === 'Admin' ? true : false;
+        });
 
     }
 }

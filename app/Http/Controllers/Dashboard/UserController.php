@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Users\Interface\IUserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Users View', ['only' => 'index']),
+            new Middleware('permission:Users View', ['only' => 'show']),
+            new Middleware('permission:Users Create', ['only' => 'create']),
+            new Middleware('permission:Users Create', ['only' => 'store']),
+            new Middleware('permission:Users Edit', ['only' => 'edit']),
+            new Middleware('permission:Users Edit', ['only' => 'update']),
+            new Middleware('permission:Users Delete', ['only' => 'destroy']),
+            new Middleware('permission:Users Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private IUserRepository $user
     ) {}

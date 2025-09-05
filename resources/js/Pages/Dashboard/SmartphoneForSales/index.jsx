@@ -5,6 +5,7 @@ import BreadCrumb from '@/Components/BreadCrumb';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 export default function index({ smartphone_for_sales }) {
     // Bulk Delete Form Data
     const { props } = usePage();
@@ -77,28 +78,30 @@ export default function index({ smartphone_for_sales }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Smartphone For Sale'}
-                                    URL={route('dashboard.smartphone-for-sales.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Smartphone For Sales Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Smartphone For Sale'}
+                                        URL={route('dashboard.smartphone-for-sales.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -112,13 +115,19 @@ export default function index({ smartphone_for_sales }) {
                                     'dashboard.smartphone-for-sales.destroybyselection'
                                 }
                                 SingleDeleteRoute={'dashboard.smartphone-for-sales.destroy'}
-                                EditRoute={'dashboard.smartphone-for-sales.edit'}
+                                EditRoute={
+                                    can('Smartphone For Sales Edit')
+                                        ? 'dashboard.smartphone-for-sales.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.smartphone-for-sales.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
                                 items={smartphone_for_sales}
                                 props={props}
                                 columns={columns}
+                                DeleteAction={can('Smartphone For Sales Delete')}
+                                canSelect={can('Smartphone For Sales Delete')}
                             />
                         </>
                     }

@@ -5,10 +5,23 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\PackageRecordings\Interface\IPackageRecordingsRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class PackageRecordingController extends Controller
+class PackageRecordingController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Package Recordings View', ['only' => 'index']),
+            new Middleware('permission:Package Recordings Create', ['only' => 'create']),
+            new Middleware('permission:Package Recordings Create', ['only' => 'store']),
+            new Middleware('permission:Package Recordings Delete', ['only' => 'destroy']),
+            new Middleware('permission:Package Recordings Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private IPackageRecordingsRepository $package_recording
     ) {}

@@ -7,6 +7,7 @@ import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
 import getContrastingColor from '@/Hooks/useColorContraster';
+import can from '@/Hooks/can';
 
 export default function index({ smartphones }) {
     // Bulk Delete Form Data
@@ -134,28 +135,30 @@ export default function index({ smartphones }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Smart Phone'}
-                                    URL={route('dashboard.smartphones.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Smartphones Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Smart Phone'}
+                                        URL={route('dashboard.smartphones.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -167,7 +170,9 @@ export default function index({ smartphones }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.smartphones.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.smartphones.destroy'}
-                                EditRoute={'dashboard.smartphones.edit'}
+                                EditRoute={
+                                    can('Smartphones Edit') ? 'dashboard.smartphones.edit' : null
+                                }
                                 SearchRoute={'dashboard.smartphones.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -175,6 +180,8 @@ export default function index({ smartphones }) {
                                 props={props}
                                 columns={columns}
                                 customActions={actions}
+                                DeleteAction={can('Smartphones Delete')}
+                                canSelect={can('Smartphones Delete')}
                             />
                         </>
                     }

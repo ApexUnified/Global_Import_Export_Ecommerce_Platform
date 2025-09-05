@@ -5,10 +5,23 @@ namespace App\Http\Controllers\Dashboard\Commissions;
 use App\Http\Controllers\Controller;
 use App\Repositories\Commissions\SupplierCommissions\Interface\ISupplierCommissionRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class SupplierCommissionController extends Controller
+class SupplierCommissionController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Supplier Commissions View', ['only' => 'index']),
+            new Middleware('permission:Supplier Commissions Edit', ['only' => 'edit']),
+            new Middleware('permission:Supplier Commissions Edit', ['only' => 'update']),
+            new Middleware('permission:Supplier Commissions Delete', ['only' => 'destroy']),
+            new Middleware('permission:Supplier Commissions Delete', ['only' => 'destroyBySelection']),
+        ];
+    }
+
     public function __construct(
         private ISupplierCommissionRepository $supplier_commission
     ) {}

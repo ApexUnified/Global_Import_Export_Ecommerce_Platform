@@ -6,6 +6,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ bookmarks }) {
     // Bulk Delete Form Data
@@ -79,6 +80,8 @@ export default function index({ bookmarks }) {
                                 SingleDeleteRoute={'dashboard.bookmarks.destroy'}
                                 Search={false}
                                 DefaultSearchInput={false}
+                                DeleteAction={can('Bookmarks Delete')}
+                                canSelect={can('Bookmarks Delete')}
                                 items={bookmarks}
                                 props={props}
                                 columns={columns}

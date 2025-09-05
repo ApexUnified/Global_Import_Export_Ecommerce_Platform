@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Suppliers\Interface\ISupplierRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class SupplierController extends Controller
+class SupplierController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Suppliers View', ['only' => 'index']),
+            new Middleware('permission:Suppliers View', ['only' => 'show']),
+            new Middleware('permission:Suppliers Create', ['only' => 'create']),
+            new Middleware('permission:Suppliers Create', ['only' => 'store']),
+            new Middleware('permission:Suppliers Edit', ['only' => 'edit']),
+            new Middleware('permission:Suppliers Edit', ['only' => 'update']),
+            new Middleware('permission:Suppliers Delete', ['only' => 'destroy']),
+            new Middleware('permission:Suppliers Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private ISupplierRepository $supplier
     ) {}

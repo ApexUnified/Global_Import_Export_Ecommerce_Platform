@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             FloorSeeder::class,
             UserSeeder::class,
-            CountrySeeder::class
+            CountrySeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

@@ -6,6 +6,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ customers }) {
     // Bulk Delete Form Data
@@ -127,29 +128,30 @@ export default function index({ customers }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Customer'}
-                                    URL={route('dashboard.customers.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
-
+                            {can('Customers Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Customer'}
+                                        URL={route('dashboard.customers.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
                                 setSingleSelectedId={setSingleSelectedId}
@@ -160,7 +162,9 @@ export default function index({ customers }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.customers.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.customers.destroy'}
-                                EditRoute={'dashboard.customers.edit'}
+                                EditRoute={
+                                    can('Customers Edit') ? 'dashboard.customers.edit' : null
+                                }
                                 SearchRoute={'dashboard.customers.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -168,6 +172,8 @@ export default function index({ customers }) {
                                 props={props}
                                 columns={columns}
                                 customActions={actions}
+                                DeleteAction={can('Customers Delete')}
+                                canSelect={can('Customers Delete')}
                             />
                         </>
                     }

@@ -6,6 +6,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 
 import { useEffect, useState } from 'react';
+import can from '@/Hooks/can';
 
 export default function index({ reward_points }) {
     // Bulk Delete Form Data
@@ -88,28 +89,30 @@ export default function index({ reward_points }) {
                 <Card
                     Content={
                         <>
-                            <div className="my-3 flex flex-wrap justify-end">
-                                <LinkButton
-                                    Text={'Create Reward point'}
-                                    URL={route('dashboard.reward-points.create')}
-                                    Icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
+                            {can('Reward Points Create') && (
+                                <div className="my-3 flex flex-wrap justify-end">
+                                    <LinkButton
+                                        Text={'Create Reward point'}
+                                        URL={route('dashboard.reward-points.create')}
+                                        Icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                            )}
 
                             <Table
                                 setBulkSelectedIds={setBulkSelectedIds}
@@ -121,7 +124,11 @@ export default function index({ reward_points }) {
                                 SingleDeleteMethod={SingleDelete}
                                 BulkDeleteRoute={'dashboard.reward-points.destroybyselection'}
                                 SingleDeleteRoute={'dashboard.reward-points.destroy'}
-                                EditRoute={'dashboard.reward-points.edit'}
+                                EditRoute={
+                                    can('Reward Points Edit')
+                                        ? 'dashboard.reward-points.edit'
+                                        : null
+                                }
                                 SearchRoute={'dashboard.reward-points.index'}
                                 Search={true}
                                 DefaultSearchInput={true}
@@ -129,6 +136,8 @@ export default function index({ reward_points }) {
                                 props={props}
                                 customActions={actions}
                                 columns={columns}
+                                DeleteAction={can('Reward Points Delete')}
+                                canSelect={can('Reward Points Delete')}
                             />
                         </>
                     }

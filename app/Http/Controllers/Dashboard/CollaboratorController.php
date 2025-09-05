@@ -5,10 +5,27 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Repositories\Collaborators\Interface\ICollaboratorRepository;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 
-class CollaboratorController extends Controller
+class CollaboratorController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:Collaborators View', ['only' => 'index']),
+            new Middleware('permission:Collaborators View', ['only' => 'show']),
+            new Middleware('permission:Collaborators Create', ['only' => 'create']),
+            new Middleware('permission:Collaborators Create', ['only' => 'store']),
+            new Middleware('permission:Collaborators Edit', ['only' => 'edit']),
+            new Middleware('permission:Collaborators Edit', ['only' => 'update']),
+            new Middleware('permission:Collaborators Delete', ['only' => 'destroy']),
+            new Middleware('permission:Collaborators Delete', ['only' => 'destroyBySelection']),
+
+        ];
+    }
+
     public function __construct(
         private ICollaboratorRepository $collaborator
     ) {}
