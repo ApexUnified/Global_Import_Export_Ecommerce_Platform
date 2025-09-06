@@ -37,7 +37,7 @@ class Order extends Model
 
     public function getAddedAtAttribute()
     {
-        return $this->created_at->format('Y-m-d');
+        return ! empty($this->created_at) ? $this->created_at->format('Y-m-d') : null;
     }
 
     // RelationShips

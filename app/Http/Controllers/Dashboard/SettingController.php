@@ -68,7 +68,9 @@ class SettingController extends Controller
     {
         $roles = $this->setting->getAllRoles();
 
-        return Inertia::render('Dashboard/Settings/Roles/index', compact('roles'));
+        $can_view_permission_module = app()->isLocal();
+
+        return Inertia::render('Dashboard/Settings/Roles/index', compact('roles', 'can_view_permission_module'));
     }
 
     public function roleCreate()

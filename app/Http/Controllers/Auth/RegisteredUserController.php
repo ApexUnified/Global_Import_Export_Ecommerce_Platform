@@ -49,6 +49,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->syncRoles('Customer');
         Auth::login($user);
 
         // Checking User Model Implements_MustVerifyEmail Inerface

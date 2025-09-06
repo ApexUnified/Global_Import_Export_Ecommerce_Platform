@@ -18,6 +18,8 @@ use App\Repositories\Commissions\SupplierCommissions\Interface\ISupplierCommissi
 use App\Repositories\Commissions\SupplierCommissions\Repository\SupplierCommissionRepository;
 use App\Repositories\Customers\Interface\ICustomerRepository;
 use App\Repositories\Customers\Repository\CustomerRepository;
+use App\Repositories\Dashboard\Interface\IDashboardRepository;
+use App\Repositories\Dashboard\Repositories\DashboardRepository;
 use App\Repositories\Distributors\Interface\IDistributorRepository;
 use App\Repositories\Distributors\Repository\DistributorRepository;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
@@ -71,6 +73,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ISupplierCommissionRepository::class, SupplierCommissionRepository::class);
         $this->app->bind(ICollaboratorCommissionRepository::class, CollaboratorCommissionRepository::class);
         $this->app->bind(IDistributorCommissionRepository::class, DistributorCommissionRepository::class);
+        $this->app->bind(IDashboardRepository::class, DashboardRepository::class);
 
     }
 

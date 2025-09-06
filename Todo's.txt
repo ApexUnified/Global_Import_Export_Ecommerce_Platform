@@ -247,6 +247,10 @@ This milestone includes all dynamic settings and global configuration features r
     )
 
 6. Charts Setup on Dashboard's Home Page
+ -> 1. Performance of collaborators ✅, distributors ✅, and suppliers ✅
+    2. New vs. returning customers ratio: to identify repurchase rate ✅
+    3. Daily/weekly sales trends: show not only order quantity but also sales amount for clearer status tracking ✅
+    4. Shipping status: percentage of orders completed, in transit, or delayed ✅
 
 5. Meta API Credentials ✅
 - Update and store Meta (Facebook/Instagram) credentials dynamically

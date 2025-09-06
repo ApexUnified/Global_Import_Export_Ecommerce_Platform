@@ -7,18 +7,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Country extends Model
 {
-    protected $fillable = ['name','iso_code','is_active'];
-
-
-
+    protected $fillable = ['name', 'iso_code', 'is_active'];
 
     // Attributes
     protected $appends = ['added_at'];
+
     public function getAddedAtAttribute()
     {
-        return $this->created_at->format('Y-m-d');
+        return ! empty($this->created_at) ? $this->created_at->format('Y-m-d') : null;
     }
-
 
     // RelationShips
     // public function special_countries() : HasMany
