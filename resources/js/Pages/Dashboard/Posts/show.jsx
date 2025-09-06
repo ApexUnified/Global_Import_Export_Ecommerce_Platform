@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrumb from '@/Components/BreadCrumb';
@@ -107,12 +107,24 @@ export default function view({ post }) {
                                                         (img, index) =>
                                                             img && (
                                                                 <SwiperSlide key={`img-${index}`}>
-                                                                    <img
-                                                                        src={img}
-                                                                        alt={`Image ${index + 1}`}
-                                                                        loading="lazy"
-                                                                        className="h-full w-full select-none object-cover"
-                                                                    />
+                                                                    <div className="relative flex h-full w-full items-center justify-center">
+                                                                        {/* Blurred background filler */}
+                                                                        <img
+                                                                            src={img}
+                                                                            alt=""
+                                                                            aria-hidden="true"
+                                                                            className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
+                                                                        />
+
+                                                                        {/* Actual image */}
+                                                                        <img
+                                                                            src={img}
+                                                                            alt={`Image ${index + 1}`}
+                                                                            loading="lazy"
+                                                                            className="relative z-10 h-full w-auto object-contain"
+                                                                        />
+                                                                    </div>
+
                                                                     <div className="swiper-lazy-preloader dark:swiper-lazy-preloader-white"></div>
                                                                 </SwiperSlide>
                                                             ),
@@ -122,18 +134,30 @@ export default function view({ post }) {
                                                         (vid, index) =>
                                                             vid && (
                                                                 <SwiperSlide key={`vid-${index}`}>
-                                                                    <video
-                                                                        controls
-                                                                        controlsList="nodownload"
-                                                                        className="h-full w-full select-none object-cover"
-                                                                    >
-                                                                        <source
+                                                                    <div className="relative flex h-full w-full items-center justify-center">
+                                                                        {/* Blurred video background */}
+                                                                        <video
                                                                             src={vid}
-                                                                            type="video/mp4"
+                                                                            className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
+                                                                            muted
+                                                                            loop
+                                                                            playsInline
                                                                         />
-                                                                        Your browser does not
-                                                                        support the video tag.
-                                                                    </video>
+
+                                                                        {/* Foreground video */}
+                                                                        <video
+                                                                            controls
+                                                                            controlsList="nodownload"
+                                                                            className="relative z-10 h-full w-auto object-contain pb-7"
+                                                                        >
+                                                                            <source
+                                                                                src={vid}
+                                                                                type="video/mp4"
+                                                                            />
+                                                                            Your browser does not
+                                                                            support the video tag.
+                                                                        </video>
+                                                                    </div>
                                                                 </SwiperSlide>
                                                             ),
                                                     )}
