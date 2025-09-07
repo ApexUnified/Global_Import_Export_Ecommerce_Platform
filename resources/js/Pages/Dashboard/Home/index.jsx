@@ -54,7 +54,7 @@ export default function Dashboard({
     const isDark = useDarkMode();
     const isMobile = window.innerWidth < 640;
     const orders_chart_data = {
-        labels: months, // ["January", "February", "March", ...]
+        labels: months,
         datasets: [
             {
                 label: 'Orders',
@@ -69,7 +69,6 @@ export default function Dashboard({
                 data: Object.values(total_sales),
                 borderColor: 'rgb(16, 185, 129)',
                 backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                yAxisID: 'y1',
                 tension: 0.4,
                 fill: true,
             },
@@ -80,7 +79,7 @@ export default function Dashboard({
         maintainAspectRatio: false,
         responsive: true,
         layout: {
-            padding: { top: 20, bottom: 20, left: 20, right: 50 },
+            padding: { top: 20, bottom: 20, left: 20, right: 60 },
         },
         plugins: {
             legend: {
@@ -113,7 +112,7 @@ export default function Dashboard({
                 ticks: {
                     color: isDark ? '#fff' : '#000',
                     autoSkip: true,
-                    maxRotation: 30,
+                    maxRotation: isMobile ? 0 : 30,
                     minRotation: 0,
                     padding: 5,
                     callback: function (value, index) {
@@ -131,6 +130,17 @@ export default function Dashboard({
                 ticks: {
                     color: isDark ? '#fff' : '#000',
                     padding: 8,
+                    callback: function (value, index, ticks) {
+                        const chart = this.chart;
+                        const salesVisible = chart.isDatasetVisible(
+                            chart.data.datasets.findIndex((ds) => ds.label === 'Sales'),
+                        );
+
+                        if (salesVisible) {
+                            return `${currency.symbol}${value}`;
+                        }
+                        return value;
+                    },
                 },
                 grid: {
                     color: isDark ? '#374151' : '#e5e7eb',
@@ -139,25 +149,7 @@ export default function Dashboard({
                     display: true,
 
                     color: isDark ? '#fff' : '#000',
-                    align: 'end',
                     padding: { top: 10, bottom: 10 },
-                },
-            },
-            y1: {
-                type: 'linear',
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                ticks: {
-                    color: isDark ? '#fff' : '#000',
-                    padding: 8,
-                    callback: (value) => `${currency.symbol}${value}`,
-                },
-                title: {
-                    display: true,
-
-                    color: isDark ? '#fff' : '#000',
-                    align: 'end',
-                    padding: { top: 20, bottom: 20 },
                 },
             },
         },
