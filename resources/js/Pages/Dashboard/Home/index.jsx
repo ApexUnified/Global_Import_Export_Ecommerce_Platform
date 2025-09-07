@@ -52,7 +52,7 @@ export default function Dashboard({
 }) {
     const { auth, currency } = usePage().props;
     const isDark = useDarkMode();
-
+    const isMobile = window.innerWidth < 640;
     const orders_chart_data = {
         labels: months,
         datasets: [
@@ -91,14 +91,16 @@ export default function Dashboard({
                 text: 'Monthly Orders Analytics',
                 color: isDark ? '#fff' : '#000',
             },
-            tooltip: {
-                callbacks: {
-                    label: function (context) {
-                        if (context.dataset.label === 'Sales') {
-                            return `${currency.symbol}${context.formattedValue}`;
-                        }
-                        return context.formattedValue;
-                    },
+            callbacks: {
+                label: function (context) {
+                    const datasetLabel = context.dataset.label || '';
+                    const value = context.formattedValue;
+
+                    if (datasetLabel === 'Sales') {
+                        return `${datasetLabel}: ${currency.symbol}${value}`;
+                    }
+
+                    return `${datasetLabel}: ${value}`;
                 },
             },
         },
@@ -216,8 +218,8 @@ export default function Dashboard({
             {
                 label: 'Orders',
                 data: collaborators_performance.map((c) => c.total_orders),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(13, 148, 136, 0.8)',
+                borderColor: 'rgb(13, 148, 136)',
                 borderWidth: 1,
             },
             {
@@ -226,55 +228,56 @@ export default function Dashboard({
                 backgroundColor: 'rgba(16, 185, 129, 0.8)',
                 borderColor: 'rgb(16, 185, 129)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
-
             {
                 label: 'Paid Commissions',
                 data: collaborators_performance.map((c) => c.paid_commissions),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)', // blue-500
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
                 borderColor: 'rgb(59, 130, 246)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
             {
                 label: 'Unpaid Commissions',
                 data: collaborators_performance.map((c) => c.unpaid_commissions),
-                backgroundColor: 'rgba(239, 68, 68, 0.8)', // red-500
+                backgroundColor: 'rgba(239, 68, 68, 0.8)',
                 borderColor: 'rgb(239, 68, 68)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
         ],
     };
 
     const collaborators_performance_options = {
+        indexAxis: 'y',
         maintainAspectRatio: false,
         responsive: true,
+        layout: {
+            padding: { left: 10, right: 20, top: 20, bottom: 20 },
+        },
         plugins: {
             legend: {
                 position: 'top',
                 labels: {
                     color: isDark ? '#fff' : '#000',
+                    boxWidth: 15,
+                    font: { size: isMobile ? 9 : 12 },
                 },
             },
             title: {
                 display: true,
                 text: 'Collaborators Performance',
                 color: isDark ? '#fff' : '#000',
+                font: { size: isMobile ? 11 : 14 },
             },
-            tooltip: {
-                callbacks: {
-                    label: function (context) {
-                        // format currency for sales + commissions
-                        if (
-                            context.dataset.label === 'Sales' ||
-                            context.dataset.label.includes('Commissions')
-                        ) {
-                            return `${currency.symbol}${context.formattedValue}`;
-                        }
-                        return context.formattedValue;
-                    },
+            callbacks: {
+                label: function (context) {
+                    const datasetLabel = context.dataset.label || '';
+                    const value = context.formattedValue;
+
+                    if (datasetLabel === 'Sales' || datasetLabel.includes('Commissions')) {
+                        return `${datasetLabel}: ${currency.symbol}${value}`;
+                    }
+
+                    return `${datasetLabel}: ${value}`;
                 },
             },
         },
@@ -282,108 +285,107 @@ export default function Dashboard({
             x: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
+                    font: { size: isMobile ? 9 : 12 },
+                    callback: function (value) {
+                        return `${currency.symbol}${value}`;
+                    },
                 },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
+                title: {
+                    display: true,
+                    text: 'Orders / Sales / Commissions',
+                    color: isDark ? '#fff' : '#000',
                 },
             },
             y: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
-                },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
-                },
-                title: {
-                    display: true,
-                    text: 'Orders',
-                    color: isDark ? '#fff' : '#000',
-                },
-            },
-            y1: {
-                type: 'linear',
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                ticks: {
-                    color: isDark ? '#fff' : '#000',
-                    callback: function (value) {
-                        return `${currency.symbol}${value}`;
+                    font: { size: isMobile ? 8 : 12 },
+                    autoSkip: false,
+                    maxRotation: 0,
+                    minRotation: 0,
+                    callback: function (value, index) {
+                        const label = collaborators_performance[index]?.name || value;
+                        return isMobile
+                            ? label.length > 12
+                                ? label.slice(0, 12) + '…'
+                                : label
+                            : label.length > 20
+                              ? label.slice(0, 20) + '…'
+                              : label;
                     },
                 },
-                title: {
-                    display: true,
-                    text: 'Sales / Commissions',
-                    color: isDark ? '#fff' : '#000',
-                },
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
             },
         },
     };
 
     const distributors_performance_data = {
-        labels: distributors_performance.map((c) => c.name),
+        labels: distributors_performance.map((d) => d.name),
         datasets: [
             {
                 label: 'Orders',
-                data: distributors_performance.map((c) => c.total_orders),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderColor: 'rgb(59, 130, 246)',
+                data: distributors_performance.map((d) => d.total_orders),
+                backgroundColor: 'rgba(13, 148, 136, 0.8)',
+                borderColor: 'rgb(13, 148, 136)',
                 borderWidth: 1,
             },
             {
                 label: 'Sales',
-                data: distributors_performance.map((c) => c.total_sales),
+                data: distributors_performance.map((d) => d.total_sales),
                 backgroundColor: 'rgba(16, 185, 129, 0.8)',
                 borderColor: 'rgb(16, 185, 129)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
-
             {
                 label: 'Paid Commissions',
-                data: distributors_performance.map((c) => c.paid_commissions),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                data: distributors_performance.map((d) => d.paid_commissions),
+                backgroundColor: 'rgba(59, 130, 246, 0.8)', // blue-500
                 borderColor: 'rgb(59, 130, 246)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
             {
                 label: 'Unpaid Commissions',
-                data: distributors_performance.map((c) => c.unpaid_commissions),
-                backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                data: distributors_performance.map((d) => d.unpaid_commissions),
+                backgroundColor: 'rgba(239, 68, 68, 0.8)', // red-500
                 borderColor: 'rgb(239, 68, 68)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
         ],
     };
 
     const distributors_performance_options = {
+        indexAxis: 'y',
         maintainAspectRatio: false,
         responsive: true,
+        layout: {
+            padding: { left: 10, right: 20, top: 20, bottom: 20 },
+        },
         plugins: {
             legend: {
                 position: 'top',
                 labels: {
                     color: isDark ? '#fff' : '#000',
+                    boxWidth: 15,
+                    font: { size: isMobile ? 9 : 12 },
                 },
             },
             title: {
                 display: true,
                 text: 'Distributors Performance',
                 color: isDark ? '#fff' : '#000',
+                font: { size: isMobile ? 11 : 14 },
             },
-            tooltip: {
-                callbacks: {
-                    label: function (context) {
-                        // format currency for sales + commissions
-                        if (
-                            context.dataset.label === 'Sales' ||
-                            context.dataset.label.includes('Commissions')
-                        ) {
-                            return `${currency.symbol}${context.formattedValue}`;
-                        }
-                        return context.formattedValue;
-                    },
+            callbacks: {
+                label: function (context) {
+                    const datasetLabel = context.dataset.label || '';
+                    const value = context.formattedValue;
+
+                    if (datasetLabel === 'Sales' || datasetLabel.includes('Commissions')) {
+                        return `${datasetLabel}: ${currency.symbol}${value}`;
+                    }
+
+                    return `${datasetLabel}: ${value}`;
                 },
             },
         },
@@ -391,39 +393,37 @@ export default function Dashboard({
             x: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
+                    font: { size: isMobile ? 9 : 12 },
+                    callback: function (value) {
+                        return `${currency.symbol}${value}`;
+                    },
                 },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
+                title: {
+                    display: true,
+                    text: 'Orders / Sales / Commissions',
+                    color: isDark ? '#fff' : '#000',
                 },
             },
             y: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
-                },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
-                },
-                title: {
-                    display: true,
-                    text: 'Orders',
-                    color: isDark ? '#fff' : '#000',
-                },
-            },
-            y1: {
-                type: 'linear',
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                ticks: {
-                    color: isDark ? '#fff' : '#000',
-                    callback: function (value) {
-                        return `${currency.symbol}${value}`;
+                    font: { size: isMobile ? 8 : 12 },
+                    autoSkip: false,
+                    maxRotation: 0,
+                    minRotation: 0,
+                    callback: function (value, index) {
+                        const label = distributors_performance[index]?.name || value;
+                        return isMobile
+                            ? label.length > 12
+                                ? label.slice(0, 12) + '…'
+                                : label
+                            : label.length > 20
+                              ? label.slice(0, 20) + '…'
+                              : label;
                     },
                 },
-                title: {
-                    display: true,
-                    text: 'Sales / Commissions',
-                    color: isDark ? '#fff' : '#000',
-                },
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
             },
         },
     };
@@ -434,8 +434,8 @@ export default function Dashboard({
             {
                 label: 'Orders',
                 data: suppliers_performance.map((c) => c.total_orders),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(13, 148, 136, 0.8)',
+                borderColor: 'rgb(13, 148, 136)',
                 borderWidth: 1,
             },
             {
@@ -444,16 +444,13 @@ export default function Dashboard({
                 backgroundColor: 'rgba(16, 185, 129, 0.8)',
                 borderColor: 'rgb(16, 185, 129)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
-
             {
                 label: 'Paid Commissions',
                 data: suppliers_performance.map((c) => c.paid_commissions),
                 backgroundColor: 'rgba(59, 130, 246, 0.8)',
                 borderColor: 'rgb(59, 130, 246)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
             {
                 label: 'Unpaid Commissions',
@@ -461,37 +458,43 @@ export default function Dashboard({
                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
                 borderColor: 'rgb(239, 68, 68)',
                 borderWidth: 1,
-                yAxisID: 'y1',
             },
         ],
     };
 
     const suppliers_performance_options = {
+        indexAxis: 'y',
         maintainAspectRatio: false,
         responsive: true,
+        layout: {
+            padding: { left: 10, right: 20, top: 20, bottom: 20 },
+        },
         plugins: {
             legend: {
                 position: 'top',
                 labels: {
                     color: isDark ? '#fff' : '#000',
+                    boxWidth: 15,
+                    font: { size: isMobile ? 9 : 12 },
                 },
             },
             title: {
                 display: true,
                 text: 'Suppliers Performance',
                 color: isDark ? '#fff' : '#000',
+                font: { size: isMobile ? 11 : 14 },
             },
             tooltip: {
                 callbacks: {
                     label: function (context) {
-                        // format currency for sales + commissions
-                        if (
-                            context.dataset.label === 'Sales' ||
-                            context.dataset.label.includes('Commissions')
-                        ) {
-                            return `${currency.symbol}${context.formattedValue}`;
+                        const datasetLabel = context.dataset.label || '';
+                        const value = context.formattedValue;
+
+                        if (datasetLabel === 'Sales' || datasetLabel.includes('Commissions')) {
+                            return `${datasetLabel}: ${currency.symbol}${value}`;
                         }
-                        return context.formattedValue;
+
+                        return `${datasetLabel}: ${value}`;
                     },
                 },
             },
@@ -500,39 +503,35 @@ export default function Dashboard({
             x: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
+                    font: { size: isMobile ? 9 : 12 },
+                    callback: function (value) {
+                        return `${currency.symbol}${value}`;
+                    },
                 },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
+                title: {
+                    display: true,
+                    text: 'Orders / Sales / Commissions',
+                    color: isDark ? '#fff' : '#000',
                 },
             },
             y: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
-                },
-                grid: {
-                    color: isDark ? '#374151' : '#e5e7eb',
-                },
-                title: {
-                    display: true,
-                    text: 'Orders',
-                    color: isDark ? '#fff' : '#000',
-                },
-            },
-            y1: {
-                type: 'linear',
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                ticks: {
-                    color: isDark ? '#fff' : '#000',
+                    font: { size: isMobile ? 8 : 12 },
+                    autoSkip: false, // show all labels
                     callback: function (value) {
-                        return `${currency.symbol}${value}`;
+                        const label = this.getLabelForValue(value);
+                        return isMobile
+                            ? label.length > 12
+                                ? label.slice(0, 12) + '…'
+                                : label
+                            : label.length > 20
+                              ? label.slice(0, 20) + '…'
+                              : label;
                     },
                 },
-                title: {
-                    display: true,
-                    text: 'Sales / Commissions',
-                    color: isDark ? '#fff' : '#000',
-                },
+                grid: { color: isDark ? '#374151' : '#e5e7eb' },
             },
         },
     };
@@ -755,8 +754,9 @@ export default function Dashboard({
 
                                 {/* Orders + Sales Line Chart */}
                                 <div className="my-10 grid grid-cols-1 gap-5">
-                                    <div className="relative h-[400px] w-full rounded-xl bg-white p-6 text-center shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
-                                        <div className="absolute right-4 top-4">
+                                    <div className="relative h-[400px] w-full rounded-xl bg-white p-6 shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200"></h2>
                                             <select
                                                 onChange={(e) => {
                                                     router.reload({
