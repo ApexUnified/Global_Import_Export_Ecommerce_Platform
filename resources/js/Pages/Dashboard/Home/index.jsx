@@ -79,7 +79,7 @@ export default function Dashboard({
         maintainAspectRatio: false,
         responsive: true,
         layout: {
-            padding: { top: 20, bottom: 20, left: 20, right: 60 },
+            padding: { top: 20, bottom: 50, left: 0, right: 0 },
         },
         plugins: {
             legend: {
@@ -149,7 +149,7 @@ export default function Dashboard({
                     display: true,
 
                     color: isDark ? '#fff' : '#000',
-                    padding: { top: 10, bottom: 10 },
+                    padding: { top: 5, bottom: 5 },
                 },
             },
         },
@@ -771,33 +771,29 @@ export default function Dashboard({
                                 </div>
 
                                 {/* Orders + Sales Line Chart */}
-                                <div className="my-10 grid grid-cols-1 gap-5">
-                                    <div className="relative h-[400px] w-full rounded-xl bg-white p-6 shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
-                                        <div className="mb-4 flex items-center justify-between">
-                                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200"></h2>
-                                            <select
-                                                onChange={(e) => {
-                                                    router.reload({
-                                                        data: { months_count: e.target.value },
-                                                        only: [
-                                                            'total_orders',
-                                                            'total_sales',
-                                                            'months',
-                                                        ],
-                                                        preserveState: true,
-                                                        replace: true,
-                                                        preserveUrl: true,
-                                                    });
-                                                }}
-                                                className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            >
-                                                <option value="12">Last 12 Months</option>
-                                                <option value="6">Last 6 Months</option>
-                                                <option value="3">Last 3 Months</option>
-                                                <option value="2">Last Month</option>
-                                            </select>
-                                        </div>
 
+                                <div className="mb-1 flex w-full justify-end">
+                                    <select
+                                        onChange={(e) => {
+                                            router.reload({
+                                                data: { months_count: e.target.value },
+                                                only: ['total_orders', 'total_sales', 'months'],
+                                                preserveState: true,
+                                                replace: true,
+                                                preserveUrl: true,
+                                            });
+                                        }}
+                                        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                    >
+                                        <option value="12">Last 12 Months</option>
+                                        <option value="6">Last 6 Months</option>
+                                        <option value="3">Last 3 Months</option>
+                                        <option value="2">Last Month</option>
+                                    </select>
+                                </div>
+
+                                <div className="my-2 grid grid-cols-1 gap-5">
+                                    <div className="relative h-[500px] w-full rounded-xl bg-white p-6 shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
                                         <Line
                                             data={orders_chart_data}
                                             options={orders_chart_options}
