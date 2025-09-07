@@ -54,7 +54,7 @@ export default function Dashboard({
     const isDark = useDarkMode();
     const isMobile = window.innerWidth < 640;
     const orders_chart_data = {
-        labels: months,
+        labels: months, // ["January", "February", "March", ...]
         datasets: [
             {
                 label: 'Orders',
@@ -79,6 +79,9 @@ export default function Dashboard({
     const orders_chart_options = {
         maintainAspectRatio: false,
         responsive: true,
+        layout: {
+            padding: { top: 20, bottom: 20, left: 20, right: 50 },
+        },
         plugins: {
             legend: {
                 position: 'top',
@@ -91,16 +94,17 @@ export default function Dashboard({
                 text: 'Monthly Orders Analytics',
                 color: isDark ? '#fff' : '#000',
             },
-            callbacks: {
-                label: function (context) {
-                    const datasetLabel = context.dataset.label || '';
-                    const value = context.formattedValue;
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const datasetLabel = context.dataset.label || '';
+                        const value = context.formattedValue;
 
-                    if (datasetLabel === 'Sales') {
-                        return `${datasetLabel}: ${currency.symbol}${value}`;
-                    }
-
-                    return `${datasetLabel}: ${value}`;
+                        if (datasetLabel === 'Sales') {
+                            return `${datasetLabel}: ${currency.symbol}${value}`;
+                        }
+                        return `${datasetLabel}: ${value}`;
+                    },
                 },
             },
         },
@@ -108,31 +112,53 @@ export default function Dashboard({
             x: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
+                    autoSkip: true,
+                    maxRotation: 30,
+                    minRotation: 0,
+                    padding: 5,
+                    callback: function (value, index) {
+                        const label = months[index];
+                        return isMobile ? label.substring(0, 3) : label;
+                    },
                 },
                 grid: {
                     color: isDark ? '#374151' : '#e5e7eb',
+                    drawTicks: false,
+                    clip: false,
                 },
             },
             y: {
                 ticks: {
                     color: isDark ? '#fff' : '#000',
+                    padding: 8,
                 },
                 grid: {
                     color: isDark ? '#374151' : '#e5e7eb',
                 },
-                title: { display: true, text: 'Orders', color: isDark ? '#fff' : '#000' },
+                title: {
+                    display: true,
+
+                    color: isDark ? '#fff' : '#000',
+                    align: 'end',
+                    padding: { top: 10, bottom: 10 },
+                },
             },
             y1: {
                 type: 'linear',
                 position: 'right',
-                grid: { drawOnChartArea: false }, // don’t overlap with y
+                grid: { drawOnChartArea: false },
                 ticks: {
                     color: isDark ? '#fff' : '#000',
-                    callback: function (value) {
-                        return `${currency.symbol}${value}`; // axis formatting
-                    },
+                    padding: 8,
+                    callback: (value) => `${currency.symbol}${value}`,
                 },
-                title: { display: true, text: 'Sales', color: isDark ? '#fff' : '#000' },
+                title: {
+                    display: true,
+
+                    color: isDark ? '#fff' : '#000',
+                    align: 'end',
+                    padding: { top: 20, bottom: 20 },
+                },
             },
         },
     };
