@@ -22,9 +22,12 @@ use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Website\HomeController as WebsiteHomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/dashboard')->name('home');
+// Website Routes
+
+Route::get('/', [WebsiteHomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

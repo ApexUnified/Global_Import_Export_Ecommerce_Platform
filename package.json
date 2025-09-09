@@ -43,6 +43,7 @@
         "react-qr-barcode-scanner": "^2.1.8",
         "react-qr-code": "^2.0.18",
         "react-select": "^5.10.2",
+        "react-toastify": "^11.0.5",
         "sweetalert2": "^11.22.2",
         "swiper": "^11.2.10",
         "tailwind-scrollbar": "^3.0.1"

@@ -22,6 +22,10 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user()));
         }
 
+        if ($request->user()->hasRole('Customer')) {
+            return redirect()->intended(route('home', absolute: false).'?verified=1')->with('success', 'Your email address has been successfully verified.');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false).'?verified=1')->with('success', 'Your email address has been successfully verified.');
     }
 }

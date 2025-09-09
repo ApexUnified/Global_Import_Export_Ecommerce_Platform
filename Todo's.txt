@@ -284,6 +284,7 @@ This milestone includes all dynamic settings and global configuration features r
 Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 
 - UI & UX for the website
+- Header Footer And Appbar For Mobile Preview  with Fully Responsiveness ✅
 - PWA frontend integration for a mobile-friendly experience
 - Product listing and product detail pages
 - Customer checkout functionality
@@ -302,6 +303,7 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 	- https://docs.google.com/document/d/1c7F1ohFgv_-ndouw3_GKkP0G5B1noJp4AG-pHp0Al3M/edit?usp=sharing yesbigshop privacy policy and data deletion (english)
 
 - Cart Logic For Customers
+- Customer Cannot Visit Dashboard Logic ✅
 - Restricting Customer From Adding Items Who Belongs To Different Distributor
 - Logic To Restrict Customer From Visiting Dashboard
 - Overall Application Performance Enhancing

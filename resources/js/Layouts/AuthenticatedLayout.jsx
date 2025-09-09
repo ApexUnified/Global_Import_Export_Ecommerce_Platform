@@ -2,22 +2,18 @@ import Header from '@/partials/Header';
 import Overlay from '@/Components/Overlay';
 import Preloader from '@/Components/Preloader';
 import Sidebar from '@/partials/Sidebar';
-import { Link, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Toast from '@/Components/Toast';
 export default function AuthenticatedLayout({ children }) {
     // Global General Setting Prop
-    const { generalSetting } = usePage().props;
-    const { auth } = usePage().props;
+    const { auth, generalSetting, asset, flash } = usePage().props;
 
     useEffect(() => {
         if (!auth.user) {
             router.visit(route('login'));
         }
     }, [auth]);
-
-    // Global Asset Prop To Get asset() path it uses Laravel Default asset() Method
-    const { asset } = usePage().props;
 
     // Application Logo Sate With Default Images
     const [ApplicationLogoLight, setApplicationLogoLight] = useState(
@@ -41,9 +37,6 @@ export default function AuthenticatedLayout({ children }) {
 
     // Global Auth user Prop
     const user = usePage().props.auth.user;
-
-    // Global Flash Messages Prop Can be Assessble Via (flash.success || flash.error)
-    const { flash } = usePage().props;
 
     // Managing Loader State
     const [loaded, setLoaded] = useState(true);
@@ -82,7 +75,7 @@ export default function AuthenticatedLayout({ children }) {
                     ApplicationLogoDark={ApplicationLogoDark}
                 />
 
-                <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                <div className="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
                     <Overlay sidebarToggle={sidebarToggle} setSidebarToggle={setSidebarToggle} />
 
                     <Header

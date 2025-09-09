@@ -31,8 +31,8 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="flex w-full flex-1 flex-col px-4 md:my-5 lg:w-1/2">
-                <div className="mx-auto w-full max-w-md pt-10">
+            <div className="flex flex-col flex-1 w-full px-4 md:my-5 lg:w-1/2">
+                <div className="w-full max-w-md pt-10 mx-auto">
                     <Link
                         href={route('home')}
                         className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-white dark:hover:text-gray-300"
@@ -56,10 +56,10 @@ export default function Register() {
                         Back to Website
                     </Link>
                 </div>
-                <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
+                <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
                     <div>
                         <div className="mb-5 sm:mb-8">
-                            <h1 className="sm:text-title-md mb-2 text-4xl font-bold text-gray-800 dark:text-white">
+                            <h1 className="mb-2 text-4xl font-bold text-gray-800 sm:text-title-md dark:text-white">
                                 Register
                             </h1>
                             <p className="text-sm text-gray-500 dark:text-white">
@@ -154,15 +154,15 @@ export default function Register() {
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
-                                                    className="h-5 w-5"
                                                     viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
                                                     stroke="currentColor"
+                                                    className="size-6"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M16 14c2.21 0 4 1.79 4 4v2H4v-2c0-2.21 1.79-4 4-4h8zm0 0V9a4 4 0 10-8 0v5m8 0h6m-3-3v6"
+                                                        d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
                                                     />
                                                 </svg>
                                             }
@@ -173,7 +173,7 @@ export default function Register() {
                             </form>
 
                             <div className="mt-5">
-                                <p className="text-center text-sm font-normal text-gray-700 dark:text-white sm:text-start">
+                                <p className="text-sm font-normal text-center text-gray-700 dark:text-white sm:text-start">
                                     Already have an account?{' '}
                                     <Link
                                         href={route('login')}
