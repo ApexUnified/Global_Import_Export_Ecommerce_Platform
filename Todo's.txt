@@ -280,11 +280,36 @@ This milestone includes all dynamic settings and global configuration features r
 
 
 
-Remeanni8ng
+
+Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
+
+- UI & UX for the website
+- PWA frontend integration for a mobile-friendly experience
+- Product listing and product detail pages
+- Customer checkout functionality
+- On checkout: FB/Instagram connect (Meta OAuth) to store the user’s Meta user ID
+- After checkout: the user will see the associated bank details along with an upload receipt
+  input. After transferring the payment, the user uploads proof of payment. Once the admin confirms the payment, the order status is updated from “Pending” to “Paid,” and the user is
+  notified.
+- The user can then view their updated order status. When the admin changes the status to “Shipped” and adds courier details, the user will be able to see those details, along with any
+  packaging videos uploaded by the admin.
+- My Orders page: View order details, watch packaging videos, and download customer order invoice receipts
+- Posts module: Display all posts/blogs to users
+- Message Us FB/Instagram links shown on both the Checkout page and main Website
+- Country-based enabling of Meta OAuth through entries stored in Special Countries (e.g., Mongolia only)
+- (1) Privacy Policy and (2) Data Deletion Policy as separate pages on yesbigshop.com.
+	- https://docs.google.com/document/d/1d_0t4RXtx1Xrdj4U4KgTXFGfLaGZJ9Ykl5dyARDsBQU/edit?usp=sharing yesbigshop privacy policy and data deletion (korean)
+	- https://docs.google.com/document/d/1c7F1ohFgv_-ndouw3_GKkP0G5B1noJp4AG-pHp0Al3M/edit?usp=sharing yesbigshop privacy policy and data deletion (english)
+
+- Cart Logic For Customers
+- Restricting Customer From Adding Items Who Belongs To Different Distributor
+- Logic To Restrict Customer From Visiting Dashboard
+- Overall Application Performance Enhancing
+- Updating Robot.txt File For Exposing Just Website Routes On Google Search Engine (Currently It Exposes Our Dashboard)
 
 
-For website Order Flow
-Restrict Multiple products With Multiple Distributors Adding in cart and also restrictiug while ordering [Dashboard This Logic Done]
+
+
 Cart Item Remeaning
 Shcema
 Schema::create('cart_items', function (Blueprint $table) {
@@ -300,7 +325,14 @@ Schema::create('cart_items', function (Blueprint $table) {
 
 
 
-After Dashboard Completion I will Add This Logic As well with the Role Permission Restriction
-Collaborator read-only earnings list
-Supplier read-only earnings list
-Distributor read-only earnings list
+website design Refference
+https://upwork-usw2-prod-file-storage-wp3.s3.us-west-2.amazonaws.com/workplace/attachment/d27a76ce01d15ceb801bf11e651eff86?response-content-disposition=inline%3B%20filename%3D%22ysbs_2.pdf%22%3B%20filename%2A%3Dutf-8%27%27ysbs_2.pdf&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGgaCXVzLXdlc3QtMiJHMEUCIQCSFCbbxdu%2F9TNQIIevGcEo%2BuwVcD%2FXnN607fTYIJIgPgIgFhUQN8YaQDCbhyaDvRkjRu9aOpfnuxsQrMTFz8Dike0qmQUI0P%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw3Mzk5MzkxNzM4MTkiDC0FTgXY4WxkQv3TWyrtBOmr685%2BzEq9%2Bg6RG0lQ0F9yrMiziuPWAeNzuYTQvX01EXqh5DIvP2M69e0IocutGt1T3sHinrkRohdrTLVfxjYmnFdWKmYqu%2BkF9pE0eBpD3FqMgRRAzhLnSSQiQUDEbw1cnBvWJvhnRizyK%2BhGDfmpJC7L6Yl%2B8QDq6%2BlsRIaCWg96JtZSTfhkQ7ZQuGT2YctnbRF%2BQ8nOJslM36PERE0BFKFkR9cV6aEMdITGfUwnlS3NhHhcFbatsqYRohOEURDszeOO8eSy5UnvEOC3B%2FR3yHsy5XN8YDNih3yjvoShygJYwncuWSLYjhbZBwu%2FgeelHATkMQsjErCX0EsGjPoRhNH%2FLCRUErsD8ebXaERrPEG8vghgQPNAszklPxQfev2ZlqPXT57w61%2BGovR%2FeAlG5cYQIwIIzZzB1A9CsDTvR%2FmKN69G6qzGEzEwagIx6sIa38VjAnuySgJcEcS9s4tgFUNrrT8afAk1KNeZSS%2BYptpOGG1tzsyN6AxCYVKbmmpd%2B3sj0EMHrcrSIy%2FNVBn7hBg4flE2FqH6XddlKdF2PV%2BwH7HcbUq8xJNBMK%2FPBBh6F2Vdo2%2BL9AzpHzIsj%2Btj0fknd%2B8rgdusoi%2FyTiNXXXuLY8LTtB%2BNXqiL22w8pdF3jfqXixBrpLoSiadyuCbI8e6AZBwYsBxigdP9OeUUKjaC3phTNi55FIBONJsxBbD1yp0JTu2KCn428lqheHiCryAc3x27rZoIheFfjzGjvl0ZfwcQmstI70dqJPd31EmYkb8CqZoaeDb6r%2FvrSuXf%2BxSmvnb6PTdRDwFBkV0BmtUHSp1YY9am7pU5DDDtqf%2FFBjqbAZYdzLyGkbg8VYVGZcH342Bk%2BhkIHFViR%2FK%2BAR3nS7m1mLwaMV66EvJUuFuHdy3bKr3YxZ59IRdugvZ5YSz3Odf3%2Fix0TnMKy5B35j2H5xVz%2B6bNwHqdRpMFj41WWO%2BGa6cqUgCFuShz21opiIV3U6Ow1deG%2BOSpH7PnudmruL5o41TLnq5d%2BDqRQBr%2BYIOJ3GTQqvKr0AU2p%2Bq5&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250909T073057Z&X-Amz-SignedHeaders=host&X-Amz-Expires=599&X-Amz-Credential=ASIA2YR6PYW5QE264TEM%2F20250909%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=68d93f183ad67b48de9e054e293455f6bd0a5aff575bcdba3989135337a9da5f
+
+
+💰 Suggested Budget: $1000
+⏱ Time Estimate: 10 - 15 days
+
+
+
+
+
