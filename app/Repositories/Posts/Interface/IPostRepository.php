@@ -25,4 +25,9 @@ interface IPostRepository
     public function placeDetails(string $placeId);
 
     public function toggleBookmark(Request $request);
+
+    // Fetching Posts For Website
+    public function getPostsForWebsite(Request $request);
+
+    public function getInfinityScrollablePostsForWebsite(Request $request);
 }

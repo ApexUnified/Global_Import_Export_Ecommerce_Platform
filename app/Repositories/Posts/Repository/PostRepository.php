@@ -56,7 +56,7 @@ class PostRepository implements IPostRepository
             'content' => ['required', 'string'],
             'images' => ['nullable', 'max:35', 'array'],
             'videos' => ['nullable', 'max:5', 'array'],
-            'tag' => ['nullable', 'string', 'max:50', function ($attribute, $value, $fail) {
+            'tag' => ['nullable', 'string', 'max:30', function ($attribute, $value, $fail) {
                 if (str_contains($value, ',')) {
                     $fail('Only One Tag Allowed In The Post');
                 }
@@ -76,7 +76,7 @@ class PostRepository implements IPostRepository
         ], [
             'images.max' => 'The :attribute field must not exceed 35 files.',
             'videos.max' => 'The :attribute field must not exceed 5 files.',
-            'tag.max' => 'The :attribute field must not exceed 50 characters.',
+            'tag.max' => 'The :attribute field must not exceed 30 characters.',
             'tag.starts_with' => 'The :attribute field must start with #.',
             'floor_id.exists' => 'Selected Floor field does not exist.',
 
@@ -89,13 +89,13 @@ class PostRepository implements IPostRepository
             ],
 
             'videos.*' => [
-                'mimes:mp4,mov,avi',
+                'mimes:mp4,mov,avi,webp,webm',
                 'max:1048576',
             ],
         ], [
             'images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'images.*.max' => 'Each image must not exceed 10MB.',
-            'videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
+            'videos.*.mimes' => 'Only MP4, MOV, WEBP, WEBM and AVI videos are allowed.',
             'videos.*.max' => 'Each video must not exceed 1GB.',
 
         ], [
@@ -142,14 +142,17 @@ class PostRepository implements IPostRepository
                 foreach ($request->file('images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
 
-                    $resizedImage = ImageManager::imagick()
-                        ->read($image)
-                        ->resize(1920, 1080)
-                        ->contain(1920, 1080)
-                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+                    // Not Needed Because We Are Using Masonry Layout On Website
+                    // $resizedImage = ImageManager::imagick()
+                    //     ->read($image)
+                    //     ->resize(1920, 1080)
+                    //     ->contain(1920, 1080)
+                    //     ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
 
-                    $tempPath = 'temp/uploads/'.$new_name;
-                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                    // $tempPath = 'temp/uploads/'.$new_name;
+                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    // Storage::disk('local')->put($tempPath, (string) $resizedImage);
 
                     $paths[] = $tempPath;
                 }
@@ -192,7 +195,7 @@ class PostRepository implements IPostRepository
             'content' => ['required', 'string'],
             'images' => ['nullable', 'max:35', 'array'],
             'videos' => ['nullable', 'max:5', 'array'],
-            'tag' => ['nullable', 'string', 'max:50', function ($attribute, $value, $fail) {
+            'tag' => ['nullable', 'string', 'max:30', function ($attribute, $value, $fail) {
                 if (str_contains($value, ',')) {
                     $fail('Only One Tag Allowed In The Post');
                 }
@@ -209,7 +212,7 @@ class PostRepository implements IPostRepository
         ], [
             'images.max' => 'The :attribute field must not exceed 35 files.',
             'videos.max' => 'The :attribute field must not exceed 5 files.',
-            'tag.max' => 'The :attribute field must not exceed 50 characters.',
+            'tag.max' => 'The :attribute field must not exceed 30 characters.',
             'tag.starts_with' => 'The :attribute field must start with #.',
             'floor_id.exists' => 'Selected Floor field does not exist.',
 
@@ -222,13 +225,13 @@ class PostRepository implements IPostRepository
             ],
 
             'new_videos.*' => [
-                'mimes:mp4,mov,avi',
+                'mimes:mp4,mov,avi,webp,webm',
                 'max:1048576',
             ],
         ], [
             'new_images.*.mimes' => 'Only JPG, JPEG, PNG, images are allowed.',
             'new_images.*.max' => 'Each image must not exceed 10MB.',
-            'new_videos.*.mimes' => 'Only MP4, MOV, and AVI videos are allowed.',
+            'new_videos.*.mimes' => 'Only MP4, MOV, WEBP, WEBM and AVI videos are allowed.',
             'new_videos.*.max' => 'Each video must not exceed 1GB.',
 
         ], [
@@ -317,14 +320,17 @@ class PostRepository implements IPostRepository
                 foreach ($request->file('new_images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
 
-                    $resizedImage = ImageManager::imagick()
-                        ->read($image)
-                        ->resize(1920, 1080)
-                        ->contain(1920, 1080)
-                        ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+                    // Not Needed Because We Are Using Masonry Layout On Website
+                    // $resizedImage = ImageManager::imagick()
+                    //     ->read($image)
+                    //     ->resize(1920, 1080)
+                    //     ->contain(1920, 1080)
+                    //     ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
 
-                    $tempPath = 'temp/uploads/'.$new_name;
-                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                    // $tempPath = 'temp/uploads/'.$new_name;
+                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+
+                    // Storage::disk('local')->put($tempPath, (string) $resizedImage);
 
                     $paths[] = $tempPath;
                 }
@@ -514,5 +520,35 @@ class PostRepository implements IPostRepository
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    // Fetching Posts For Website
+    public function getPostsForWebsite(Request $request)
+    {
+        $posts = $this->post
+            ->where('status', true)
+            ->with(['floor', 'user'])
+            ->latest()
+            ->paginate(10);
+
+        return [
+            'posts' => $posts->items(),
+            'next_page_url' => $posts->nextPageUrl(),
+        ];
+    }
+
+    public function getInfinityScrollablePostsForWebsite(Request $request)
+    {
+        $posts = $this->post
+            ->where('status', true)
+            ->with(['floor', 'user'])
+            ->latest()
+            ->paginate(10);
+
+        return [
+            'posts' => $posts->items(),
+            'next_page_url' => $posts->nextPageUrl(),
+
+        ];
     }
 }

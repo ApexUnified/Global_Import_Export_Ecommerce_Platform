@@ -287,6 +287,7 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 - Header Footer And Appbar For Mobile Preview  with Fully Responsiveness ✅
 - PWA frontend integration for a mobile-friendly experience
 - Product listing and product detail pages
+- Cart Logic For Customers
 - Customer checkout functionality
 - On checkout: FB/Instagram connect (Meta OAuth) to store the user’s Meta user ID
 - After checkout: the user will see the associated bank details along with an upload receipt
@@ -302,7 +303,7 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 	- https://docs.google.com/document/d/1d_0t4RXtx1Xrdj4U4KgTXFGfLaGZJ9Ykl5dyARDsBQU/edit?usp=sharing yesbigshop privacy policy and data deletion (korean)
 	- https://docs.google.com/document/d/1c7F1ohFgv_-ndouw3_GKkP0G5B1noJp4AG-pHp0Al3M/edit?usp=sharing yesbigshop privacy policy and data deletion (english)
 
-- Cart Logic For Customers
+
 - Customer Cannot Visit Dashboard Logic ✅
 - Restricting Customer From Adding Items Who Belongs To Different Distributor
 - Logic To Restrict Customer From Visiting Dashboard

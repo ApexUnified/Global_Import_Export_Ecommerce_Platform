@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 
 export default function Footer({ ApplicationName, ApplicationLogoDark, ApplicationLogoLight }) {
@@ -38,12 +38,12 @@ export default function Footer({ ApplicationName, ApplicationLogoDark, Applicati
                             </h3>
                             <ul className="mt-4 space-y-2">
                                 <li>
-                                    <a
-                                        href="#"
-                                        className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white/60"
+                                    <Link
+                                        href={route('home')}
+                                        className={`py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-white/60 ${route().current() === 'home' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'}`}
                                     >
                                         Home
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
                                     <a

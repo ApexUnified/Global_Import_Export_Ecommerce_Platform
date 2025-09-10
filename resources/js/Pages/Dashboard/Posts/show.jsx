@@ -187,10 +187,12 @@ export default function view({ post }) {
                                                     alt="Profile"
                                                 />
                                                 <span className="text-lg font-semibold dark:text-white/80">
-                                                    {generalSetting?.app_name
-                                                        .split(' ')
-                                                        .map((word) => word[0])
-                                                        .join('')}
+                                                    {generalSetting?.app_name.length > 20
+                                                        ? generalSetting?.app_name
+                                                              .split(' ')
+                                                              .map((word) => word[0])
+                                                              .join('')
+                                                        : generalSetting?.app_name}
                                                 </span>
                                             </div>
 

@@ -23,11 +23,20 @@ use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Website\HomeController as WebsiteHomeController;
+use App\Http\Controllers\Website\PostController as WebsitePostController;
 use Illuminate\Support\Facades\Route;
 
-// Website Routes
-
+// Website Un Auth Routes
+// Home
 Route::get('/', [WebsiteHomeController::class, 'index'])->name('home');
+
+// Posts
+Route::controller(WebsitePostController::class)->name('website.posts.')->group(function () {
+    Route::get('/posts', [WebsitePostController::class, 'index'])->name('index');
+    Route::get('/posts-getmore', [WebsitePostController::class, 'getMorePosts'])->name('getmore');
+    Route::put('/posts-bookmark', [WebsitePostController::class, 'bookmark'])->name('bookmark')->middleware('auth');
+
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
