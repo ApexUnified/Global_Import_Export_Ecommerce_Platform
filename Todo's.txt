@@ -296,7 +296,7 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 - The user can then view their updated order status. When the admin changes the status to “Shipped” and adds courier details, the user will be able to see those details, along with any
   packaging videos uploaded by the admin.
 - My Orders page: View order details, watch packaging videos, and download customer order invoice receipts
-- Posts module: Display all posts/blogs to users
+- Posts module: Display all posts/blogs to users ✅
 - Message Us FB/Instagram links shown on both the Checkout page and main Website
 - Country-based enabling of Meta OAuth through entries stored in Special Countries (e.g., Mongolia only)
 - (1) Privacy Policy and (2) Data Deletion Policy as separate pages on yesbigshop.com.
