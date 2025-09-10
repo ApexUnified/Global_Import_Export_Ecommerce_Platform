@@ -34,6 +34,7 @@ Route::get('/', [WebsiteHomeController::class, 'index'])->name('home');
 Route::controller(WebsitePostController::class)->name('website.posts.')->group(function () {
     Route::get('/posts', [WebsitePostController::class, 'index'])->name('index');
     Route::get('/posts-getmore', [WebsitePostController::class, 'getMorePosts'])->name('getmore');
+    Route::get('/posts-getsingle/{slug?}', [WebsitePostController::class, 'getSinglePostBySlug'])->name('getsingle');
     Route::put('/posts-bookmark', [WebsitePostController::class, 'bookmark'])->name('bookmark')->middleware('auth');
 
 });

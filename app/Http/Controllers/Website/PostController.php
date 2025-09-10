@@ -28,6 +28,9 @@ class PostController extends Controller
 
     public function getMorePosts(Request $request)
     {
+        if (! $request->has('page')) {
+            return back();
+        }
 
         $posts = $this->post->getInfinityScrollablePostsForWebsite($request);
 
@@ -47,5 +50,21 @@ class PostController extends Controller
         }
 
         return back()->with('success', $bookmarked['message']);
+    }
+
+    public function getSinglePostBySlug(?string $slug = null)
+    {
+
+        if (empty($slug)) {
+            return response()->json(['status' => false]);
+        }
+
+        $post = $this->post->getSinglePostBySlug($slug);
+
+        if (empty($post)) {
+            return response()->json(['status' => false]);
+        }
+
+        return response()->json(['status' => true, 'post' => $post]);
     }
 }

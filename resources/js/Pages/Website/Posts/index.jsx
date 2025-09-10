@@ -35,6 +35,8 @@ export default function index({ all_posts, next_page_url }) {
             const post = posts.find((post) => post.slug === slug);
             if (post) {
                 setViewablePost(post);
+            } else {
+                fetchSinglePost(slug);
             }
         }
     }, []);
@@ -69,6 +71,21 @@ export default function index({ all_posts, next_page_url }) {
             setNextPageUrl(data.next_page_url);
         } catch (err) {
             toast.error('Error fetching posts:', err);
+        }
+    };
+
+    const fetchSinglePost = async (slug) => {
+        try {
+            const res = await fetch(route('website.posts.getsingle', slug));
+            const data = await res.json();
+
+            if (data.status) {
+                setViewablePost(data.post);
+            } else {
+                toast.error('Post Not Found');
+            }
+        } catch (err) {
+            toast.error('Error fetching post:', err);
         }
     };
 
@@ -350,7 +367,7 @@ export default function index({ all_posts, next_page_url }) {
                                 viewablePost.post_video_urls.length > 0) ||
                             (Array.isArray(viewablePost?.post_image_urls) &&
                                 viewablePost.post_image_urls.length > 0)
-                                ? 'h-[100vh]'
+                                ? 'h-[95vh]'
                                 : 'h-[50vh]'
                         } w-full max-w-screen-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8`}
                     >
