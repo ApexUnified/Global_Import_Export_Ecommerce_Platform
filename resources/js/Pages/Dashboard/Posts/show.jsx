@@ -368,7 +368,7 @@ export default function view({ post }) {
                                         </p>
 
                                         <div
-                                            className="prose dark:prose-invert max-w-none"
+                                            className="prose dark:prose-invert max-w-none text-gray-800 dark:text-white/80"
                                             dangerouslySetInnerHTML={{
                                                 __html: post?.content,
                                             }}

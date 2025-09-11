@@ -556,7 +556,7 @@ export default function index({ all_posts, next_page_url }) {
                                     </p>
 
                                     <div
-                                        className="prose dark:prose-invert max-w-none"
+                                        className="prose dark:prose-invert max-w-none text-gray-800 dark:text-white/80"
                                         dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
                                     />
 
@@ -572,7 +572,7 @@ export default function index({ all_posts, next_page_url }) {
                                     {/* Post Meta Info */}
                                     <div className="flex flex-wrap gap-2 text-xs text-gray-700 dark:text-white/80">
                                         <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-500">
-                                            {viewablePost?.added_at}
+                                            {viewablePost?.added_at} {viewablePost?.created_at_time}
                                         </span>
 
                                         {viewablePost?.location_name && (
