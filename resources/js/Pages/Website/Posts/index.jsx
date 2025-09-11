@@ -1,5 +1,6 @@
 import PostMediaViewer from '@/Components/PostMediaViewer';
 import PrimaryButton from '@/Components/PrimaryButton';
+import useDarkMode from '@/Hooks/useDarkMode';
 import MainLayout from '@/Layouts/Website/MainLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,6 +17,10 @@ export default function index({ all_posts, next_page_url }) {
 
     const { generalSetting, auth } = usePage().props;
     const [showQrCode, setShowQrCode] = useState(false);
+
+    // Checking Dark Mode
+
+    const isDarkMode = useDarkMode();
 
     const generateURL = (post) => {
         return (
@@ -397,7 +402,7 @@ export default function index({ all_posts, next_page_url }) {
                         </div>
 
                         {/* Post Content */}
-                        <div className="mx-auto flex flex-col overflow-hidden rounded-lg md:flex-row">
+                        <div className="mx-auto flex flex-col overflow-hidden rounded-lg lg:flex-row">
                             {/* Media Section - Shows on top for mobile, left for desktop */}
                             {((Array.isArray(viewablePost?.post_video_urls) &&
                                 viewablePost.post_video_urls.length > 0) ||
@@ -413,14 +418,14 @@ export default function index({ all_posts, next_page_url }) {
                                         viewablePost.post_video_urls.length > 0) ||
                                     (Array.isArray(viewablePost?.post_image_urls) &&
                                         viewablePost.post_image_urls.length > 0)
-                                        ? 'md:w-1/2'
-                                        : 'md:w-full'
+                                        ? 'lg:w-1/2'
+                                        : 'lg:w-full'
                                 }`}
                             >
                                 <div className="mx-auto w-full space-y-4 p-6 md:p-10">
                                     {/* Author Header */}
-                                    <div className="flex flex-wrap items-center justify-between space-x-3">
-                                        <div className="flex items-center space-x-3">
+                                    <div className="flex flex-wrap items-center justify-between space-x-3 space-y-3">
+                                        <div className="flex items-center space-x-3 space-y-3">
                                             <img
                                                 src={generalSetting?.app_favicon ?? DummyLogo}
                                                 className="h-10 w-10 rounded-full"
@@ -491,12 +496,16 @@ export default function index({ all_posts, next_page_url }) {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         fill={
                                                             viewablePost?.is_bookmarked
-                                                                ? '#1A3F99'
+                                                                ? isDarkMode
+                                                                    ? '#ffff'
+                                                                    : '#0340D1'
                                                                 : 'none'
                                                         }
                                                         stroke={
                                                             viewablePost?.is_bookmarked
-                                                                ? '#1A3F99'
+                                                                ? isDarkMode
+                                                                    ? '#ffff'
+                                                                    : '#0340D1'
                                                                 : 'currentColor'
                                                         }
                                                         strokeWidth={1.5}

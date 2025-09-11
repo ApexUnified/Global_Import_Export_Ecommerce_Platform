@@ -311,6 +311,9 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 - Updating Robot.txt File For Exposing Just Website Routes On Google Search Engine (Currently It Exposes Our Dashboard)
 
 
+Additional Work:
+Making Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
+
 
 
 Cart Item Remeaning
