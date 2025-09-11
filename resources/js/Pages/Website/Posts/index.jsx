@@ -117,12 +117,12 @@ export default function index({ all_posts, next_page_url }) {
             <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                 <div className="absolute inset-0 bg-black opacity-20"></div>
                 <div className="relative py-16 sm:py-24">
-                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
                                 Latest Posts
                             </h1>
-                            <p className="max-w-2xl mx-auto mt-4 text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
+                            <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
                                 Explore the latest updates, buying guides, and tips on smartphones,
                                 from unboxings and tutorials to industry news, everything you need
                                 to stay informed before making your next purchase.
@@ -143,7 +143,7 @@ export default function index({ all_posts, next_page_url }) {
                             return (
                                 <article
                                     key={post?.id}
-                                    className="relative mb-1 overflow-hidden transition-all duration-300 rounded-none shadow-md cursor-pointer group break-inside-avoid hover:-translate-y-1 hover:shadow-xl"
+                                    className="group relative mb-1 cursor-pointer break-inside-avoid overflow-hidden rounded-none shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
@@ -156,12 +156,12 @@ export default function index({ all_posts, next_page_url }) {
                                                 src={post?.images[0]?.url}
                                                 alt={post?.title}
                                                 loading="lazy"
-                                                className="object-cover w-full transition-all duration-500 group-hover:scale-105"
+                                                className="w-full object-cover transition-all duration-500 group-hover:scale-105"
                                             />
 
                                             {/* Share Button */}
                                             <button
-                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
+                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -192,10 +192,10 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Title + Meta */}
                                             <div className="absolute inset-x-0 bottom-0 p-4">
-                                                <h2 className="text-lg font-semibold text-white line-clamp-2 drop-shadow-lg">
+                                                <h2 className="line-clamp-2 text-lg font-semibold text-white drop-shadow-lg">
                                                     {post?.title}
                                                 </h2>
-                                                <div className="flex items-center justify-between mt-1 text-xs font-bold text-gray-200 drop-shadow-sm">
+                                                <div className="mt-1 flex items-center justify-between text-xs font-bold text-gray-200 drop-shadow-sm">
                                                     <span className="text-white drop-shadow-md">
                                                         {post?.tag}
                                                     </span>
@@ -221,10 +221,10 @@ export default function index({ all_posts, next_page_url }) {
                                         </div>
                                     ) : (
                                         /* Text-only */
-                                        <div className="relative flex flex-col justify-between p-5 text-white bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
+                                        <div className="relative flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-5 text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                                             {/* Share Button */}
                                             <button
-                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
+                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -257,7 +257,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 <h2 className="mb-2 text-lg font-bold">
                                                     {post?.title}
                                                 </h2>
-                                                <p className="text-sm line-clamp-4 opacity-90">
+                                                <p className="line-clamp-4 text-sm opacity-90">
                                                     {post.content.length > 200 ? (
                                                         <span
                                                             dangerouslySetInnerHTML={{
@@ -277,7 +277,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     )}
                                                 </p>
                                             </div>
-                                            <div className="flex items-center justify-between mt-2 text-xs font-bold text-gray-200 drop-shadow-sm">
+                                            <div className="mt-2 flex items-center justify-between text-xs font-bold text-gray-200 drop-shadow-sm">
                                                 <span className="text-white drop-shadow-md">
                                                     {post?.tag}
                                                 </span>
@@ -307,8 +307,8 @@ export default function index({ all_posts, next_page_url }) {
                     </div>
 
                     {posts?.length === 0 && (
-                        <div className="flex items-center justify-center py-5 text-center text-white rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
-                            <h1 className="font-bold text-md">No Posts Found</h1>
+                        <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 py-5 text-center text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
+                            <h1 className="text-md font-bold">No Posts Found</h1>
                         </div>
                     )}
 
@@ -318,13 +318,13 @@ export default function index({ all_posts, next_page_url }) {
                             {nextPageUrl && (
                                 <div
                                     ref={loaderRef}
-                                    className="flex items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 animate-pulse dark:text-white/80"
+                                    className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80"
                                 >
                                     <div className="flex items-center justify-center">
                                         <div role="status">
                                             <svg
                                                 aria-hidden="true"
-                                                className="w-5 h-5 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                                 viewBox="0 0 100 101"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -351,7 +351,7 @@ export default function index({ all_posts, next_page_url }) {
 
             {/* Post View Modal */}
             {viewablePost != '' && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                     <div
                         className="fixed inset-0 backdrop-blur-[32px]"
                         onClick={() => {
@@ -397,7 +397,7 @@ export default function index({ all_posts, next_page_url }) {
                         </div>
 
                         {/* Post Content */}
-                        <div className="flex flex-col mx-auto overflow-hidden rounded-lg md:flex-row">
+                        <div className="mx-auto flex flex-col overflow-hidden rounded-lg md:flex-row">
                             {/* Media Section - Shows on top for mobile, left for desktop */}
                             {((Array.isArray(viewablePost?.post_video_urls) &&
                                 viewablePost.post_video_urls.length > 0) ||
@@ -417,13 +417,13 @@ export default function index({ all_posts, next_page_url }) {
                                         : 'md:w-full'
                                 }`}
                             >
-                                <div className="w-full p-6 mx-auto space-y-4 md:p-10">
+                                <div className="mx-auto w-full space-y-4 p-6 md:p-10">
                                     {/* Author Header */}
                                     <div className="flex flex-wrap items-center justify-between space-x-3">
                                         <div className="flex items-center space-x-3">
                                             <img
                                                 src={generalSetting?.app_favicon ?? DummyLogo}
-                                                className="w-10 h-10 rounded-full"
+                                                className="h-10 w-10 rounded-full"
                                                 alt="Profile"
                                             />
                                             <span className="text-lg font-semibold dark:text-white/80">
@@ -436,7 +436,7 @@ export default function index({ all_posts, next_page_url }) {
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center gap-2 cursor-pointer">
+                                        <div className="flex cursor-pointer items-center gap-2">
                                             <button
                                                 onClick={() => {
                                                     setShowQrCode(true);
@@ -542,12 +542,12 @@ export default function index({ all_posts, next_page_url }) {
 
                                     {/* Post Content */}
 
-                                    <p className="mt-8 font-semibold text-gray-800 break-all whitespace-normal text-md dark:text-white/80">
+                                    <p className="whitespace- text-md mt-8 break-all font-semibold text-gray-800 dark:text-white/80">
                                         {viewablePost?.title}
                                     </p>
 
-                                    <p
-                                        className="my-8 text-sm text-gray-800 break-words whitespace-normal md:text-md dark:text-white/80 md:my-12"
+                                    <div
+                                        className="prose dark:prose-invert max-w-none"
                                         dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
                                     />
 
@@ -562,12 +562,12 @@ export default function index({ all_posts, next_page_url }) {
 
                                     {/* Post Meta Info */}
                                     <div className="flex flex-wrap gap-2 text-xs text-gray-700 dark:text-white/80">
-                                        <span className="px-2 py-1 bg-gray-100 rounded-full dark:bg-gray-500">
+                                        <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-500">
                                             {viewablePost?.added_at}
                                         </span>
 
                                         {viewablePost?.location_name && (
-                                            <span className="px-2 py-1 bg-gray-100 rounded-full dark:bg-gray-500">
+                                            <span className="rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-500">
                                                 {viewablePost?.location_name}
                                             </span>
                                         )}
@@ -582,7 +582,7 @@ export default function index({ all_posts, next_page_url }) {
             {/* QR CODE */}
             {showQrCode && (
                 <>
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
                         <div
                             className="fixed inset-0 backdrop-blur-[32px]"
                             onClick={() => setShowQrCode(false)}
@@ -593,7 +593,7 @@ export default function index({ all_posts, next_page_url }) {
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="qrCodeTitle"
-                            className="relative z-10 w-full max-w-lg max-h-screen p-6 overflow-y-auto bg-white shadow-xl rounded-2xl dark:bg-gray-800 sm:p-8"
+                            className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8"
                         >
                             <div className="text-center">
                                 <h2
@@ -604,16 +604,16 @@ export default function index({ all_posts, next_page_url }) {
                                 </h2>
 
                                 <div className="flex items-center justify-center">
-                                    <div className="w-full max-w-xs mx-auto">
+                                    <div className="mx-auto w-full max-w-xs">
                                         <QRCode
-                                            className="w-full h-auto"
+                                            className="h-auto w-full"
                                             value={generateURL(viewablePost)}
                                             viewBox="0 0 256 256"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center mt-6">
+                                <div className="mt-6 flex justify-center">
                                     <PrimaryButton
                                         Action={() => setShowQrCode(false)}
                                         Text="Close"
@@ -626,7 +626,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="w-6 h-6"
+                                                className="h-6 w-6"
                                                 aria-hidden="true"
                                             >
                                                 <path

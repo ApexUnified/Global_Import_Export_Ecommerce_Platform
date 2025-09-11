@@ -338,4 +338,8 @@ https://upwork-usw2-prod-file-storage-wp3.s3.us-west-2.amazonaws.com/workplace/a
 
 
 
+For Later
+AND have all content—regular posts, product posts, and ad posts (to be implemented later)—appear together,
+mixed, in a single home archive page. From there, if someone wants to view only posts or only products, implement filters so they can view them accordingly.
+
 

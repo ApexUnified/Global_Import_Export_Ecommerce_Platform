@@ -1,5 +1,6 @@
 import forms from '@tailwindcss/forms';
 import scrollbar from 'tailwind-scrollbar';
+import typography from '@tailwindcss/typography';
 
 
 /** @type {import('tailwindcss').Config} */
@@ -21,7 +22,7 @@ export default {
         },
     },
 
-    plugins: [forms,scrollbar, function ({ addUtilities }) {
+    plugins: [forms,scrollbar,typography, function ({ addUtilities }) {
       addUtilities({
         '.page-break': {
           'page-break-before': 'always',
