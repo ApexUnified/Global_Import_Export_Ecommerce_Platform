@@ -56,6 +56,7 @@ export default function index({ all_posts, next_page_url }) {
     // Stopping Overflow Of Body When Modal is Open
     useEffect(() => {
         if (viewablePost !== '') {
+            setSelectedMediaIndex(0);
             document.body.classList.add('overflow-hidden');
         } else {
             document.body.classList.remove('overflow-hidden');
@@ -159,7 +160,7 @@ export default function index({ all_posts, next_page_url }) {
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
-                                        setSelectedPostIndex(index);
+                                        setSelectedPostIndex(index ?? 0);
                                         setSelectedMediaIndex(0);
                                         window.history.pushState({}, '', url);
                                     }}
