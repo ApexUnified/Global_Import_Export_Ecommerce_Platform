@@ -7,6 +7,9 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     const thumbRefs = useRef([]);
     const MediaRef = useRef(null);
 
+    //  Cache for loaded URLs
+    const loadedCache = useRef(new Set());
+
     const [loading, setLoading] = useState(true);
 
     // Combine images + videos into one array with type
@@ -49,10 +52,53 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
             mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
         };
     }, [mediaItems.length]);
+    if (mediaItems.length === 0) return null;
+
+    // Reset when post changes
+    useEffect(() => {
+        onSelectMediaIndex(0);
+    }, [viewablePost]);
+
+    useEffect(() => {
+        const current = mediaItems[selected];
+        if (!current) return;
+
+        if (loadedCache.current.has(current.url)) {
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+
+        if (current.type === 'image') {
+            const img = new Image();
+            img.src = current.url;
+
+            if (img.complete) {
+                setLoading(false);
+                loadedCache.current.add(current.url);
+            } else {
+                img.onload = () => {
+                    setLoading(false);
+                    loadedCache.current.add(current.url);
+                };
+                img.onerror = () => setLoading(false);
+            }
+        } else {
+            const video = document.createElement('video');
+            video.src = current.url;
+            video.preload = 'metadata';
+
+            video.onloadeddata = () => {
+                setLoading(false);
+                loadedCache.current.add(current.url);
+            };
+            video.onerror = () => setLoading(false);
+        }
+    }, [mediaItems, selected]);
 
     // Auto-scroll to keep selected thumbnail in view
     useEffect(() => {
-        setLoading(true);
         if (thumbRefs.current[selected]) {
             thumbRefs.current[selected].scrollIntoView({
                 behavior: 'smooth',
@@ -61,8 +107,6 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
             });
         }
     }, [selected]);
-
-    if (mediaItems.length === 0) return null;
 
     return (
         <div className="h-[80%] w-full bg-gray-200 dark:bg-gray-900 lg:w-[50%]" ref={MediaRef}>
@@ -74,8 +118,6 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                             src={mediaItems[selected]?.url}
                             alt={`Media ${selected}`}
                             className="h-full w-full object-contain"
-                            onLoad={() => setLoading(false)}
-                            onError={() => setLoading(false)}
                         />
 
                         {loading && (
@@ -86,10 +128,9 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                     <div className="relative h-full w-full">
                         <video
                             controls
+                            controlsList="nodownload "
                             src={mediaItems[selected]?.url}
                             className="h-full w-full object-contain"
-                            onLoadedData={() => setLoading(false)}
-                            onError={() => setLoading(false)}
                         />
 
                         {loading && (
@@ -117,6 +158,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                                 src={item.url}
                                 alt={`Image ${idx}`}
                                 className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
+                                loading="lazy"
                             />
                         ) : (
                             <div className="relative flex h-full w-full items-center justify-center bg-black">
@@ -124,6 +166,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                                     src={videoThumbnail}
                                     alt={`Video  ${idx}`}
                                     className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 opacity-80 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
+                                    loading="lazy"
                                 />
                             </div>
                         )}

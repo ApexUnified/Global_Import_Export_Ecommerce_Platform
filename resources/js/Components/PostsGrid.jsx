@@ -28,7 +28,7 @@ export default function PostsGrid({
                 fetchSinglePost(slug);
             }
         }
-    }, [posts, onSelectIndex, selected]);
+    }, [posts]);
 
     // Infinite scroll loader
     useEffect(() => {
@@ -75,9 +75,6 @@ export default function PostsGrid({
                 nextIndex = selectedPostIndex === 0 ? posts.length - 1 : selectedPostIndex - 1;
             }
 
-            // console.log(nextIndex);
-            // console.log(posts.length);
-
             onSelectIndex(nextIndex);
 
             if (posts[nextIndex]) {
@@ -113,8 +110,8 @@ export default function PostsGrid({
                         key={post.id}
                         ref={(el) => (thumbRefs.current[idx] = el)}
                         onClick={() => {
-                            onSelectIndex(idx);
                             onSelect(post);
+                            onSelectIndex(idx);
                         }}
                         className={`relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 text-xs transition lg:h-20 lg:w-20 ${
                             selected === idx
@@ -130,7 +127,7 @@ export default function PostsGrid({
                                         ? post.title.slice(0, 20) + '...'
                                         : post.title
                                 }
-                                loading="lazy"
+                                loading="eager"
                                 className="h-full w-full object-cover text-[5px] text-gray-700 dark:text-white/80 lg:text-[10px]"
                             />
                         ) : post.videos?.length > 0 ? (
@@ -141,7 +138,7 @@ export default function PostsGrid({
                                         ? post.title.slice(0, 20) + '...'
                                         : post.title
                                 }
-                                loading="lazy"
+                                loading="eager"
                                 className="h-full w-full object-cover text-[5px] text-gray-700 dark:text-white/80 lg:text-[10px]"
                             />
                         ) : (

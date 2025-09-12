@@ -94,6 +94,21 @@ export default function index({ all_posts, next_page_url }) {
 
             if (data.status) {
                 setViewablePost(data.post);
+
+                //  Only add if not already in posts
+                setPosts((prev) => {
+                    const exists = prev.some((p) => p.id === data.post.id);
+                    return exists ? prev : [data.post, ...prev];
+                });
+
+                // Update selected index to the position of this post
+                setPosts((prev) => {
+                    const idx = prev.findIndex((p) => p.id === data.post.id);
+                    if (idx !== -1) {
+                        setSelectedPostIndex(idx);
+                    }
+                    return prev;
+                });
             } else {
                 toast.error('Post Not Found');
             }
@@ -210,7 +225,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 <h2 className="line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
                                                     {post?.title}
                                                 </h2>
-                                                <div className="mt-1 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-lg">
+                                                <div className="mt-1 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
                                                     <span className="text-white drop-shadow-md">
                                                         {post?.tag}
                                                     </span>
@@ -269,7 +284,7 @@ export default function index({ all_posts, next_page_url }) {
                                             </button>
 
                                             <div>
-                                                <h2 className="mb-2 text-[8px] font-bold sm:text-[9px] md:text-[10px] lg:text-lg">
+                                                <h2 className="mb-2 line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
                                                     {post?.title}
                                                 </h2>
                                                 <p className="line-clamp-4 text-[10px] opacity-90 lg:text-sm">
