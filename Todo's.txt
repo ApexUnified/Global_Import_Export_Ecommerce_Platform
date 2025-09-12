@@ -312,7 +312,8 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 
 
 Additional Work:
-Making Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
+Made Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
+Made Right Posts Side bar For Switching Posts Also Implemented Mouse Wheel Functionality
 
 
 

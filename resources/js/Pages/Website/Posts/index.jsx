@@ -1,6 +1,8 @@
 import PostMediaViewer from '@/Components/PostMediaViewer';
+import PostsGrid from '@/Components/PostsGrid';
 import PrimaryButton from '@/Components/PrimaryButton';
 import useDarkMode from '@/Hooks/useDarkMode';
+import useWindowSize from '@/Hooks/useWindowSize';
 import MainLayout from '@/Layouts/Website/MainLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +15,10 @@ export default function index({ all_posts, next_page_url }) {
     const [posts, setPosts] = useState(all_posts || []);
 
     const [nextPageUrl, setNextPageUrl] = useState(next_page_url);
+
+    const [selectedPostIndex, setSelectedPostIndex] = useState(0);
+    const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
+
     const loaderRef = useRef(null);
 
     const { generalSetting, auth } = usePage().props;
@@ -21,6 +27,7 @@ export default function index({ all_posts, next_page_url }) {
     // Checking Dark Mode
 
     const isDarkMode = useDarkMode();
+    const windowSize = useWindowSize();
 
     const generateURL = (post) => {
         return (
@@ -116,7 +123,7 @@ export default function index({ all_posts, next_page_url }) {
 
     return (
         <MainLayout>
-            <Head title="Blog Posts" />
+            <Head title="Posts" />
 
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
@@ -142,7 +149,7 @@ export default function index({ all_posts, next_page_url }) {
             <div className="py-12 sm:py-16">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {/* Compact Masonry */}
-                    <div className="columns-1 gap-1 [column-fill:_balance] sm:columns-2 lg:columns-3">
+                    <div className="columns-1 gap-1 [column-fill:_balance] min-[300px]:columns-2 lg:columns-3">
                         {posts.map((post, index) => {
                             const url = generateURL(post);
                             return (
@@ -152,6 +159,8 @@ export default function index({ all_posts, next_page_url }) {
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
+                                        setSelectedPostIndex(index);
+                                        setSelectedMediaIndex(0);
                                         window.history.pushState({}, '', url);
                                     }}
                                 >
@@ -161,7 +170,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 src={post?.images[0]?.url}
                                                 alt={post?.title}
                                                 loading="lazy"
-                                                className="w-full object-cover transition-all duration-500 group-hover:scale-105"
+                                                className="w-full object-cover text-[10px] text-gray-700 transition-all duration-500 group-hover:scale-105 dark:text-white/80"
                                             />
 
                                             {/* Share Button */}
@@ -185,7 +194,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     viewBox="0 0 24 24"
                                                     strokeWidth={1.5}
                                                     stroke="currentColor"
-                                                    className="size-5"
+                                                    className="size-3 lg:size-5"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
@@ -197,21 +206,21 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Title + Meta */}
                                             <div className="absolute inset-x-0 bottom-0 p-4">
-                                                <h2 className="line-clamp-2 text-lg font-semibold text-white drop-shadow-lg">
+                                                <h2 className="line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
                                                     {post?.title}
                                                 </h2>
-                                                <div className="mt-1 flex items-center justify-between text-xs font-bold text-gray-200 drop-shadow-sm">
+                                                <div className="mt-1 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-lg">
                                                     <span className="text-white drop-shadow-md">
                                                         {post?.tag}
                                                     </span>
-                                                    <span className="flex items-center gap-2 text-white drop-shadow-md">
+                                                    <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
                                                             viewBox="0 0 24 24"
                                                             strokeWidth={1.5}
                                                             stroke="currentColor"
-                                                            className="size-4"
+                                                            className="size-2 md:size-3 lg:size-4"
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
@@ -248,7 +257,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     viewBox="0 0 24 24"
                                                     strokeWidth={1.5}
                                                     stroke="currentColor"
-                                                    className="size-5"
+                                                    className="size-3 lg:size-5"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
@@ -259,10 +268,10 @@ export default function index({ all_posts, next_page_url }) {
                                             </button>
 
                                             <div>
-                                                <h2 className="mb-2 text-lg font-bold">
+                                                <h2 className="mb-2 text-[8px] font-bold sm:text-[9px] md:text-[10px] lg:text-lg">
                                                     {post?.title}
                                                 </h2>
-                                                <p className="line-clamp-4 text-sm opacity-90">
+                                                <p className="line-clamp-4 text-[10px] opacity-90 lg:text-sm">
                                                     {post.content.length > 200 ? (
                                                         <span
                                                             dangerouslySetInnerHTML={{
@@ -282,18 +291,18 @@ export default function index({ all_posts, next_page_url }) {
                                                     )}
                                                 </p>
                                             </div>
-                                            <div className="mt-2 flex items-center justify-between text-xs font-bold text-gray-200 drop-shadow-sm">
+                                            <div className="mt-2 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
                                                 <span className="text-white drop-shadow-md">
                                                     {post?.tag}
                                                 </span>
-                                                <span className="flex items-center gap-2 text-white drop-shadow-md">
+                                                <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         fill="none"
                                                         viewBox="0 0 24 24"
                                                         strokeWidth={1.5}
                                                         stroke="currentColor"
-                                                        className="size-4"
+                                                        className="size-2 md:size-3 lg:size-4"
                                                     >
                                                         <path
                                                             strokeLinecap="round"
@@ -373,8 +382,8 @@ export default function index({ all_posts, next_page_url }) {
                             (Array.isArray(viewablePost?.post_image_urls) &&
                                 viewablePost.post_image_urls.length > 0)
                                 ? 'h-[95vh]'
-                                : 'h-[50vh]'
-                        } w-full max-w-screen-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8`}
+                                : 'h-[80vh]'
+                        } max-w-screen-3xl w-full overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8`}
                     >
                         {/* Close Button */}
                         <div className="flex items-center justify-end">
@@ -401,14 +410,35 @@ export default function index({ all_posts, next_page_url }) {
                             </button>
                         </div>
 
+                        {/* Scrollable Posts  */}
+
                         {/* Post Content */}
                         <div className="mx-auto flex flex-col overflow-hidden rounded-lg lg:flex-row">
+                            {windowSize.width < 1024 && (
+                                <PostsGrid
+                                    posts={posts}
+                                    onSelect={(post) => {
+                                        setViewablePost(post);
+                                        window.history.pushState({}, '', generateURL(post));
+                                    }}
+                                    selectedPostIndex={selectedPostIndex}
+                                    onSelectIndex={setSelectedPostIndex}
+                                    nextPageUrl={nextPageUrl}
+                                    fetchSinglePost={fetchSinglePost}
+                                    fetchMorePosts={fetchMorePosts}
+                                />
+                            )}
+
                             {/* Media Section - Shows on top for mobile, left for desktop */}
                             {((Array.isArray(viewablePost?.post_video_urls) &&
                                 viewablePost.post_video_urls.length > 0) ||
                                 (Array.isArray(viewablePost?.post_image_urls) &&
                                     viewablePost.post_image_urls.length > 0)) && (
-                                <PostMediaViewer viewablePost={viewablePost} />
+                                <PostMediaViewer
+                                    viewablePost={viewablePost}
+                                    selectedMediaIndex={selectedMediaIndex}
+                                    onSelectMediaIndex={setSelectedMediaIndex}
+                                />
                             )}
 
                             {/* Content Section - Shows below media on mobile, right side on desktop */}
@@ -556,7 +586,7 @@ export default function index({ all_posts, next_page_url }) {
                                     </p>
 
                                     <div
-                                        className="prose dark:prose-invert max-w-none text-gray-800 dark:text-white/80"
+                                        className="prose max-w-none text-gray-800 dark:prose-invert dark:text-white/80"
                                         dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
                                     />
 
@@ -583,6 +613,22 @@ export default function index({ all_posts, next_page_url }) {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Scrollable Posts  */}
+                            {windowSize.width > 1024 && (
+                                <PostsGrid
+                                    posts={posts}
+                                    onSelect={(post) => {
+                                        setViewablePost(post);
+                                        window.history.pushState({}, '', generateURL(post));
+                                    }}
+                                    selectedPostIndex={selectedPostIndex}
+                                    onSelectIndex={setSelectedPostIndex}
+                                    nextPageUrl={nextPageUrl}
+                                    fetchMorePosts={fetchMorePosts}
+                                    fetchSinglePost={fetchSinglePost}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

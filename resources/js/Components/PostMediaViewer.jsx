@@ -1,9 +1,13 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import videoThumbnail from '../../../public/assets/images/video-thumb/general-video.png';
 
-export default function PostMediaViewer({ viewablePost }) {
-    const [selected, setSelected] = useState(0);
+export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSelectMediaIndex }) {
+    const selected = selectedMediaIndex ?? 0;
+
     const thumbRefs = useRef([]);
+    const MediaRef = useRef(null);
+
+    const [loading, setLoading] = useState(true);
 
     // Combine images + videos into one array with type
     const mediaItems = useMemo(() => {
@@ -24,26 +28,31 @@ export default function PostMediaViewer({ viewablePost }) {
 
     // Changing Post Images On Mouse Wheel
     useEffect(() => {
+        const mediaEl = MediaRef.current;
+        if (!mediaEl) return;
+
         const handleWheel = (event) => {
             if (event.ctrlKey || event.metaKey) return;
-
             event.preventDefault();
+
             if (event.deltaY < 0) {
-                setSelected((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1));
+                onSelectMediaIndex((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1));
             } else {
-                setSelected((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
+                onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
             }
         };
 
-        window.addEventListener('wheel', handleWheel, { passive: false });
+        // attach directly to the container
+        mediaEl.addEventListener('wheel', handleWheel, { passive: false });
 
         return () => {
-            window.removeEventListener('wheel', handleWheel, { passive: false });
+            mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
         };
-    }, [viewablePost]);
+    }, [mediaItems.length]);
 
     // Auto-scroll to keep selected thumbnail in view
     useEffect(() => {
+        setLoading(true);
         if (thumbRefs.current[selected]) {
             thumbRefs.current[selected].scrollIntoView({
                 behavior: 'smooth',
@@ -56,47 +65,65 @@ export default function PostMediaViewer({ viewablePost }) {
     if (mediaItems.length === 0) return null;
 
     return (
-        <div className="w-full bg-gray-200 dark:bg-gray-900 lg:w-[70%]">
+        <div className="h-[80%] w-full bg-gray-200 dark:bg-gray-900 lg:w-[50%]" ref={MediaRef}>
             {/* Big Viewer */}
             <div className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-lg bg-black/5 lg:h-[70vh]">
-                {mediaItems[selected].type === 'image' ? (
-                    <img
-                        src={mediaItems[selected].url}
-                        alt={`Media ${selected}`}
-                        className="h-full w-full object-contain"
-                    />
+                {mediaItems[selected]?.type === 'image' ? (
+                    <div className="relative h-full w-full">
+                        <img
+                            src={mediaItems[selected]?.url}
+                            alt={`Media ${selected}`}
+                            className="h-full w-full object-contain"
+                            onLoad={() => setLoading(false)}
+                            onError={() => setLoading(false)}
+                        />
+
+                        {loading && (
+                            <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
+                        )}
+                    </div>
                 ) : (
-                    <video
-                        controls
-                        src={mediaItems[selected].url}
-                        className="h-full w-full object-contain"
-                    />
+                    <div className="relative h-full w-full">
+                        <video
+                            controls
+                            src={mediaItems[selected]?.url}
+                            className="h-full w-full object-contain"
+                            onLoadedData={() => setLoading(false)}
+                            onError={() => setLoading(false)}
+                        />
+
+                        {loading && (
+                            <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
+                        )}
+                    </div>
                 )}
             </div>
 
             {/* Thumbnails */}
-            <div className="mx-5 mb-5 mt-6 flex gap-2 overflow-x-auto lg:overflow-x-hidden">
+            <div className="hide-y-scrollbar flex flex-row gap-2 overflow-x-auto overflow-y-hidden border-gray-700 p-2 lg:overflow-y-auto lg:overflow-x-hidden">
                 {mediaItems.map((item, idx) => (
                     <button
                         key={idx}
                         ref={(el) => (thumbRefs.current[idx] = el)}
-                        onClick={() => setSelected(idx)}
-                        className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${
-                            selected === idx ? 'border-blue-500' : 'border-transparent'
+                        onClick={() => onSelectMediaIndex(idx)}
+                        className={`relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 transition lg:h-20 lg:w-20 ${
+                            selectedMediaIndex === idx
+                                ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
+                                : 'border-transparent opacity-70 hover:opacity-100'
                         }`}
                     >
                         {item.type === 'image' ? (
                             <img
                                 src={item.url}
-                                alt={`Thumbnail ${idx}`}
-                                className="h-full w-full object-cover"
+                                alt={`Image ${idx}`}
+                                className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
                             />
                         ) : (
                             <div className="relative flex h-full w-full items-center justify-center bg-black">
                                 <img
                                     src={videoThumbnail}
-                                    alt={`Video thumbnail ${idx}`}
-                                    className="h-full w-full object-cover opacity-80"
+                                    alt={`Video  ${idx}`}
+                                    className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 opacity-80 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
                                 />
                             </div>
                         )}
