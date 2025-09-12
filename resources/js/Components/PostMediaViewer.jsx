@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import videoThumbnail from '../../../public/assets/images/video-thumb/general-video.png';
+import { useSwipeable } from 'react-swipeable';
 
 export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSelectMediaIndex }) {
     const selected = selectedMediaIndex ?? 0;
@@ -11,6 +12,17 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     const loadedCache = useRef(new Set());
 
     const [loading, setLoading] = useState(true);
+
+    // Swiper
+    const handlers = useSwipeable({
+        onSwipedLeft: () =>
+            onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1)),
+        onSwipedRight: () =>
+            onSelectMediaIndex((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1)),
+        preventScrollOnSwipe: true,
+        trackTouch: true,
+        trackMouse: false,
+    });
 
     // Combine images + videos into one array with type
     const mediaItems = useMemo(() => {
@@ -111,7 +123,10 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     return (
         <div className="h-[80%] w-full bg-gray-200 dark:bg-gray-900 lg:w-[50%]" ref={MediaRef}>
             {/* Big Viewer */}
-            <div className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-lg bg-black/5 lg:h-[70vh]">
+            <div
+                className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-lg bg-black/5 lg:h-[70vh]"
+                {...handlers}
+            >
                 {mediaItems[selected]?.type === 'image' ? (
                     <div className="relative h-full w-full">
                         <img
