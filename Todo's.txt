@@ -312,13 +312,32 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 
 
 Additional Work:
-Made Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
-Made Right Posts Side bar For Switching Posts Also Implemented Mouse Wheel Functionality
+(
+  Made Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
+  Made Right Posts Side bar For Switching Posts Also Implemented Mouse Wheel Functionality
 
+
+  Search Methods:
+  1. Spatiotemporal Information:
+  Select one address from an auto-completed list.
+  Search by terms (words, numbers, etc.) included in the address.
+  Include height information (e.g., number of floors).
+  Include time information.
+
+  2. General Search Terms
+  Titles, tags, etc.
+
+  3. User Information
+  Account name or user ID.
+
+  4. Citation-Based Trends
+  Ability to search based on how often spatiotemporal information, posts, or user accounts/IDs have been cited by others.
+  Provide both trend analysis and quantitative data.
+)
 
 
 Cart Item Remeaning
-Shcema
+Schema
 Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete()->cascadeOnUpdate();
