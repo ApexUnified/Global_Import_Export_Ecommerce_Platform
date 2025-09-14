@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import videoThumbnail from '../../../public/assets/images/video-thumb/general-video.png';
 import { useSwipeable } from 'react-swipeable';
+import useWindowSize from '@/Hooks/useWindowSize';
 
 export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSelectMediaIndex }) {
     const selected = selectedMediaIndex ?? 0;
@@ -12,6 +13,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     const loadedCache = useRef(new Set());
 
     const [loading, setLoading] = useState(true);
+    const windowSize = useWindowSize();
 
     // Swiper
     const handlers = useSwipeable({
@@ -121,73 +123,67 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     }, [selected]);
 
     return (
-        <div className="h-[80%] w-full bg-gray-200 dark:bg-gray-900 lg:w-[50%]" ref={MediaRef}>
+        <div
+            className="relative mx-auto mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
+            ref={MediaRef}
+        >
             {/* Big Viewer */}
             <div
-                className="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-lg bg-black/5 lg:h-[70vh]"
+                className="relative flex items-center justify-center rounded-lg"
+                style={{ maxHeight: '50vh' }}
                 {...handlers}
             >
                 {mediaItems[selected]?.type === 'image' ? (
-                    <div className="relative h-full w-full">
-                        <img
-                            src={mediaItems[selected]?.url}
-                            alt={`Media ${selected}`}
-                            className="h-full w-full object-contain"
-                        />
-
-                        {loading && (
-                            <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
-                        )}
-                    </div>
+                    <img
+                        src={mediaItems[selected]?.url}
+                        alt={`Media ${selected}`}
+                        className="h-full max-h-[50vh] w-auto max-w-[50vw] rounded-2xl object-contain"
+                    />
                 ) : (
-                    <div className="relative h-full w-full">
-                        <video
-                            controls
-                            controlsList="nodownload "
-                            src={mediaItems[selected]?.url}
-                            className="h-full w-full object-contain"
-                        />
+                    <video
+                        controls
+                        controlsList="nodownload"
+                        src={mediaItems[selected]?.url}
+                        className="h-full max-h-[50vh] min-h-[50vh] w-auto max-w-[50vw] rounded-2xl bg-gray-200 object-cover dark:bg-gray-900"
+                    />
+                )}
 
-                        {loading && (
-                            <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
-                        )}
-                    </div>
+                {loading && (
+                    <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
                 )}
             </div>
 
             {/* Thumbnails */}
-            <div className="hide-y-scrollbar flex flex-row gap-2 overflow-x-auto overflow-y-hidden border-gray-700 p-2 lg:overflow-y-auto lg:overflow-x-hidden">
-                {mediaItems.map((item, idx) => (
-                    <button
-                        key={idx}
-                        ref={(el) => (thumbRefs.current[idx] = el)}
-                        onClick={() => onSelectMediaIndex(idx)}
-                        className={`relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 transition lg:h-20 lg:w-20 ${
-                            selectedMediaIndex === idx
-                                ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
-                                : 'border-transparent opacity-70 hover:opacity-100'
-                        }`}
-                    >
-                        {item.type === 'image' ? (
-                            <img
-                                src={item.url}
-                                alt={`Image ${idx}`}
-                                className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
-                                loading="lazy"
-                            />
-                        ) : (
-                            <div className="relative flex h-full w-full items-center justify-center bg-black">
+            {windowSize.width > 1024 && mediaItems.length > 1 && (
+                <div className="mt-2 flex flex-row gap-2 overflow-x-auto p-2">
+                    {mediaItems.map((item, idx) => (
+                        <button
+                            key={idx}
+                            ref={(el) => (thumbRefs.current[idx] = el)}
+                            onClick={() => onSelectMediaIndex(idx)}
+                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                                selectedMediaIndex === idx
+                                    ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
+                                    : 'border-transparent opacity-70 hover:opacity-100'
+                            }`}
+                        >
+                            {item.type === 'image' ? (
+                                <img
+                                    src={item.url}
+                                    alt={`Image ${idx}`}
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
                                 <img
                                     src={videoThumbnail}
-                                    alt={`Video  ${idx}`}
-                                    className="flex h-full w-full items-center justify-center bg-gray-200 object-cover text-[5px] text-gray-700 opacity-80 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]"
-                                    loading="lazy"
+                                    alt={`Video ${idx}`}
+                                    className="h-full w-full object-cover opacity-80"
                                 />
-                            </div>
-                        )}
-                    </button>
-                ))}
-            </div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
