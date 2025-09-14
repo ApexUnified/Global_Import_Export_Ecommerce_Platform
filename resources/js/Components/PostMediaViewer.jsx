@@ -9,7 +9,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
     const thumbRefs = useRef([]);
     const MediaRef = useRef(null);
 
-    //  Cache for loaded URLs
+    // Cache for loaded URLs
     const loadedCache = useRef(new Set());
 
     const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
         trackMouse: false,
     });
 
-    // Combine images + videos into one array with type
+    // Combine images + videos into one array
     const mediaItems = useMemo(() => {
         const images =
             viewablePost?.images?.map((img) => ({
@@ -43,7 +43,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
         return [...images, ...videos];
     }, [viewablePost]);
 
-    // Changing Post Images On Mouse Wheel
+    // Mouse wheel navigation
     useEffect(() => {
         const mediaEl = MediaRef.current;
         if (!mediaEl) return;
@@ -59,20 +59,21 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
             }
         };
 
-        // attach directly to the container
         mediaEl.addEventListener('wheel', handleWheel, { passive: false });
 
         return () => {
             mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
         };
     }, [mediaItems.length]);
+
     if (mediaItems.length === 0) return null;
 
-    // Reset when post changes
+    // Reset on post change
     useEffect(() => {
         onSelectMediaIndex(0);
     }, [viewablePost]);
 
+    // Preload
     useEffect(() => {
         const current = mediaItems[selected];
         if (!current) return;
@@ -111,7 +112,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
         }
     }, [mediaItems, selected]);
 
-    // Auto-scroll to keep selected thumbnail in view
+    // Auto-scroll thumbnails
     useEffect(() => {
         if (thumbRefs.current[selected]) {
             thumbRefs.current[selected].scrollIntoView({
@@ -124,14 +125,15 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
 
     return (
         <div
-            className="relative mx-auto mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
+            className="relative mx-auto mb-5 mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
             ref={MediaRef}
         >
             {/* Big Viewer */}
             <div
-                className="relative flex items-center justify-center overflow-hidden rounded-3xl"
+                className="relative flex items-center justify-center overflow-hidden rounded-2xl bg-black"
                 style={{
-                    height: windowSize.width >= 1024 ? '70vh' : '80vh',
+                    height: windowSize.width >= 1024 ? '70vh' : '60vh',
+                    width: '100%',
                 }}
                 {...handlers}
             >
@@ -139,33 +141,33 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                     <img
                         src={mediaItems[selected]?.url}
                         alt={`Media ${selected}`}
-                        className="max-h-full max-w-full rounded-2xl object-contain"
+                        className="h-full w-full object-contain transition-all duration-300"
                     />
                 ) : (
                     <video
                         controls
                         src={mediaItems[selected]?.url}
-                        className="max-h-full max-w-full rounded-2xl object-contain"
+                        className="h-full w-full rounded-xl object-contain transition-all duration-300"
                     />
                 )}
 
                 {loading && (
-                    <div className="absolute inset-0 flex animate-pulse items-center justify-center rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
+                    <div className="absolute inset-0 flex animate-pulse items-center justify-center rounded-xl bg-gray-300 dark:bg-gray-700" />
                 )}
             </div>
 
             {/* Thumbnails */}
             {windowSize.width > 1024 && mediaItems.length > 1 && (
-                <div className="mt-2 flex flex-row gap-2 overflow-x-auto p-2">
+                <div className="mt-3 flex max-w-full gap-2 overflow-x-auto px-2 scrollbar-none">
                     {mediaItems.map((item, idx) => (
                         <button
                             key={idx}
                             ref={(el) => (thumbRefs.current[idx] = el)}
                             onClick={() => onSelectMediaIndex(idx)}
-                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
                                 selectedMediaIndex === idx
-                                    ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
-                                    : 'border-transparent opacity-70 hover:opacity-100'
+                                    ? 'border-blue-600 ring-2 ring-blue-400'
+                                    : 'border-gray-300 hover:border-gray-500'
                             }`}
                         >
                             {item.type === 'image' ? (

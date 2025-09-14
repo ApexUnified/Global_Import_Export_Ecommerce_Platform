@@ -476,7 +476,7 @@ export default function index({ all_posts, next_page_url }) {
                                             {/* Author Header */}
                                             <div className="flex flex-wrap items-center justify-between space-x-3">
                                                 <div className="flex items-center">
-                                                    <span className="text-[7px] font-semibold dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]">
+                                                    <span className="text-[7px] font-semibold dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[15px]">
                                                         {viewablePost?.user?.name.length > 20
                                                             ? viewablePost?.user?.name.substring(
                                                                   0,
@@ -592,12 +592,12 @@ export default function index({ all_posts, next_page_url }) {
                                             </div>
 
                                             {/* Post Content */}
-                                            <p className="mt-2 whitespace-normal break-all text-[7px] font-semibold text-gray-800 dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]">
+                                            <p className="mt-2 whitespace-normal break-all text-[7px] font-semibold text-gray-800 dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]">
                                                 {viewablePost?.title}
                                             </p>
 
                                             <div
-                                                className="prose max-w-none text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                                className="prose max-w-none text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
                                                 dangerouslySetInnerHTML={{
                                                     __html: viewablePost?.content,
                                                 }}
@@ -605,7 +605,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Tag */}
                                             <div>
-                                                <span className="text-[5px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                                                <span className="text-[5px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[12px]">
                                                     {viewablePost?.tag}
                                                 </span>
                                             </div>
@@ -613,7 +613,7 @@ export default function index({ all_posts, next_page_url }) {
                                             <hr className="border-gray-200 dark:border-gray-700" />
 
                                             {/* Post Meta Info */}
-                                            <div className="my-2 flex flex-wrap gap-2 text-[5px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                                            <div className="my-2 flex flex-wrap gap-2 text-[5px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[12px]">
                                                 <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                                     {viewablePost?.added_at}{' '}
                                                     {viewablePost?.created_at_time}
@@ -660,7 +660,7 @@ export default function index({ all_posts, next_page_url }) {
                         className={`fixed bottom-0 left-0 right-0 z-50 transform rounded-t-2xl shadow-lg transition-transform duration-300 scrollbar-none ${
                             showDetails
                                 ? 'max-h-[80vh] translate-y-0 overflow-y-auto bg-gray-200 dark:bg-gray-950'
-                                : 'max-h-[30vh] translate-y-[70%] bg-white dark:bg-gray-800'
+                                : 'max-h-[30vh] translate-y-[50%] bg-white dark:bg-gray-800'
                         }`}
                     >
                         <div className="me-2 flex items-center justify-end gap-2">
@@ -668,7 +668,7 @@ export default function index({ all_posts, next_page_url }) {
                                 onClick={() => {
                                     setShowDetails(!showDetails);
                                 }}
-                                className={`${showDetails && 'rounded-2xl bg-blue-600 p-2 text-white dark:bg-gray-800'} `}
+                                className={`${showDetails && 'rounded-2xl bg-blue-600 p-2 text-white dark:bg-gray-800 dark:text-white'} `}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -676,7 +676,7 @@ export default function index({ all_posts, next_page_url }) {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className={`size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6`}
+                                    className={`size-3 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6`}
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -848,7 +848,11 @@ export default function index({ all_posts, next_page_url }) {
                             <div
                                 className="prose max-w-none cursor-pointer text-[7px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                 onClick={() => setShowDetails(!showDetails)}
-                                dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
+                                dangerouslySetInnerHTML={{
+                                    __html: showDetails
+                                        ? viewablePost?.content
+                                        : viewablePost?.content.substring(0, 200) + '...',
+                                }}
                             />
 
                             {/* Tag */}
