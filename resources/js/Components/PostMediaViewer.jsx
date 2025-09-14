@@ -137,6 +137,7 @@ export default function PostMediaViewer({
         <div
             className="relative mx-auto mb-5 mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
             ref={MediaRef}
+            {...handlers}
         >
             {/* Big Viewer */}
             <div
@@ -146,7 +147,6 @@ export default function PostMediaViewer({
                     maxWidth: windowSize.width >= 1024 ? '50vw' : '100%', // limit width on large screens
                     width: '100%',
                 }}
-                {...handlers}
             >
                 {mediaItems[selected]?.type === 'image' ? (
                     <img
