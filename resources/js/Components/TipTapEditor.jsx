@@ -69,6 +69,9 @@ export default function TipTapEditor({ Label, Id, Action, Value, Required = fals
             attributes: {
                 class: 'prose dark:prose-invert focus:outline-none max-w-none',
             },
+            transformPastedHTML(html) {
+                return html.replace(/ style="[^"]*color:[^";]+;?[^"]*"/g, '');
+            },
         },
         onUpdate({ editor }) {
             Action(editor.getHTML());
@@ -87,16 +90,16 @@ export default function TipTapEditor({ Label, Id, Action, Value, Required = fals
             {Label && (
                 <label
                     htmlFor={Id}
-                    className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                     {Label}{' '}
                     {Required ? <span className="text-red-500 dark:text-white"> *</span> : ''}
                 </label>
             )}
 
-            <div className="p-2 rounded-lg shadow-2xl dark:bg-gray-900">
+            <div className="rounded-lg p-2 shadow-2xl dark:bg-gray-900">
                 {/* Toolbar */}
-                <div className="flex flex-wrap gap-2 m-1">
+                <div className="m-1 flex flex-wrap gap-2">
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleBold().run()}
