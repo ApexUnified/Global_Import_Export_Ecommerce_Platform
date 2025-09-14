@@ -134,22 +134,28 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                 {...handlers}
             >
                 {mediaItems[selected]?.type === 'image' ? (
-                    <img
-                        src={mediaItems[selected]?.url}
-                        alt={`Media ${selected}`}
-                        className="h-full w-auto max-w-full rounded-3xl object-contain"
-                    />
+                    <div className="relative">
+                        <img
+                            src={mediaItems[selected]?.url}
+                            alt={`Media ${selected}`}
+                            className="h-full w-auto max-w-full rounded-2xl object-contain"
+                        />
+                        {loading && (
+                            <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
+                        )}
+                    </div>
                 ) : (
-                    <video
-                        controls
-                        controlsList="nodownload"
-                        src={mediaItems[selected]?.url}
-                        className="h-full max-h-[50vh] min-h-[50vh] w-auto max-w-[50vw] rounded-2xl bg-gray-200 object-cover dark:bg-gray-900"
-                    />
-                )}
-
-                {loading && (
-                    <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
+                    <div className="relative">
+                        <video
+                            controls
+                            controlsList="nodownload"
+                            src={mediaItems[selected]?.url}
+                            className="h-full w-auto max-w-full rounded-2xl object-contain"
+                        />
+                        {loading && (
+                            <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
+                        )}
+                    </div>
                 )}
             </div>
 
