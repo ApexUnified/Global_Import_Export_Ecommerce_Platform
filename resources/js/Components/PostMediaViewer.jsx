@@ -124,7 +124,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
 
     return (
         <div
-            className="relative mx-auto mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
+            className="relative mx-auto mb-10 mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
             ref={MediaRef}
         >
             {/* Big Viewer */}
