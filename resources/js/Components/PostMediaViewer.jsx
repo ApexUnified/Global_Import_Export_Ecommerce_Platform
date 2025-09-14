@@ -124,7 +124,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
 
     return (
         <div
-            className="relative mx-auto mb-10 mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
+            className="relative mx-auto mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
             ref={MediaRef}
         >
             {/* Big Viewer */}
@@ -142,13 +142,14 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                 ) : (
                     <video
                         controls
+                        controlsList="nodownload"
                         src={mediaItems[selected]?.url}
-                        className="h-full w-auto max-w-full object-contain"
+                        className="h-full max-h-[50vh] min-h-[50vh] w-auto max-w-[50vw] rounded-2xl bg-gray-200 object-cover dark:bg-gray-900"
                     />
                 )}
 
                 {loading && (
-                    <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
+                    <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
                 )}
             </div>
 
