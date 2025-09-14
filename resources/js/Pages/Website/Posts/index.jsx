@@ -657,10 +657,10 @@ export default function index({ all_posts, next_page_url }) {
                     (Array.isArray(viewablePost?.post_image_urls) &&
                         viewablePost.post_image_urls.length > 0)) && (
                     <div
-                        className={`fixed bottom-0 left-0 right-0 z-50 transform ${showDetails ? 'overflow-y-auto bg-gray-200 dark:bg-gray-950' : 'bg-white dark:bg-gray-800'} rounded-t-2xl shadow-lg transition-transform duration-300 scrollbar-none ${
+                        className={`fixed bottom-0 left-0 right-0 z-50 transform rounded-t-2xl shadow-lg transition-transform duration-300 scrollbar-none ${
                             showDetails
-                                ? 'max-h-[80vh] translate-y-0'
-                                : 'max-h-[40vh] translate-y-[50%]'
+                                ? 'max-h-[80vh] translate-y-0 overflow-y-auto bg-gray-200 dark:bg-gray-950'
+                                : 'max-h-[30vh] translate-y-[70%] bg-white dark:bg-gray-800'
                         }`}
                     >
                         <div className="me-2 flex items-center justify-end gap-2">

@@ -129,27 +129,26 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
         >
             {/* Big Viewer */}
             <div
-                className="relative flex items-center justify-center rounded-lg"
-                style={{ maxHeight: '50vh' }}
+                className="relative flex items-center justify-center overflow-hidden rounded-3xl"
+                style={{ height: windowSize.width >= 1024 ? '50vh' : '80vh' }}
                 {...handlers}
             >
                 {mediaItems[selected]?.type === 'image' ? (
                     <img
                         src={mediaItems[selected]?.url}
                         alt={`Media ${selected}`}
-                        className="h-full max-h-[50vh] w-auto max-w-[50vw] rounded-2xl object-contain"
+                        className="h-full w-auto max-w-full rounded-3xl object-contain"
                     />
                 ) : (
                     <video
                         controls
-                        controlsList="nodownload"
                         src={mediaItems[selected]?.url}
-                        className="h-full max-h-[50vh] min-h-[50vh] w-auto max-w-[50vw] rounded-2xl bg-gray-200 object-cover dark:bg-gray-900"
+                        className="h-full w-auto max-w-full object-contain"
                     />
                 )}
 
                 {loading && (
-                    <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
+                    <div className="absolute inset-0 animate-pulse bg-gray-300 blur-sm dark:bg-gray-700" />
                 )}
             </div>
 
