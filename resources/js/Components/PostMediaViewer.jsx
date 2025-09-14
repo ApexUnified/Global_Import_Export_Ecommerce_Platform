@@ -130,32 +130,27 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
             {/* Big Viewer */}
             <div
                 className="relative flex items-center justify-center overflow-hidden rounded-3xl"
-                style={{ height: windowSize.width >= 1024 ? '50vh' : '80vh' }}
+                style={{
+                    height: windowSize.width >= 1024 ? '70vh' : '80vh',
+                }}
                 {...handlers}
             >
                 {mediaItems[selected]?.type === 'image' ? (
-                    <div className="relative">
-                        <img
-                            src={mediaItems[selected]?.url}
-                            alt={`Media ${selected}`}
-                            className="h-full w-auto max-w-full rounded-2xl object-contain"
-                        />
-                        {loading && (
-                            <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
-                        )}
-                    </div>
+                    <img
+                        src={mediaItems[selected]?.url}
+                        alt={`Media ${selected}`}
+                        className="max-h-full max-w-full rounded-2xl object-contain"
+                    />
                 ) : (
-                    <div className="relative">
-                        <video
-                            controls
-                            controlsList="nodownload"
-                            src={mediaItems[selected]?.url}
-                            className="h-full w-auto max-w-full rounded-2xl object-contain"
-                        />
-                        {loading && (
-                            <div className="absolute inset-0 animate-pulse rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
-                        )}
-                    </div>
+                    <video
+                        controls
+                        src={mediaItems[selected]?.url}
+                        className="max-h-full max-w-full rounded-2xl object-contain"
+                    />
+                )}
+
+                {loading && (
+                    <div className="absolute inset-0 flex animate-pulse items-center justify-center rounded-2xl bg-gray-300 blur-sm dark:bg-gray-700" />
                 )}
             </div>
 

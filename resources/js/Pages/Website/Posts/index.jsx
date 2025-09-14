@@ -429,7 +429,7 @@ export default function index({ all_posts, next_page_url }) {
                         {/* Scrollable Posts  */}
 
                         {/* Post Content */}
-                        <div className="mx-auto flex flex-col overflow-hidden rounded-lg lg:flex-row">
+                        <div className="flex flex-col lg:flex-row">
                             {windowSize.width < 1024 && (
                                 <PostsGrid
                                     posts={posts}
