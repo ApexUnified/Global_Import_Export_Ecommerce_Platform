@@ -3,10 +3,15 @@ import videoThumbnail from '../../../public/assets/images/video-thumb/general-vi
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '@/Hooks/useWindowSize';
 
-export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSelectMediaIndex }) {
+export default function PostMediaViewer({
+    viewablePost,
+    selectedMediaIndex,
+    onSelectMediaIndex,
+    setMediaItems,
+    thumbRefs,
+}) {
     const selected = selectedMediaIndex ?? 0;
 
-    const thumbRefs = useRef([]);
     const MediaRef = useRef(null);
 
     // Cache for loaded URLs
@@ -61,6 +66,8 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
                 onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
             }
         };
+
+        setMediaItems(mediaItems);
 
         mediaEl.addEventListener('wheel', handleWheel, { passive: false });
 

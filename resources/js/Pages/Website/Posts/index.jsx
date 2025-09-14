@@ -8,7 +8,7 @@ import { Head, router, usePage } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
-
+import videoThumbnail from '../../../../../public/assets/images/video-thumb/general-video.png';
 export default function index({ all_posts, next_page_url }) {
     const [viewablePost, setViewablePost] = useState('');
 
@@ -29,6 +29,10 @@ export default function index({ all_posts, next_page_url }) {
 
     const windowSize = useWindowSize();
     const [showDetails, setShowDetails] = useState(false);
+
+    // Set Media items For Media Viewer In the bottom bar
+    const [mediaItems, setMediaItems] = useState([]);
+    const thumbRefs = useRef([]);
 
     const generateURL = (post) => {
         return (
@@ -454,6 +458,8 @@ export default function index({ all_posts, next_page_url }) {
                                     viewablePost={viewablePost}
                                     selectedMediaIndex={selectedMediaIndex}
                                     onSelectMediaIndex={setSelectedMediaIndex}
+                                    setMediaItems={setMediaItems}
+                                    thumbRefs={thumbRefs}
                                 />
                             )}
 
@@ -876,6 +882,37 @@ export default function index({ all_posts, next_page_url }) {
                                     </span>
                                 )}
                             </div>
+
+                            {mediaItems.length > 1 && showDetails && (
+                                <div className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none">
+                                    {mediaItems.map((item, idx) => (
+                                        <button
+                                            key={idx}
+                                            ref={(el) => (thumbRefs.current[idx] = el)}
+                                            onClick={() => setSelectedMediaIndex(idx)}
+                                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
+                                                selectedMediaIndex === idx
+                                                    ? 'border-blue-600 ring-2 ring-blue-400'
+                                                    : 'border-gray-300 hover:border-gray-500'
+                                            }`}
+                                        >
+                                            {item.type === 'image' ? (
+                                                <img
+                                                    src={item.url}
+                                                    alt={`Image ${idx}`}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={videoThumbnail}
+                                                    alt={`Video ${idx}`}
+                                                    className="h-full w-full object-cover opacity-80"
+                                                />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
