@@ -21,6 +21,9 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
             onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1)),
         onSwipedRight: () =>
             onSelectMediaIndex((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1)),
+
+        delta: 10,
+        velocity: 0.2,
         preventScrollOnSwipe: true,
         trackTouch: true,
         trackMouse: false,
@@ -130,9 +133,10 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
         >
             {/* Big Viewer */}
             <div
-                className="relative flex items-center justify-center overflow-hidden rounded-2xl bg-black"
+                className="relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black"
                 style={{
                     height: windowSize.width >= 1024 ? '70vh' : '60vh',
+                    maxWidth: windowSize.width >= 1024 ? '50vw' : '100%', // limit width on large screens
                     width: '100%',
                 }}
                 {...handlers}
@@ -158,7 +162,7 @@ export default function PostMediaViewer({ viewablePost, selectedMediaIndex, onSe
 
             {/* Thumbnails */}
             {windowSize.width > 1024 && mediaItems.length > 1 && (
-                <div className="mt-3 flex max-w-full gap-2 overflow-x-auto px-2 scrollbar-none">
+                <div className="mt-3 flex max-w-[40vw] gap-2 overflow-x-auto px-2 scrollbar-none">
                     {mediaItems.map((item, idx) => (
                         <button
                             key={idx}
