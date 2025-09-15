@@ -482,11 +482,11 @@ export default function index({ all_posts, next_page_url }) {
                                             {/* Author Header */}
                                             <div className="flex flex-wrap items-center justify-between space-x-3">
                                                 <div className="flex items-center">
-                                                    <span className="text-[7px] font-semibold dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[15px]">
-                                                        {viewablePost?.user?.name.length > 20
+                                                    <span className="text-[8px] font-semibold dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[15px]">
+                                                        {viewablePost?.user?.name.length > 50
                                                             ? viewablePost?.user?.name.substring(
                                                                   0,
-                                                                  20,
+                                                                  50,
                                                               ) + '...'
                                                             : viewablePost?.user?.name}
                                                     </span>
@@ -726,8 +726,8 @@ export default function index({ all_posts, next_page_url }) {
                                         className="cursor-pointer text-[10px] font-semibold hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                         onClick={() => setShowDetails(!showDetails)}
                                     >
-                                        {viewablePost?.user?.name.length > 20
-                                            ? viewablePost?.user?.name.substring(0, 20) + '...'
+                                        {viewablePost?.user?.name.length > 50
+                                            ? viewablePost?.user?.name.substring(0, 50) + '...'
                                             : viewablePost?.user?.name}
                                     </span>
                                 </div>

@@ -12,6 +12,19 @@ export default defineConfig({
         }),
         react(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    pdf: ["html2pdf.js"],
+                    react: ["react", "react-dom"],
+                    inertia: ["@inertiajs/react", "@inertiajs/core"],
+                    vendor: ["axios", "lodash"],
+                },
+            },
+        },
+        chunkSizeWarningLimit: 1000,
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
@@ -19,3 +32,4 @@ export default defineConfig({
         }
     }
 });
+
