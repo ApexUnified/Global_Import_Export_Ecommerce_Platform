@@ -289,7 +289,7 @@ export default function index({ all_posts, next_page_url }) {
                                             </button>
 
                                             <div>
-                                                <h2 className="mb-2 line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
+                                                <h2 className="mb-2 line-clamp-2 text-[10px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
                                                     {post?.title}
                                                 </h2>
                                                 <p className="line-clamp-4 text-[10px] opacity-90 lg:text-sm">
@@ -312,7 +312,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     )}
                                                 </p>
                                             </div>
-                                            <div className="mt-2 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
+                                            <div className="mt-2 flex items-center justify-between text-[7px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
                                                 <span className="text-white drop-shadow-md">
                                                     {post?.tag}
                                                 </span>
@@ -682,7 +682,7 @@ export default function index({ all_posts, next_page_url }) {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className={`size-3 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6`}
+                                    className={`size-4 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6`}
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -706,7 +706,7 @@ export default function index({ all_posts, next_page_url }) {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                    className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -723,7 +723,7 @@ export default function index({ all_posts, next_page_url }) {
                             <div className="flex flex-wrap items-center justify-between space-x-3">
                                 <div className="flex items-center">
                                     <span
-                                        className="cursor-pointer text-[7px] font-semibold hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                        className="cursor-pointer text-[10px] font-semibold hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                         onClick={() => setShowDetails(!showDetails)}
                                     >
                                         {viewablePost?.user?.name.length > 20
@@ -745,7 +745,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -802,7 +802,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     }
                                                     strokeWidth={1.5}
                                                     viewBox="0 0 24 24"
-                                                    className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                    className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
@@ -829,7 +829,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -845,14 +845,14 @@ export default function index({ all_posts, next_page_url }) {
                             {/* Post Content */}
 
                             <p
-                                className="mt-2 cursor-pointer whitespace-normal break-all text-[7px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className="mt-2 cursor-pointer whitespace-normal break-all text-[10px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                 onClick={() => setShowDetails(!showDetails)}
                             >
                                 {viewablePost?.title}
                             </p>
 
                             <div
-                                className="prose max-w-none cursor-pointer text-[7px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className="prose max-w-none cursor-pointer text-[10px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                 onClick={() => setShowDetails(!showDetails)}
                                 dangerouslySetInnerHTML={{
                                     __html: showDetails
@@ -863,7 +863,7 @@ export default function index({ all_posts, next_page_url }) {
 
                             {/* Tag */}
                             <div>
-                                <span className="text-[5px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                                <span className="text-[8px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
                                     {viewablePost?.tag}
                                 </span>
                             </div>
@@ -871,7 +871,7 @@ export default function index({ all_posts, next_page_url }) {
                             <hr className="border-gray-200 dark:border-gray-700" />
 
                             {/* Post Meta Info */}
-                            <div className="my-2 flex flex-wrap gap-2 text-[5px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                            <div className="my-2 flex flex-wrap gap-2 text-[8px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
                                 <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                     {viewablePost?.added_at} {viewablePost?.created_at_time}
                                 </span>

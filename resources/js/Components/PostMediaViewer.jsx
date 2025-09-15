@@ -143,7 +143,7 @@ export default function PostMediaViewer({
                 className="relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black"
                 style={{
                     height: windowSize.width >= 1024 ? '70vh' : '60vh',
-                    maxWidth: windowSize.width >= 1024 ? '50vw' : '100%', // limit width on large screens
+                    maxWidth: windowSize.width >= 1024 ? '50vw' : '100%',
                     width: '100%',
                 }}
                 {...handlers}
