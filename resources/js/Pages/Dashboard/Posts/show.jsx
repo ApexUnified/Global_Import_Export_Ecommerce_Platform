@@ -363,12 +363,12 @@ export default function view({ post }) {
 
                                         {/* Post Content */}
 
-                                        <p className="text-md mt-8 whitespace-normal break-all font-semibold text-gray-800 dark:text-white/80">
+                                        <p className="text-md mt-8 whitespace-normal break-words font-semibold text-gray-800 dark:text-white/80">
                                             {post?.title}
                                         </p>
 
                                         <div
-                                            className="prose dark:prose-invert max-w-none text-gray-800 dark:text-white/80"
+                                            className="prose max-w-none break-words text-gray-800 dark:prose-invert dark:text-white/80"
                                             dangerouslySetInnerHTML={{
                                                 __html: post?.content,
                                             }}

@@ -598,12 +598,12 @@ export default function index({ all_posts, next_page_url }) {
                                             </div>
 
                                             {/* Post Content */}
-                                            <p className="mt-2 whitespace-normal break-all text-[7px] font-semibold text-gray-800 dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]">
+                                            <p className="mt-2 whitespace-normal break-words text-[7px] font-semibold text-gray-800 dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]">
                                                 {viewablePost?.title}
                                             </p>
 
                                             <div
-                                                className="prose max-w-none text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
+                                                className="prose max-w-none break-words text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
                                                 dangerouslySetInnerHTML={{
                                                     __html: viewablePost?.content,
                                                 }}
@@ -845,14 +845,14 @@ export default function index({ all_posts, next_page_url }) {
                             {/* Post Content */}
 
                             <p
-                                className="mt-2 cursor-pointer whitespace-normal break-all text-[10px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className="mt-2 cursor-pointer whitespace-normal break-words text-[10px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                 onClick={() => setShowDetails(!showDetails)}
                             >
                                 {viewablePost?.title}
                             </p>
 
                             <div
-                                className="prose max-w-none cursor-pointer text-[10px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className="prose max-w-none cursor-pointer break-words text-[10px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
                                 onClick={() => setShowDetails(!showDetails)}
                                 dangerouslySetInnerHTML={{
                                     __html: showDetails
