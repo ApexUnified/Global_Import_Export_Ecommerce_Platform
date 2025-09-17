@@ -191,6 +191,10 @@ export default function index({ all_posts, next_page_url }) {
         onSwipedUp: () => {
             setShowDetails(true);
         },
+
+        onSwipedDown: () => {
+            if (showDetails) setShowDetails(false);
+        },
         trackTouch: true,
         trackMouse: true,
         preventScrollOnSwipe: true,
