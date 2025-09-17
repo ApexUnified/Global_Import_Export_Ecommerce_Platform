@@ -439,7 +439,7 @@ export default function index({ all_posts, next_page_url }) {
                     ></div>
 
                     {/* Modal content */}
-                    <div className="relative z-10 h-screen w-screen overflow-y-auto p-6 shadow-xl scrollbar-none sm:p-8">
+                    <div className="relative z-10 h-screen w-screen overflow-y-auto overflow-x-hidden p-6 shadow-xl scrollbar-none sm:p-8">
                         {windowSize.width > 1024 && viewablePost != '' && (
                             <>
                                 {/* Close Button */}
