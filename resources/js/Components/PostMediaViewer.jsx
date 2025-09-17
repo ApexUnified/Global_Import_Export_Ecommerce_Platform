@@ -20,21 +20,6 @@ export default function PostMediaViewer({
 
     const windowSize = useWindowSize();
 
-    // Swiper
-    const handlers = useSwipeable({
-        onSwipedLeft: (e) => {
-            setDirection(1);
-            onSelectMediaIndex((prev) => (prev + 1) % mediaItems.length);
-        },
-        onSwipedRight: (e) => {
-            setDirection(-1);
-            onSelectMediaIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
-        },
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
-
     // Combine images + videos into one array
     const mediaItems = useMemo(() => {
         const images =
@@ -123,10 +108,28 @@ export default function PostMediaViewer({
         setDirection(1);
     }, [selected]);
 
+    // Swiper
+    const handlers = useSwipeable({
+        onSwipedLeft: (e) => {
+            setDirection(1);
+            onSelectMediaIndex((prev) => (prev + 1) % mediaItems.length);
+        },
+        onSwipedRight: (e) => {
+            setDirection(-1);
+            onSelectMediaIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+        },
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
+
     return (
         <div
             className="relative mx-auto mb-5 mt-5 flex flex-col items-center lg:mt-0"
-            ref={MediaRef}
+            ref={(el) => {
+                MediaRef.current = el;
+                if (handlers.ref) handlers.ref(el);
+            }}
         >
             {/* Big Viewer */}
             <div
@@ -137,7 +140,6 @@ export default function PostMediaViewer({
                     width: '100%',
                     position: 'relative', // redundant but explicit
                 }}
-                {...handlers}
             >
                 <div className="invisible h-full w-full">
                     {mediaItems[selected]?.type === 'image' ? (

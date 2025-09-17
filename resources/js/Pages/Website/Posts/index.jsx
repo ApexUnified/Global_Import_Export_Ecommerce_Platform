@@ -173,7 +173,7 @@ export default function index({ all_posts, next_page_url }) {
                 mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
             };
         }
-    }, [mediaItems.length, viewablePost, showDetails]);
+    }, [mediaItems.length, viewablePost]);
     // Auto-scroll thumbnails For Mobile Media Navigation
     useEffect(() => {
         if (thumbRefs.current[selectedPostIndex]) {
@@ -926,7 +926,7 @@ export default function index({ all_posts, next_page_url }) {
                                 )}
                             </div>
 
-                            {mediaItems.length > 1 && showDetails && (
+                            {mediaItems.length > 1 && (
                                 <div
                                     className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none"
                                     ref={mediaMobileref}
