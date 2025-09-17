@@ -60,6 +60,7 @@ export default function PostsGrid({
     }, [selected]);
 
     // Mouse wheel handler
+    const wheelTimeout = useRef(null);
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
@@ -77,13 +78,16 @@ export default function PostsGrid({
 
             onSelectIndex(nextIndex);
 
-            if (posts[nextIndex]) {
-                onSelect(posts[nextIndex]);
-            }
+            if (wheelTimeout.current) clearTimeout(wheelTimeout.current);
+            wheelTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    onSelect(posts[nextIndex]);
+                }
 
-            if (nextIndex >= posts.length - 2 && nextPageUrl) {
-                fetchMorePosts();
-            }
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
         };
 
         container.addEventListener('wheel', handleWheel, { passive: false });
@@ -91,16 +95,7 @@ export default function PostsGrid({
     }, [posts.length, nextPageUrl, fetchMorePosts]);
 
     return (
-        <div
-            className={`${
-                (Array.isArray(posts[selected]?.post_video_urls) &&
-                    posts[selected].post_video_urls.length > 0) ||
-                (Array.isArray(posts[selected]?.post_image_urls) &&
-                    posts[selected].post_image_urls.length > 0)
-                    ? 'lg:h-[85vh]'
-                    : 'lg:h-[60vh]'
-            } overflow-hidden`}
-        >
+        <div className={`overflow-hidden lg:h-[85vh]`}>
             <div
                 ref={containerRef}
                 className="hide-y-scrollbar flex flex-row gap-2 overflow-x-auto overflow-y-hidden border-gray-700 lg:w-28 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden"
@@ -110,8 +105,11 @@ export default function PostsGrid({
                         key={post.id}
                         ref={(el) => (thumbRefs.current[idx] = el)}
                         onClick={() => {
-                            onSelect(post);
                             onSelectIndex(idx);
+
+                            setTimeout(() => {
+                                onSelect(post);
+                            }, 500);
                         }}
                         className={`md:h-15 md:w-15 relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 text-xs transition sm:h-12 sm:w-12 lg:h-20 lg:w-20 ${
                             selected === idx

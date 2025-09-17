@@ -100,19 +100,20 @@ export default function index({ all_posts, next_page_url }) {
             if (data.status) {
                 setViewablePost(data.post);
 
-                //  Only add if not already in posts
                 setPosts((prev) => {
+                    let newPosts = prev;
                     const exists = prev.some((p) => p.id === data.post.id);
-                    return exists ? prev : [data.post, ...prev];
-                });
 
-                // Update selected index to the position of this post
-                setPosts((prev) => {
-                    const idx = prev.findIndex((p) => p.id === data.post.id);
+                    if (!exists) {
+                        newPosts = [data.post, ...prev];
+                    }
+
+                    const idx = newPosts.findIndex((p) => p.id === data.post.id);
                     if (idx !== -1) {
                         setSelectedPostIndex(idx);
                     }
-                    return prev;
+
+                    return newPosts;
                 });
             } else {
                 toast.error('Post Not Found');
@@ -141,6 +142,48 @@ export default function index({ all_posts, next_page_url }) {
             if (loaderRef.current) observer.unobserve(loaderRef.current);
         };
     }, [nextPageUrl]);
+
+    const mediaMobileref = useRef(null);
+    // Mouse wheel navigation For Mobile Media Navigation
+    useEffect(() => {
+        if (!mediaMobileref.current) return;
+
+        if (viewablePost != '' && mediaItems.length > 0) {
+            const mediaEl = mediaMobileref.current;
+
+            const handleWheel = (event) => {
+                if (event.ctrlKey || event.metaKey) return;
+                event.preventDefault();
+
+                if (event.deltaY < 0) {
+                    setSelectedMediaIndex((prev) =>
+                        prev === 0 ? mediaItems.length - 1 : prev - 1,
+                    );
+                } else {
+                    setSelectedMediaIndex((prev) =>
+                        prev === mediaItems.length - 1 ? 0 : prev + 1,
+                    );
+                }
+            };
+
+            setMediaItems(mediaItems);
+
+            mediaEl.addEventListener('wheel', handleWheel, { passive: false });
+            return () => {
+                mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
+            };
+        }
+    }, [mediaItems.length, viewablePost, showDetails]);
+    // Auto-scroll thumbnails For Mobile Media Navigation
+    useEffect(() => {
+        if (thumbRefs.current[selectedPostIndex]) {
+            thumbRefs.current[selectedPostIndex].scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest',
+            });
+        }
+    }, [selectedPostIndex]);
 
     return (
         <MainLayout>
@@ -603,7 +646,7 @@ export default function index({ all_posts, next_page_url }) {
                                             </p>
 
                                             <div
-                                                className="prose max-w-none break-words text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
+                                                className="prose max-w-[60vw] break-words text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
                                                 dangerouslySetInnerHTML={{
                                                     __html: viewablePost?.content,
                                                 }}
@@ -884,7 +927,10 @@ export default function index({ all_posts, next_page_url }) {
                             </div>
 
                             {mediaItems.length > 1 && showDetails && (
-                                <div className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none">
+                                <div
+                                    className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none"
+                                    ref={mediaMobileref}
+                                >
                                     {mediaItems.map((item, idx) => (
                                         <button
                                             key={idx}
@@ -901,12 +947,14 @@ export default function index({ all_posts, next_page_url }) {
                                                     src={item.url}
                                                     alt={`Image ${idx}`}
                                                     className="h-full w-full object-cover"
+                                                    loading="lazy"
                                                 />
                                             ) : (
                                                 <img
                                                     src={videoThumbnail}
                                                     alt={`Video ${idx}`}
                                                     className="h-full w-full object-cover opacity-80"
+                                                    loading="lazy"
                                                 />
                                             )}
                                         </button>

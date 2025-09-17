@@ -142,17 +142,14 @@ class PostRepository implements IPostRepository
                 foreach ($request->file('images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
 
-                    // Not Needed Because We Are Using Masonry Layout On Website
-                    // $resizedImage = ImageManager::imagick()
-                    //     ->read($image)
-                    //     ->resize(1920, 1080)
-                    //     ->contain(1920, 1080)
-                    //     ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->encodeByExtension('jpg', quality: 70);
 
-                    // $tempPath = 'temp/uploads/'.$new_name;
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+                    // $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
 
-                    // Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
 
                     $paths[] = $tempPath;
                 }
@@ -320,17 +317,14 @@ class PostRepository implements IPostRepository
                 foreach ($request->file('new_images') as $image) {
                     $new_name = time().uniqid().'-'.Str::random(10).'.'.$image->getClientOriginalExtension();
 
-                    // Not Needed Because We Are Using Masonry Layout On Website
-                    // $resizedImage = ImageManager::imagick()
-                    //     ->read($image)
-                    //     ->resize(1920, 1080)
-                    //     ->contain(1920, 1080)
-                    //     ->encodeByExtension($image->getClientOriginalExtension(), quality: 80);
+                    $resizedImage = ImageManager::imagick()
+                        ->read($image)
+                        ->encodeByExtension('jpg', quality: 70);
 
-                    // $tempPath = 'temp/uploads/'.$new_name;
-                    $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
+                    // $tempPath = $image->storeAs('temp/uploads', $new_name, 'local');
 
-                    // Storage::disk('local')->put($tempPath, (string) $resizedImage);
+                    $tempPath = 'temp/uploads/'.$new_name;
+                    Storage::disk('local')->put($tempPath, (string) $resizedImage);
 
                     $paths[] = $tempPath;
                 }

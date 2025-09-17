@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import videoThumbnail from '../../../public/assets/images/video-thumb/general-video.png';
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '@/Hooks/useWindowSize';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PostMediaViewer({
     viewablePost,
@@ -17,21 +18,21 @@ export default function PostMediaViewer({
     // Cache for loaded URLs
     const loadedCache = useRef(new Set());
 
-    const [loading, setLoading] = useState(true);
     const windowSize = useWindowSize();
 
     // Swiper
     const handlers = useSwipeable({
-        onSwipedLeft: () =>
-            onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1)),
-        onSwipedRight: () =>
-            onSelectMediaIndex((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1)),
-
-        delta: 10,
-        velocity: 0.2,
-        preventScrollOnSwipe: true,
+        onSwipedLeft: (e) => {
+            setDirection(1);
+            onSelectMediaIndex((prev) => (prev + 1) % mediaItems.length);
+        },
+        onSwipedRight: (e) => {
+            setDirection(-1);
+            onSelectMediaIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+        },
         trackTouch: true,
-        trackMouse: false,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
     });
 
     // Combine images + videos into one array
@@ -85,42 +86,25 @@ export default function PostMediaViewer({
 
     // Preload
     useEffect(() => {
-        const current = mediaItems[selected];
-        if (!current) return;
-
-        if (loadedCache.current.has(current.url)) {
-            setLoading(false);
-            return;
-        }
-
-        setLoading(true);
-
-        if (current.type === 'image') {
-            const img = new Image();
-            img.src = current.url;
-
-            if (img.complete) {
-                setLoading(false);
-                loadedCache.current.add(current.url);
+        const preload = (item) => {
+            if (!item || loadedCache.current.has(item.url)) return;
+            if (item.type === 'image') {
+                const img = new Image();
+                img.src = item.url;
+                img.onload = () => loadedCache.current.add(item.url);
             } else {
-                img.onload = () => {
-                    setLoading(false);
-                    loadedCache.current.add(current.url);
-                };
-                img.onerror = () => setLoading(false);
+                const video = document.createElement('video');
+                video.src = item.url;
+                video.preload = 'auto';
+                video.oncanplaythrough = () => loadedCache.current.add(item.url);
             }
-        } else {
-            const video = document.createElement('video');
-            video.src = current.url;
-            video.preload = 'metadata';
+        };
 
-            video.onloadeddata = () => {
-                setLoading(false);
-                loadedCache.current.add(current.url);
-            };
-            video.onerror = () => setLoading(false);
-        }
-    }, [mediaItems, selected]);
+        // preload current, next, and prev
+        preload(mediaItems[selected]);
+        preload(mediaItems[selected + 1]);
+        preload(mediaItems[selected - 1]);
+    }, [selected, mediaItems]);
 
     // Auto-scroll thumbnails
     useEffect(() => {
@@ -133,9 +117,15 @@ export default function PostMediaViewer({
         }
     }, [selected]);
 
+    const [direction, setDirection] = useState(0);
+
+    useEffect(() => {
+        setDirection(1);
+    }, [selected]);
+
     return (
         <div
-            className="relative mx-auto mb-5 mt-5 flex flex-col items-center justify-center lg:mt-0 lg:items-start lg:justify-start"
+            className="relative mx-auto mb-5 mt-5 flex flex-col items-center lg:mt-0"
             ref={MediaRef}
         >
             {/* Big Viewer */}
@@ -145,26 +135,58 @@ export default function PostMediaViewer({
                     height: windowSize.width >= 1024 ? '70vh' : '60vh',
                     maxWidth: windowSize.width >= 1024 ? '50vw' : '100%',
                     width: '100%',
+                    position: 'relative', // redundant but explicit
                 }}
                 {...handlers}
             >
-                {mediaItems[selected]?.type === 'image' ? (
-                    <img
-                        src={mediaItems[selected]?.url}
-                        alt={`Media ${selected}`}
-                        className="h-full w-full object-contain transition-all duration-300"
-                    />
-                ) : (
-                    <video
-                        controls
-                        src={mediaItems[selected]?.url}
-                        className="h-full w-full rounded-xl object-contain transition-all duration-300"
-                    />
-                )}
-
-                {loading && (
-                    <div className="absolute inset-0 flex animate-pulse items-center justify-center rounded-xl bg-gray-300 dark:bg-gray-700" />
-                )}
+                <div className="invisible h-full w-full">
+                    {mediaItems[selected]?.type === 'image' ? (
+                        <img
+                            src={mediaItems[selected]?.url}
+                            alt={`Media ${selected}`}
+                            className="h-full w-full object-contain"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <video
+                            src={mediaItems[selected]?.url}
+                            className="h-full w-full rounded-xl object-contain"
+                        />
+                    )}
+                </div>
+                {/* Animated layers */}
+                <AnimatePresence initial={false} custom={direction}>
+                    <div className="absolute inset-0 flex h-full w-full items-center justify-center">
+                        {mediaItems.map((item, idx) => (
+                            <motion.div
+                                key={item.url}
+                                initial={false}
+                                animate={{
+                                    opacity: idx === selected ? 1 : 0,
+                                    zIndex: idx === selected ? 1 : 0,
+                                }}
+                                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                className="absolute inset-0 flex h-full w-full items-center justify-center"
+                            >
+                                {item.type === 'image' ? (
+                                    <img
+                                        src={item.url}
+                                        alt={`Media ${idx}`}
+                                        className="h-full w-full object-contain"
+                                        onLoad={() => loadedCache.current.add(item.url)}
+                                    />
+                                ) : (
+                                    <video
+                                        src={item.url}
+                                        controls
+                                        preload="auto"
+                                        className="h-full w-full rounded-xl object-contain"
+                                    />
+                                )}
+                            </motion.div>
+                        ))}
+                    </div>
+                </AnimatePresence>
             </div>
 
             {/* Thumbnails */}

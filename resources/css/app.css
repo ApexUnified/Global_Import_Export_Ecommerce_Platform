@@ -31,6 +31,10 @@
     display: none; /* Chrome, Safari, Edge */
 }
 
+.transition-all {
+    will-change: transform, opacity;
+}
+
 /* Tailwind CSS Base */
 @tailwind base;
 
