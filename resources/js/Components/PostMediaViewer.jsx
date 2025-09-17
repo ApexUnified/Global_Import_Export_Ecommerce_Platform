@@ -191,7 +191,7 @@ export default function PostMediaViewer({
 
             {/* Thumbnails */}
             {windowSize.width > 1024 && mediaItems.length > 1 && (
-                <div className="mt-3 flex max-w-[40vw] gap-2 overflow-x-auto px-2 scrollbar-none">
+                <div className="mt-3 flex max-w-[40vw] gap-2 overflow-x-hidden px-2 scrollbar-none">
                     {mediaItems.map((item, idx) => (
                         <button
                             key={idx}
