@@ -69,6 +69,23 @@ export default function PostMediaViewer({
         onSelectMediaIndex(0);
     }, [viewablePost]);
 
+    // Auto-scroll thumbnails
+    useEffect(() => {
+        if (thumbRefs.current[selected]) {
+            thumbRefs.current[selected].scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest',
+            });
+        }
+    }, [selected]);
+
+    const [direction, setDirection] = useState(0);
+
+    useEffect(() => {
+        setDirection(1);
+    }, [selected]);
+
     // Preload
     useEffect(() => {
         const preload = (item) => {
@@ -90,23 +107,6 @@ export default function PostMediaViewer({
         preload(mediaItems[selected + 1]);
         preload(mediaItems[selected - 1]);
     }, [selected, mediaItems]);
-
-    // Auto-scroll thumbnails
-    useEffect(() => {
-        if (thumbRefs.current[selected]) {
-            thumbRefs.current[selected].scrollIntoView({
-                behavior: 'smooth',
-                inline: 'center',
-                block: 'nearest',
-            });
-        }
-    }, [selected]);
-
-    const [direction, setDirection] = useState(0);
-
-    useEffect(() => {
-        setDirection(1);
-    }, [selected]);
 
     // Swiper
     const handlers = useSwipeable({

@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
 import videoThumbnail from '../../../../../public/assets/images/video-thumb/general-video.png';
+import { useSwipeable } from 'react-swipeable';
 export default function index({ all_posts, next_page_url }) {
     const [viewablePost, setViewablePost] = useState('');
 
@@ -184,6 +185,16 @@ export default function index({ all_posts, next_page_url }) {
             });
         }
     }, [selectedPostIndex]);
+
+    // Swiper For Opening About Post Bottom bar
+    const handlers = useSwipeable({
+        onSwipedUp: () => {
+            setShowDetails(true);
+        },
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
 
     return (
         <MainLayout>
@@ -761,7 +772,7 @@ export default function index({ all_posts, next_page_url }) {
                         </div>
 
                         {/* Content */}
-                        <div className="mx-auto w-full p-2 md:px-7">
+                        <div className="mx-auto w-full p-2 md:px-7" {...handlers}>
                             {/* Author Header */}
                             <div className="flex flex-wrap items-center justify-between space-x-3">
                                 <div className="flex items-center">
