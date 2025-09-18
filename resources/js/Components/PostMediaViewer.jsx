@@ -142,7 +142,7 @@ export default function PostMediaViewer({
                     height: windowSize.width >= 1024 ? '70vh' : '60vh',
                     maxWidth: windowSize.width >= 1024 ? '50vw' : '100%',
                     width: '100%',
-                    position: 'relative', // redundant but explicit
+                    position: 'relative',
                 }}
                 {...handlers}
             >
@@ -151,13 +151,13 @@ export default function PostMediaViewer({
                         <img
                             src={mediaItems[selected]?.url}
                             alt={`Media ${selected}`}
-                            className="h-full w-full object-contain"
+                            className="h-full w-full min-w-[300px] max-w-[300px] object-contain"
                             loading="lazy"
                         />
                     ) : (
                         <video
                             src={mediaItems[selected]?.url}
-                            className="h-full w-full rounded-xl object-contain"
+                            className="h-full w-full min-w-[300px] max-w-[300px] rounded-xl object-contain"
                         />
                     )}
                 </div>
@@ -179,7 +179,7 @@ export default function PostMediaViewer({
                                     <img
                                         src={item.url}
                                         alt={`Media ${idx}`}
-                                        className="h-full w-full object-contain"
+                                        className="h-full w-full rounded-xl object-contain"
                                         onLoad={() => loadedCache.current.add(item.url)}
                                     />
                                 ) : (
@@ -202,7 +202,7 @@ export default function PostMediaViewer({
                     {mediaItems.map((item, idx) => (
                         <button
                             key={idx}
-                            ref={(el) => (thumbRefs.current[idx] = el)}
+                            ref={(el) => (mediaThumbRefs.current[idx] = el)}
                             onClick={() => onSelectMediaIndex(idx)}
                             className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
                                 selectedMediaIndex === idx
