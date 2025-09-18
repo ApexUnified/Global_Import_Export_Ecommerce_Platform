@@ -95,10 +95,10 @@ export default function PostsGrid({
     }, [posts.length, nextPageUrl, fetchMorePosts]);
 
     return (
-        <div className={`overflow-hidden lg:h-[85vh]`}>
+        <div className={`lg:h-[85vh]`}>
             <div
                 ref={containerRef}
-                className="hide-y-scrollbar flex flex-row gap-2 overflow-x-auto overflow-y-hidden border-gray-700 lg:w-28 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden"
+                className="hide-y-scrollbar flex max-h-[75vh] cursor-pointer flex-row gap-2 overflow-x-auto overflow-y-hidden border-gray-700 lg:w-28 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden"
             >
                 {posts.map((post, idx) => (
                     <button

@@ -49,6 +49,33 @@
     body {
         @apply font-outfit;
     }
+
+    /* Chrome, Edge, Safari */
+    ::-webkit-scrollbar {
+        @apply h-2 w-2;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-gray-100 dark:bg-gray-900; /* Light: gray-100, Dark: gray-900 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-gray-400 dark:bg-gray-600;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-600 dark:bg-gray-400;
+    }
+
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #9ca3af #f3f4f6; /* thumb | track for light mode */
+    }
+
+    .dark * {
+        scrollbar-color: #4b5563 #111827; /* thumb | track for dark mode */
+    }
 }
 
 /* Utilities Layer: Define custom utilities for sidebar and other components */

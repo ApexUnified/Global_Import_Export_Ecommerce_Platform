@@ -34,6 +34,7 @@ export default function index({ all_posts, next_page_url }) {
     // Set Media items For Media Viewer In the bottom bar
     const [mediaItems, setMediaItems] = useState([]);
     const thumbRefs = useRef([]);
+    const mediaThumbRefs = useRef([]);
 
     const generateURL = (post) => {
         return (
@@ -167,14 +168,13 @@ export default function index({ all_posts, next_page_url }) {
                 }
             };
 
-            setMediaItems(mediaItems);
-
             mediaEl.addEventListener('wheel', handleWheel, { passive: false });
             return () => {
                 mediaEl.removeEventListener('wheel', handleWheel, { passive: false });
             };
         }
     }, [mediaItems.length, viewablePost]);
+
     // Auto-scroll thumbnails For Mobile Media Navigation
     useEffect(() => {
         if (thumbRefs.current[selectedPostIndex]) {
@@ -186,6 +186,21 @@ export default function index({ all_posts, next_page_url }) {
         }
     }, [selectedPostIndex]);
 
+    useEffect(() => {
+        if (viewablePost) {
+            const images = Array.isArray(viewablePost.post_image_urls)
+                ? viewablePost.post_image_urls.map((url) => ({ type: 'image', url }))
+                : [];
+            const videos = Array.isArray(viewablePost.post_video_urls)
+                ? viewablePost.post_video_urls.map((url) => ({ type: 'video', url }))
+                : [];
+
+            const allMedia = [...images, ...videos];
+            setMediaItems(allMedia);
+            setSelectedMediaIndex(allMedia.length > 0 ? 0 : -1);
+        }
+    }, [viewablePost]);
+
     // Swiper For Opening About Post Bottom bar
     const handlers = useSwipeable({
         onSwipedUp: () => {
@@ -195,6 +210,55 @@ export default function index({ all_posts, next_page_url }) {
         onSwipedDown: () => {
             if (showDetails) setShowDetails(false);
         },
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
+
+    const PostSwipeTimeout = useRef(null);
+    const outerHandlers = useSwipeable({
+        onSwipedLeft: () => {
+            let nextIndex = selectedPostIndex === posts.length - 1 ? 0 : selectedPostIndex + 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.pushState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
+        onSwipedRight: () => {
+            let nextIndex = selectedPostIndex === 0 ? posts.length - 1 : selectedPostIndex - 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.pushState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
         trackTouch: true,
         trackMouse: true,
         preventScrollOnSwipe: true,
@@ -491,7 +555,24 @@ export default function index({ all_posts, next_page_url }) {
                         {/* Scrollable Posts  */}
 
                         {/* Post Content */}
-                        <div className="flex flex-col lg:flex-row">
+                        <div
+                            {...(windowSize.width < 1024 && outerHandlers)}
+                            className="flex flex-col lg:flex-row"
+                        >
+                            {windowSize.width < 1024 && (
+                                <>
+                                    <div
+                                        {...outerHandlers}
+                                        className="absolute left-0 top-0 z-10 h-full w-[10%]"
+                                    />
+                                    {/* Right swipe zone */}
+                                    <div
+                                        {...outerHandlers}
+                                        className="absolute right-0 top-0 z-10 h-full w-[10%]"
+                                    />
+                                </>
+                            )}
+
                             {windowSize.width < 1024 && (
                                 <PostsGrid
                                     posts={posts}
@@ -517,7 +598,7 @@ export default function index({ all_posts, next_page_url }) {
                                     selectedMediaIndex={selectedMediaIndex}
                                     onSelectMediaIndex={setSelectedMediaIndex}
                                     setMediaItems={setMediaItems}
-                                    thumbRefs={thumbRefs}
+                                    mediaThumbRefs={mediaThumbRefs}
                                 />
                             )}
 
@@ -538,13 +619,13 @@ export default function index({ all_posts, next_page_url }) {
                                         windowSize.width > 1024) && (
                                         <div className="mx-auto w-full space-y-4 p-2 md:px-10">
                                             {/* Author Header */}
-                                            <div className="flex flex-wrap items-center justify-between space-x-3">
+                                            <div className="flex flex-wrap items-center justify-between space-x-3 space-y-4">
                                                 <div className="flex items-center">
-                                                    <span className="text-[8px] font-semibold dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[15px]">
-                                                        {viewablePost?.user?.name.length > 50
+                                                    <span className="text-[13px] font-semibold dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
+                                                        {viewablePost?.user?.name.length > 30
                                                             ? viewablePost?.user?.name.substring(
                                                                   0,
-                                                                  50,
+                                                                  30,
                                                               ) + '...'
                                                             : viewablePost?.user?.name}
                                                     </span>
@@ -559,7 +640,7 @@ export default function index({ all_posts, next_page_url }) {
                                                             viewBox="0 0 24 24"
                                                             strokeWidth={1.5}
                                                             stroke="currentColor"
-                                                            className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                            className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
@@ -614,7 +695,7 @@ export default function index({ all_posts, next_page_url }) {
                                                                 }
                                                                 strokeWidth={1.5}
                                                                 viewBox="0 0 24 24"
-                                                                className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                             >
                                                                 <path
                                                                     strokeLinecap="round"
@@ -643,7 +724,7 @@ export default function index({ all_posts, next_page_url }) {
                                                             viewBox="0 0 24 24"
                                                             strokeWidth={1.5}
                                                             stroke="currentColor"
-                                                            className="size-3 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                            className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
@@ -656,12 +737,12 @@ export default function index({ all_posts, next_page_url }) {
                                             </div>
 
                                             {/* Post Content */}
-                                            <p className="mt-2 whitespace-normal break-words text-[7px] font-semibold text-gray-800 dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]">
+                                            <p className="mt-2 whitespace-normal break-words text-[15px] font-semibold text-gray-800 dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
                                                 {viewablePost?.title}
                                             </p>
 
                                             <div
-                                                className="prose max-w-[60vw] break-words text-[7px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[20px]"
+                                                className="prose max-h-[400px] max-w-[80vw] overflow-auto break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                                 dangerouslySetInnerHTML={{
                                                     __html: viewablePost?.content,
                                                 }}
@@ -669,7 +750,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Tag */}
                                             <div>
-                                                <span className="text-[5px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[12px]">
+                                                <span className="text-[10px] font-semibold text-blue-600 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
                                                     {viewablePost?.tag}
                                                 </span>
                                             </div>
@@ -677,7 +758,7 @@ export default function index({ all_posts, next_page_url }) {
                                             <hr className="border-gray-200 dark:border-gray-700" />
 
                                             {/* Post Meta Info */}
-                                            <div className="my-2 flex flex-wrap gap-2 text-[5px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[12px]">
+                                            <div className="my-2 flex flex-wrap gap-2 text-[10px] text-gray-700 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
                                                 <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                                     {viewablePost?.added_at}{' '}
                                                     {viewablePost?.created_at_time}
@@ -726,8 +807,9 @@ export default function index({ all_posts, next_page_url }) {
                                 ? 'max-h-[80vh] translate-y-0 overflow-y-auto bg-gray-200 dark:bg-gray-950'
                                 : 'max-h-[30vh] translate-y-[50%] bg-white dark:bg-gray-800'
                         }`}
+                        {...handlers}
                     >
-                        <div className="me-2 flex items-center justify-end gap-2">
+                        <div className="me-2 flex items-center justify-end gap-2 pt-2">
                             <button
                                 onClick={() => {
                                     setShowDetails(!showDetails);
@@ -740,12 +822,17 @@ export default function index({ all_posts, next_page_url }) {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className={`size-4 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6`}
+                                    className="size-5 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
                                 >
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                                     />
                                 </svg>
                             </button>
@@ -764,7 +851,7 @@ export default function index({ all_posts, next_page_url }) {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -776,16 +863,16 @@ export default function index({ all_posts, next_page_url }) {
                         </div>
 
                         {/* Content */}
-                        <div className="mx-auto w-full p-2 md:px-7" {...handlers}>
+                        <div className="mx-auto w-full p-2 md:px-7">
                             {/* Author Header */}
                             <div className="flex flex-wrap items-center justify-between space-x-3">
                                 <div className="flex items-center">
                                     <span
-                                        className="cursor-pointer text-[10px] font-semibold hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                        className="cursor-pointer text-[15px] font-semibold hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                         onClick={() => setShowDetails(!showDetails)}
                                     >
-                                        {viewablePost?.user?.name.length > 50
-                                            ? viewablePost?.user?.name.substring(0, 50) + '...'
+                                        {viewablePost?.user?.name.length > 30
+                                            ? viewablePost?.user?.name.substring(0, 30) + '...'
                                             : viewablePost?.user?.name}
                                     </span>
                                 </div>
@@ -803,7 +890,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -860,7 +947,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     }
                                                     strokeWidth={1.5}
                                                     viewBox="0 0 24 24"
-                                                    className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
@@ -887,7 +974,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
                                             >
                                                 <path
                                                     strokeLinecap="round"
@@ -903,14 +990,14 @@ export default function index({ all_posts, next_page_url }) {
                             {/* Post Content */}
 
                             <p
-                                className="mt-2 cursor-pointer whitespace-normal break-words text-[10px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className="mt-2 cursor-pointer whitespace-normal break-words text-[15px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                 onClick={() => setShowDetails(!showDetails)}
                             >
                                 {viewablePost?.title}
                             </p>
 
                             <div
-                                className="prose max-w-none cursor-pointer break-words text-[10px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[8px] md:text-[9px] lg:text-[10px]"
+                                className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
                                 onClick={() => setShowDetails(!showDetails)}
                                 dangerouslySetInnerHTML={{
                                     __html: showDetails
@@ -921,7 +1008,7 @@ export default function index({ all_posts, next_page_url }) {
 
                             {/* Tag */}
                             <div>
-                                <span className="text-[8px] font-semibold text-blue-600 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                                <span className="text-[12px] font-semibold text-blue-600 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
                                     {viewablePost?.tag}
                                 </span>
                             </div>
@@ -929,7 +1016,7 @@ export default function index({ all_posts, next_page_url }) {
                             <hr className="border-gray-200 dark:border-gray-700" />
 
                             {/* Post Meta Info */}
-                            <div className="my-2 flex flex-wrap gap-2 text-[8px] text-gray-700 dark:text-white/80 sm:text-[6px] md:text-[7px] lg:text-[8px]">
+                            <div className="my-2 flex flex-wrap gap-2 text-[12px] text-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
                                 <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                     {viewablePost?.added_at} {viewablePost?.created_at_time}
                                 </span>
@@ -949,7 +1036,7 @@ export default function index({ all_posts, next_page_url }) {
                                     {mediaItems.map((item, idx) => (
                                         <button
                                             key={idx}
-                                            ref={(el) => (thumbRefs.current[idx] = el)}
+                                            ref={(el) => (mediaThumbRefs.current[idx] = el)}
                                             onClick={() => setSelectedMediaIndex(idx)}
                                             className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
                                                 selectedMediaIndex === idx
@@ -1004,7 +1091,7 @@ export default function index({ all_posts, next_page_url }) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="size-4 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-6 lg:size-7"
+                                        className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-6 lg:size-7"
                                         aria-hidden="true"
                                     >
                                         <path
@@ -1019,14 +1106,14 @@ export default function index({ all_posts, next_page_url }) {
                             <div className="text-center">
                                 <h2
                                     id="qrCodeTitle"
-                                    className="mb-2 text-[10px] font-semibold text-gray-900 dark:text-gray-100 sm:text-[11px] md:text-[12px] lg:text-[13px]"
+                                    className="mb-2 text-[15px] font-semibold text-gray-900 dark:text-gray-100 sm:text-[11px] md:text-[12px] lg:text-[13px]"
                                 >
                                     Scan QR Code
                                 </h2>
 
                                 <div className="flex items-center justify-center text-center">
                                     <QRCode
-                                        className="sm:size-50 size-20 md:size-40 lg:size-60"
+                                        className="sm:size-50 size-30 md:size-40 lg:size-60"
                                         value={generateURL(viewablePost)}
                                         viewBox="0 0 256 256"
                                     />

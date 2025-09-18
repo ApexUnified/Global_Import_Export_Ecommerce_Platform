@@ -9,7 +9,7 @@ export default function PostMediaViewer({
     selectedMediaIndex,
     onSelectMediaIndex,
     setMediaItems,
-    thumbRefs,
+    mediaThumbRefs,
 }) {
     const selected = selectedMediaIndex ?? 0;
 
@@ -71,8 +71,8 @@ export default function PostMediaViewer({
 
     // Auto-scroll thumbnails
     useEffect(() => {
-        if (thumbRefs.current[selected]) {
-            thumbRefs.current[selected].scrollIntoView({
+        if (mediaThumbRefs.current[selected]) {
+            mediaThumbRefs.current[selected].scrollIntoView({
                 behavior: 'smooth',
                 inline: 'center',
                 block: 'nearest',
@@ -111,12 +111,19 @@ export default function PostMediaViewer({
     // Swiper
     const handlers = useSwipeable({
         onSwipedLeft: (e) => {
-            setDirection(1);
-            onSelectMediaIndex((prev) => (prev + 1) % mediaItems.length);
+            if (mediaItems.length > 1) {
+                e.event.stopPropagation();
+                setDirection(1);
+                onSelectMediaIndex((prev) => (prev + 1) % mediaItems.length);
+            }
         },
+
         onSwipedRight: (e) => {
-            setDirection(-1);
-            onSelectMediaIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+            if (mediaItems.length > 1) {
+                e.event.stopPropagation();
+                setDirection(-1);
+                onSelectMediaIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+            }
         },
         trackTouch: true,
         trackMouse: true,
@@ -126,10 +133,7 @@ export default function PostMediaViewer({
     return (
         <div
             className="relative mx-auto mb-5 mt-5 flex flex-col items-center lg:mt-0"
-            ref={(el) => {
-                MediaRef.current = el;
-                if (handlers.ref) handlers.ref(el);
-            }}
+            ref={MediaRef}
         >
             {/* Big Viewer */}
             <div
@@ -140,6 +144,7 @@ export default function PostMediaViewer({
                     width: '100%',
                     position: 'relative', // redundant but explicit
                 }}
+                {...handlers}
             >
                 <div className="invisible h-full w-full">
                     {mediaItems[selected]?.type === 'image' ? (
