@@ -203,11 +203,11 @@ export default function index({ all_posts, next_page_url }) {
 
     // Swiper For Opening About Post Bottom bar
     const handlers = useSwipeable({
-        onSwipedUp: () => {
-            setShowDetails(true);
+        onSwipedUp: (e) => {
+            if (!showDetails) setShowDetails(true);
         },
 
-        onSwipedDown: () => {
+        onSwipedDown: (e) => {
             if (showDetails) setShowDetails(false);
         },
         trackTouch: true,
@@ -832,9 +832,11 @@ export default function index({ all_posts, next_page_url }) {
                                 ? 'max-h-[80vh] translate-y-0 overflow-y-auto bg-gray-200 dark:bg-gray-950'
                                 : 'max-h-[30vh] translate-y-[50%] bg-white dark:bg-gray-800'
                         }`}
-                        {...handlers}
                     >
-                        <div className="me-2 flex items-center justify-end gap-2 pt-2">
+                        <div
+                            className="me-2 flex items-center justify-end gap-2 pt-2"
+                            {...handlers}
+                        >
                             <button
                                 onClick={() => {
                                     setShowDetails(!showDetails);
@@ -1022,8 +1024,7 @@ export default function index({ all_posts, next_page_url }) {
                             </p>
 
                             <div
-                                className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
-                                onClick={() => setShowDetails(!showDetails)}
+                                className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
                                 dangerouslySetInnerHTML={{
                                     __html: showDetails
                                         ? viewablePost?.content
