@@ -264,6 +264,19 @@ export default function index({ all_posts, next_page_url }) {
         preventScrollOnSwipe: true,
     });
 
+    // Bottom Bar Hiding State
+    const [isVisible, setIsVisible] = useState(!showDetails);
+
+    useEffect(() => {
+        if (!showDetails) {
+            // Make it visible immediately → triggers fade-in
+            setIsVisible(true);
+        } else {
+            // Delay unmount until fadeOutUp finishes
+            const timer = setTimeout(() => setIsVisible(false), 500); // 500ms = animation time
+            return () => clearTimeout(timer);
+        }
+    }, [showDetails]);
     return (
         <MainLayout>
             <Head title="Posts" />
@@ -573,34 +586,46 @@ export default function index({ all_posts, next_page_url }) {
                                 </>
                             )}
 
-                            {windowSize.width < 1024 && (
-                                <PostsGrid
-                                    posts={posts}
-                                    onSelect={(post) => {
-                                        setViewablePost(post);
-                                        window.history.pushState({}, '', generateURL(post));
-                                    }}
-                                    selectedPostIndex={selectedPostIndex}
-                                    onSelectIndex={setSelectedPostIndex}
-                                    nextPageUrl={nextPageUrl}
-                                    fetchSinglePost={fetchSinglePost}
-                                    fetchMorePosts={fetchMorePosts}
-                                />
+                            {windowSize.width < 1024 && isVisible && (
+                                <div
+                                    className={`transition-all duration-500 ${
+                                        !showDetails ? 'animate-fadeInDown' : 'animate-fadeOutUp'
+                                    }`}
+                                >
+                                    <PostsGrid
+                                        posts={posts}
+                                        onSelect={(post) => {
+                                            setViewablePost(post);
+                                            window.history.pushState({}, '', generateURL(post));
+                                        }}
+                                        selectedPostIndex={selectedPostIndex}
+                                        onSelectIndex={setSelectedPostIndex}
+                                        nextPageUrl={nextPageUrl}
+                                        fetchSinglePost={fetchSinglePost}
+                                        fetchMorePosts={fetchMorePosts}
+                                    />
+                                </div>
                             )}
 
                             {/* Media Section - Shows on top for mobile, left for desktop */}
-                            {((Array.isArray(viewablePost?.post_video_urls) &&
-                                viewablePost.post_video_urls.length > 0) ||
-                                (Array.isArray(viewablePost?.post_image_urls) &&
-                                    viewablePost.post_image_urls.length > 0)) && (
-                                <PostMediaViewer
-                                    viewablePost={viewablePost}
-                                    selectedMediaIndex={selectedMediaIndex}
-                                    onSelectMediaIndex={setSelectedMediaIndex}
-                                    setMediaItems={setMediaItems}
-                                    mediaThumbRefs={mediaThumbRefs}
-                                />
-                            )}
+                            <div
+                                className={`transform transition-all duration-500 ease-in-out ${
+                                    showDetails ? '-translate-y-5' : 'translate-y-3'
+                                }`}
+                            >
+                                {((Array.isArray(viewablePost?.post_video_urls) &&
+                                    viewablePost.post_video_urls.length > 0) ||
+                                    (Array.isArray(viewablePost?.post_image_urls) &&
+                                        viewablePost.post_image_urls.length > 0)) && (
+                                    <PostMediaViewer
+                                        viewablePost={viewablePost}
+                                        selectedMediaIndex={selectedMediaIndex}
+                                        onSelectMediaIndex={setSelectedMediaIndex}
+                                        setMediaItems={setMediaItems}
+                                        mediaThumbRefs={mediaThumbRefs}
+                                    />
+                                )}
+                            </div>
 
                             {/* Content Section */}
                             {viewablePost && (
