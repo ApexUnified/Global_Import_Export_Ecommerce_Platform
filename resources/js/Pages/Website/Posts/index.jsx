@@ -833,9 +833,18 @@ export default function index({ all_posts, next_page_url }) {
                         }`}
                     >
                         <div
-                            className="me-2 flex items-center justify-end gap-2 pt-2"
+                            className={`me-2 flex items-center justify-between gap-2 px-2 ${showDetails && 'p-2'}`}
                             {...handlers}
                         >
+                            <span
+                                className="cursor-pointer text-[15px] font-semibold hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
+                                onClick={() => setShowDetails(!showDetails)}
+                            >
+                                {viewablePost?.user?.name.length > 30
+                                    ? viewablePost?.user?.name.substring(0, 30) + '...'
+                                    : viewablePost?.user?.name}
+                            </span>
+
                             <button
                                 onClick={() => {
                                     setShowDetails(!showDetails);
@@ -863,7 +872,7 @@ export default function index({ all_posts, next_page_url }) {
                                 </svg>
                             </button>
 
-                            <button
+                            {/* <button
                                 onClick={() => {
                                     setViewablePost('');
                                     window.history.pushState({}, '', window.location.pathname);
@@ -885,142 +894,19 @@ export default function index({ all_posts, next_page_url }) {
                                         d="M6 18 18 6M6 6l12 12"
                                     />
                                 </svg>
-                            </button>
+                            </button> */}
                         </div>
 
                         {/* Content */}
                         <div className="mx-auto w-full p-2 md:px-7">
-                            {/* Author Header */}
-                            <div className="flex flex-wrap items-center justify-between space-x-3">
-                                <div className="flex items-center">
-                                    <span
-                                        className="cursor-pointer text-[15px] font-semibold hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
-                                        onClick={() => setShowDetails(!showDetails)}
-                                    >
-                                        {viewablePost?.user?.name.length > 30
-                                            ? viewablePost?.user?.name.substring(0, 30) + '...'
-                                            : viewablePost?.user?.name}
-                                    </span>
-                                </div>
-
-                                {showDetails && (
-                                    <div className="flex cursor-pointer items-center gap-2">
-                                        <button
-                                            onClick={() => {
-                                                setShowQrCode(true);
-                                            }}
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
-                                                />
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
-                                                />
-                                            </svg>
-                                        </button>
-
-                                        {auth?.user && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    router.put(
-                                                        route(
-                                                            'website.posts.bookmark',
-                                                            viewablePost?.id,
-                                                        ),
-                                                        {
-                                                            post_id: viewablePost?.id,
-                                                        },
-                                                        {
-                                                            onSuccess: () => {
-                                                                viewablePost.is_bookmarked =
-                                                                    !viewablePost.is_bookmarked;
-                                                            },
-                                                            onError: (e) => {
-                                                                toast.error(e.message);
-                                                            },
-                                                        },
-                                                    );
-                                                }}
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill={
-                                                        viewablePost?.is_bookmarked
-                                                            ? isDarkMode
-                                                                ? '#ffff'
-                                                                : '#0340D1'
-                                                            : 'none'
-                                                    }
-                                                    stroke={
-                                                        viewablePost?.is_bookmarked
-                                                            ? isDarkMode
-                                                                ? '#ffff'
-                                                                : '#0340D1'
-                                                            : 'currentColor'
-                                                    }
-                                                    strokeWidth={1.5}
-                                                    viewBox="0 0 24 24"
-                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        )}
-
-                                        <button
-                                            onClick={(e) => {
-                                                const url =
-                                                    route('website.posts.index') +
-                                                    generateURL(viewablePost);
-                                                navigator.clipboard.writeText(url.trim());
-
-                                                toast.success('Copied to clipboard');
-                                            }}
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
                             {/* Post Content */}
 
-                            <p
+                            {/* <p
                                 className="mt-2 cursor-pointer whitespace-normal break-words text-[15px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                 onClick={() => setShowDetails(!showDetails)}
                             >
                                 {viewablePost?.title}
-                            </p>
+                            </p> */}
 
                             <div
                                 className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
@@ -1041,16 +927,129 @@ export default function index({ all_posts, next_page_url }) {
                             <hr className="border-gray-200 dark:border-gray-700" />
 
                             {/* Post Meta Info */}
-                            <div className="my-2 flex flex-wrap gap-2 text-[12px] text-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
-                                <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
-                                    {viewablePost?.added_at} {viewablePost?.created_at_time}
-                                </span>
-
-                                {viewablePost?.location_name && (
-                                    <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
-                                        {viewablePost?.location_name}
+                            <div className="my-2 flex flex-wrap justify-between gap-2">
+                                <div>
+                                    <span className="rounded-full bg-gray-100 p-1 text-[12px] text-gray-700 dark:bg-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
+                                        {viewablePost?.added_at} {viewablePost?.created_at_time}
                                     </span>
-                                )}
+
+                                    {viewablePost?.location_name && (
+                                        <span className="rounded-full bg-gray-100 p-1 text-[12px] text-gray-700 dark:bg-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
+                                            {viewablePost?.location_name}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div>
+                                    {showDetails && (
+                                        <div className="flex cursor-pointer items-center gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    setShowQrCode(true);
+                                                }}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+                                                    />
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+                                                    />
+                                                </svg>
+                                            </button>
+
+                                            {auth?.user && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.put(
+                                                            route(
+                                                                'website.posts.bookmark',
+                                                                viewablePost?.id,
+                                                            ),
+                                                            {
+                                                                post_id: viewablePost?.id,
+                                                            },
+                                                            {
+                                                                onSuccess: () => {
+                                                                    viewablePost.is_bookmarked =
+                                                                        !viewablePost.is_bookmarked;
+                                                                },
+                                                                onError: (e) => {
+                                                                    toast.error(e.message);
+                                                                },
+                                                            },
+                                                        );
+                                                    }}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill={
+                                                            viewablePost?.is_bookmarked
+                                                                ? isDarkMode
+                                                                    ? '#ffff'
+                                                                    : '#0340D1'
+                                                                : 'none'
+                                                        }
+                                                        stroke={
+                                                            viewablePost?.is_bookmarked
+                                                                ? isDarkMode
+                                                                    ? '#ffff'
+                                                                    : '#0340D1'
+                                                                : 'currentColor'
+                                                        }
+                                                        strokeWidth={1.5}
+                                                        viewBox="0 0 24 24"
+                                                        className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            )}
+
+                                            <button
+                                                onClick={(e) => {
+                                                    const url =
+                                                        route('website.posts.index') +
+                                                        generateURL(viewablePost);
+                                                    navigator.clipboard.writeText(url.trim());
+
+                                                    toast.success('Copied to clipboard');
+                                                }}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {mediaItems.length > 1 && (
