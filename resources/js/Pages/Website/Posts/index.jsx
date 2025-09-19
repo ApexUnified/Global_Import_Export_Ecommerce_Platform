@@ -158,12 +158,10 @@ export default function index({ all_posts, next_page_url }) {
                 event.preventDefault();
 
                 if (event.deltaY < 0) {
-                    setSelectedMediaIndex((prev) =>
-                        prev === 0 ? mediaItems.length - 1 : prev - 1,
-                    );
+                    setSelectedMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
                 } else {
                     setSelectedMediaIndex((prev) =>
-                        prev === mediaItems.length - 1 ? 0 : prev + 1,
+                        prev === mediaItems.length - 1 ? prev : prev + 1,
                     );
                 }
             };
@@ -218,7 +216,8 @@ export default function index({ all_posts, next_page_url }) {
     const PostSwipeTimeout = useRef(null);
     const outerHandlers = useSwipeable({
         onSwipedLeft: () => {
-            let nextIndex = selectedPostIndex === posts.length - 1 ? 0 : selectedPostIndex + 1;
+            let nextIndex =
+                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
 
             // Update current index
             setSelectedPostIndex(nextIndex);
@@ -239,7 +238,7 @@ export default function index({ all_posts, next_page_url }) {
         },
 
         onSwipedRight: () => {
-            let nextIndex = selectedPostIndex === 0 ? posts.length - 1 : selectedPostIndex - 1;
+            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
 
             // Update current index
             setSelectedPostIndex(nextIndex);
@@ -570,18 +569,18 @@ export default function index({ all_posts, next_page_url }) {
                         {/* Post Content */}
                         <div
                             {...(windowSize.width < 1024 && outerHandlers)}
-                            className="flex flex-col lg:flex-row"
+                            className="flex flex-col justify-center lg:flex-row"
                         >
                             {windowSize.width < 1024 && (
                                 <>
                                     <div
                                         {...outerHandlers}
-                                        className="absolute left-0 top-0 z-10 h-full w-[10%]"
+                                        className="absolute left-0 top-0 z-10 h-full w-[20%]"
                                     />
                                     {/* Right swipe zone */}
                                     <div
                                         {...outerHandlers}
-                                        className="absolute right-0 top-0 z-10 h-full w-[10%]"
+                                        className="absolute right-0 top-0 z-10 h-full w-[20%]"
                                     />
                                 </>
                             )}
@@ -636,7 +635,7 @@ export default function index({ all_posts, next_page_url }) {
                                         (Array.isArray(viewablePost?.post_image_urls) &&
                                             viewablePost.post_image_urls.length > 0)
                                             ? 'lg:w-1/2' // when media exists, take half width on desktop
-                                            : 'lg:w-full' // when no media, take full width
+                                            : 'lg:w-[80%]' // when no media, take full width
                                     }`}
                                 >
                                     {((!viewablePost?.post_video_urls?.length &&
@@ -767,7 +766,7 @@ export default function index({ all_posts, next_page_url }) {
                                             </p>
 
                                             <div
-                                                className="prose max-h-[400px] max-w-[80vw] overflow-auto break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
+                                                className="prose max-h-[400px] max-w-[70vw] overflow-auto break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                                 dangerouslySetInnerHTML={{
                                                     __html: viewablePost?.content,
                                                 }}

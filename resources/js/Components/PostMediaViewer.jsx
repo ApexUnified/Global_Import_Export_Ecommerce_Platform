@@ -47,9 +47,9 @@ export default function PostMediaViewer({
             event.preventDefault();
 
             if (event.deltaY < 0) {
-                onSelectMediaIndex((prev) => (prev === 0 ? mediaItems.length - 1 : prev - 1));
+                onSelectMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
             } else {
-                onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
+                onSelectMediaIndex((prev) => (prev === mediaItems.length - 1 ? prev : prev + 1));
             }
         };
 
@@ -131,102 +131,105 @@ export default function PostMediaViewer({
     });
 
     return (
-        <div
-            className="relative mx-auto mb-5 mt-5 flex flex-col items-center lg:mt-0"
-            ref={MediaRef}
-        >
-            {/* Big Viewer */}
+        <>
             <div
-                className="relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black"
-                style={{
-                    height: windowSize.width >= 1024 ? '70vh' : '60vh',
-                    maxWidth: windowSize.width >= 1024 ? '50vw' : '100%',
-                    width: '100%',
-                    position: 'relative',
-                }}
-                {...handlers}
+                className="relative mx-auto mb-5 mt-5 flex flex-col items-center lg:mt-0"
+                ref={MediaRef}
             >
-                <div className="invisible h-full w-full">
-                    {mediaItems[selected]?.type === 'image' ? (
-                        <img
-                            src={mediaItems[selected]?.url}
-                            alt={`Media ${selected}`}
-                            className="h-full w-full min-w-[300px] max-w-[300px] object-contain"
-                            loading="lazy"
-                        />
-                    ) : (
-                        <video
-                            src={mediaItems[selected]?.url}
-                            className="h-full w-full min-w-[300px] max-w-[300px] rounded-xl object-contain"
-                        />
-                    )}
+                {/* Big Viewer */}
+                <div
+                    className="relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black"
+                    style={{
+                        height: windowSize.width >= 1024 ? '70vh' : '60vh',
+                        minWidth: windowSize.width >= 1024 ? '30vw' : '100%',
+                        maxWidth: windowSize.width >= 1024 ? '30vw' : '100%',
+                        width: '100%',
+                        position: 'relative',
+                    }}
+                    {...handlers}
+                >
+                    <div className="invisible h-full w-full">
+                        {mediaItems[selected]?.type === 'image' ? (
+                            <img
+                                src={mediaItems[selected]?.url}
+                                alt={`Media ${selected}`}
+                                className="h-full w-full min-w-[300px] max-w-[300px] object-contain lg:min-w-[500px]"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <video
+                                src={mediaItems[selected]?.url}
+                                className="h-full w-full min-w-[300px] max-w-[300px] rounded-xl object-contain lg:min-w-[500px]"
+                            />
+                        )}
+                    </div>
+                    {/* Animated layers */}
+                    <AnimatePresence initial={false} custom={direction}>
+                        <div className="absolute inset-0 flex h-full w-full items-center justify-center">
+                            {mediaItems.map((item, idx) => (
+                                <motion.div
+                                    key={item.url}
+                                    initial={false}
+                                    animate={{
+                                        opacity: idx === selected ? 1 : 0,
+                                        zIndex: idx === selected ? 1 : 0,
+                                    }}
+                                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                    className="absolute inset-0 flex h-full w-full items-center justify-center"
+                                >
+                                    {item.type === 'image' ? (
+                                        <img
+                                            src={item.url}
+                                            alt={`Media ${idx}`}
+                                            className="h-full w-full rounded-xl object-contain"
+                                            onLoad={() => loadedCache.current.add(item.url)}
+                                        />
+                                    ) : (
+                                        <video
+                                            src={item.url}
+                                            controls
+                                            preload="auto"
+                                            className="h-full w-full rounded-xl object-contain"
+                                        />
+                                    )}
+                                </motion.div>
+                            ))}
+                        </div>
+                    </AnimatePresence>
                 </div>
-                {/* Animated layers */}
-                <AnimatePresence initial={false} custom={direction}>
-                    <div className="absolute inset-0 flex h-full w-full items-center justify-center">
+
+                {/* Thumbnails */}
+                {windowSize.width > 1024 && mediaItems.length > 1 && (
+                    <div className="mt-3 flex max-w-[28vw] gap-2 overflow-x-hidden px-2 scrollbar-none">
                         {mediaItems.map((item, idx) => (
-                            <motion.div
-                                key={item.url}
-                                initial={false}
-                                animate={{
-                                    opacity: idx === selected ? 1 : 0,
-                                    zIndex: idx === selected ? 1 : 0,
-                                }}
-                                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                className="absolute inset-0 flex h-full w-full items-center justify-center"
+                            <button
+                                key={idx}
+                                ref={(el) => (mediaThumbRefs.current[idx] = el)}
+                                onClick={() => onSelectMediaIndex(idx)}
+                                className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
+                                    selectedMediaIndex === idx
+                                        ? 'border-blue-600 ring-2 ring-blue-400'
+                                        : 'border-gray-300 hover:border-gray-500'
+                                }`}
                             >
                                 {item.type === 'image' ? (
                                     <img
                                         src={item.url}
-                                        alt={`Media ${idx}`}
-                                        className="h-full w-full rounded-xl object-contain"
-                                        onLoad={() => loadedCache.current.add(item.url)}
+                                        alt={`Image ${idx}`}
+                                        className="h-full w-full object-cover"
                                     />
                                 ) : (
-                                    <video
-                                        src={item.url}
-                                        controls
-                                        preload="auto"
-                                        className="h-full w-full rounded-xl object-contain"
+                                    <img
+                                        src={videoThumbnail}
+                                        alt={`Video ${idx}`}
+                                        className="h-full w-full object-cover opacity-80"
                                     />
                                 )}
-                            </motion.div>
+                            </button>
                         ))}
                     </div>
-                </AnimatePresence>
+                )}
             </div>
-
-            {/* Thumbnails */}
-            {windowSize.width > 1024 && mediaItems.length > 1 && (
-                <div className="mt-3 flex max-w-[40vw] gap-2 overflow-x-hidden px-2 scrollbar-none">
-                    {mediaItems.map((item, idx) => (
-                        <button
-                            key={idx}
-                            ref={(el) => (mediaThumbRefs.current[idx] = el)}
-                            onClick={() => onSelectMediaIndex(idx)}
-                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
-                                selectedMediaIndex === idx
-                                    ? 'border-blue-600 ring-2 ring-blue-400'
-                                    : 'border-gray-300 hover:border-gray-500'
-                            }`}
-                        >
-                            {item.type === 'image' ? (
-                                <img
-                                    src={item.url}
-                                    alt={`Image ${idx}`}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
-                                <img
-                                    src={videoThumbnail}
-                                    alt={`Video ${idx}`}
-                                    className="h-full w-full object-cover opacity-80"
-                                />
-                            )}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
+        </>
     );
 }

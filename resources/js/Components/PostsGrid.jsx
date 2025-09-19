@@ -71,9 +71,12 @@ export default function PostsGrid({
 
             let nextIndex;
             if (e.deltaY > 0) {
-                nextIndex = selectedPostIndex === posts.length - 1 ? 0 : selectedPostIndex + 1;
+                nextIndex =
+                    selectedPostIndex === posts.length - 1
+                        ? selectedPostIndex
+                        : selectedPostIndex + 1;
             } else {
-                nextIndex = selectedPostIndex === 0 ? posts.length - 1 : selectedPostIndex - 1;
+                nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
             }
 
             onSelectIndex(nextIndex);
