@@ -69,7 +69,17 @@ export default function index({ all_posts, next_page_url }) {
             document.body.classList.remove('overflow-hidden');
         }
 
-        return () => document.body.classList.remove('overflow-hidden');
+        const handlePopState = () => {
+            if (viewablePost !== '') {
+                setViewablePost('');
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+            document.body.classList.remove('overflow-hidden');
+            window.removeEventListener('popstate', handlePopState);
+        };
     }, [viewablePost]);
 
     // Fetch more posts
@@ -200,6 +210,7 @@ export default function index({ all_posts, next_page_url }) {
     }, [viewablePost]);
 
     // Swiper For Opening About Post Bottom bar
+    const PostSwipeTimeout = useRef(null);
     const handlers = useSwipeable({
         onSwipedUp: (e) => {
             if (!showDetails) setShowDetails(true);
@@ -208,13 +219,7 @@ export default function index({ all_posts, next_page_url }) {
         onSwipedDown: (e) => {
             if (showDetails) setShowDetails(false);
         },
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
 
-    const PostSwipeTimeout = useRef(null);
-    const outerHandlers = useSwipeable({
         onSwipedLeft: () => {
             let nextIndex =
                 selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
@@ -228,7 +233,7 @@ export default function index({ all_posts, next_page_url }) {
                 if (posts[nextIndex]) {
                     const post = posts[nextIndex];
                     setViewablePost(post);
-                    window.history.pushState({}, '', generateURL(post));
+                    window.history.replaceState({}, '', generateURL(post));
                 }
 
                 if (nextIndex >= posts.length - 5 && nextPageUrl) {
@@ -249,7 +254,7 @@ export default function index({ all_posts, next_page_url }) {
                 if (posts[nextIndex]) {
                     const post = posts[nextIndex];
                     setViewablePost(post);
-                    window.history.pushState({}, '', generateURL(post));
+                    window.history.replaceState({}, '', generateURL(post));
                 }
 
                 if (nextIndex >= posts.length - 5 && nextPageUrl) {
@@ -263,8 +268,148 @@ export default function index({ all_posts, next_page_url }) {
         preventScrollOnSwipe: true,
     });
 
+    const postSwipeForMobileBottomContent = useSwipeable({
+        onSwipedLeft: () => {
+            let nextIndex =
+                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.replaceState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
+        onSwipedRight: () => {
+            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.replaceState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
+
+    const outerHandlers = useSwipeable({
+        onSwipedLeft: () => {
+            let nextIndex =
+                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.replaceState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
+        onSwipedRight: () => {
+            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
+
+            // Update current index
+            setSelectedPostIndex(nextIndex);
+
+            // Debounce like wheel
+            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+            PostSwipeTimeout.current = setTimeout(() => {
+                if (posts[nextIndex]) {
+                    const post = posts[nextIndex];
+                    setViewablePost(post);
+                    window.history.replaceState({}, '', generateURL(post));
+                }
+
+                if (nextIndex >= posts.length - 5 && nextPageUrl) {
+                    fetchMorePosts();
+                }
+            }, 500);
+        },
+
+        onSwipedUp: () => {
+            if (
+                !showDetails &&
+                windowSize.width < 1024 &&
+                ((Array.isArray(viewablePost?.post_video_urls) &&
+                    viewablePost.post_video_urls.length > 0) ||
+                    (Array.isArray(viewablePost?.post_image_urls) &&
+                        viewablePost.post_image_urls.length > 0))
+            ) {
+                setShowDetails(true);
+            }
+        },
+
+        onSwipedDown: () => {
+            if (showDetails) setShowDetails(false);
+
+            if (!showDetails) {
+                setViewablePost('');
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        },
+
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
+
+    const mediaMobileHandlers = useSwipeable({
+        onSwipedLeft: (e) => {
+            setSelectedMediaIndex((prev) => (prev === mediaItems.length - 1 ? prev : prev + 1));
+        },
+
+        onSwipedRight: (e) => {
+            setSelectedMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
+        },
+
+        trackTouch: true,
+        trackMouse: true,
+        preventScrollOnSwipe: true,
+    });
+
     // Bottom Bar Hiding State
-    const [isVisible, setIsVisible] = useState(!showDetails);
+    const [isVisible, setIsVisible] = useState(
+        (!showDetails &&
+            Array.isArray(viewablePost?.post_video_urls) &&
+            !viewablePost.post_video_urls.length > 0) ||
+            (Array.isArray(viewablePost?.post_image_urls) &&
+                !viewablePost.post_image_urls.length > 0),
+    );
 
     useEffect(() => {
         if (!showDetails) {
@@ -525,12 +670,15 @@ export default function index({ all_posts, next_page_url }) {
                         className="fixed inset-0 backdrop-blur-[32px]"
                         onClick={() => {
                             setViewablePost('');
-                            window.history.pushState({}, '', window.location.pathname);
+                            window.history.replaceState({}, '', window.location.pathname);
                         }}
                     ></div>
 
                     {/* Modal content */}
-                    <div className="relative z-10 h-screen w-screen overflow-y-auto overflow-x-hidden p-6 shadow-xl scrollbar-none sm:p-8">
+                    <div
+                        className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto"
+                        {...(windowSize.width < 1024 && outerHandlers)}
+                    >
                         {windowSize.width > 1024 && viewablePost != '' && (
                             <>
                                 {/* Close Button */}
@@ -538,7 +686,7 @@ export default function index({ all_posts, next_page_url }) {
                                     <button
                                         onClick={() => {
                                             setViewablePost('');
-                                            window.history.pushState(
+                                            window.history.replaceState(
                                                 {},
                                                 '',
                                                 window.location.pathname,
@@ -595,7 +743,7 @@ export default function index({ all_posts, next_page_url }) {
                                         posts={posts}
                                         onSelect={(post) => {
                                             setViewablePost(post);
-                                            window.history.pushState({}, '', generateURL(post));
+                                            window.history.replaceState({}, '', generateURL(post));
                                         }}
                                         selectedPostIndex={selectedPostIndex}
                                         onSelectIndex={setSelectedPostIndex}
@@ -805,7 +953,7 @@ export default function index({ all_posts, next_page_url }) {
                                     posts={posts}
                                     onSelect={(post) => {
                                         setViewablePost(post);
-                                        window.history.pushState({}, '', generateURL(post));
+                                        window.history.replaceState({}, '', generateURL(post));
                                     }}
                                     selectedPostIndex={selectedPostIndex}
                                     onSelectIndex={setSelectedPostIndex}
@@ -915,6 +1063,7 @@ export default function index({ all_posts, next_page_url }) {
                                         ? viewablePost?.content
                                         : viewablePost?.content.substring(0, 200) + '...',
                                 }}
+                                {...postSwipeForMobileBottomContent}
                             />
 
                             {/* Tag */}
@@ -1057,34 +1206,39 @@ export default function index({ all_posts, next_page_url }) {
                                     className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none"
                                     ref={mediaMobileref}
                                 >
-                                    {mediaItems.map((item, idx) => (
-                                        <button
-                                            key={idx}
-                                            ref={(el) => (mediaThumbRefs.current[idx] = el)}
-                                            onClick={() => setSelectedMediaIndex(idx)}
-                                            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
-                                                selectedMediaIndex === idx
-                                                    ? 'border-blue-600 ring-2 ring-blue-400'
-                                                    : 'border-gray-300 hover:border-gray-500'
-                                            }`}
-                                        >
-                                            {item.type === 'image' ? (
-                                                <img
-                                                    src={item.url}
-                                                    alt={`Image ${idx}`}
-                                                    className="h-full w-full object-cover"
-                                                    loading="lazy"
-                                                />
-                                            ) : (
-                                                <img
-                                                    src={videoThumbnail}
-                                                    alt={`Video ${idx}`}
-                                                    className="h-full w-full object-cover opacity-80"
-                                                    loading="lazy"
-                                                />
-                                            )}
-                                        </button>
-                                    ))}
+                                    <div
+                                        {...mediaMobileHandlers}
+                                        className="flex gap-2 overflow-x-hidden scrollbar-none"
+                                    >
+                                        {mediaItems.map((item, idx) => (
+                                            <button
+                                                key={idx}
+                                                ref={(el) => (mediaThumbRefs.current[idx] = el)}
+                                                onClick={() => setSelectedMediaIndex(idx)}
+                                                className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
+                                                    selectedMediaIndex === idx
+                                                        ? 'border-blue-600 ring-2 ring-blue-400'
+                                                        : 'border-gray-300 hover:border-gray-500'
+                                                }`}
+                                            >
+                                                {item.type === 'image' ? (
+                                                    <img
+                                                        src={item.url}
+                                                        alt={`Image ${idx}`}
+                                                        className="h-full w-full object-cover"
+                                                        loading="lazy"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={videoThumbnail}
+                                                        alt={`Video ${idx}`}
+                                                        className="h-full w-full object-cover opacity-80"
+                                                        loading="lazy"
+                                                    />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

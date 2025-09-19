@@ -314,7 +314,11 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 Additional Work:
 (
   Made Posts Media Change When Mouse Wheel Rotates Like Mid-Journey Also Ensured Responsiveness ✅
-  Made Right Posts Side bar For Switching Posts Also Implemented Mouse Wheel Functionality
+  Made Right Posts Side bar For Switching Posts Also Implemented Mouse Wheel Functionality  ✅
+  On mobile, the Escape button sometimes doesn’t work. ✅
+  When the text appears, there is a container spacing issue. ✅
+  The feature to scroll the text upward with a finger doesn’t work. ✅
+  Swiping the text left or right with a finger doesn’t work. ✅
 
 
   Search Methods:
