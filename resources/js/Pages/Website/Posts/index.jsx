@@ -575,12 +575,12 @@ export default function index({ all_posts, next_page_url }) {
                                 <>
                                     <div
                                         {...outerHandlers}
-                                        className="absolute left-0 top-0 z-10 h-full w-[20%]"
+                                        className="absolute left-0 top-20 z-10 h-full w-[20%]"
                                     />
                                     {/* Right swipe zone */}
                                     <div
                                         {...outerHandlers}
-                                        className="absolute right-0 top-0 z-10 h-full w-[20%]"
+                                        className="absolute right-0 top-20 z-10 h-full w-[20%]"
                                     />
                                 </>
                             )}

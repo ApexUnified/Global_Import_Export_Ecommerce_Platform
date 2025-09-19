@@ -107,14 +107,14 @@ export default function PostsGrid({
                     <button
                         key={post.id}
                         ref={(el) => (thumbRefs.current[idx] = el)}
-                        // onClick={() => {
-                        //     onSelectIndex(idx);
+                        onClick={() => {
+                            onSelectIndex(idx);
 
-                        //     setTimeout(() => {
-                        //         onSelect(post);
-                        //     }, 500);
-                        // }}
-                        className={`md:h-15 md:w-15 pointer-events-none relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 text-xs transition sm:h-12 sm:w-12 lg:h-20 lg:w-20 ${
+                            setTimeout(() => {
+                                onSelect(post);
+                            }, 500);
+                        }}
+                        className={`md:h-15 md:w-15 relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 text-xs transition sm:h-12 sm:w-12 lg:h-20 lg:w-20 ${
                             selected === idx
                                 ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
                                 : 'border-gray-700 border-transparent opacity-70 hover:opacity-100 dark:border-white/80'
