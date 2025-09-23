@@ -303,12 +303,12 @@ Milestone 7: Customer Website (Frontend + PWA + Posts + Orders + Meta OAuth)
 	- https://docs.google.com/document/d/1d_0t4RXtx1Xrdj4U4KgTXFGfLaGZJ9Ykl5dyARDsBQU/edit?usp=sharing yesbigshop privacy policy and data deletion (korean)
 	- https://docs.google.com/document/d/1c7F1ohFgv_-ndouw3_GKkP0G5B1noJp4AG-pHp0Al3M/edit?usp=sharing yesbigshop privacy policy and data deletion (english)
 
-
+- Implementation of cryptocurrency payment (e.g., Bitcoin) for product purchases -> (new)
 - Customer Cannot Visit Dashboard Logic ✅
 - Restricting Customer From Adding Items Who Belongs To Different Distributor
-- Logic To Restrict Customer From Visiting Dashboard
+- Logic To Restrict Customer From Visiting Dashboard ✅
 - Overall Application Performance Enhancing
-- Updating Robot.txt File For Exposing Just Website Routes On Google Search Engine (Currently It Exposes Our Dashboard)
+- Updating Robot.txt File For Exposing Just Website Routes On Google Search Engine (Currently It Exposes Our Dashboard) ✅
 
 
 Additional Work:
@@ -321,6 +321,8 @@ Additional Work:
   Swiping the text left or right with a finger doesn’t work. ✅
 
 
+  Post Create Functionality For All users
+
   Search Methods:
   1. Spatiotemporal Information:
   Select one address from an auto-completed list.
@@ -331,7 +333,7 @@ Additional Work:
   2. General Search Terms
   Titles, tags, etc.
 
-  3. User Information
+  3. User Information ✅
   Account name or user ID.
 
   4. Citation-Based Trends
