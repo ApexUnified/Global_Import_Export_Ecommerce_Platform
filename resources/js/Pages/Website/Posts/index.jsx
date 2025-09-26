@@ -1197,28 +1197,38 @@ export default function index({ all_posts, next_page_url }) {
                                 </div>
 
                                 {/* Media Viewer */}
-                                <div className="flex items-center justify-center h-full text-white">
+                                <div className="relative flex items-center justify-center w-full h-full text-white">
+                                    {/* Blurred Background */}
                                     {Array.isArray(post.post_image_urls) &&
                                     post.post_image_urls.length > 0 ? (
-                                        <img
-                                            src={post.post_image_urls[0]}
-                                            alt="Post"
-                                            className="absolute inset-0 object-cover w-full h-full"
-                                        />
+                                        <>
+                                            <img
+                                                src={post.post_image_urls[0]}
+                                                alt="Post background blur"
+                                                className="absolute inset-0 object-cover w-full h-full scale-110 blur-lg"
+                                            />
+                                            <img
+                                                src={post.post_image_urls[0]}
+                                                alt="Post main"
+                                                className="relative z-10 max-h-[85dvh] w-auto object-contain"
+                                            />
+                                        </>
                                     ) : (
                                         Array.isArray(post.post_video_urls) &&
                                         post.post_video_urls.length > 0 && (
-                                            // <video
-                                            //     src={post.post_video_urls[0]}
-                                            //     controls
-                                            //     className="pointer-events-none max-h-[80vh] w-auto rounded-md object-contain"
-                                            // />
-
-                                            <VideoPlayer
-                                                videoUrl={post.post_video_urls[0]}
-                                                thumbnail={videoThumbnail}
-                                                className="absolute inset-0 object-cover w-full h-full"
-                                            />
+                                            <>
+                                                <VideoPlayer
+                                                    videoUrl={post.post_video_urls[0]}
+                                                    thumbnail={videoThumbnail}
+                                                    className="absolute inset-0 object-cover w-full h-full scale-110 blur-lg"
+                                                    muted
+                                                />
+                                                <VideoPlayer
+                                                    videoUrl={post.post_video_urls[0]}
+                                                    thumbnail={videoThumbnail}
+                                                    className="relative z-10 max-h-[85dvh] w-auto object-contain"
+                                                />
+                                            </>
                                         )
                                     )}
                                 </div>
@@ -1232,7 +1242,7 @@ export default function index({ all_posts, next_page_url }) {
                                             post.post_video_urls.length > 0)
                                             ? 'bottom-0 right-0'
                                             : 'right-10 top-10'
-                                    } left-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
+                                    } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
                                     style={{ minHeight: '20dvh' }}
                                 >
                                     {/* Username */}
