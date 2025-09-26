@@ -974,10 +974,10 @@ export default function index({ all_posts, next_page_url }) {
                         {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                className="relative flex flex-col w-full h-screen max-w-md mx-auto snap-start"
+                                className="relative w-full h-screen overflow-hidden snap-start"
                             >
                                 {/* Top Bar */}
-                                <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 text-white">
+                                <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 text-white bg-black/50 backdrop-blur-sm">
                                     <button
                                         onClick={() => {
                                             setViewablePost('');
@@ -1203,7 +1203,7 @@ export default function index({ all_posts, next_page_url }) {
                                         <img
                                             src={post.post_image_urls[0]}
                                             alt="Post"
-                                            className="pointer-events-none max-h-[100vh] w-auto rounded-md object-contain"
+                                            className="absolute inset-0 object-cover w-full h-full"
                                         />
                                     ) : (
                                         Array.isArray(post.post_video_urls) &&
@@ -1217,7 +1217,7 @@ export default function index({ all_posts, next_page_url }) {
                                             <VideoPlayer
                                                 videoUrl={post.post_video_urls[0]}
                                                 thumbnail={videoThumbnail}
-                                                className="pointer-events-none max-h-[100vh] w-auto rounded-md object-contain"
+                                                className="absolute inset-0 object-cover w-full h-full"
                                             />
                                         )
                                     )}
