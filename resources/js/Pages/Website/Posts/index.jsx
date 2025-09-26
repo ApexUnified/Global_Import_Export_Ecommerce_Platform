@@ -35,8 +35,23 @@ export default function index({ all_posts, next_page_url }) {
 
     // Set Media items For Media Viewer In the bottom bar
     const [mediaItems, setMediaItems] = useState([]);
+
+    // Tracking Post Viewer Width
+
+    // Desktop Post Viewer
+    const [isDesktopPostViewer, setIsDesktopPostViewer] = useState(false);
+
+    // Mobile Post Viewer
+    const [isMobilePostViewer, setIsMobilePostViewer] = useState(false);
+
+    // All Refs
     const thumbRefs = useRef([]);
     const mediaThumbRefs = useRef([]);
+    const mediaMobileref = useRef(null);
+    const mobilePostContainerRef = useRef(null);
+    const elipsisDropDownRef = useRef(null);
+    const elipsisButtonRef = useRef(null);
+    const postsRefs = useRef([]);
 
     const generateURL = (post) => {
         return (
@@ -71,13 +86,35 @@ export default function index({ all_posts, next_page_url }) {
         }
     };
 
-    // Tracking Post Viewer Width
+    // Auto Select Post From Mobile Post Container Logic
 
-    // Desktop Post Viewer
-    const [isDesktopPostViewer, setIsDesktopPostViewer] = useState(false);
+    const scrollToPost = (post) => {
+        const index = posts.findIndex((p) => p.id === post.id);
+        if (index !== -1 && postsRefs.current[index]) {
+            postsRefs.current[index].scrollIntoView({ block: 'start', behavior: 'instant' });
+        }
+    };
 
-    // Mobile Post Viewer
-    const [isMobilePostViewer, setIsMobilePostViewer] = useState(false);
+    // When mobile viewer opens
+    useEffect(() => {
+        if (isMobilePostViewer && viewablePost) {
+            scrollToPost(viewablePost);
+        }
+    }, [isMobilePostViewer]);
+
+    // When fullscreen toggles
+    const handleFullscreenChange = () => {
+        if (document.fullscreenElement) {
+            scrollToPost(viewablePost);
+        } else {
+            if (viewablePost !== '') {
+                setViewablePost('');
+                setIsDesktopPostViewer(false);
+                setIsMobilePostViewer(false);
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        }
+    };
 
     const setPostViewerBasedOnWidth = (windowSize) => {
         if (windowSize.width < 1024) {
@@ -125,12 +162,17 @@ export default function index({ all_posts, next_page_url }) {
                 setViewablePost('');
                 window.history.replaceState({}, '', window.location.pathname);
                 if (document.fullscreenElement) closeFullscreen();
+                setIsDesktopPostViewer(false);
+                setIsMobilePostViewer(false);
             }
         };
+
         window.addEventListener('popstate', handlePopState);
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.body.classList.remove('overflow-hidden');
             window.removeEventListener('popstate', handlePopState);
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
     }, [viewablePost]);
 
@@ -207,7 +249,6 @@ export default function index({ all_posts, next_page_url }) {
         };
     }, [nextPageUrl]);
 
-    const mediaMobileref = useRef(null);
     // Mouse wheel navigation For Mobile Media Navigation
     useEffect(() => {
         if (!mediaMobileref.current) return;
@@ -261,24 +302,8 @@ export default function index({ all_posts, next_page_url }) {
         }
     }, [viewablePost]);
 
-    // Auto Select Post From Mobile Post Container Logic
-    const mobilePostContainerRef = useRef(null);
-    useEffect(() => {
-        if (isMobilePostViewer && viewablePost && mobilePostContainerRef.current) {
-            const index = posts.findIndex((p) => p.id === viewablePost.id);
-            if (index !== -1) {
-                mobilePostContainerRef.current.scrollTo({
-                    top: index * window.innerHeight,
-                    behavior: 'instant',
-                });
-            }
-        }
-    }, [isMobilePostViewer]);
-
     // Mobile Post Elipsis Dropdown
     const [showElipsisDropdown, setElipsisShowDropdown] = useState(false);
-    const elipsisDropDownRef = useRef(null);
-    const elipsisButtonRef = useRef(null);
 
     // Checking Outside Click Of Elipsis Dropdown
     useEffect(() => {
@@ -976,7 +1001,7 @@ export default function index({ all_posts, next_page_url }) {
 
                     {/* Scrollable Container */}
                     <div
-                        className="relative z-10 w-full h-full overflow-y-scroll snap-y snap-mandatory scrollbar-none"
+                        className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
                         onScroll={(e) => {
                             setElipsisShowDropdown(false);
                             const scrollTop = e.currentTarget.scrollTop;
@@ -1000,7 +1025,8 @@ export default function index({ all_posts, next_page_url }) {
                         {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                className="relative w-full h-screen overflow-hidden snap-start"
+                                ref={(el) => (postsRefs.current[index] = el)}
+                                className="relative h-[100dvh] w-full snap-start overflow-hidden"
                             >
                                 {/* Top Bar */}
                                 <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 text-white bg-black/50 backdrop-blur-sm">
