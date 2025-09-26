@@ -1210,7 +1210,7 @@ export default function index({ all_posts, next_page_url }) {
                                             <img
                                                 src={post.post_image_urls[0]}
                                                 alt="Post main"
-                                                className="relative z-10 max-h-[85dvh] w-auto object-contain"
+                                                className="relative z-10 object-contain max-w-full max-h-full"
                                             />
                                         </>
                                     ) : (
@@ -1220,13 +1220,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 <VideoPlayer
                                                     videoUrl={post.post_video_urls[0]}
                                                     thumbnail={videoThumbnail}
-                                                    className="absolute inset-0 object-cover w-full h-full scale-110 blur-lg"
-                                                    muted
-                                                />
-                                                <VideoPlayer
-                                                    videoUrl={post.post_video_urls[0]}
-                                                    thumbnail={videoThumbnail}
-                                                    className="relative z-10 max-h-[85dvh] w-auto object-contain"
+                                                    className="relative z-10 object-contain max-w-full max-h-full"
                                                 />
                                             </>
                                         )
@@ -1243,7 +1237,6 @@ export default function index({ all_posts, next_page_url }) {
                                             ? 'bottom-0 right-0'
                                             : 'right-10 top-10'
                                     } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
-                                    style={{ minHeight: '20dvh' }}
                                 >
                                     {/* Username */}
                                     <div className="flex items-center mb-2 space-x-2">
