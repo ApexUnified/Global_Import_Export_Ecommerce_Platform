@@ -3,6 +3,7 @@ import videoThumbnail from '../../../public/assets/images/video-thumb/general-vi
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '@/Hooks/useWindowSize';
 import { motion, AnimatePresence } from 'framer-motion';
+import VideoPlayer from './VideoPlayer';
 
 export default function PostMediaViewer({
     viewablePost,
@@ -185,11 +186,19 @@ export default function PostMediaViewer({
                                             onLoad={() => loadedCache.current.add(item.url)}
                                         />
                                     ) : (
-                                        <video
-                                            src={item.url}
-                                            controls
-                                            preload="auto"
+                                        // <video
+                                        //     src={item.url}
+                                        //     controls
+                                        //     preload="auto"
+                                        //     className="object-contain w-full h-full rounded-xl"
+                                        // />
+
+                                        <VideoPlayer
+                                            key={selectedMediaIndex}
+                                            videoUrl={item.url}
+                                            thumbnail={videoThumbnail}
                                             className="h-full w-full rounded-xl object-contain"
+                                            fullscreen={true}
                                         />
                                     )}
                                 </motion.div>

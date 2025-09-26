@@ -1,6 +1,5 @@
 import PostMediaViewer from '@/Components/PostMediaViewer';
 import PostsGrid from '@/Components/PostsGrid';
-import PrimaryButton from '@/Components/PrimaryButton';
 import useDarkMode from '@/Hooks/useDarkMode';
 import useWindowSize from '@/Hooks/useWindowSize';
 import MainLayout from '@/Layouts/Website/MainLayout';
@@ -10,6 +9,9 @@ import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
 import videoThumbnail from '../../../../../public/assets/images/video-thumb/general-video.png';
 import { useSwipeable } from 'react-swipeable';
+import VideoPlayer from '@/Components/VideoPlayer';
+import { createPortal } from 'react-dom';
+
 export default function index({ all_posts, next_page_url }) {
     const [viewablePost, setViewablePost] = useState('');
 
@@ -22,7 +24,7 @@ export default function index({ all_posts, next_page_url }) {
 
     const loaderRef = useRef(null);
 
-    const { generalSetting, auth } = usePage().props;
+    const { auth } = usePage().props;
     const [showQrCode, setShowQrCode] = useState(false);
 
     // Checking Dark Mode
@@ -46,6 +48,30 @@ export default function index({ all_posts, next_page_url }) {
         );
     };
 
+    // Tracking Post Viewer Width
+
+    // Desktop Post Viewer
+    const [isDesktopPostViewer, setIsDesktopPostViewer] = useState(false);
+
+    // Mobile Post Viewer
+    const [isMobilePostViewer, setIsMobilePostViewer] = useState(false);
+
+    const setPostViewerBasedOnWidth = (windowSize) => {
+        if (windowSize.width < 1024) {
+            setIsDesktopPostViewer(false);
+            setIsMobilePostViewer(true);
+        }
+
+        if (windowSize.width > 1024) {
+            setIsMobilePostViewer(false);
+            setIsDesktopPostViewer(true);
+        }
+    };
+
+    useEffect(() => {
+        if (viewablePost != '') setPostViewerBasedOnWidth(windowSize);
+    }, [windowSize.width]);
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const slug = params.get('slug');
@@ -54,8 +80,10 @@ export default function index({ all_posts, next_page_url }) {
             const post = posts.find((post) => post.slug === slug);
             if (post) {
                 setViewablePost(post);
+                setPostViewerBasedOnWidth(windowSize);
             } else {
                 fetchSinglePost(slug);
+                setPostViewerBasedOnWidth(windowSize);
             }
         }
     }, []);
@@ -68,7 +96,6 @@ export default function index({ all_posts, next_page_url }) {
         } else {
             document.body.classList.remove('overflow-hidden');
         }
-
         const handlePopState = () => {
             if (viewablePost !== '') {
                 setViewablePost('');
@@ -209,218 +236,199 @@ export default function index({ all_posts, next_page_url }) {
         }
     }, [viewablePost]);
 
-    // Swiper For Opening About Post Bottom bar
-    const PostSwipeTimeout = useRef(null);
-    const handlers = useSwipeable({
-        onSwipedUp: (e) => {
-            if (!showDetails) setShowDetails(true);
-        },
-
-        onSwipedDown: (e) => {
-            if (showDetails) setShowDetails(false);
-        },
-
-        onSwipedLeft: () => {
-            let nextIndex =
-                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        onSwipedRight: () => {
-            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
-
-    const postSwipeForMobileBottomContent = useSwipeable({
-        onSwipedLeft: () => {
-            let nextIndex =
-                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        onSwipedRight: () => {
-            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
-
-    const outerHandlers = useSwipeable({
-        onSwipedLeft: () => {
-            let nextIndex =
-                selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        onSwipedRight: () => {
-            let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
-
-            // Update current index
-            setSelectedPostIndex(nextIndex);
-
-            // Debounce like wheel
-            if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-            PostSwipeTimeout.current = setTimeout(() => {
-                if (posts[nextIndex]) {
-                    const post = posts[nextIndex];
-                    setViewablePost(post);
-                    window.history.replaceState({}, '', generateURL(post));
-                }
-
-                if (nextIndex >= posts.length - 5 && nextPageUrl) {
-                    fetchMorePosts();
-                }
-            }, 500);
-        },
-
-        onSwipedUp: () => {
-            if (
-                !showDetails &&
-                windowSize.width < 1024 &&
-                ((Array.isArray(viewablePost?.post_video_urls) &&
-                    viewablePost.post_video_urls.length > 0) ||
-                    (Array.isArray(viewablePost?.post_image_urls) &&
-                        viewablePost.post_image_urls.length > 0))
-            ) {
-                setShowDetails(true);
-            }
-        },
-
-        onSwipedDown: () => {
-            if (showDetails) setShowDetails(false);
-
-            if (!showDetails) {
-                setViewablePost('');
-                window.history.replaceState({}, '', window.location.pathname);
-            }
-        },
-
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
-
-    const mediaMobileHandlers = useSwipeable({
-        onSwipedLeft: (e) => {
-            setSelectedMediaIndex((prev) => (prev === mediaItems.length - 1 ? prev : prev + 1));
-        },
-
-        onSwipedRight: (e) => {
-            setSelectedMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
-        },
-
-        trackTouch: true,
-        trackMouse: true,
-        preventScrollOnSwipe: true,
-    });
-
-    // Bottom Bar Hiding State
-    const [isVisible, setIsVisible] = useState(
-        (!showDetails &&
-            Array.isArray(viewablePost?.post_video_urls) &&
-            !viewablePost.post_video_urls.length > 0) ||
-            (Array.isArray(viewablePost?.post_image_urls) &&
-                !viewablePost.post_image_urls.length > 0),
-    );
-
+    // Auto Select Post From Mobile Post Container Logic
+    const mobilePostContainerRef = useRef(null);
     useEffect(() => {
-        if (!showDetails) {
-            // Make it visible immediately → triggers fade-in
-            setIsVisible(true);
-        } else {
-            // Delay unmount until fadeOutUp finishes
-            const timer = setTimeout(() => setIsVisible(false), 500); // 500ms = animation time
-            return () => clearTimeout(timer);
+        if (isMobilePostViewer && viewablePost && mobilePostContainerRef.current) {
+            const index = posts.findIndex((p) => p.id === viewablePost.id);
+            if (index !== -1) {
+                mobilePostContainerRef.current.scrollTo({
+                    top: index * window.innerHeight,
+                    behavior: 'instant',
+                });
+            }
         }
-    }, [showDetails]);
+    }, [isMobilePostViewer]);
+
+    // Mobile Post Elipsis Dropdown
+    const [showElipsisDropdown, setElipsisShowDropdown] = useState(false);
+    const elipsisDropDownRef = useRef(null);
+    const elipsisButtonRef = useRef(null);
+
+    // Checking Outside Click Of Elipsis Dropdown
+    useEffect(() => {
+        const handleResize = () => setElipsisShowDropdown(false);
+        const handleClickOutside = (e) => {
+            // Working But Too Greedy
+            // if (elipsisButtonRef.current && !e.target.closest('[data-elipsis-button]')) {
+            //     console.log('BUTTON LOGIC RUNS');
+            //     setElipsisShowDropdown(false);
+            // }
+
+            // if (
+            //     elipsisDropDownRef &&
+            //     !e.target.closest('[data-elipsis-button]') &&
+            //     e.target.closest('[data-elipsis-dropdown]')
+            // ) {
+            //     setElipsisShowDropdown(true);
+            // }
+
+            const clickedButton = e.target.closest('[data-elipsis-button]');
+            const clickedDropdown = e.target.closest('[data-elipsis-dropdown]');
+
+            if (clickedButton) {
+                setElipsisShowDropdown((prev) => !prev);
+                return;
+            }
+
+            if (clickedDropdown) {
+                return;
+            }
+
+            setElipsisShowDropdown(false);
+        };
+        window.addEventListener('resize', handleResize);
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Not Using For Now
+    // const postSwipeForMobileBottomContent = useSwipeable({
+    //     onSwipedLeft: () => {
+    //         let nextIndex =
+    //             selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
+
+    //         // Update current index
+    //         setSelectedPostIndex(nextIndex);
+
+    //         // Debounce like wheel
+    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+    //         PostSwipeTimeout.current = setTimeout(() => {
+    //             if (posts[nextIndex]) {
+    //                 const post = posts[nextIndex];
+    //                 setViewablePost(post);
+    //                 window.history.replaceState({}, '', generateURL(post));
+    //             }
+
+    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
+    //                 fetchMorePosts();
+    //             }
+    //         }, 500);
+    //     },
+
+    //     onSwipedRight: () => {
+    //         let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
+
+    //         // Update current index
+    //         setSelectedPostIndex(nextIndex);
+
+    //         // Debounce like wheel
+    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+    //         PostSwipeTimeout.current = setTimeout(() => {
+    //             if (posts[nextIndex]) {
+    //                 const post = posts[nextIndex];
+    //                 setViewablePost(post);
+    //                 window.history.replaceState({}, '', generateURL(post));
+    //             }
+
+    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
+    //                 fetchMorePosts();
+    //             }
+    //         }, 500);
+    //     },
+
+    //     trackTouch: true,
+    //     trackMouse: true,
+    //     preventScrollOnSwipe: true,
+    // });
+
+    // const outerHandlers = useSwipeable({
+    //     onSwipedLeft: () => {
+    //         let nextIndex =
+    //             selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
+
+    //         // Update current index
+    //         setSelectedPostIndex(nextIndex);
+
+    //         // Debounce like wheel
+    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+    //         PostSwipeTimeout.current = setTimeout(() => {
+    //             if (posts[nextIndex]) {
+    //                 const post = posts[nextIndex];
+    //                 setViewablePost(post);
+    //                 window.history.replaceState({}, '', generateURL(post));
+    //             }
+
+    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
+    //                 fetchMorePosts();
+    //             }
+    //         }, 500);
+    //     },
+
+    //     onSwipedRight: () => {
+    //         let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
+
+    //         // Update current index
+    //         setSelectedPostIndex(nextIndex);
+
+    //         // Debounce like wheel
+    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
+    //         PostSwipeTimeout.current = setTimeout(() => {
+    //             if (posts[nextIndex]) {
+    //                 const post = posts[nextIndex];
+    //                 setViewablePost(post);
+    //                 window.history.replaceState({}, '', generateURL(post));
+    //             }
+
+    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
+    //                 fetchMorePosts();
+    //             }
+    //         }, 500);
+    //     },
+
+    //     trackTouch: true,
+    //     trackMouse: true,
+    //     preventScrollOnSwipe: true,
+    // });
+
+    // const mediaMobileHandlers = useSwipeable({
+    //     onSwipedLeft: (e) => {
+    //         setSelectedMediaIndex((prev) => (prev === mediaItems.length - 1 ? prev : prev + 1));
+    //     },
+
+    //     onSwipedRight: (e) => {
+    //         setSelectedMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
+    //     },
+
+    //     trackTouch: true,
+    //     trackMouse: true,
+    //     preventScrollOnSwipe: true,
+    // });
+
+    // // Bottom Bar Hiding State
+    // const [isVisible, setIsVisible] = useState(
+    //     (!showDetails &&
+    //         Array.isArray(viewablePost?.post_video_urls) &&
+    //         !viewablePost.post_video_urls.length > 0) ||
+    //         (Array.isArray(viewablePost?.post_image_urls) &&
+    //             !viewablePost.post_image_urls.length > 0),
+    // );
+
+    // useEffect(() => {
+    //     if (!showDetails) {
+    //         // Make it visible immediately → triggers fade-in
+    //         setIsVisible(true);
+    //     } else {
+    //         // Delay unmount until fadeOutUp finishes
+    //         const timer = setTimeout(() => setIsVisible(false), 500); // 500ms = animation time
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [showDetails]);
+
     return (
         <MainLayout>
             <Head title="Posts" />
@@ -459,6 +467,13 @@ export default function index({ all_posts, next_page_url }) {
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
+
+                                        if (windowSize.width > 1024) {
+                                            setIsDesktopPostViewer(true);
+                                        } else {
+                                            setIsMobilePostViewer(true);
+                                        }
+
                                         setSelectedPostIndex(index ?? 0);
                                         setSelectedMediaIndex(0);
                                         window.history.pushState({}, '', url);
@@ -663,8 +678,8 @@ export default function index({ all_posts, next_page_url }) {
                 </div>
             </div>
 
-            {/* Post View Modal */}
-            {viewablePost != '' && (
+            {/* Desktop Post View Modal */}
+            {viewablePost != '' && isDesktopPostViewer && (
                 <div className="fixed inset-0 z-50 bg-white dark:bg-gray-800">
                     <div
                         className="fixed inset-0 backdrop-blur-[32px]"
@@ -675,10 +690,7 @@ export default function index({ all_posts, next_page_url }) {
                     ></div>
 
                     {/* Modal content */}
-                    <div
-                        className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto"
-                        {...(windowSize.width < 1024 && outerHandlers)}
-                    >
+                    <div className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
                         {windowSize.width > 1024 && viewablePost != '' && (
                             <>
                                 {/* Close Button */}
@@ -691,6 +703,9 @@ export default function index({ all_posts, next_page_url }) {
                                                 '',
                                                 window.location.pathname,
                                             );
+
+                                            setIsDesktopPostViewer(false);
+                                            setIsMobilePostViewer(false);
                                         }}
                                     >
                                         <svg
@@ -715,50 +730,10 @@ export default function index({ all_posts, next_page_url }) {
                         {/* Scrollable Posts  */}
 
                         {/* Post Content */}
-                        <div
-                            {...(windowSize.width < 1024 && outerHandlers)}
-                            className="flex flex-col justify-center lg:flex-row"
-                        >
-                            {windowSize.width < 1024 && (
-                                <>
-                                    <div
-                                        {...outerHandlers}
-                                        className="absolute left-0 top-20 z-10 h-full w-[20%]"
-                                    />
-                                    {/* Right swipe zone */}
-                                    <div
-                                        {...outerHandlers}
-                                        className="absolute right-0 top-20 z-10 h-full w-[20%]"
-                                    />
-                                </>
-                            )}
-
-                            {windowSize.width < 1024 && isVisible && (
-                                <div
-                                    className={`transition-all duration-500 ${
-                                        !showDetails ? 'animate-fadeInDown' : 'animate-fadeOutUp'
-                                    }`}
-                                >
-                                    <PostsGrid
-                                        posts={posts}
-                                        onSelect={(post) => {
-                                            setViewablePost(post);
-                                            window.history.replaceState({}, '', generateURL(post));
-                                        }}
-                                        selectedPostIndex={selectedPostIndex}
-                                        onSelectIndex={setSelectedPostIndex}
-                                        nextPageUrl={nextPageUrl}
-                                        fetchSinglePost={fetchSinglePost}
-                                        fetchMorePosts={fetchMorePosts}
-                                    />
-                                </div>
-                            )}
-
+                        <div className="flex flex-col justify-center lg:flex-row">
                             {/* Media Section - Shows on top for mobile, left for desktop */}
                             <div
-                                className={`transform transition-all duration-500 ease-in-out ${
-                                    showDetails ? '-translate-y-5' : 'translate-y-3'
-                                }`}
+                                className={`translate-y-3 transform transition-all duration-500 ease-in-out`}
                             >
                                 {((Array.isArray(viewablePost?.post_video_urls) &&
                                     viewablePost.post_video_urls.length > 0) ||
@@ -967,7 +942,361 @@ export default function index({ all_posts, next_page_url }) {
                 </div>
             )}
 
-            {windowSize.width < 1024 &&
+            {/* Mobile Post View */}
+            {viewablePost !== '' && isMobilePostViewer && (
+                <div className="fixed inset-0 z-50 bg-black">
+                    {/* Backdrop */}
+                    <div className="absolute inset-0 bg-black/70"></div>
+
+                    {/* Scrollable Container */}
+                    <div
+                        className="relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
+                        onScroll={(e) => {
+                            setElipsisShowDropdown(false);
+                            const scrollTop = e.currentTarget.scrollTop;
+                            const index = Math.round(scrollTop / window.innerHeight);
+
+                            if (index !== selectedPostIndex && posts[index]) {
+                                setSelectedPostIndex(index);
+
+                                const post = posts[index];
+                                setViewablePost(post);
+                                window.history.replaceState({}, '', generateURL(post));
+
+                                // load more when near bottom
+                                if (index >= posts.length - 5 && nextPageUrl) {
+                                    fetchMorePosts();
+                                }
+                            }
+                        }}
+                        ref={mobilePostContainerRef}
+                    >
+                        {posts.map((post, index) => (
+                            <div
+                                key={post.id}
+                                className="relative mx-auto flex h-screen w-full max-w-md snap-start flex-col"
+                            >
+                                {/* Top Bar */}
+                                <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-4 py-3 text-white">
+                                    <button
+                                        onClick={() => {
+                                            setViewablePost('');
+                                            setIsDesktopPostViewer(false);
+                                            setIsMobilePostViewer(false);
+                                            window.history.replaceState(
+                                                {},
+                                                '',
+                                                window.location.pathname,
+                                            );
+                                        }}
+                                        className="rounded-full p-1 hover:bg-gray-300/20"
+                                    >
+                                        {/* back icon */}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                                            />
+                                        </svg>
+                                    </button>
+
+                                    <div className="flex items-center space-x-3">
+                                        {/* Elipsis button */}
+                                        <button
+                                            ref={elipsisButtonRef}
+                                            data-elipsis-button
+                                            className="rounded-full p-1 hover:bg-gray-300/20"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="pointer-events-none size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                                                    className="pointer-events-none"
+                                                />
+                                            </svg>
+                                        </button>
+
+                                        {/* Elipsis Dropdown Menu */}
+                                        {showElipsisDropdown && isMobilePostViewer && (
+                                            <>
+                                                <div
+                                                    ref={elipsisDropDownRef}
+                                                    data-elipsis-dropdown
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                                >
+                                                    <ul
+                                                        className="overflow-y-scroll py-1 text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
+                                                        style={{ maxHeight: '180px' }}
+                                                    >
+                                                        <li>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    setShowQrCode(true);
+                                                                    setElipsisShowDropdown(false);
+                                                                }}
+                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                            >
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    strokeWidth={1.5}
+                                                                    stroke="currentColor"
+                                                                    className="size-6"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+                                                                    />
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+                                                                    />
+                                                                </svg>
+                                                                QR Code
+                                                            </button>
+                                                        </li>
+
+                                                        {auth?.user && (
+                                                            <li>
+                                                                <button
+                                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        router.put(
+                                                                            route(
+                                                                                'website.posts.bookmark',
+                                                                                viewablePost?.id,
+                                                                            ),
+                                                                            {
+                                                                                post_id:
+                                                                                    viewablePost?.id,
+                                                                            },
+                                                                            {
+                                                                                onSuccess: () => {
+                                                                                    viewablePost.is_bookmarked =
+                                                                                        !viewablePost.is_bookmarked;
+                                                                                },
+                                                                                onError: (e) => {
+                                                                                    toast.error(
+                                                                                        e.message,
+                                                                                    );
+                                                                                },
+
+                                                                                onFinish: () => {
+                                                                                    setElipsisShowDropdown(
+                                                                                        false,
+                                                                                    );
+                                                                                },
+                                                                            },
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill={
+                                                                            post?.is_bookmarked
+                                                                                ? '#FFFFFF'
+                                                                                : 'none'
+                                                                        }
+                                                                        viewBox="0 0 24 24"
+                                                                        strokeWidth={1.5}
+                                                                        stroke="currentColor"
+                                                                        className="size-6"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                                        />
+                                                                    </svg>
+                                                                    Bookmark
+                                                                </button>
+                                                            </li>
+                                                        )}
+
+                                                        <li>
+                                                            <button
+                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                onClick={(e) => {
+                                                                    const url =
+                                                                        route(
+                                                                            'website.posts.index',
+                                                                        ) +
+                                                                        generateURL(viewablePost);
+                                                                    navigator.clipboard.writeText(
+                                                                        url.trim(),
+                                                                    );
+
+                                                                    toast.success(
+                                                                        'Copied to clipboard',
+                                                                    );
+
+                                                                    setElipsisShowDropdown(false);
+                                                                }}
+                                                            >
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    strokeWidth={1.5}
+                                                                    stroke="currentColor"
+                                                                    className="size-6"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                                    />
+                                                                </svg>
+                                                                Copy Link
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {/* Filter button */}
+                                        <button className="rounded-full p-1 hover:bg-gray-300/20">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Media Viewer */}
+                                <div className="flex h-full items-center justify-center text-white">
+                                    {Array.isArray(post.post_image_urls) &&
+                                    post.post_image_urls.length > 0 ? (
+                                        <img
+                                            src={post.post_image_urls[0]}
+                                            alt="Post"
+                                            className="pointer-events-none max-h-[70vh] w-auto rounded-md object-contain"
+                                        />
+                                    ) : (
+                                        Array.isArray(post.post_video_urls) &&
+                                        post.post_video_urls.length > 0 && (
+                                            // <video
+                                            //     src={post.post_video_urls[0]}
+                                            //     controls
+                                            //     className="pointer-events-none max-h-[80vh] w-auto rounded-md object-contain"
+                                            // />
+
+                                            <VideoPlayer
+                                                videoUrl={post.post_video_urls[0]}
+                                                thumbnail={videoThumbnail}
+                                                className="pointer-events-none max-h-[70vh] w-auto rounded-md object-contain"
+                                            />
+                                        )
+                                    )}
+                                </div>
+
+                                {/* Bottom Overlay */}
+                                <div
+                                    className={`absolute ${
+                                        (Array.isArray(post.post_image_urls) &&
+                                            post.post_image_urls.length > 0) ||
+                                        (Array.isArray(post.post_video_urls) &&
+                                            post.post_video_urls.length > 0)
+                                            ? 'bottom-0 right-0'
+                                            : 'right-10 top-10'
+                                    } left-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
+                                >
+                                    {/* Username */}
+                                    <div className="mb-2 flex items-center space-x-2">
+                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                                            {/* avatar */}
+                                        </div>
+                                        <span className="text-xs font-medium text-white/80">
+                                            {post.user?.name.length > 30
+                                                ? post.user?.name.substring(0, 30) + '...'
+                                                : post.user?.name}
+                                        </span>
+                                    </div>
+
+                                    {/* Content */}
+                                    {(Array.isArray(post.post_image_urls) &&
+                                        post.post_image_urls.length > 0) ||
+                                    (Array.isArray(post.post_video_urls) &&
+                                        post.post_video_urls.length > 0) ? (
+                                        <div
+                                            dangerouslySetInnerHTML={{ __html: post?.content }}
+                                            className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [display:-webkit-box] ${
+                                                showDetails
+                                                    ? '[-webkit-line-clamp:5]'
+                                                    : '[-webkit-line-clamp:3]'
+                                            }`}
+                                            onClick={() => setShowDetails(!showDetails)}
+                                            style={{ maxHeight: showDetails ? '10rem' : '4rem' }}
+                                        ></div>
+                                    ) : (
+                                        <div
+                                            dangerouslySetInnerHTML={{ __html: post?.content }}
+                                            className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [-webkit-line-clamp:5] [display:-webkit-box]`}
+                                        ></div>
+                                    )}
+
+                                    {/* Learn More Button */}
+                                    {showDetails && (
+                                        <div className="mt-2 flex items-center justify-end">
+                                            <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
+                                                Learn More
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {!showDetails &&
+                                        Array.isArray(post.post_image_urls) &&
+                                        post.post_image_urls.length < 1 &&
+                                        Array.isArray(post.post_video_urls) &&
+                                        post.post_video_urls.length < 1 && (
+                                            <div className="mt-2 flex items-center justify-end">
+                                                <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
+                                                    Learn More
+                                                </button>
+                                            </div>
+                                        )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Bottom Bar Logic Will Be Used Later If Needed */}
+            {/* {windowSize.width < 1024 &&
                 viewablePost != '' &&
                 ((Array.isArray(viewablePost?.post_video_urls) &&
                     viewablePost.post_video_urls.length > 0) ||
@@ -1043,20 +1372,20 @@ export default function index({ all_posts, next_page_url }) {
                                     />
                                 </svg>
                             </button> */}
-                        </div>
+            {/* </div> */}
 
-                        {/* Content */}
-                        <div className="mx-auto w-full p-2 md:px-7">
-                            {/* Post Content */}
+            {/* Content */}
+            {/* <div className="w-full p-2 mx-auto md:px-7"> */}
+            {/* Post Content */}
 
-                            {/* <p
+            {/* <p
                                 className="mt-2 cursor-pointer whitespace-normal break-words text-[15px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
                                 onClick={() => setShowDetails(!showDetails)}
                             >
                                 {viewablePost?.title}
                             </p> */}
 
-                            <div
+            {/* <div
                                 className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
                                 dangerouslySetInnerHTML={{
                                     __html: showDetails
@@ -1064,19 +1393,19 @@ export default function index({ all_posts, next_page_url }) {
                                         : viewablePost?.content.substring(0, 200) + '...',
                                 }}
                                 {...postSwipeForMobileBottomContent}
-                            />
+                            /> */}
 
-                            {/* Tag */}
-                            <div>
+            {/* Tag */}
+            {/* <div>
                                 <span className="text-[12px] font-semibold text-blue-600 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
                                     {viewablePost?.tag}
                                 </span>
-                            </div>
+                            </div> */}
 
-                            <hr className="border-gray-200 dark:border-gray-700" />
+            {/* <hr className="border-gray-200 dark:border-gray-700" /> */}
 
-                            {/* Post Meta Info */}
-                            <div className="my-2 flex flex-wrap justify-between gap-2">
+            {/* Post Meta Info */}
+            {/* <div className="flex flex-wrap justify-between gap-2 my-2">
                                 <div>
                                     <span className="rounded-full bg-gray-100 p-1 text-[12px] text-gray-700 dark:bg-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
                                         {viewablePost?.added_at} {viewablePost?.created_at_time}
@@ -1091,7 +1420,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                 <div>
                                     {showDetails && (
-                                        <div className="flex cursor-pointer items-center gap-2">
+                                        <div className="flex items-center gap-2 cursor-pointer">
                                             <button
                                                 onClick={() => {
                                                     setShowQrCode(true);
@@ -1199,9 +1528,9 @@ export default function index({ all_posts, next_page_url }) {
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            </div> */}
 
-                            {mediaItems.length > 1 && (
+            {/* {mediaItems.length > 1 && (
                                 <div
                                     className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none"
                                     ref={mediaMobileref}
@@ -1225,14 +1554,14 @@ export default function index({ all_posts, next_page_url }) {
                                                     <img
                                                         src={item.url}
                                                         alt={`Image ${idx}`}
-                                                        className="h-full w-full object-cover"
+                                                        className="object-cover w-full h-full"
                                                         loading="lazy"
                                                     />
                                                 ) : (
                                                     <img
                                                         src={videoThumbnail}
                                                         alt={`Video ${idx}`}
-                                                        className="h-full w-full object-cover opacity-80"
+                                                        className="object-cover w-full h-full opacity-80"
                                                         loading="lazy"
                                                     />
                                                 )}
@@ -1243,7 +1572,7 @@ export default function index({ all_posts, next_page_url }) {
                             )}
                         </div>
                     </div>
-                )}
+                )} */}
 
             {/* QR CODE */}
             {showQrCode && (
@@ -1259,7 +1588,7 @@ export default function index({ all_posts, next_page_url }) {
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="qrCodeTitle"
-                            className="relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800 sm:p-8"
+                            className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white dark:bg-gray-800' : 'bg-gray-950'} p-6 shadow-xl sm:p-8`}
                         >
                             <div className="mt-1 flex justify-end">
                                 <button onClick={() => setShowQrCode(false)}>

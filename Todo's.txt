@@ -321,6 +321,39 @@ Additional Work:
   Swiping the text left or right with a finger doesn’t work. ✅
 
 
+Navigation (Latitude/Longitude concept):
+- On mobile, navigation should follow a map-like logic:
+- Up/Down (Latitude): switch between posts in the feed. ✅
+- Left/Right (Longitude): navigate within the gallery/media of a single post.
+- On desktop/PC, since swiping isn’t native, I suggest alternatives like:
+- Arrow keys / WASD controls for the same movement.
+- Or hover/click zones with directional arrows.
+- (Optionally, we could explore a small mini-map overlay to make the grid-style navigation more visual.)
+Also, about the PC website version (post archive and post single archive) — do you want these to remain exactly the same as now, or should the design/interaction on desktop also be adjusted differently from mobile?
+
+Feed Travel Distance (Geo-based Exposure):
+The slider(s) define how far posts are visible based on latitude and longitude ranges.
+- Instead of a single slider, there should be two separate sliders:
+- One for Latitude range (north/south exposure).
+- One for Longitude range (east/west exposure).
+These values will be applied to filter the posts/products shown in the feed according to the user’s defined exposure range.
+
+Archive Layouts (Posts vs Products):
+- The posts archive will keep the MidJourney-style masonry grid with unresized images for that creative feel.
+- The products archive will follow the cleaner PDF-style layout, with optimized and resized images for consistency (as expected in e-commerce).
+- On the home archive, posts and products can appear together, but there must also be a filter option to display only products or only posts when needed.
+
+Marking things for clarity:
+To make it easier for me and avoid misunderstandings, could you please mark or highlight the elements/sections that should be removed or changed (just like you do when pointing out details) For The Desktop Layout ? This way I’ll have a clear checklist to follow and won’t miss anything.
+
+So in short:
+- Navigation → latitude/longitude gestures (mobile) + confirm PC version flow.
+- Filtering → latitude/longitude range sliders for exposure.
+- Layout → MidJourney style for posts, PDF style for products, filterable in mixed archives.
+- Next step → please confirm and mark removals/changes for the Posts Single Archive On Desktop so I can proceed smoothly.
+
+
+
   Post Create Functionality For All users
 
   Search Methods:
