@@ -1233,6 +1233,7 @@ export default function index({ all_posts, next_page_url }) {
                                             ? 'bottom-0 right-0'
                                             : 'right-10 top-10'
                                     } left-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
+                                    style={{ minHeight: '20dvh' }}
                                 >
                                     {/* Username */}
                                     <div className="flex items-center mb-2 space-x-2">
@@ -1270,7 +1271,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                     {/* Learn More Button */}
                                     {showDetails && (
-                                        <div className="flex items-center justify-end mt-2">
+                                        <div className="flex items-center justify-end my-2">
                                             <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
                                                 Learn More
                                             </button>
