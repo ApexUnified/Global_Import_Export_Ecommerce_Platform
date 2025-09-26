@@ -437,12 +437,12 @@ export default function index({ all_posts, next_page_url }) {
             <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                 <div className="absolute inset-0 bg-black opacity-20"></div>
                 <div className="relative py-16 sm:py-24">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
                                 Latest Posts
                             </h1>
-                            <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
+                            <p className="max-w-2xl mx-auto mt-4 text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
                                 Explore the latest updates, buying guides, and tips on smartphones,
                                 from unboxings and tutorials to industry news, everything you need
                                 to stay informed before making your next purchase.
@@ -463,7 +463,7 @@ export default function index({ all_posts, next_page_url }) {
                             return (
                                 <article
                                     key={post?.id}
-                                    className="group relative mb-1 cursor-pointer break-inside-avoid overflow-hidden rounded-none shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                                    className="relative mb-1 overflow-hidden transition-all duration-300 rounded-none shadow-md cursor-pointer group break-inside-avoid hover:-translate-y-1 hover:shadow-xl"
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
@@ -490,7 +490,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Share Button */}
                                             <button
-                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
+                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -550,10 +550,10 @@ export default function index({ all_posts, next_page_url }) {
                                         </div>
                                     ) : (
                                         /* Text-only */
-                                        <div className="relative flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-5 text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
+                                        <div className="relative flex flex-col justify-between p-5 text-white bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                                             {/* Share Button */}
                                             <button
-                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
+                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -636,8 +636,8 @@ export default function index({ all_posts, next_page_url }) {
                     </div>
 
                     {posts?.length === 0 && (
-                        <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 py-5 text-center text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
-                            <h1 className="text-md font-bold">No Posts Found</h1>
+                        <div className="flex items-center justify-center py-5 text-center text-white rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
+                            <h1 className="font-bold text-md">No Posts Found</h1>
                         </div>
                     )}
 
@@ -647,13 +647,13 @@ export default function index({ all_posts, next_page_url }) {
                             {nextPageUrl && (
                                 <div
                                     ref={loaderRef}
-                                    className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80"
+                                    className="flex items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 animate-pulse dark:text-white/80"
                                 >
                                     <div className="flex items-center justify-center">
                                         <div role="status">
                                             <svg
                                                 aria-hidden="true"
-                                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                                className="w-5 h-5 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
                                                 viewBox="0 0 100 101"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -690,7 +690,7 @@ export default function index({ all_posts, next_page_url }) {
                     ></div>
 
                     {/* Modal content */}
-                    <div className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
+                    <div className="relative z-10 w-screen h-screen p-6 overflow-hidden shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
                         {windowSize.width > 1024 && viewablePost != '' && (
                             <>
                                 {/* Close Button */}
@@ -764,7 +764,7 @@ export default function index({ all_posts, next_page_url }) {
                                     {((!viewablePost?.post_video_urls?.length &&
                                         !viewablePost?.post_image_urls?.length) ||
                                         windowSize.width > 1024) && (
-                                        <div className="mx-auto w-full space-y-4 p-2 md:px-10">
+                                        <div className="w-full p-2 mx-auto space-y-4 md:px-10">
                                             {/* Author Header */}
                                             <div className="flex flex-wrap items-center justify-between space-x-3 space-y-4">
                                                 <div className="flex items-center">
@@ -778,7 +778,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     </span>
                                                 </div>
 
-                                                <div className="flex cursor-pointer items-center gap-2">
+                                                <div className="flex items-center gap-2 cursor-pointer">
                                                     {/* QR Button */}
                                                     <button onClick={() => setShowQrCode(true)}>
                                                         <svg
@@ -906,13 +906,13 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Post Meta Info */}
                                             <div className="my-2 flex flex-wrap gap-2 text-[10px] text-gray-700 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
-                                                <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
+                                                <span className="p-1 bg-gray-100 rounded-full dark:bg-gray-700">
                                                     {viewablePost?.added_at}{' '}
                                                     {viewablePost?.created_at_time}
                                                 </span>
 
                                                 {viewablePost?.location_name && (
-                                                    <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
+                                                    <span className="p-1 bg-gray-100 rounded-full dark:bg-gray-700">
                                                         {viewablePost?.location_name}
                                                     </span>
                                                 )}
@@ -950,7 +950,7 @@ export default function index({ all_posts, next_page_url }) {
 
                     {/* Scrollable Container */}
                     <div
-                        className="relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
+                        className="relative z-10 w-full h-full overflow-y-scroll snap-y snap-mandatory scrollbar-none"
                         onScroll={(e) => {
                             setElipsisShowDropdown(false);
                             const scrollTop = e.currentTarget.scrollTop;
@@ -974,10 +974,10 @@ export default function index({ all_posts, next_page_url }) {
                         {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                className="relative mx-auto flex h-screen w-full max-w-md snap-start flex-col"
+                                className="relative flex flex-col w-full h-screen max-w-md mx-auto snap-start"
                             >
                                 {/* Top Bar */}
-                                <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-4 py-3 text-white">
+                                <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 text-white">
                                     <button
                                         onClick={() => {
                                             setViewablePost('');
@@ -989,7 +989,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 window.location.pathname,
                                             );
                                         }}
-                                        className="rounded-full p-1 hover:bg-gray-300/20"
+                                        className="p-1 rounded-full hover:bg-gray-300/20"
                                     >
                                         {/* back icon */}
                                         <svg
@@ -1013,7 +1013,7 @@ export default function index({ all_posts, next_page_url }) {
                                         <button
                                             ref={elipsisButtonRef}
                                             data-elipsis-button
-                                            className="rounded-full p-1 hover:bg-gray-300/20"
+                                            className="p-1 rounded-full hover:bg-gray-300/20"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -1039,10 +1039,10 @@ export default function index({ all_posts, next_page_url }) {
                                                     ref={elipsisDropDownRef}
                                                     data-elipsis-dropdown
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                                    className="absolute right-0 z-50 mt-2 bg-black border border-gray-900 rounded-lg shadow-xl top-full w-44 sm:w-48"
                                                 >
                                                     <ul
-                                                        className="overflow-y-scroll py-1 text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
+                                                        className="py-1 overflow-y-scroll text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
                                                         style={{ maxHeight: '180px' }}
                                                     >
                                                         <li>
@@ -1051,7 +1051,7 @@ export default function index({ all_posts, next_page_url }) {
                                                                     setShowQrCode(true);
                                                                     setElipsisShowDropdown(false);
                                                                 }}
-                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                             >
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -1079,7 +1079,7 @@ export default function index({ all_posts, next_page_url }) {
                                                         {auth?.user && (
                                                             <li>
                                                                 <button
-                                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                    className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         router.put(
@@ -1136,7 +1136,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                                         <li>
                                                             <button
-                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                 onClick={(e) => {
                                                                     const url =
                                                                         route(
@@ -1177,7 +1177,7 @@ export default function index({ all_posts, next_page_url }) {
                                         )}
 
                                         {/* Filter button */}
-                                        <button className="rounded-full p-1 hover:bg-gray-300/20">
+                                        <button className="p-1 rounded-full hover:bg-gray-300/20">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -1197,13 +1197,13 @@ export default function index({ all_posts, next_page_url }) {
                                 </div>
 
                                 {/* Media Viewer */}
-                                <div className="flex h-full items-center justify-center text-white">
+                                <div className="flex items-center justify-center h-full text-white">
                                     {Array.isArray(post.post_image_urls) &&
                                     post.post_image_urls.length > 0 ? (
                                         <img
                                             src={post.post_image_urls[0]}
                                             alt="Post"
-                                            className="pointer-events-none max-h-[70vh] w-auto rounded-md object-contain"
+                                            className="pointer-events-none max-h-[100vh] w-auto rounded-md object-contain"
                                         />
                                     ) : (
                                         Array.isArray(post.post_video_urls) &&
@@ -1217,7 +1217,7 @@ export default function index({ all_posts, next_page_url }) {
                                             <VideoPlayer
                                                 videoUrl={post.post_video_urls[0]}
                                                 thumbnail={videoThumbnail}
-                                                className="pointer-events-none max-h-[70vh] w-auto rounded-md object-contain"
+                                                className="pointer-events-none max-h-[100vh] w-auto rounded-md object-contain"
                                             />
                                         )
                                     )}
@@ -1235,8 +1235,8 @@ export default function index({ all_posts, next_page_url }) {
                                     } left-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
                                 >
                                     {/* Username */}
-                                    <div className="mb-2 flex items-center space-x-2">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                                    <div className="flex items-center mb-2 space-x-2">
+                                        <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
                                             {/* avatar */}
                                         </div>
                                         <span className="text-xs font-medium text-white/80">
@@ -1270,7 +1270,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                     {/* Learn More Button */}
                                     {showDetails && (
-                                        <div className="mt-2 flex items-center justify-end">
+                                        <div className="flex items-center justify-end mt-2">
                                             <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
                                                 Learn More
                                             </button>
@@ -1282,7 +1282,7 @@ export default function index({ all_posts, next_page_url }) {
                                         post.post_image_urls.length < 1 &&
                                         Array.isArray(post.post_video_urls) &&
                                         post.post_video_urls.length < 1 && (
-                                            <div className="mt-2 flex items-center justify-end">
+                                            <div className="flex items-center justify-end mt-2">
                                                 <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
                                                     Learn More
                                                 </button>
@@ -1577,7 +1577,7 @@ export default function index({ all_posts, next_page_url }) {
             {/* QR CODE */}
             {showQrCode && (
                 <>
-                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4 scrollbar-none sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden scrollbar-none sm:p-6">
                         <div
                             className="fixed inset-0 backdrop-blur-[32px]"
                             onClick={() => setShowQrCode(false)}
@@ -1590,7 +1590,7 @@ export default function index({ all_posts, next_page_url }) {
                             aria-labelledby="qrCodeTitle"
                             className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white dark:bg-gray-800' : 'bg-gray-950'} p-6 shadow-xl sm:p-8`}
                         >
-                            <div className="mt-1 flex justify-end">
+                            <div className="flex justify-end mt-1">
                                 <button onClick={() => setShowQrCode(false)}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
