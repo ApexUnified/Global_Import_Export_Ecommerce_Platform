@@ -48,6 +48,29 @@ export default function index({ all_posts, next_page_url }) {
         );
     };
 
+    const openFullscreen = () => {
+        const elem = document.documentElement; // whole page
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            // Safari
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            // older IE/Edge
+            elem.msRequestFullscreen();
+        }
+    };
+
+    const closeFullscreen = () => {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    };
+
     // Tracking Post Viewer Width
 
     // Desktop Post Viewer
@@ -95,11 +118,13 @@ export default function index({ all_posts, next_page_url }) {
             document.body.classList.add('overflow-hidden');
         } else {
             document.body.classList.remove('overflow-hidden');
+            if (document.fullscreenElement) closeFullscreen();
         }
         const handlePopState = () => {
             if (viewablePost !== '') {
                 setViewablePost('');
                 window.history.replaceState({}, '', window.location.pathname);
+                if (document.fullscreenElement) closeFullscreen();
             }
         };
         window.addEventListener('popstate', handlePopState);
@@ -472,6 +497,7 @@ export default function index({ all_posts, next_page_url }) {
                                             setIsDesktopPostViewer(true);
                                         } else {
                                             setIsMobilePostViewer(true);
+                                            openFullscreen();
                                         }
 
                                         setSelectedPostIndex(index ?? 0);
