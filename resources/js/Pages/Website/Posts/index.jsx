@@ -44,6 +44,9 @@ export default function index({ all_posts, next_page_url }) {
     // Mobile Post Viewer
     const [isMobilePostViewer, setIsMobilePostViewer] = useState(false);
 
+    // Mobile Post Gallery
+    const [isMobilePostGallery, setIsMobilePostGallery] = useState(false);
+
     // All Refs
     const thumbRefs = useRef([]);
     const mediaThumbRefs = useRef([]);
@@ -487,12 +490,12 @@ export default function index({ all_posts, next_page_url }) {
             <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                 <div className="absolute inset-0 bg-black opacity-20"></div>
                 <div className="relative py-16 sm:py-24">
-                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
                                 Latest Posts
                             </h1>
-                            <p className="max-w-2xl mx-auto mt-4 text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
+                            <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
                                 Explore the latest updates, buying guides, and tips on smartphones,
                                 from unboxings and tutorials to industry news, everything you need
                                 to stay informed before making your next purchase.
@@ -513,7 +516,7 @@ export default function index({ all_posts, next_page_url }) {
                             return (
                                 <article
                                     key={post?.id}
-                                    className="relative mb-1 overflow-hidden transition-all duration-300 rounded-none shadow-md cursor-pointer group break-inside-avoid hover:-translate-y-1 hover:shadow-xl"
+                                    className="group relative mb-1 cursor-pointer break-inside-avoid overflow-hidden rounded-none shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                                     style={{ animationDelay: `${index * 100}ms` }}
                                     onClick={() => {
                                         setViewablePost(post);
@@ -541,7 +544,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Share Button */}
                                             <button
-                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
+                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -601,10 +604,10 @@ export default function index({ all_posts, next_page_url }) {
                                         </div>
                                     ) : (
                                         /* Text-only */
-                                        <div className="relative flex flex-col justify-between p-5 text-white bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
+                                        <div className="relative flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-5 text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
                                             {/* Share Button */}
                                             <button
-                                                className="absolute text-white right-3 top-3 opacity-80 hover:opacity-100"
+                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const url =
@@ -687,8 +690,8 @@ export default function index({ all_posts, next_page_url }) {
                     </div>
 
                     {posts?.length === 0 && (
-                        <div className="flex items-center justify-center py-5 text-center text-white rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
-                            <h1 className="font-bold text-md">No Posts Found</h1>
+                        <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 py-5 text-center text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
+                            <h1 className="text-md font-bold">No Posts Found</h1>
                         </div>
                     )}
 
@@ -698,13 +701,13 @@ export default function index({ all_posts, next_page_url }) {
                             {nextPageUrl && (
                                 <div
                                     ref={loaderRef}
-                                    className="flex items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 animate-pulse dark:text-white/80"
+                                    className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80"
                                 >
                                     <div className="flex items-center justify-center">
                                         <div role="status">
                                             <svg
                                                 aria-hidden="true"
-                                                className="w-5 h-5 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
                                                 viewBox="0 0 100 101"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -741,7 +744,7 @@ export default function index({ all_posts, next_page_url }) {
                     ></div>
 
                     {/* Modal content */}
-                    <div className="relative z-10 w-screen h-screen p-6 overflow-hidden shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
+                    <div className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
                         {windowSize.width > 1024 && viewablePost != '' && (
                             <>
                                 {/* Close Button */}
@@ -815,7 +818,7 @@ export default function index({ all_posts, next_page_url }) {
                                     {((!viewablePost?.post_video_urls?.length &&
                                         !viewablePost?.post_image_urls?.length) ||
                                         windowSize.width > 1024) && (
-                                        <div className="w-full p-2 mx-auto space-y-4 md:px-10">
+                                        <div className="mx-auto w-full space-y-4 p-2 md:px-10">
                                             {/* Author Header */}
                                             <div className="flex flex-wrap items-center justify-between space-x-3 space-y-4">
                                                 <div className="flex items-center">
@@ -829,7 +832,7 @@ export default function index({ all_posts, next_page_url }) {
                                                     </span>
                                                 </div>
 
-                                                <div className="flex items-center gap-2 cursor-pointer">
+                                                <div className="flex cursor-pointer items-center gap-2">
                                                     {/* QR Button */}
                                                     <button onClick={() => setShowQrCode(true)}>
                                                         <svg
@@ -957,13 +960,13 @@ export default function index({ all_posts, next_page_url }) {
 
                                             {/* Post Meta Info */}
                                             <div className="my-2 flex flex-wrap gap-2 text-[10px] text-gray-700 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
-                                                <span className="p-1 bg-gray-100 rounded-full dark:bg-gray-700">
+                                                <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                                     {viewablePost?.added_at}{' '}
                                                     {viewablePost?.created_at_time}
                                                 </span>
 
                                                 {viewablePost?.location_name && (
-                                                    <span className="p-1 bg-gray-100 rounded-full dark:bg-gray-700">
+                                                    <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
                                                         {viewablePost?.location_name}
                                                     </span>
                                                 )}
@@ -1029,7 +1032,7 @@ export default function index({ all_posts, next_page_url }) {
                                 className="relative h-[100dvh] w-full snap-start overflow-hidden"
                             >
                                 {/* Top Bar */}
-                                <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 text-white bg-black/50 backdrop-blur-sm">
+                                <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between bg-black/50 px-4 py-3 text-white backdrop-blur-sm">
                                     <button
                                         onClick={() => {
                                             setViewablePost('');
@@ -1041,7 +1044,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 window.location.pathname,
                                             );
                                         }}
-                                        className="p-1 rounded-full hover:bg-gray-300/20"
+                                        className="rounded-full p-1 hover:bg-gray-300/20"
                                     >
                                         {/* back icon */}
                                         <svg
@@ -1065,7 +1068,7 @@ export default function index({ all_posts, next_page_url }) {
                                         <button
                                             ref={elipsisButtonRef}
                                             data-elipsis-button
-                                            className="p-1 rounded-full hover:bg-gray-300/20"
+                                            className="rounded-full p-1 hover:bg-gray-300/20"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -1091,10 +1094,10 @@ export default function index({ all_posts, next_page_url }) {
                                                     ref={elipsisDropDownRef}
                                                     data-elipsis-dropdown
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="absolute right-0 z-50 mt-2 bg-black border border-gray-900 rounded-lg shadow-xl top-full w-44 sm:w-48"
+                                                    className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
                                                 >
                                                     <ul
-                                                        className="py-1 overflow-y-scroll text-sm text-gray-700 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500 dark:text-gray-200 dark:scrollbar-thumb-white"
+                                                        className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
                                                         style={{ maxHeight: '180px' }}
                                                     >
                                                         <li>
@@ -1103,7 +1106,7 @@ export default function index({ all_posts, next_page_url }) {
                                                                     setShowQrCode(true);
                                                                     setElipsisShowDropdown(false);
                                                                 }}
-                                                                className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                             >
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -1131,7 +1134,7 @@ export default function index({ all_posts, next_page_url }) {
                                                         {auth?.user && (
                                                             <li>
                                                                 <button
-                                                                    className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         router.put(
@@ -1188,7 +1191,7 @@ export default function index({ all_posts, next_page_url }) {
 
                                                         <li>
                                                             <button
-                                                                className="flex items-center w-full gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                 onClick={(e) => {
                                                                     const url =
                                                                         route(
@@ -1229,7 +1232,7 @@ export default function index({ all_posts, next_page_url }) {
                                         )}
 
                                         {/* Filter button */}
-                                        <button className="p-1 rounded-full hover:bg-gray-300/20">
+                                        <button className="rounded-full p-1 hover:bg-gray-300/20">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -1249,7 +1252,7 @@ export default function index({ all_posts, next_page_url }) {
                                 </div>
 
                                 {/* Media Viewer */}
-                                <div className="relative flex items-center justify-center w-full h-full text-white">
+                                <div className="relative flex h-full w-full items-center justify-center text-white">
                                     {/* Blurred Background */}
                                     {Array.isArray(post.post_image_urls) &&
                                     post.post_image_urls.length > 0 ? (
@@ -1257,12 +1260,12 @@ export default function index({ all_posts, next_page_url }) {
                                             <img
                                                 src={post.post_image_urls[0]}
                                                 alt="Post background blur"
-                                                className="absolute inset-0 object-cover w-full h-full scale-110 blur-lg"
+                                                className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
                                             />
                                             <img
                                                 src={post.post_image_urls[0]}
                                                 alt="Post main"
-                                                className="relative z-10 object-contain max-w-full max-h-full"
+                                                className="relative z-10 max-h-full max-w-full object-contain"
                                             />
                                         </>
                                     ) : (
@@ -1272,7 +1275,7 @@ export default function index({ all_posts, next_page_url }) {
                                                 <VideoPlayer
                                                     videoUrl={post.post_video_urls[0]}
                                                     thumbnail={videoThumbnail}
-                                                    className="relative z-10 object-contain max-w-full max-h-full"
+                                                    className="relative z-10 max-h-full max-w-full object-contain"
                                                 />
                                             </>
                                         )
@@ -1291,13 +1294,13 @@ export default function index({ all_posts, next_page_url }) {
                                     } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
                                 >
                                     {/* Username */}
-                                    <div className="flex items-center mb-2 space-x-2">
-                                        <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-                                            {/* avatar */}
+                                    <div className="mb-2 flex items-center space-x-2">
+                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
+                                            {viewablePost.user?.avatar}
                                         </div>
                                         <span className="text-xs font-medium text-white/80">
-                                            {post.user?.name.length > 30
-                                                ? post.user?.name.substring(0, 30) + '...'
+                                            {post.user?.name.length > 6
+                                                ? post.user?.name.substring(0, 6) + '...'
                                                 : post.user?.name}
                                         </span>
                                     </div>
@@ -1326,8 +1329,11 @@ export default function index({ all_posts, next_page_url }) {
 
                                     {/* Learn More Button */}
                                     {showDetails && (
-                                        <div className="flex items-center justify-end my-2">
-                                            <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
+                                        <div className="my-2 flex items-center justify-end">
+                                            <button
+                                                className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
+                                                onClick={() => setIsMobilePostGallery(true)}
+                                            >
                                                 Learn More
                                             </button>
                                         </div>
@@ -1338,8 +1344,11 @@ export default function index({ all_posts, next_page_url }) {
                                         post.post_image_urls.length < 1 &&
                                         Array.isArray(post.post_video_urls) &&
                                         post.post_video_urls.length < 1 && (
-                                            <div className="flex items-center justify-end mt-2">
-                                                <button className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80">
+                                            <div className="mt-2 flex items-center justify-end">
+                                                <button
+                                                    className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
+                                                    onClick={() => setIsMobilePostGallery(true)}
+                                                >
                                                     Learn More
                                                 </button>
                                             </div>
@@ -1351,289 +1360,297 @@ export default function index({ all_posts, next_page_url }) {
                 </div>
             )}
 
-            {/* Bottom Bar Logic Will Be Used Later If Needed */}
-            {/* {windowSize.width < 1024 &&
-                viewablePost != '' &&
-                ((Array.isArray(viewablePost?.post_video_urls) &&
-                    viewablePost.post_video_urls.length > 0) ||
-                    (Array.isArray(viewablePost?.post_image_urls) &&
-                        viewablePost.post_image_urls.length > 0)) && (
-                    <div
-                        className={`fixed bottom-0 left-0 right-0 z-50 transform rounded-t-2xl shadow-lg transition-transform duration-300 scrollbar-none ${
-                            showDetails
-                                ? 'max-h-[80vh] translate-y-0 overflow-y-auto bg-gray-200 dark:bg-gray-950'
-                                : 'max-h-[30vh] translate-y-[50%] bg-white dark:bg-gray-800'
-                        }`}
-                    >
-                        <div
-                            className={`me-2 flex items-center justify-between gap-2 px-2 ${showDetails && 'p-2'}`}
-                            {...handlers}
-                        >
-                            <span
-                                className="cursor-pointer text-[15px] font-semibold hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
-                                onClick={() => setShowDetails(!showDetails)}
+            {/* Mobile Post Gallery */}
+            {isMobilePostGallery && isMobilePostViewer && (
+                <div className="fixed inset-0 z-50 bg-black">
+                    {/* Elipsis Dropdown Menu */}
+                    {showElipsisDropdown && isMobilePostViewer && (
+                        <>
+                            <div
+                                ref={elipsisDropDownRef}
+                                data-elipsis-dropdown
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute left-20 top-12 z-[9999] mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
                             >
-                                {viewablePost?.user?.name.length > 30
-                                    ? viewablePost?.user?.name.substring(0, 30) + '...'
-                                    : viewablePost?.user?.name}
-                            </span>
-
-                            <button
-                                onClick={() => {
-                                    setShowDetails(!showDetails);
-                                }}
-                                className={`${showDetails && 'rounded-2xl bg-blue-600 p-2 text-white dark:bg-gray-800 dark:text-white'} `}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="size-5 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
+                                <ul
+                                    className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
+                                    style={{ maxHeight: '180px' }}
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                                    />
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                    />
-                                </svg>
-                            </button>
-
-                            {/* <button
-                                onClick={() => {
-                                    setViewablePost('');
-                                    window.history.pushState({}, '', window.location.pathname);
-
-                                    setShowDetails(false);
-                                }}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M6 18 18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button> */}
-            {/* </div> */}
-
-            {/* Content */}
-            {/* <div className="w-full p-2 mx-auto md:px-7"> */}
-            {/* Post Content */}
-
-            {/* <p
-                                className="mt-2 cursor-pointer whitespace-normal break-words text-[15px] font-semibold text-gray-800 hover:underline dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
-                                onClick={() => setShowDetails(!showDetails)}
-                            >
-                                {viewablePost?.title}
-                            </p> */}
-
-            {/* <div
-                                className={`prose max-h-[150px] max-w-none cursor-pointer ${showDetails ? 'overflow-y-auto' : 'overflow-hidden'} break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]`}
-                                dangerouslySetInnerHTML={{
-                                    __html: showDetails
-                                        ? viewablePost?.content
-                                        : viewablePost?.content.substring(0, 200) + '...',
-                                }}
-                                {...postSwipeForMobileBottomContent}
-                            /> */}
-
-            {/* Tag */}
-            {/* <div>
-                                <span className="text-[12px] font-semibold text-blue-600 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
-                                    {viewablePost?.tag}
-                                </span>
-                            </div> */}
-
-            {/* <hr className="border-gray-200 dark:border-gray-700" /> */}
-
-            {/* Post Meta Info */}
-            {/* <div className="flex flex-wrap justify-between gap-2 my-2">
-                                <div>
-                                    <span className="rounded-full bg-gray-100 p-1 text-[12px] text-gray-700 dark:bg-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
-                                        {viewablePost?.added_at} {viewablePost?.created_at_time}
-                                    </span>
-
-                                    {viewablePost?.location_name && (
-                                        <span className="rounded-full bg-gray-100 p-1 text-[12px] text-gray-700 dark:bg-gray-700 dark:text-white/80 sm:text-[13px] md:text-[14px] lg:text-[15px]">
-                                            {viewablePost?.location_name}
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    {showDetails && (
-                                        <div className="flex items-center gap-2 cursor-pointer">
-                                            <button
-                                                onClick={() => {
-                                                    setShowQrCode(true);
-                                                }}
+                                    <li>
+                                        <button
+                                            onClick={(e) => {
+                                                setShowQrCode(true);
+                                                setElipsisShowDropdown(false);
+                                            }}
+                                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
                                             >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
-                                                    />
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
-                                                    />
-                                                </svg>
-                                            </button>
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+                                                />
+                                            </svg>
+                                            QR Code
+                                        </button>
+                                    </li>
 
-                                            {auth?.user && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        router.put(
-                                                            route(
-                                                                'website.posts.bookmark',
-                                                                viewablePost?.id,
-                                                            ),
-                                                            {
-                                                                post_id: viewablePost?.id,
-                                                            },
-                                                            {
-                                                                onSuccess: () => {
-                                                                    viewablePost.is_bookmarked =
-                                                                        !viewablePost.is_bookmarked;
-                                                                },
-                                                                onError: (e) => {
-                                                                    toast.error(e.message);
-                                                                },
-                                                            },
-                                                        );
-                                                    }}
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill={
-                                                            viewablePost?.is_bookmarked
-                                                                ? isDarkMode
-                                                                    ? '#ffff'
-                                                                    : '#0340D1'
-                                                                : 'none'
-                                                        }
-                                                        stroke={
-                                                            viewablePost?.is_bookmarked
-                                                                ? isDarkMode
-                                                                    ? '#ffff'
-                                                                    : '#0340D1'
-                                                                : 'currentColor'
-                                                        }
-                                                        strokeWidth={1.5}
-                                                        viewBox="0 0 24 24"
-                                                        className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            )}
-
+                                    {auth?.user && (
+                                        <li>
                                             <button
+                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                 onClick={(e) => {
-                                                    const url =
-                                                        route('website.posts.index') +
-                                                        generateURL(viewablePost);
-                                                    navigator.clipboard.writeText(url.trim());
+                                                    e.stopPropagation();
+                                                    router.put(
+                                                        route(
+                                                            'website.posts.bookmark',
+                                                            viewablePost?.id,
+                                                        ),
+                                                        {
+                                                            post_id: viewablePost?.id,
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                viewablePost.is_bookmarked =
+                                                                    !viewablePost.is_bookmarked;
+                                                            },
+                                                            onError: (e) => {
+                                                                toast.error(e.message);
+                                                            },
 
-                                                    toast.success('Copied to clipboard');
+                                                            onFinish: () => {
+                                                                setElipsisShowDropdown(false);
+                                                            },
+                                                        },
+                                                    );
                                                 }}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
+                                                    fill={
+                                                        viewablePost?.is_bookmarked
+                                                            ? '#FFFFFF'
+                                                            : 'none'
+                                                    }
                                                     viewBox="0 0 24 24"
                                                     strokeWidth={1.5}
                                                     stroke="currentColor"
-                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-5 lg:size-6"
+                                                    className="size-6"
                                                 >
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                                                     />
                                                 </svg>
+                                                Bookmark
                                             </button>
-                                        </div>
+                                        </li>
                                     )}
-                                </div>
-                            </div> */}
 
-            {/* {mediaItems.length > 1 && (
-                                <div
-                                    className="mt-3 flex max-w-[100vw] gap-2 overflow-x-auto px-2 scrollbar-none"
-                                    ref={mediaMobileref}
-                                >
-                                    <div
-                                        {...mediaMobileHandlers}
-                                        className="flex gap-2 overflow-x-hidden scrollbar-none"
-                                    >
-                                        {mediaItems.map((item, idx) => (
-                                            <button
-                                                key={idx}
-                                                ref={(el) => (mediaThumbRefs.current[idx] = el)}
-                                                onClick={() => setSelectedMediaIndex(idx)}
-                                                className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
-                                                    selectedMediaIndex === idx
-                                                        ? 'border-blue-600 ring-2 ring-blue-400'
-                                                        : 'border-gray-300 hover:border-gray-500'
-                                                }`}
+                                    <li>
+                                        <button
+                                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                            onClick={(e) => {
+                                                const url =
+                                                    route('website.posts.index') +
+                                                    generateURL(viewablePost);
+                                                navigator.clipboard.writeText(url.trim());
+
+                                                toast.success('Copied to clipboard');
+
+                                                setElipsisShowDropdown(false);
+                                            }}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="size-6"
                                             >
-                                                {item.type === 'image' ? (
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                />
+                                            </svg>
+                                            Copy Link
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Backdrop */}
+                    <div className="absolute inset-0 bg-black/70"></div>
+
+                    <div className="relative z-10 flex h-[100dvh] w-full flex-col bg-black text-white">
+                        {/* Top Bar */}
+                        <div className="flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-sm">
+                            {/* Left side */}
+                            <div className="flex items-center space-x-3">
+                                <div className="flex items-center space-x-2">
+                                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
+                                        {viewablePost.user?.avatar}
+                                    </div>
+                                    <span className="text-xs font-medium text-white/80">
+                                        {viewablePost.user?.name.length > 6
+                                            ? viewablePost.user?.name.substring(0, 6) + '...'
+                                            : viewablePost.user?.name}
+                                    </span>
+                                </div>
+
+                                {/* Ellipsis */}
+                                <button
+                                    className="rounded-full p-1 hover:bg-gray-300/20"
+                                    ref={elipsisButtonRef}
+                                    data-elipsis-button
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="h-6 w-6"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Right side */}
+                            <div className="flex items-center space-x-2">
+                                {/* Close */}
+                                <button
+                                    onClick={() => setIsMobilePostGallery(false)}
+                                    className="rounded-full p-1 hover:bg-gray-300/20"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="h-6 w-6"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M6 18 18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Media Section (fixed height) */}
+                        {mediaItems.length > 0 && (
+                            <div className="relative h-[60vh] w-full snap-x snap-mandatory overflow-y-hidden overflow-x-scroll scroll-smooth scrollbar-none">
+                                <div className="flex h-full w-full">
+                                    {mediaItems?.map((item, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="relative flex h-full w-full flex-shrink-0 snap-start items-center justify-center text-white"
+                                        >
+                                            {item.type === 'image' ? (
+                                                <>
                                                     <img
                                                         src={item.url}
-                                                        alt={`Image ${idx}`}
-                                                        className="object-cover w-full h-full"
-                                                        loading="lazy"
+                                                        alt="Post background blur"
+                                                        className="absolute inset-0 z-0 h-full w-full scale-110 object-cover blur-lg"
                                                     />
-                                                ) : (
                                                     <img
-                                                        src={videoThumbnail}
-                                                        alt={`Video ${idx}`}
-                                                        className="object-cover w-full h-full opacity-80"
-                                                        loading="lazy"
+                                                        src={item.url}
+                                                        alt={`Media ${idx}`}
+                                                        className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
                                                     />
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {/* <img
+                                                    src={videoThumbnail}
+                                                    alt="Post background blur"
+                                                    className="absolute inset-0 z-0 object-cover w-full h-full scale-110 blur-lg"
+                                                /> */}
+
+                                                    <VideoPlayer
+                                                        key={idx}
+                                                        videoUrl={item.url}
+                                                        thumbnail={videoThumbnail}
+                                                        className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
+                                                        fullscreen={true}
+                                                    />
+                                                </>
+                                            )}
+
+                                            <div className="absolute bottom-3 right-3 z-[9999] rounded-full bg-black/70 px-2 py-1 text-xs font-semibold text-white">
+                                                {idx + 1} / {mediaItems.length}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Scrollable Bottom Section */}
+                        <div className="flex-1 space-y-3 overflow-y-auto p-4 scrollbar-none">
+                            <h2 className="text-sm font-semibold">
+                                {viewablePost?.title || 'Post Title'}
+                            </h2>
+
+                            <div
+                                dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
+                                className="prose break-words text-xs text-white/80"
+                            ></div>
+
+                            {/* Tags */}
+                            {viewablePost?.tag && (
+                                <div className="flex flex-wrap gap-2 text-[11px] text-blue-400">
+                                    {viewablePost?.tag}
                                 </div>
                             )}
+
+                            <div className="flex items-center gap-3">
+                                {/* Location */}
+                                {viewablePost?.location_name && (
+                                    <span className="rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                        {viewablePost?.location_name}
+                                    </span>
+                                )}
+
+                                <span className="w-32 rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                    {viewablePost?.added_at + ' ' + viewablePost?.created_at_time}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                )} */}
+                </div>
+            )}
 
             {/* QR CODE */}
             {showQrCode && (
                 <>
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden scrollbar-none sm:p-6">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4 scrollbar-none sm:p-6">
                         <div
                             className="fixed inset-0 backdrop-blur-[32px]"
                             onClick={() => setShowQrCode(false)}
@@ -1644,9 +1661,9 @@ export default function index({ all_posts, next_page_url }) {
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="qrCodeTitle"
-                            className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white dark:bg-gray-800' : 'bg-gray-950'} p-6 shadow-xl sm:p-8`}
+                            className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'bg-gray-950 text-white/80'} p-6 shadow-xl sm:p-8`}
                         >
-                            <div className="flex justify-end mt-1">
+                            <div className="mt-1 flex justify-end">
                                 <button onClick={() => setShowQrCode(false)}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -1654,7 +1671,11 @@ export default function index({ all_posts, next_page_url }) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-5 md:size-6 lg:size-7"
+                                        className={`size-5 ${
+                                            isDesktopPostViewer
+                                                ? 'hover:text-black/80 dark:text-white/80 dark:hover:text-white'
+                                                : 'hover:text-white/70 dark:text-white/80 dark:hover:text-white'
+                                        } sm:size-5 md:size-6 lg:size-7`}
                                         aria-hidden="true"
                                     >
                                         <path
@@ -1669,7 +1690,7 @@ export default function index({ all_posts, next_page_url }) {
                             <div className="text-center">
                                 <h2
                                     id="qrCodeTitle"
-                                    className="mb-2 text-[15px] font-semibold text-gray-900 dark:text-gray-100 sm:text-[11px] md:text-[12px] lg:text-[13px]"
+                                    className="mb-2 text-[15px] font-semibold sm:text-[11px] md:text-[12px] lg:text-[13px]"
                                 >
                                     Scan QR Code
                                 </h2>
