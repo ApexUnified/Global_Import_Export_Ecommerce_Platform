@@ -1565,7 +1565,7 @@ export default function index({ all_posts, next_page_url }) {
 
                         {/* Media Section (fixed height) */}
                         {mediaItems.length > 0 && (
-                            <div className="relative h-[60vh] w-full snap-x snap-mandatory overflow-y-hidden overflow-x-scroll scroll-smooth scrollbar-none">
+                            <div className="relative h-[60vh] w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scrollbar-none">
                                 <div className="flex h-full w-full">
                                     {mediaItems?.map((item, idx) => (
                                         <div
