@@ -1570,7 +1570,7 @@ export default function index({ all_posts, next_page_url }) {
                                     {mediaItems?.map((item, idx) => (
                                         <div
                                             key={idx}
-                                            className="relative flex h-full w-full flex-shrink-0 snap-start items-center justify-center text-white"
+                                            className="relative flex h-full w-full flex-shrink-0 snap-center snap-always items-center justify-center text-white"
                                         >
                                             {item.type === 'image' ? (
                                                 <>
