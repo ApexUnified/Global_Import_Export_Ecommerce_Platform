@@ -504,7 +504,7 @@ export default function index() {
                         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                             {/* Post Filter For Mobile */}
                             {windowSize.width < 1024 && (
-                                <div className="my-5 flex items-center justify-end">
+                                <div className="mx-3 my-5 flex items-center justify-end">
                                     <button
                                         className="rounded-full bg-white p-1 hover:bg-gray-300/20 dark:bg-gray-700 dark:text-white/80"
                                         onClick={() => setIsPostFilterSetting(true)}
