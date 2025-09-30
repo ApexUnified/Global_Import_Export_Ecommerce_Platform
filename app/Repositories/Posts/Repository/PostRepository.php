@@ -34,9 +34,41 @@ class PostRepository implements IPostRepository
         return $posts;
     }
 
-    public function getSinglePostBySlug(string $slug)
+    public function getSinglePostBySlug(string $slug, ?Request $request = null)
     {
-        $post = $this->post->with(['floor', 'user'])->where('slug', $slug)->first();
+        $images = ! empty($request) ? ($request->has('images') ? $request->boolean('images') : false) : null;
+        $videos = ! empty($request) ? ($request->has('videos') ? $request->boolean('videos') : false) : null;
+        $text = ! empty($request) ? ($request->has('text') ? $request->boolean('text') : false) : null;
+
+        $post = $this->post->with(['floor', 'user'])
+            ->where('slug', $slug)
+            ->when($request && $request->hasAny(['text', 'images', 'videos']), function ($q) use ($text, $images, $videos) {
+                $q->where(function ($q) use ($text, $images, $videos) {
+                    if ($text) {
+
+                        $q->orWhere(function ($sub) {
+                            $sub->whereNull('images')
+                                ->whereNull('videos');
+                        });
+                    }
+
+                    if ($images) {
+
+                        $q->orWhere(function ($sub) {
+                            $sub->whereNotNull('images')
+                                ->whereNull('videos');
+                        });
+                    }
+
+                    if ($videos) {
+
+                        $q->orWhere(function ($sub) {
+                            $sub->whereNotNull('videos');
+                        });
+                    }
+                });
+            })
+            ->first();
 
         return $post;
     }
@@ -244,7 +276,7 @@ class PostRepository implements IPostRepository
 
         try {
 
-            $post = $this->getSinglePostBySlug($slug);
+            $post = $this->getSinglePostBySlug($slug, $request);
 
             if (empty($post)) {
                 throw new Exception('Post Not Found');
@@ -519,8 +551,36 @@ class PostRepository implements IPostRepository
     // Fetching Posts For Website
     public function getPostsForWebsite(Request $request)
     {
+        $images = $request->boolean('images');
+        $text = $request->boolean('text');
+        $videos = $request->boolean('videos');
+
         $posts = $this->post
             ->where('status', true)
+            ->where(function ($q) use ($text, $images, $videos) {
+                if ($text) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNull('images')
+                            ->whereNull('videos');
+                    });
+                }
+
+                if ($images) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNotNull('images')
+                            ->whereNull('videos');
+                    });
+                }
+
+                if ($videos) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNotNull('videos');
+                    });
+                }
+            })
             ->with(['floor', 'user'])
             ->latest()
             ->paginate(10);
@@ -533,8 +593,36 @@ class PostRepository implements IPostRepository
 
     public function getInfinityScrollablePostsForWebsite(Request $request)
     {
+        $images = $request->boolean('images');
+        $text = $request->boolean('text');
+        $videos = $request->boolean('videos');
+
         $posts = $this->post
             ->where('status', true)
+            ->where(function ($q) use ($text, $images, $videos) {
+                if ($text) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNull('images')
+                            ->whereNull('videos');
+                    });
+                }
+
+                if ($images) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNotNull('images')
+                            ->whereNull('videos');
+                    });
+                }
+
+                if ($videos) {
+
+                    $q->orWhere(function ($sub) {
+                        $sub->whereNotNull('videos');
+                    });
+                }
+            })
             ->with(['floor', 'user'])
             ->latest()
             ->paginate(10);

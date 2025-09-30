@@ -16,18 +16,30 @@ class PostController extends Controller
     public function index(Request $request)
     {
 
-        $data = $this->post->getPostsForWebsite($request);
+        if ($request->header('X-Inertia')) {
+            return Inertia::render('Website/Posts/index');
+        }
 
-        $all_posts = $data['posts'];
-        $next_page_url = $data['next_page_url'];
+        if ($request->ajax()) {
 
-        // return $posts;
+            $data = $this->post->getPostsForWebsite($request);
 
-        return Inertia::render('Website/Posts/index', compact('all_posts', 'next_page_url'));
+            $posts = $data['posts'];
+            $next_page_url = $data['next_page_url'];
+
+            return response()->json([
+                'status' => true,
+                'posts' => $posts,
+                'next_page_url' => $next_page_url,
+            ]);
+        }
+
+        return Inertia::render('Website/Posts/index');
     }
 
     public function getMorePosts(Request $request)
     {
+
         if (! $request->has('page')) {
             return back();
         }
@@ -52,14 +64,14 @@ class PostController extends Controller
         return back()->with('success', $bookmarked['message']);
     }
 
-    public function getSinglePostBySlug(?string $slug = null)
+    public function getSinglePostBySlug(?string $slug, Request $request)
     {
 
         if (empty($slug)) {
             return response()->json(['status' => false]);
         }
 
-        $post = $this->post->getSinglePostBySlug($slug);
+        $post = $this->post->getSinglePostBySlug($slug, $request);
 
         if (empty($post)) {
             return response()->json(['status' => false]);

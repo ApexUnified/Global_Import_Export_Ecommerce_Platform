@@ -11,13 +11,62 @@ import videoThumbnail from '../../../../../public/assets/images/video-thumb/gene
 import { useSwipeable } from 'react-swipeable';
 import VideoPlayer from '@/Components/VideoPlayer';
 import { createPortal } from 'react-dom';
+import axios from 'axios';
 
-export default function index({ all_posts, next_page_url }) {
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+};
+
+export default function index() {
+    const [isPostLoaded, setIsPostLoaded] = useState(false);
+    const [posts, setPosts] = useState(null);
+    const [nextPageUrl, setNextPageUrl] = useState(null);
+    const [postPreferences, setPostPreferences] = useState({
+        text: true,
+        videos: true,
+        images: true,
+    });
+
+    const [prefsLoaded, setPrefsLoaded] = useState(false);
+    const [isPrefChanged, setIsPrefChanged] = useState(false);
+
+    useEffect(() => {
+        const cookieValue = getCookie('post_preferences');
+        if (cookieValue) {
+            try {
+                const parsed = JSON.parse(decodeURIComponent(cookieValue));
+                setPostPreferences(parsed);
+            } catch (e) {
+                console.error('Failed to parse post_preferences cookie', e);
+            }
+        }
+
+        setPrefsLoaded(true);
+    }, []);
+
+    const fetchPosts = () => {
+        axios
+            .get(route('website.posts.index'), {
+                params: postPreferences,
+            })
+            .then((res) => {
+                setPosts(res.data.posts);
+                setNextPageUrl(res.data.next_page_url);
+            })
+            .finally(() => {
+                setIsPostLoaded(true);
+            });
+    };
+
+    useEffect(() => {
+        if (!prefsLoaded) return;
+        fetchPosts();
+    }, [prefsLoaded]);
+
     const [viewablePost, setViewablePost] = useState('');
-
-    const [posts, setPosts] = useState(all_posts || []);
-
-    const [nextPageUrl, setNextPageUrl] = useState(next_page_url);
 
     const [selectedPostIndex, setSelectedPostIndex] = useState(0);
     const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
@@ -46,6 +95,13 @@ export default function index({ all_posts, next_page_url }) {
 
     // Mobile Post Gallery
     const [isMobilePostGallery, setIsMobilePostGallery] = useState(false);
+
+    // Mobile Post Gallery Setting
+    const [isPostFilterSetting, setIsPostFilterSetting] = useState(false);
+
+    // useEffect(() => {
+    //
+    // },[]);
 
     // All Refs
     const thumbRefs = useRef([]);
@@ -114,6 +170,7 @@ export default function index({ all_posts, next_page_url }) {
                 setViewablePost('');
                 setIsDesktopPostViewer(false);
                 setIsMobilePostViewer(false);
+                setIsMobilePostGallery(false);
                 window.history.replaceState({}, '', window.location.pathname);
             }
         }
@@ -136,6 +193,8 @@ export default function index({ all_posts, next_page_url }) {
     }, [windowSize.width]);
 
     useEffect(() => {
+        if (!posts || !isPostLoaded) return;
+
         const params = new URLSearchParams(window.location.search);
         const slug = params.get('slug');
 
@@ -149,7 +208,7 @@ export default function index({ all_posts, next_page_url }) {
                 setPostViewerBasedOnWidth(windowSize);
             }
         }
-    }, []);
+    }, [isPostLoaded, posts]);
 
     // Stopping Overflow Of Body When Modal is Open
     useEffect(() => {
@@ -185,6 +244,9 @@ export default function index({ all_posts, next_page_url }) {
 
         try {
             const params = new URLSearchParams(nextPageUrl.split('?')[1]);
+            Object.entries(postPreferences).forEach(([key, value]) => {
+                params.set(key, value);
+            });
 
             const res = await fetch(route('website.posts.getmore') + `?${params.toString()}`);
             const data = await res.json();
@@ -203,7 +265,8 @@ export default function index({ all_posts, next_page_url }) {
 
     const fetchSinglePost = async (slug) => {
         try {
-            const res = await fetch(route('website.posts.getsingle', slug));
+            const queryString = new URLSearchParams(postPreferences).toString();
+            const res = await fetch(route('website.posts.getsingle', slug) + `?${queryString}`);
             const data = await res.json();
 
             if (data.status) {
@@ -349,138 +412,39 @@ export default function index({ all_posts, next_page_url }) {
         };
     }, []);
 
-    // Not Using For Now
-    // const postSwipeForMobileBottomContent = useSwipeable({
-    //     onSwipedLeft: () => {
-    //         let nextIndex =
-    //             selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
+    const handlePostPreferences = (type, value) => {
+        if (postPreferences)
+            setPostPreferences((prev) => {
+                const updated = { ...prev, [type]: value };
 
-    //         // Update current index
-    //         setSelectedPostIndex(nextIndex);
+                const allFalse = Object.values(updated).every((v) => v === false);
 
-    //         // Debounce like wheel
-    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-    //         PostSwipeTimeout.current = setTimeout(() => {
-    //             if (posts[nextIndex]) {
-    //                 const post = posts[nextIndex];
-    //                 setViewablePost(post);
-    //                 window.history.replaceState({}, '', generateURL(post));
-    //             }
+                if (allFalse) {
+                    toast.info('Atleast One Filter Should Be Enabled');
+                    return prev;
+                }
+                setIsPrefChanged(true);
+                return updated;
+            });
+    };
 
-    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
-    //                 fetchMorePosts();
-    //             }
-    //         }, 500);
-    //     },
+    useEffect(() => {
+        if (!isPostLoaded) return;
+        document.cookie = `post_preferences=${JSON.stringify(postPreferences)};path=/;max-age=31536000;SameSite=Lax;`;
+    }, [postPreferences]);
 
-    //     onSwipedRight: () => {
-    //         let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
-
-    //         // Update current index
-    //         setSelectedPostIndex(nextIndex);
-
-    //         // Debounce like wheel
-    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-    //         PostSwipeTimeout.current = setTimeout(() => {
-    //             if (posts[nextIndex]) {
-    //                 const post = posts[nextIndex];
-    //                 setViewablePost(post);
-    //                 window.history.replaceState({}, '', generateURL(post));
-    //             }
-
-    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
-    //                 fetchMorePosts();
-    //             }
-    //         }, 500);
-    //     },
-
-    //     trackTouch: true,
-    //     trackMouse: true,
-    //     preventScrollOnSwipe: true,
-    // });
-
-    // const outerHandlers = useSwipeable({
-    //     onSwipedLeft: () => {
-    //         let nextIndex =
-    //             selectedPostIndex === posts.length - 1 ? selectedPostIndex : selectedPostIndex + 1;
-
-    //         // Update current index
-    //         setSelectedPostIndex(nextIndex);
-
-    //         // Debounce like wheel
-    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-    //         PostSwipeTimeout.current = setTimeout(() => {
-    //             if (posts[nextIndex]) {
-    //                 const post = posts[nextIndex];
-    //                 setViewablePost(post);
-    //                 window.history.replaceState({}, '', generateURL(post));
-    //             }
-
-    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
-    //                 fetchMorePosts();
-    //             }
-    //         }, 500);
-    //     },
-
-    //     onSwipedRight: () => {
-    //         let nextIndex = selectedPostIndex === 0 ? 0 : selectedPostIndex - 1;
-
-    //         // Update current index
-    //         setSelectedPostIndex(nextIndex);
-
-    //         // Debounce like wheel
-    //         if (PostSwipeTimeout.current) clearTimeout(PostSwipeTimeout.current);
-    //         PostSwipeTimeout.current = setTimeout(() => {
-    //             if (posts[nextIndex]) {
-    //                 const post = posts[nextIndex];
-    //                 setViewablePost(post);
-    //                 window.history.replaceState({}, '', generateURL(post));
-    //             }
-
-    //             if (nextIndex >= posts.length - 5 && nextPageUrl) {
-    //                 fetchMorePosts();
-    //             }
-    //         }, 500);
-    //     },
-
-    //     trackTouch: true,
-    //     trackMouse: true,
-    //     preventScrollOnSwipe: true,
-    // });
-
-    // const mediaMobileHandlers = useSwipeable({
-    //     onSwipedLeft: (e) => {
-    //         setSelectedMediaIndex((prev) => (prev === mediaItems.length - 1 ? prev : prev + 1));
-    //     },
-
-    //     onSwipedRight: (e) => {
-    //         setSelectedMediaIndex((prev) => (prev === 0 ? 0 : prev - 1));
-    //     },
-
-    //     trackTouch: true,
-    //     trackMouse: true,
-    //     preventScrollOnSwipe: true,
-    // });
-
-    // // Bottom Bar Hiding State
-    // const [isVisible, setIsVisible] = useState(
-    //     (!showDetails &&
-    //         Array.isArray(viewablePost?.post_video_urls) &&
-    //         !viewablePost.post_video_urls.length > 0) ||
-    //         (Array.isArray(viewablePost?.post_image_urls) &&
-    //             !viewablePost.post_image_urls.length > 0),
-    // );
-
-    // useEffect(() => {
-    //     if (!showDetails) {
-    //         // Make it visible immediately → triggers fade-in
-    //         setIsVisible(true);
-    //     } else {
-    //         // Delay unmount until fadeOutUp finishes
-    //         const timer = setTimeout(() => setIsVisible(false), 500); // 500ms = animation time
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [showDetails]);
+    const ApplyFilter = () => {
+        setIsPostFilterSetting(false);
+        window.history.replaceState({}, '', window.location.pathname);
+        setViewablePost('');
+        setIsDesktopPostViewer(false);
+        setIsMobilePostViewer(false);
+        setIsPostLoaded(false);
+        setPosts(null);
+        setNextPageUrl(null);
+        fetchPosts();
+        setIsPrefChanged(false);
+    };
 
     return (
         <MainLayout>
@@ -506,417 +470,86 @@ export default function index({ all_posts, next_page_url }) {
                 <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-900"></div>
             </div>
 
-            {/* Masonry Layout */}
-            <div className="py-12 sm:py-16">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {/* Compact Masonry */}
-                    <div className="columns-1 gap-1 [column-fill:_balance] min-[300px]:columns-2 lg:columns-4">
-                        {posts.map((post, index) => {
-                            const url = generateURL(post);
-                            return (
-                                <article
-                                    key={post?.id}
-                                    className="group relative mb-1 cursor-pointer break-inside-avoid overflow-hidden rounded-none shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                                    style={{ animationDelay: `${index * 100}ms` }}
-                                    onClick={() => {
-                                        setViewablePost(post);
-
-                                        if (windowSize.width > 1024) {
-                                            setIsDesktopPostViewer(true);
-                                        } else {
-                                            setIsMobilePostViewer(true);
-                                            openFullscreen();
-                                        }
-
-                                        setSelectedPostIndex(index ?? 0);
-                                        setSelectedMediaIndex(0);
-                                        window.history.pushState({}, '', url);
-                                    }}
-                                >
-                                    {post?.images ? (
-                                        <div className="relative">
-                                            <img
-                                                src={post?.images[0]?.url}
-                                                alt={post?.title}
-                                                loading="lazy"
-                                                className="w-full object-cover text-[10px] text-gray-700 transition-all duration-500 group-hover:scale-105 dark:text-white/80"
-                                            />
-
-                                            {/* Share Button */}
-                                            <button
-                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const url =
-                                                        route('website.posts.index') +
-                                                        generateURL(post);
-                                                    navigator.clipboard.writeText(url.trim());
-
-                                                    toast.success(
-                                                        'Shareable Link Copied To Clipboard',
-                                                    );
-                                                }}
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="size-3 lg:size-5"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-                                                    />
-                                                </svg>
-                                            </button>
-
-                                            {/* Title + Meta */}
-                                            <div className="absolute inset-x-0 bottom-0 p-4">
-                                                <h2 className="line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
-                                                    {post?.title}
-                                                </h2>
-                                                <div className="mt-1 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
-                                                    <span className="text-white drop-shadow-md">
-                                                        {post?.tag}
-                                                    </span>
-                                                    <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="currentColor"
-                                                            className="size-2 md:size-3 lg:size-4"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                            />
-                                                        </svg>
-                                                        {post?.added_at}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        /* Text-only */
-                                        <div className="relative flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-5 text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
-                                            {/* Share Button */}
-                                            <button
-                                                className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const url =
-                                                        route('website.posts.index') +
-                                                        generateURL(post);
-                                                    navigator.clipboard.writeText(url.trim());
-
-                                                    toast.success(
-                                                        'Shareable Link Copied To Clipboard',
-                                                    );
-                                                }}
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="size-3 lg:size-5"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-                                                    />
-                                                </svg>
-                                            </button>
-
-                                            <div>
-                                                <h2 className="mb-2 line-clamp-2 text-[10px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
-                                                    {post?.title}
-                                                </h2>
-                                                <p className="line-clamp-4 text-[10px] opacity-90 lg:text-sm">
-                                                    {post.content.length > 200 ? (
-                                                        <span
-                                                            dangerouslySetInnerHTML={{
-                                                                __html:
-                                                                    post?.content.substring(
-                                                                        0,
-                                                                        200,
-                                                                    ) + '...',
-                                                            }}
-                                                        ></span>
-                                                    ) : (
-                                                        <span
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: post?.content,
-                                                            }}
-                                                        ></span>
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <div className="mt-2 flex items-center justify-between text-[7px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
-                                                <span className="text-white drop-shadow-md">
-                                                    {post?.tag}
-                                                </span>
-                                                <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="size-2 md:size-3 lg:size-4"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                        />
-                                                    </svg>
-                                                    {post?.added_at}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </article>
-                            );
-                        })}
-                    </div>
-
-                    {posts?.length === 0 && (
-                        <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 py-5 text-center text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
-                            <h1 className="text-md font-bold">No Posts Found</h1>
-                        </div>
-                    )}
-
-                    {/* Loader */}
-                    {posts?.length > 0 && (
-                        <>
-                            {nextPageUrl && (
-                                <div
-                                    ref={loaderRef}
-                                    className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80"
-                                >
-                                    <div className="flex items-center justify-center">
-                                        <div role="status">
-                                            <svg
-                                                aria-hidden="true"
-                                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
-                                                viewBox="0 0 100 101"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                                    fill="currentColor"
-                                                />
-                                                <path
-                                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                                    fill="currentFill"
-                                                />
-                                            </svg>
-                                            <span className="sr-only">Loading...</span>
-                                        </div>
-                                    </div>
-                                    Loading more...
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </div>
-
-            {/* Desktop Post View Modal */}
-            {viewablePost != '' && isDesktopPostViewer && (
-                <div className="fixed inset-0 z-50 bg-white dark:bg-gray-800">
-                    <div
-                        className="fixed inset-0 backdrop-blur-[32px]"
-                        onClick={() => {
-                            setViewablePost('');
-                            window.history.replaceState({}, '', window.location.pathname);
-                        }}
-                    ></div>
-
-                    {/* Modal content */}
-                    <div className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
-                        {windowSize.width > 1024 && viewablePost != '' && (
-                            <>
-                                {/* Close Button */}
-                                <div className="flex items-center justify-end">
-                                    <button
-                                        onClick={() => {
-                                            setViewablePost('');
-                                            window.history.replaceState(
-                                                {},
-                                                '',
-                                                window.location.pathname,
-                                            );
-
-                                            setIsDesktopPostViewer(false);
-                                            setIsMobilePostViewer(false);
-                                        }}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6 hover:text-black/80 dark:text-white/80 dark:hover:text-white"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M6 18 18 6M6 6l12 12"
-                                            />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </>
-                        )}
-
-                        {/* Scrollable Posts  */}
-
-                        {/* Post Content */}
-                        <div className="flex flex-col justify-center lg:flex-row">
-                            {/* Media Section - Shows on top for mobile, left for desktop */}
-                            <div
-                                className={`translate-y-3 transform transition-all duration-500 ease-in-out`}
+            {!isPostLoaded && (
+                <div className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80">
+                    <div className="flex items-center justify-center">
+                        <div role="status">
+                            <svg
+                                aria-hidden="true"
+                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                viewBox="0 0 100 101"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
                             >
-                                {((Array.isArray(viewablePost?.post_video_urls) &&
-                                    viewablePost.post_video_urls.length > 0) ||
-                                    (Array.isArray(viewablePost?.post_image_urls) &&
-                                        viewablePost.post_image_urls.length > 0)) && (
-                                    <PostMediaViewer
-                                        viewablePost={viewablePost}
-                                        selectedMediaIndex={selectedMediaIndex}
-                                        onSelectMediaIndex={setSelectedMediaIndex}
-                                        setMediaItems={setMediaItems}
-                                        mediaThumbRefs={mediaThumbRefs}
-                                    />
-                                )}
-                            </div>
+                                <path
+                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                    fill="currentColor"
+                                />
+                                <path
+                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                    fill="currentFill"
+                                />
+                            </svg>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    Please Wait While We Load Posts...
+                </div>
+            )}
 
-                            {/* Content Section */}
-                            {viewablePost && (
-                                <div
-                                    className={`w-full bg-transparent ${
-                                        (Array.isArray(viewablePost?.post_video_urls) &&
-                                            viewablePost.post_video_urls.length > 0) ||
-                                        (Array.isArray(viewablePost?.post_image_urls) &&
-                                            viewablePost.post_image_urls.length > 0)
-                                            ? 'lg:w-1/2' // when media exists, take half width on desktop
-                                            : 'lg:w-[80%]' // when no media, take full width
-                                    }`}
-                                >
-                                    {((!viewablePost?.post_video_urls?.length &&
-                                        !viewablePost?.post_image_urls?.length) ||
-                                        windowSize.width > 1024) && (
-                                        <div className="mx-auto w-full space-y-4 p-2 md:px-10">
-                                            {/* Author Header */}
-                                            <div className="flex flex-wrap items-center justify-between space-x-3 space-y-4">
-                                                <div className="flex items-center">
-                                                    <span className="text-[13px] font-semibold dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
-                                                        {viewablePost?.user?.name.length > 30
-                                                            ? viewablePost?.user?.name.substring(
-                                                                  0,
-                                                                  30,
-                                                              ) + '...'
-                                                            : viewablePost?.user?.name}
-                                                    </span>
-                                                </div>
+            {isPostLoaded && (
+                <>
+                    {/* Masonry Layout */}
+                    <div className="py-12 sm:py-16">
+                        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                            {/* Compact Masonry */}
+                            <div className="columns-1 gap-1 [column-fill:_balance] min-[300px]:columns-2 lg:columns-4">
+                                {posts.map((post, index) => {
+                                    const url = generateURL(post);
+                                    return (
+                                        <article
+                                            key={post?.id}
+                                            className="group relative mb-1 cursor-pointer break-inside-avoid overflow-hidden rounded-none shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                                            style={{ animationDelay: `${index * 100}ms` }}
+                                            onClick={() => {
+                                                setViewablePost(post);
 
-                                                <div className="flex cursor-pointer items-center gap-2">
-                                                    {/* QR Button */}
-                                                    <button onClick={() => setShowQrCode(true)}>
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="currentColor"
-                                                            className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
-                                                            />
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
-                                                            />
-                                                        </svg>
-                                                    </button>
+                                                if (windowSize.width > 1024) {
+                                                    setIsDesktopPostViewer(true);
+                                                } else {
+                                                    setIsMobilePostViewer(true);
+                                                    openFullscreen();
+                                                }
 
-                                                    {/* Bookmark Button */}
-                                                    {auth?.user && (
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                router.put(
-                                                                    route(
-                                                                        'website.posts.bookmark',
-                                                                        viewablePost?.id,
-                                                                    ),
-                                                                    { post_id: viewablePost?.id },
-                                                                    {
-                                                                        onSuccess: () => {
-                                                                            viewablePost.is_bookmarked =
-                                                                                !viewablePost.is_bookmarked;
-                                                                        },
-                                                                        onError: (e) =>
-                                                                            toast.error(e.message),
-                                                                    },
-                                                                );
-                                                            }}
-                                                        >
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill={
-                                                                    viewablePost?.is_bookmarked
-                                                                        ? isDarkMode
-                                                                            ? '#fff'
-                                                                            : '#0340D1'
-                                                                        : 'none'
-                                                                }
-                                                                stroke={
-                                                                    viewablePost?.is_bookmarked
-                                                                        ? isDarkMode
-                                                                            ? '#fff'
-                                                                            : '#0340D1'
-                                                                        : 'currentColor'
-                                                                }
-                                                                strokeWidth={1.5}
-                                                                viewBox="0 0 24 24"
-                                                                className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
-                                                            >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    )}
+                                                setSelectedPostIndex(index ?? 0);
+                                                setSelectedMediaIndex(0);
+                                                window.history.pushState({}, '', url);
+                                            }}
+                                        >
+                                            {post?.images ? (
+                                                <div className="relative">
+                                                    <img
+                                                        src={post?.images[0]?.url}
+                                                        alt={post?.title}
+                                                        loading="lazy"
+                                                        className="w-full object-cover text-[10px] text-gray-700 transition-all duration-500 group-hover:scale-105 dark:text-white/80"
+                                                    />
 
-                                                    {/* Copy Link Button */}
+                                                    {/* Share Button */}
                                                     <button
+                                                        className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
                                                         onClick={(e) => {
+                                                            e.stopPropagation();
                                                             const url =
                                                                 route('website.posts.index') +
-                                                                generateURL(viewablePost);
+                                                                generateURL(post);
                                                             navigator.clipboard.writeText(
                                                                 url.trim(),
                                                             );
-                                                            toast.success('Copied to clipboard');
+
+                                                            toast.success(
+                                                                'Shareable Link Copied To Clipboard',
+                                                            );
                                                         }}
                                                     >
                                                         <svg
@@ -925,188 +558,282 @@ export default function index({ all_posts, next_page_url }) {
                                                             viewBox="0 0 24 24"
                                                             strokeWidth={1.5}
                                                             stroke="currentColor"
-                                                            className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
+                                                            className="size-3 lg:size-5"
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
-                                                                d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                                d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
                                                             />
                                                         </svg>
                                                     </button>
+
+                                                    {/* Title + Meta */}
+                                                    <div className="absolute inset-x-0 bottom-0 p-4">
+                                                        <h2 className="line-clamp-2 text-[8px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
+                                                            {post?.title}
+                                                        </h2>
+                                                        <div className="mt-1 flex items-center justify-between text-[6px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
+                                                            <span className="text-white drop-shadow-md">
+                                                                {post?.tag}
+                                                            </span>
+                                                            <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    strokeWidth={1.5}
+                                                                    stroke="currentColor"
+                                                                    className="size-2 md:size-3 lg:size-4"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                                {post?.added_at}
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ) : (
+                                                /* Text-only */
+                                                <div className="relative flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-5 text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
+                                                    {/* Share Button */}
+                                                    <button
+                                                        className="absolute right-3 top-3 text-white opacity-80 hover:opacity-100"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const url =
+                                                                route('website.posts.index') +
+                                                                generateURL(post);
+                                                            navigator.clipboard.writeText(
+                                                                url.trim(),
+                                                            );
 
-                                            {/* Post Content */}
-                                            <p className="mt-2 whitespace-normal break-words text-[15px] font-semibold text-gray-800 dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
-                                                {viewablePost?.title}
-                                            </p>
+                                                            toast.success(
+                                                                'Shareable Link Copied To Clipboard',
+                                                            );
+                                                        }}
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth={1.5}
+                                                            stroke="currentColor"
+                                                            className="size-3 lg:size-5"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+                                                            />
+                                                        </svg>
+                                                    </button>
 
-                                            <div
-                                                className="prose max-h-[400px] max-w-[70vw] overflow-auto break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: viewablePost?.content,
-                                                }}
-                                            />
+                                                    <div>
+                                                        <h2 className="mb-2 line-clamp-2 text-[10px] font-semibold text-white drop-shadow-lg sm:text-[9px] md:text-[10px] lg:text-lg">
+                                                            {post?.title}
+                                                        </h2>
+                                                        <p className="line-clamp-4 text-[10px] opacity-90 lg:text-sm">
+                                                            {post.content.length > 200 ? (
+                                                                <span
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html:
+                                                                            post?.content.substring(
+                                                                                0,
+                                                                                200,
+                                                                            ) + '...',
+                                                                    }}
+                                                                ></span>
+                                                            ) : (
+                                                                <span
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html: post?.content,
+                                                                    }}
+                                                                ></span>
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                    <div className="mt-2 flex items-center justify-between text-[7px] font-bold text-gray-200 drop-shadow-sm sm:text-[7px] md:text-[8px] lg:text-xs">
+                                                        <span className="text-white drop-shadow-md">
+                                                            {post?.tag}
+                                                        </span>
+                                                        <span className="flex items-center gap-1 text-white drop-shadow-md lg:gap-2">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                strokeWidth={1.5}
+                                                                stroke="currentColor"
+                                                                className="size-2 md:size-3 lg:size-4"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                />
+                                                            </svg>
+                                                            {post?.added_at}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </article>
+                                    );
+                                })}
+                            </div>
 
-                                            {/* Tag */}
-                                            <div>
-                                                <span className="text-[10px] font-semibold text-blue-600 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
-                                                    {viewablePost?.tag}
-                                                </span>
-                                            </div>
-
-                                            <hr className="border-gray-200 dark:border-gray-700" />
-
-                                            {/* Post Meta Info */}
-                                            <div className="my-2 flex flex-wrap gap-2 text-[10px] text-gray-700 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
-                                                <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
-                                                    {viewablePost?.added_at}{' '}
-                                                    {viewablePost?.created_at_time}
-                                                </span>
-
-                                                {viewablePost?.location_name && (
-                                                    <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
-                                                        {viewablePost?.location_name}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
+                            {posts?.length === 0 && (
+                                <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-600 py-5 text-center text-white dark:from-gray-500 dark:via-gray-600 dark:to-gray-800 dark:text-white/80">
+                                    <h1 className="text-md font-bold">No Posts Found</h1>
                                 </div>
                             )}
 
-                            {/* Scrollable Posts  */}
-                            {windowSize.width > 1024 && (
-                                <PostsGrid
-                                    posts={posts}
-                                    onSelect={(post) => {
-                                        setViewablePost(post);
-                                        window.history.replaceState({}, '', generateURL(post));
-                                    }}
-                                    selectedPostIndex={selectedPostIndex}
-                                    onSelectIndex={setSelectedPostIndex}
-                                    nextPageUrl={nextPageUrl}
-                                    fetchMorePosts={fetchMorePosts}
-                                    fetchSinglePost={fetchSinglePost}
-                                />
+                            {/* Loader */}
+                            {posts?.length > 0 && (
+                                <>
+                                    {nextPageUrl && (
+                                        <div
+                                            ref={loaderRef}
+                                            className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80"
+                                        >
+                                            <div className="flex items-center justify-center">
+                                                <div role="status">
+                                                    <svg
+                                                        aria-hidden="true"
+                                                        className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                                        viewBox="0 0 100 101"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                                            fill="currentColor"
+                                                        />
+                                                        <path
+                                                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                            fill="currentFill"
+                                                        />
+                                                    </svg>
+                                                    <span className="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
+                                            Loading more...
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
-                </div>
-            )}
 
-            {/* Mobile Post View */}
-            {viewablePost !== '' && isMobilePostViewer && (
-                <div className="fixed inset-0 z-50 bg-black">
-                    {/* Backdrop */}
-                    <div className="absolute inset-0 bg-black/70"></div>
-
-                    {/* Scrollable Container */}
-                    <div
-                        className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
-                        onScroll={(e) => {
-                            setElipsisShowDropdown(false);
-                            const scrollTop = e.currentTarget.scrollTop;
-                            const index = Math.round(scrollTop / window.innerHeight);
-
-                            if (index !== selectedPostIndex && posts[index]) {
-                                setSelectedPostIndex(index);
-
-                                const post = posts[index];
-                                setViewablePost(post);
-                                window.history.replaceState({}, '', generateURL(post));
-
-                                // load more when near bottom
-                                if (index >= posts.length - 5 && nextPageUrl) {
-                                    fetchMorePosts();
-                                }
-                            }
-                        }}
-                        ref={mobilePostContainerRef}
-                    >
-                        {posts.map((post, index) => (
+                    {/* Desktop Post View Modal */}
+                    {viewablePost != '' && isDesktopPostViewer && (
+                        <div className="fixed inset-0 z-50 bg-white dark:bg-gray-800">
                             <div
-                                key={post.id}
-                                ref={(el) => (postsRefs.current[index] = el)}
-                                className="relative h-[100dvh] w-full snap-start overflow-hidden"
-                            >
-                                {/* Top Bar */}
-                                <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between bg-black/50 px-4 py-3 text-white backdrop-blur-sm">
-                                    <button
-                                        onClick={() => {
-                                            setViewablePost('');
-                                            setIsDesktopPostViewer(false);
-                                            setIsMobilePostViewer(false);
-                                            window.history.replaceState(
-                                                {},
-                                                '',
-                                                window.location.pathname,
-                                            );
-                                        }}
-                                        className="rounded-full p-1 hover:bg-gray-300/20"
-                                    >
-                                        {/* back icon */}
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                                            />
-                                        </svg>
-                                    </button>
+                                className="fixed inset-0 backdrop-blur-[32px]"
+                                onClick={() => {
+                                    setViewablePost('');
+                                    window.history.replaceState({}, '', window.location.pathname);
+                                }}
+                            ></div>
 
-                                    <div className="flex items-center space-x-3">
-                                        {/* Elipsis button */}
-                                        <button
-                                            ref={elipsisButtonRef}
-                                            data-elipsis-button
-                                            className="rounded-full p-1 hover:bg-gray-300/20"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="pointer-events-none size-6"
+                            {/* Modal content */}
+                            <div className="relative z-10 h-screen w-screen overflow-hidden p-6 shadow-xl scrollbar-none sm:p-8 lg:overflow-y-auto">
+                                {windowSize.width > 1024 && viewablePost != '' && (
+                                    <>
+                                        {/* Close Button */}
+                                        <div className="flex items-center justify-end">
+                                            <button
+                                                onClick={() => {
+                                                    setViewablePost('');
+                                                    window.history.replaceState(
+                                                        {},
+                                                        '',
+                                                        window.location.pathname,
+                                                    );
+
+                                                    setIsDesktopPostViewer(false);
+                                                    setIsMobilePostViewer(false);
+                                                }}
                                             >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                                                    className="pointer-events-none"
-                                                />
-                                            </svg>
-                                        </button>
-
-                                        {/* Elipsis Dropdown Menu */}
-                                        {showElipsisDropdown && isMobilePostViewer && (
-                                            <>
-                                                <div
-                                                    ref={elipsisDropDownRef}
-                                                    data-elipsis-dropdown
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="size-6 hover:text-black/80 dark:text-white/80 dark:hover:text-white"
                                                 >
-                                                    <ul
-                                                        className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
-                                                        style={{ maxHeight: '180px' }}
-                                                    >
-                                                        <li>
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M6 18 18 6M6 6l12 12"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Scrollable Posts  */}
+
+                                {/* Post Content */}
+                                <div className="flex flex-col justify-center lg:flex-row">
+                                    {/* Media Section - Shows on top for mobile, left for desktop */}
+                                    <div
+                                        className={`translate-y-3 transform transition-all duration-500 ease-in-out`}
+                                    >
+                                        {((Array.isArray(viewablePost?.post_video_urls) &&
+                                            viewablePost.post_video_urls.length > 0) ||
+                                            (Array.isArray(viewablePost?.post_image_urls) &&
+                                                viewablePost.post_image_urls.length > 0)) && (
+                                            <PostMediaViewer
+                                                viewablePost={viewablePost}
+                                                selectedMediaIndex={selectedMediaIndex}
+                                                onSelectMediaIndex={setSelectedMediaIndex}
+                                                setMediaItems={setMediaItems}
+                                                mediaThumbRefs={mediaThumbRefs}
+                                            />
+                                        )}
+                                    </div>
+
+                                    {/* Content Section */}
+                                    {viewablePost && (
+                                        <div
+                                            className={`w-full bg-transparent ${
+                                                (Array.isArray(viewablePost?.post_video_urls) &&
+                                                    viewablePost.post_video_urls.length > 0) ||
+                                                (Array.isArray(viewablePost?.post_image_urls) &&
+                                                    viewablePost.post_image_urls.length > 0)
+                                                    ? 'lg:w-1/2' // when media exists, take half width on desktop
+                                                    : 'lg:w-[80%]' // when no media, take full width
+                                            }`}
+                                        >
+                                            {((!viewablePost?.post_video_urls?.length &&
+                                                !viewablePost?.post_image_urls?.length) ||
+                                                windowSize.width > 1024) && (
+                                                <div className="mx-auto w-full space-y-4 p-2 md:px-10">
+                                                    {/* Author Header */}
+                                                    <div className="flex flex-wrap items-center justify-between space-x-3 space-y-4">
+                                                        <div className="flex items-center">
+                                                            <span className="text-[13px] font-semibold dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
+                                                                {viewablePost?.user?.name.length >
+                                                                30
+                                                                    ? viewablePost?.user?.name.substring(
+                                                                          0,
+                                                                          30,
+                                                                      ) + '...'
+                                                                    : viewablePost?.user?.name}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="flex cursor-pointer items-center gap-2">
+                                                            {/* QR Button */}
                                                             <button
-                                                                onClick={(e) => {
-                                                                    setShowQrCode(true);
-                                                                    setElipsisShowDropdown(false);
-                                                                }}
-                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                onClick={() => setShowQrCode(true)}
                                                             >
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -1114,7 +841,7 @@ export default function index({ all_posts, next_page_url }) {
                                                                     viewBox="0 0 24 24"
                                                                     strokeWidth={1.5}
                                                                     stroke="currentColor"
-                                                                    className="size-6"
+                                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                                 >
                                                                     <path
                                                                         strokeLinecap="round"
@@ -1127,14 +854,11 @@ export default function index({ all_posts, next_page_url }) {
                                                                         d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
                                                                     />
                                                                 </svg>
-                                                                QR Code
                                                             </button>
-                                                        </li>
 
-                                                        {auth?.user && (
-                                                            <li>
+                                                            {/* Bookmark Button */}
+                                                            {auth?.user && (
                                                                 <button
-                                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         router.put(
@@ -1151,17 +875,10 @@ export default function index({ all_posts, next_page_url }) {
                                                                                     viewablePost.is_bookmarked =
                                                                                         !viewablePost.is_bookmarked;
                                                                                 },
-                                                                                onError: (e) => {
+                                                                                onError: (e) =>
                                                                                     toast.error(
                                                                                         e.message,
-                                                                                    );
-                                                                                },
-
-                                                                                onFinish: () => {
-                                                                                    setElipsisShowDropdown(
-                                                                                        false,
-                                                                                    );
-                                                                                },
+                                                                                    ),
                                                                             },
                                                                         );
                                                                     }}
@@ -1169,14 +886,22 @@ export default function index({ all_posts, next_page_url }) {
                                                                     <svg
                                                                         xmlns="http://www.w3.org/2000/svg"
                                                                         fill={
-                                                                            post?.is_bookmarked
-                                                                                ? '#FFFFFF'
+                                                                            viewablePost?.is_bookmarked
+                                                                                ? isDarkMode
+                                                                                    ? '#fff'
+                                                                                    : '#0340D1'
                                                                                 : 'none'
                                                                         }
-                                                                        viewBox="0 0 24 24"
+                                                                        stroke={
+                                                                            viewablePost?.is_bookmarked
+                                                                                ? isDarkMode
+                                                                                    ? '#fff'
+                                                                                    : '#0340D1'
+                                                                                : 'currentColor'
+                                                                        }
                                                                         strokeWidth={1.5}
-                                                                        stroke="currentColor"
-                                                                        className="size-6"
+                                                                        viewBox="0 0 24 24"
+                                                                        className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                                     >
                                                                         <path
                                                                             strokeLinecap="round"
@@ -1184,14 +909,11 @@ export default function index({ all_posts, next_page_url }) {
                                                                             d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                                                                         />
                                                                     </svg>
-                                                                    Bookmark
                                                                 </button>
-                                                            </li>
-                                                        )}
+                                                            )}
 
-                                                        <li>
+                                                            {/* Copy Link Button */}
                                                             <button
-                                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
                                                                 onClick={(e) => {
                                                                     const url =
                                                                         route(
@@ -1201,12 +923,9 @@ export default function index({ all_posts, next_page_url }) {
                                                                     navigator.clipboard.writeText(
                                                                         url.trim(),
                                                                     );
-
                                                                     toast.success(
                                                                         'Copied to clipboard',
                                                                     );
-
-                                                                    setElipsisShowDropdown(false);
                                                                 }}
                                                             >
                                                                 <svg
@@ -1215,7 +934,7 @@ export default function index({ all_posts, next_page_url }) {
                                                                     viewBox="0 0 24 24"
                                                                     strokeWidth={1.5}
                                                                     stroke="currentColor"
-                                                                    className="size-6"
+                                                                    className="size-5 hover:text-black/80 dark:text-white/80 dark:hover:text-white sm:size-4 md:size-5 lg:size-6"
                                                                 >
                                                                     <path
                                                                         strokeLinecap="round"
@@ -1223,227 +942,127 @@ export default function index({ all_posts, next_page_url }) {
                                                                         d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
                                                                     />
                                                                 </svg>
-                                                                Copy Link
                                                             </button>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Post Content */}
+                                                    <p className="mt-2 whitespace-normal break-words text-[15px] font-semibold text-gray-800 dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]">
+                                                        {viewablePost?.title}
+                                                    </p>
+
+                                                    <div
+                                                        className="prose max-h-[400px] max-w-[70vw] overflow-auto break-words text-[15px] text-gray-800 dark:prose-invert dark:text-white/80 sm:text-[16px] md:text-[17px] lg:text-[20px]"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: viewablePost?.content,
+                                                        }}
+                                                    />
+
+                                                    {/* Tag */}
+                                                    <div>
+                                                        <span className="text-[10px] font-semibold text-blue-600 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
+                                                            {viewablePost?.tag}
+                                                        </span>
+                                                    </div>
+
+                                                    <hr className="border-gray-200 dark:border-gray-700" />
+
+                                                    {/* Post Meta Info */}
+                                                    <div className="my-2 flex flex-wrap gap-2 text-[10px] text-gray-700 dark:text-white/80 sm:text-[11px] md:text-[12px] lg:text-[15px]">
+                                                        <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
+                                                            {viewablePost?.added_at}{' '}
+                                                            {viewablePost?.created_at_time}
+                                                        </span>
+
+                                                        {viewablePost?.location_name && (
+                                                            <span className="rounded-full bg-gray-100 p-1 dark:bg-gray-700">
+                                                                {viewablePost?.location_name}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </>
-                                        )}
-
-                                        {/* Filter button */}
-                                        <button className="rounded-full p-1 hover:bg-gray-300/20">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="size-6"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Media Viewer */}
-                                <div className="relative flex h-full w-full items-center justify-center text-white">
-                                    {/* Blurred Background */}
-                                    {Array.isArray(post.post_image_urls) &&
-                                    post.post_image_urls.length > 0 ? (
-                                        <>
-                                            <img
-                                                src={post.post_image_urls[0]}
-                                                alt="Post background blur"
-                                                className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
-                                            />
-                                            <img
-                                                src={post.post_image_urls[0]}
-                                                alt="Post main"
-                                                className="relative z-10 max-h-full max-w-full object-contain"
-                                            />
-                                        </>
-                                    ) : (
-                                        Array.isArray(post.post_video_urls) &&
-                                        post.post_video_urls.length > 0 && (
-                                            <>
-                                                <VideoPlayer
-                                                    videoUrl={post.post_video_urls[0]}
-                                                    thumbnail={videoThumbnail}
-                                                    className="relative z-10 max-h-full max-w-full object-contain"
-                                                />
-                                            </>
-                                        )
-                                    )}
-                                </div>
-
-                                {/* Bottom Overlay */}
-                                <div
-                                    className={`absolute ${
-                                        (Array.isArray(post.post_image_urls) &&
-                                            post.post_image_urls.length > 0) ||
-                                        (Array.isArray(post.post_video_urls) &&
-                                            post.post_video_urls.length > 0)
-                                            ? 'bottom-0 right-0'
-                                            : 'right-10 top-10'
-                                    } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
-                                >
-                                    {/* Username */}
-                                    <div className="mb-2 flex items-center space-x-2">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
-                                            {viewablePost.user?.avatar}
-                                        </div>
-                                        <span className="text-xs font-medium text-white/80">
-                                            {post.user?.name.length > 6
-                                                ? post.user?.name.substring(0, 6) + '...'
-                                                : post.user?.name}
-                                        </span>
-                                    </div>
-
-                                    {/* Content */}
-                                    {(Array.isArray(post.post_image_urls) &&
-                                        post.post_image_urls.length > 0) ||
-                                    (Array.isArray(post.post_video_urls) &&
-                                        post.post_video_urls.length > 0) ? (
-                                        <div
-                                            dangerouslySetInnerHTML={{ __html: post?.content }}
-                                            className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [display:-webkit-box] ${
-                                                showDetails
-                                                    ? '[-webkit-line-clamp:5]'
-                                                    : '[-webkit-line-clamp:3]'
-                                            }`}
-                                            onClick={() => setShowDetails(!showDetails)}
-                                            style={{ maxHeight: showDetails ? '10rem' : '4rem' }}
-                                        ></div>
-                                    ) : (
-                                        <div
-                                            dangerouslySetInnerHTML={{ __html: post?.content }}
-                                            className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [-webkit-line-clamp:5] [display:-webkit-box]`}
-                                        ></div>
-                                    )}
-
-                                    {/* Learn More Button */}
-                                    {showDetails && (
-                                        <div className="my-2 flex items-center justify-end">
-                                            <button
-                                                className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
-                                                onClick={() => setIsMobilePostGallery(true)}
-                                            >
-                                                Learn More
-                                            </button>
+                                            )}
                                         </div>
                                     )}
 
-                                    {!showDetails &&
-                                        Array.isArray(post.post_image_urls) &&
-                                        post.post_image_urls.length < 1 &&
-                                        Array.isArray(post.post_video_urls) &&
-                                        post.post_video_urls.length < 1 && (
-                                            <div className="mt-2 flex items-center justify-end">
-                                                <button
-                                                    className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
-                                                    onClick={() => setIsMobilePostGallery(true)}
-                                                >
-                                                    Learn More
-                                                </button>
-                                            </div>
-                                        )}
+                                    {/* Scrollable Posts  */}
+                                    {windowSize.width > 1024 && (
+                                        <PostsGrid
+                                            posts={posts}
+                                            onSelect={(post) => {
+                                                setViewablePost(post);
+                                                window.history.replaceState(
+                                                    {},
+                                                    '',
+                                                    generateURL(post),
+                                                );
+                                            }}
+                                            selectedPostIndex={selectedPostIndex}
+                                            onSelectIndex={setSelectedPostIndex}
+                                            nextPageUrl={nextPageUrl}
+                                            fetchMorePosts={fetchMorePosts}
+                                            fetchSinglePost={fetchSinglePost}
+                                        />
+                                    )}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+                        </div>
+                    )}
 
-            {/* Mobile Post Gallery */}
-            {isMobilePostGallery && isMobilePostViewer && (
-                <div className="fixed inset-0 z-50 bg-black">
-                    {/* Elipsis Dropdown Menu */}
-                    {showElipsisDropdown && isMobilePostViewer && (
-                        <>
+                    {/* Mobile Post View */}
+                    {viewablePost !== '' && isMobilePostViewer && (
+                        <div className="fixed inset-0 z-50 bg-black">
+                            {/* Backdrop */}
+                            <div className="absolute inset-0 bg-black/70"></div>
+
+                            {/* Scrollable Container */}
                             <div
-                                ref={elipsisDropDownRef}
-                                data-elipsis-dropdown
-                                onClick={(e) => e.stopPropagation()}
-                                className="absolute left-20 top-12 z-[9999] mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
+                                onScroll={(e) => {
+                                    setElipsisShowDropdown(false);
+                                    const scrollTop = e.currentTarget.scrollTop;
+                                    const index = Math.round(scrollTop / window.innerHeight);
+
+                                    if (index !== selectedPostIndex && posts[index]) {
+                                        setSelectedPostIndex(index);
+
+                                        const post = posts[index];
+                                        setViewablePost(post);
+                                        window.history.replaceState({}, '', generateURL(post));
+
+                                        // load more when near bottom
+                                        if (index >= posts.length - 5 && nextPageUrl) {
+                                            fetchMorePosts();
+                                        }
+                                    }
+                                }}
+                                ref={mobilePostContainerRef}
                             >
-                                <ul
-                                    className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
-                                    style={{ maxHeight: '180px' }}
-                                >
-                                    <li>
-                                        <button
-                                            onClick={(e) => {
-                                                setShowQrCode(true);
-                                                setElipsisShowDropdown(false);
-                                            }}
-                                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="size-6"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
-                                                />
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
-                                                />
-                                            </svg>
-                                            QR Code
-                                        </button>
-                                    </li>
-
-                                    {auth?.user && (
-                                        <li>
+                                {posts.map((post, index) => (
+                                    <div
+                                        key={post.id}
+                                        ref={(el) => (postsRefs.current[index] = el)}
+                                        className="relative h-[100dvh] w-full snap-start overflow-hidden"
+                                    >
+                                        {/* Top Bar */}
+                                        <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between bg-black/50 px-4 py-3 text-white backdrop-blur-sm">
                                             <button
-                                                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    router.put(
-                                                        route(
-                                                            'website.posts.bookmark',
-                                                            viewablePost?.id,
-                                                        ),
-                                                        {
-                                                            post_id: viewablePost?.id,
-                                                        },
-                                                        {
-                                                            onSuccess: () => {
-                                                                viewablePost.is_bookmarked =
-                                                                    !viewablePost.is_bookmarked;
-                                                            },
-                                                            onError: (e) => {
-                                                                toast.error(e.message);
-                                                            },
-
-                                                            onFinish: () => {
-                                                                setElipsisShowDropdown(false);
-                                                            },
-                                                        },
+                                                onClick={() => {
+                                                    setViewablePost('');
+                                                    setIsDesktopPostViewer(false);
+                                                    setIsMobilePostViewer(false);
+                                                    window.history.replaceState(
+                                                        {},
+                                                        '',
+                                                        window.location.pathname,
                                                     );
                                                 }}
+                                                className="rounded-full p-1 hover:bg-gray-300/20"
                                             >
+                                                {/* back icon */}
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
-                                                    fill={
-                                                        viewablePost?.is_bookmarked
-                                                            ? '#FFFFFF'
-                                                            : 'none'
-                                                    }
+                                                    fill="none"
                                                     viewBox="0 0 24 24"
                                                     strokeWidth={1.5}
                                                     stroke="currentColor"
@@ -1452,27 +1071,492 @@ export default function index({ all_posts, next_page_url }) {
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
                                                     />
                                                 </svg>
-                                                Bookmark
                                             </button>
-                                        </li>
-                                    )}
 
-                                    <li>
+                                            <div className="flex items-center space-x-3">
+                                                {/* Elipsis button */}
+                                                <button
+                                                    ref={elipsisButtonRef}
+                                                    data-elipsis-button
+                                                    className="rounded-full p-1 hover:bg-gray-300/20"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="pointer-events-none size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                                                            className="pointer-events-none"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                {/* Elipsis Dropdown Menu */}
+                                                {showElipsisDropdown && isMobilePostViewer && (
+                                                    <>
+                                                        <div
+                                                            ref={elipsisDropDownRef}
+                                                            data-elipsis-dropdown
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                                        >
+                                                            <ul
+                                                                className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
+                                                                style={{ maxHeight: '180px' }}
+                                                            >
+                                                                <li>
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            setShowQrCode(true);
+                                                                            setElipsisShowDropdown(
+                                                                                false,
+                                                                            );
+                                                                        }}
+                                                                        className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            strokeWidth={1.5}
+                                                                            stroke="currentColor"
+                                                                            className="size-6"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+                                                                            />
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+                                                                            />
+                                                                        </svg>
+                                                                        QR Code
+                                                                    </button>
+                                                                </li>
+
+                                                                {auth?.user && (
+                                                                    <li>
+                                                                        <button
+                                                                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                router.put(
+                                                                                    route(
+                                                                                        'website.posts.bookmark',
+                                                                                        viewablePost?.id,
+                                                                                    ),
+                                                                                    {
+                                                                                        post_id:
+                                                                                            viewablePost?.id,
+                                                                                    },
+                                                                                    {
+                                                                                        onSuccess:
+                                                                                            () => {
+                                                                                                viewablePost.is_bookmarked =
+                                                                                                    !viewablePost.is_bookmarked;
+                                                                                            },
+                                                                                        onError: (
+                                                                                            e,
+                                                                                        ) => {
+                                                                                            toast.error(
+                                                                                                e.message,
+                                                                                            );
+                                                                                        },
+
+                                                                                        onFinish:
+                                                                                            () => {
+                                                                                                setElipsisShowDropdown(
+                                                                                                    false,
+                                                                                                );
+                                                                                            },
+                                                                                    },
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <svg
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                fill={
+                                                                                    post?.is_bookmarked
+                                                                                        ? '#FFFFFF'
+                                                                                        : 'none'
+                                                                                }
+                                                                                viewBox="0 0 24 24"
+                                                                                strokeWidth={1.5}
+                                                                                stroke="currentColor"
+                                                                                className="size-6"
+                                                                            >
+                                                                                <path
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                                                />
+                                                                            </svg>
+                                                                            Bookmark
+                                                                        </button>
+                                                                    </li>
+                                                                )}
+
+                                                                <li>
+                                                                    <button
+                                                                        className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                                        onClick={(e) => {
+                                                                            const url =
+                                                                                route(
+                                                                                    'website.posts.index',
+                                                                                ) +
+                                                                                generateURL(
+                                                                                    viewablePost,
+                                                                                );
+                                                                            navigator.clipboard.writeText(
+                                                                                url.trim(),
+                                                                            );
+
+                                                                            toast.success(
+                                                                                'Copied to clipboard',
+                                                                            );
+
+                                                                            setElipsisShowDropdown(
+                                                                                false,
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            strokeWidth={1.5}
+                                                                            stroke="currentColor"
+                                                                            className="size-6"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                                            />
+                                                                        </svg>
+                                                                        Copy Link
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                {/* Filter button */}
+                                                <button
+                                                    className="rounded-full p-1 hover:bg-gray-300/20"
+                                                    onClick={() => setIsPostFilterSetting(true)}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Media Viewer */}
+                                        <div className="relative flex h-full w-full items-center justify-center text-white">
+                                            {/* Blurred Background */}
+                                            {Array.isArray(post.post_image_urls) &&
+                                            post.post_image_urls.length > 0 ? (
+                                                <>
+                                                    <img
+                                                        src={post.post_image_urls[0]}
+                                                        alt="Post background blur"
+                                                        className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
+                                                    />
+                                                    <img
+                                                        src={post.post_image_urls[0]}
+                                                        alt="Post main"
+                                                        className="relative z-10 max-h-full max-w-full object-contain"
+                                                    />
+                                                </>
+                                            ) : (
+                                                Array.isArray(post.post_video_urls) &&
+                                                post.post_video_urls.length > 0 && (
+                                                    <>
+                                                        <VideoPlayer
+                                                            videoUrl={post.post_video_urls[0]}
+                                                            thumbnail={videoThumbnail}
+                                                            className="relative z-10 max-h-full max-w-full object-contain"
+                                                        />
+                                                    </>
+                                                )
+                                            )}
+                                        </div>
+
+                                        {/* Bottom Overlay */}
+                                        <div
+                                            className={`absolute ${
+                                                (Array.isArray(post.post_image_urls) &&
+                                                    post.post_image_urls.length > 0) ||
+                                                (Array.isArray(post.post_video_urls) &&
+                                                    post.post_video_urls.length > 0)
+                                                    ? 'bottom-0 right-0'
+                                                    : 'right-10 top-10'
+                                            } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
+                                        >
+                                            {/* Username */}
+                                            <div className="mb-2 flex items-center space-x-2">
+                                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
+                                                    {viewablePost.user?.avatar}
+                                                </div>
+                                                <span className="text-xs font-medium text-white/80">
+                                                    {post.user?.name.length > 6
+                                                        ? post.user?.name.substring(0, 6) + '...'
+                                                        : post.user?.name}
+                                                </span>
+                                            </div>
+
+                                            {/* Content */}
+                                            {(Array.isArray(post.post_image_urls) &&
+                                                post.post_image_urls.length > 0) ||
+                                            (Array.isArray(post.post_video_urls) &&
+                                                post.post_video_urls.length > 0) ? (
+                                                <div
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: post?.content,
+                                                    }}
+                                                    className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [display:-webkit-box] ${
+                                                        showDetails
+                                                            ? '[-webkit-line-clamp:5]'
+                                                            : '[-webkit-line-clamp:3]'
+                                                    }`}
+                                                    onClick={() => setShowDetails(!showDetails)}
+                                                    style={{
+                                                        maxHeight: showDetails ? '10rem' : '4rem',
+                                                    }}
+                                                ></div>
+                                            ) : (
+                                                <div
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: post?.content,
+                                                    }}
+                                                    className={`prose overflow-hidden break-words text-xs text-white/80 transition-all duration-100 ease-in-out [-webkit-box-orient:vertical] [-webkit-line-clamp:5] [display:-webkit-box]`}
+                                                ></div>
+                                            )}
+
+                                            {/* Learn More Button */}
+                                            {showDetails && (
+                                                <div className="my-2 flex items-center justify-end">
+                                                    <button
+                                                        className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
+                                                        onClick={() => setIsMobilePostGallery(true)}
+                                                    >
+                                                        Learn More
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {!showDetails &&
+                                                Array.isArray(post.post_image_urls) &&
+                                                post.post_image_urls.length < 1 &&
+                                                Array.isArray(post.post_video_urls) &&
+                                                post.post_video_urls.length < 1 && (
+                                                    <div className="mt-2 flex items-center justify-end">
+                                                        <button
+                                                            className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
+                                                            onClick={() =>
+                                                                setIsMobilePostGallery(true)
+                                                            }
+                                                        >
+                                                            Learn More
+                                                        </button>
+                                                    </div>
+                                                )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Mobile Post Gallery */}
+                    {isMobilePostGallery && isMobilePostViewer && (
+                        <div className="fixed inset-0 z-50 bg-black">
+                            {/* Elipsis Dropdown Menu */}
+                            {showElipsisDropdown && isMobilePostViewer && (
+                                <>
+                                    <div
+                                        ref={elipsisDropDownRef}
+                                        data-elipsis-dropdown
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="absolute left-20 top-12 z-[9999] mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                    >
+                                        <ul
+                                            className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
+                                            style={{ maxHeight: '180px' }}
+                                        >
+                                            <li>
+                                                <button
+                                                    onClick={(e) => {
+                                                        setShowQrCode(true);
+                                                        setElipsisShowDropdown(false);
+                                                    }}
+                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+                                                        />
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+                                                        />
+                                                    </svg>
+                                                    QR Code
+                                                </button>
+                                            </li>
+
+                                            {auth?.user && (
+                                                <li>
+                                                    <button
+                                                        className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            router.put(
+                                                                route(
+                                                                    'website.posts.bookmark',
+                                                                    viewablePost?.id,
+                                                                ),
+                                                                {
+                                                                    post_id: viewablePost?.id,
+                                                                },
+                                                                {
+                                                                    onSuccess: () => {
+                                                                        viewablePost.is_bookmarked =
+                                                                            !viewablePost.is_bookmarked;
+                                                                    },
+                                                                    onError: (e) => {
+                                                                        toast.error(e.message);
+                                                                    },
+
+                                                                    onFinish: () => {
+                                                                        setElipsisShowDropdown(
+                                                                            false,
+                                                                        );
+                                                                    },
+                                                                },
+                                                            );
+                                                        }}
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill={
+                                                                viewablePost?.is_bookmarked
+                                                                    ? '#FFFFFF'
+                                                                    : 'none'
+                                                            }
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth={1.5}
+                                                            stroke="currentColor"
+                                                            className="size-6"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                            />
+                                                        </svg>
+                                                        Bookmark
+                                                    </button>
+                                                </li>
+                                            )}
+
+                                            <li>
+                                                <button
+                                                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
+                                                    onClick={(e) => {
+                                                        const url =
+                                                            route('website.posts.index') +
+                                                            generateURL(viewablePost);
+                                                        navigator.clipboard.writeText(url.trim());
+
+                                                        toast.success('Copied to clipboard');
+
+                                                        setElipsisShowDropdown(false);
+                                                    }}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                        />
+                                                    </svg>
+                                                    Copy Link
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Backdrop */}
+                            <div className="absolute inset-0 bg-black/70"></div>
+
+                            <div className="relative z-10 flex h-[100dvh] w-full flex-col bg-black text-white">
+                                {/* Top Bar */}
+                                <div className="flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-sm">
+                                    {/* Left side */}
+                                    <div className="flex items-center space-x-3">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
+                                                {viewablePost.user?.avatar}
+                                            </div>
+                                            <span className="text-xs font-medium text-white/80">
+                                                {viewablePost.user?.name.length > 6
+                                                    ? viewablePost.user?.name.substring(0, 6) +
+                                                      '...'
+                                                    : viewablePost.user?.name}
+                                            </span>
+                                        </div>
+
+                                        {/* Ellipsis */}
                                         <button
-                                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-950 hover:text-white"
-                                            onClick={(e) => {
-                                                const url =
-                                                    route('website.posts.index') +
-                                                    generateURL(viewablePost);
-                                                navigator.clipboard.writeText(url.trim());
-
-                                                toast.success('Copied to clipboard');
-
-                                                setElipsisShowDropdown(false);
-                                            }}
+                                            className="rounded-full p-1 hover:bg-gray-300/20"
+                                            ref={elipsisButtonRef}
+                                            data-elipsis-button
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -1480,231 +1564,337 @@ export default function index({ all_posts, next_page_url }) {
                                                 viewBox="0 0 24 24"
                                                 strokeWidth={1.5}
                                                 stroke="currentColor"
-                                                className="size-6"
+                                                className="h-6 w-6"
                                             >
                                                 <path
                                                     strokeLinecap="round"
                                                     strokeLinejoin="round"
-                                                    d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+                                                    d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
                                                 />
                                             </svg>
-                                            Copy Link
                                         </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </>
-                    )}
-
-                    {/* Backdrop */}
-                    <div className="absolute inset-0 bg-black/70"></div>
-
-                    <div className="relative z-10 flex h-[100dvh] w-full flex-col bg-black text-white">
-                        {/* Top Bar */}
-                        <div className="flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-sm">
-                            {/* Left side */}
-                            <div className="flex items-center space-x-3">
-                                <div className="flex items-center space-x-2">
-                                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-gray-900">
-                                        {viewablePost.user?.avatar}
                                     </div>
-                                    <span className="text-xs font-medium text-white/80">
-                                        {viewablePost.user?.name.length > 6
-                                            ? viewablePost.user?.name.substring(0, 6) + '...'
-                                            : viewablePost.user?.name}
-                                    </span>
+
+                                    {/* Right side */}
+                                    <div className="flex items-center space-x-2">
+                                        {/* Close */}
+                                        <button
+                                            onClick={() => setIsMobilePostGallery(false)}
+                                            className="rounded-full p-1 hover:bg-gray-300/20"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="h-6 w-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18 18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                {/* Ellipsis */}
-                                <button
-                                    className="rounded-full p-1 hover:bg-gray-300/20"
-                                    ref={elipsisButtonRef}
-                                    data-elipsis-button
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                        className="h-6 w-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {/* Right side */}
-                            <div className="flex items-center space-x-2">
-                                {/* Close */}
-                                <button
-                                    onClick={() => setIsMobilePostGallery(false)}
-                                    className="rounded-full p-1 hover:bg-gray-300/20"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                        className="h-6 w-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M6 18 18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Media Section (fixed height) */}
-                        {mediaItems.length > 0 && (
-                            <div className="relative h-[60vh] w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scrollbar-none">
-                                <div className="flex h-full w-full">
-                                    {mediaItems?.map((item, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="relative flex h-full w-full flex-shrink-0 snap-center snap-always items-center justify-center text-white"
-                                        >
-                                            {item.type === 'image' ? (
-                                                <>
-                                                    <img
-                                                        src={item.url}
-                                                        alt="Post background blur"
-                                                        className="absolute inset-0 z-0 h-full w-full scale-110 object-cover blur-lg"
-                                                    />
-                                                    <img
-                                                        src={item.url}
-                                                        alt={`Media ${idx}`}
-                                                        className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
-                                                    />
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {/* <img
+                                {/* Media Section (fixed height) */}
+                                {mediaItems.length > 0 && (
+                                    <div className="relative h-[60vh] w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scrollbar-none">
+                                        <div className="flex h-full w-full">
+                                            {mediaItems?.map((item, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="relative flex h-full w-full flex-shrink-0 snap-center snap-always items-center justify-center text-white"
+                                                >
+                                                    {item.type === 'image' ? (
+                                                        <>
+                                                            <img
+                                                                src={item.url}
+                                                                alt="Post background blur"
+                                                                className="absolute inset-0 z-0 h-full w-full scale-110 object-cover blur-lg"
+                                                            />
+                                                            <img
+                                                                src={item.url}
+                                                                alt={`Media ${idx}`}
+                                                                className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            {/* <img
                                                     src={videoThumbnail}
                                                     alt="Post background blur"
                                                     className="absolute inset-0 z-0 object-cover w-full h-full scale-110 blur-lg"
                                                 /> */}
 
-                                                    <VideoPlayer
-                                                        key={idx}
-                                                        videoUrl={item.url}
-                                                        thumbnail={videoThumbnail}
-                                                        className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
-                                                        fullscreen={true}
-                                                    />
-                                                </>
-                                            )}
+                                                            <VideoPlayer
+                                                                key={idx}
+                                                                videoUrl={item.url}
+                                                                thumbnail={videoThumbnail}
+                                                                className="relative z-10 max-h-full max-w-full rounded-xl object-contain"
+                                                                fullscreen={true}
+                                                            />
+                                                        </>
+                                                    )}
 
-                                            <div className="absolute bottom-3 right-3 z-[9999] rounded-full bg-black/70 px-2 py-1 text-xs font-semibold text-white">
-                                                {idx + 1} / {mediaItems.length}
-                                            </div>
+                                                    <div className="absolute bottom-3 right-3 z-[9999] rounded-full bg-black/70 px-2 py-1 text-xs font-semibold text-white">
+                                                        {idx + 1} / {mediaItems.length}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Scrollable Bottom Section */}
-                        <div className="flex-1 space-y-3 overflow-y-auto p-4 scrollbar-none">
-                            <h2 className="text-sm font-semibold">
-                                {viewablePost?.title || 'Post Title'}
-                            </h2>
-
-                            <div
-                                dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
-                                className="prose break-words text-xs text-white/80"
-                            ></div>
-
-                            {/* Tags */}
-                            {viewablePost?.tag && (
-                                <div className="flex flex-wrap gap-2 text-[11px] text-blue-400">
-                                    {viewablePost?.tag}
-                                </div>
-                            )}
-
-                            <div className="flex items-center gap-3">
-                                {/* Location */}
-                                {viewablePost?.location_name && (
-                                    <span className="rounded-full bg-gray-900 px-2 py-1 text-xs">
-                                        {viewablePost?.location_name}
-                                    </span>
+                                    </div>
                                 )}
 
-                                <span className="w-32 rounded-full bg-gray-900 px-2 py-1 text-xs">
-                                    {viewablePost?.added_at + ' ' + viewablePost?.created_at_time}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                                {/* Scrollable Bottom Section */}
+                                <div className="flex-1 space-y-3 overflow-y-auto p-4 scrollbar-none">
+                                    <h2 className="text-sm font-semibold">
+                                        {viewablePost?.title || 'Post Title'}
+                                    </h2>
 
-            {/* QR CODE */}
-            {showQrCode && (
-                <>
-                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4 scrollbar-none sm:p-6">
-                        <div
-                            className="fixed inset-0 backdrop-blur-[32px]"
-                            onClick={() => setShowQrCode(false)}
-                        ></div>
+                                    <div
+                                        dangerouslySetInnerHTML={{ __html: viewablePost?.content }}
+                                        className="prose break-words text-xs text-white/80"
+                                    ></div>
 
-                        {/* Modal content */}
-                        <div
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="qrCodeTitle"
-                            className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'bg-gray-950 text-white/80'} p-6 shadow-xl sm:p-8`}
-                        >
-                            <div className="mt-1 flex justify-end">
-                                <button onClick={() => setShowQrCode(false)}>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                        className={`size-5 ${
-                                            isDesktopPostViewer
-                                                ? 'hover:text-black/80 dark:text-white/80 dark:hover:text-white'
-                                                : 'hover:text-white/70 dark:text-white/80 dark:hover:text-white'
-                                        } sm:size-5 md:size-6 lg:size-7`}
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
+                                    {/* Tags */}
+                                    {viewablePost?.tag && (
+                                        <div className="flex flex-wrap gap-2 text-[11px] text-blue-400">
+                                            {viewablePost?.tag}
+                                        </div>
+                                    )}
 
-                            <div className="text-center">
-                                <h2
-                                    id="qrCodeTitle"
-                                    className="mb-2 text-[15px] font-semibold sm:text-[11px] md:text-[12px] lg:text-[13px]"
-                                >
-                                    Scan QR Code
-                                </h2>
+                                    <div className="flex items-center gap-3">
+                                        {/* Location */}
+                                        {viewablePost?.location_name && (
+                                            <span className="rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                                {viewablePost?.location_name}
+                                            </span>
+                                        )}
 
-                                <div className="flex items-center justify-center text-center">
-                                    <QRCode
-                                        className="sm:size-50 size-30 md:size-40 lg:size-60"
-                                        value={generateURL(viewablePost)}
-                                        viewBox="0 0 256 256"
-                                    />
+                                        <span className="w-32 rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                            {viewablePost?.added_at +
+                                                ' ' +
+                                                viewablePost?.created_at_time}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* Post Filter Setting */}
+                    {isPostFilterSetting && (
+                        <div className="fixed inset-0 z-50 bg-black">
+                            {/* Backdrop */}
+                            <div className="absolute inset-0 bg-black/70"></div>
+
+                            <div className="relative z-10 flex h-[100dvh] w-full flex-col bg-white text-black">
+                                {/* Top Bar */}
+                                <div className="relative flex items-center border-b border-gray-200 px-4 py-3">
+                                    <button
+                                        onClick={() => setIsPostFilterSetting(false)}
+                                        className="absolute left-4 rounded-full p-1 hover:bg-gray-100"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                                            />
+                                        </svg>
+                                    </button>
+
+                                    <h2 className="mx-auto text-base font-semibold">
+                                        Filter Setting
+                                    </h2>
+                                </div>
+
+                                {/* Content */}
+                                <div className="my-4 flex-1 space-y-6 p-4">
+                                    {/* Location Section */}
+                                    <div className="space-y-4">
+                                        {/* Show content near current location */}
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm">
+                                                Show content near current location
+                                            </span>
+                                            <label className="relative inline-flex cursor-pointer items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    className="peer sr-only"
+                                                    defaultChecked
+                                                />
+                                                <div className="peer h-5 w-9 rounded-full bg-gray-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:bg-black peer-checked:after:translate-x-4"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    {/* Feed Settings */}
+                                    <div>
+                                        <h3 className="mb-3 text-sm font-medium text-gray-500">
+                                            Filters
+                                        </h3>
+                                        <div className="space-y-5">
+                                            {/* Text */}
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm">Text</span>
+                                                <label className="relative inline-flex cursor-pointer items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="peer sr-only"
+                                                        checked={postPreferences.text}
+                                                        onChange={(e) =>
+                                                            handlePostPreferences(
+                                                                'text',
+                                                                e.target.checked,
+                                                            )
+                                                        }
+                                                    />
+                                                    <div className="peer h-5 w-9 rounded-full bg-gray-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:bg-black peer-checked:after:translate-x-4"></div>
+                                                </label>
+                                            </div>
+
+                                            {/* Images */}
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm">Images</span>
+                                                <label className="relative inline-flex cursor-pointer items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="peer sr-only"
+                                                        checked={postPreferences.images}
+                                                        onChange={(e) =>
+                                                            handlePostPreferences(
+                                                                'images',
+                                                                e.target.checked,
+                                                            )
+                                                        }
+                                                    />
+                                                    <div className="peer h-5 w-9 rounded-full bg-gray-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:bg-black peer-checked:after:translate-x-4"></div>
+                                                </label>
+                                            </div>
+
+                                            {/* Videos */}
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm">Videos</span>
+                                                <label className="relative inline-flex cursor-pointer items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="peer sr-only"
+                                                        checked={postPreferences.videos}
+                                                        onChange={(e) =>
+                                                            handlePostPreferences(
+                                                                'videos',
+                                                                e.target.checked,
+                                                            )
+                                                        }
+                                                    />
+                                                    <div className="peer h-5 w-9 rounded-full bg-gray-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:bg-black peer-checked:after:translate-x-4"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {isPrefChanged && (
+                                            <div className="flex items-center justify-center">
+                                                <button
+                                                    type="submit"
+                                                    className="mt-5 flex w-[200px] items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-black/80"
+                                                    onClick={() => ApplyFilter()}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                                                        />
+                                                    </svg>
+                                                    Apply Filter
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* QR CODE */}
+                    {showQrCode && (
+                        <>
+                            <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4 scrollbar-none sm:p-6">
+                                <div
+                                    className="fixed inset-0 backdrop-blur-[32px]"
+                                    onClick={() => setShowQrCode(false)}
+                                ></div>
+
+                                {/* Modal content */}
+                                <div
+                                    role="dialog"
+                                    aria-modal="true"
+                                    aria-labelledby="qrCodeTitle"
+                                    className={`relative z-10 max-h-screen w-full max-w-lg overflow-y-auto rounded-2xl ${isDesktopPostViewer ? 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'bg-gray-950 text-white/80'} p-6 shadow-xl sm:p-8`}
+                                >
+                                    <div className="mt-1 flex justify-end">
+                                        <button onClick={() => setShowQrCode(false)}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className={`size-5 ${
+                                                    isDesktopPostViewer
+                                                        ? 'hover:text-black/80 dark:text-white/80 dark:hover:text-white'
+                                                        : 'hover:text-white/70 dark:text-white/80 dark:hover:text-white'
+                                                } sm:size-5 md:size-6 lg:size-7`}
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <h2
+                                            id="qrCodeTitle"
+                                            className="mb-2 text-[15px] font-semibold sm:text-[11px] md:text-[12px] lg:text-[13px]"
+                                        >
+                                            Scan QR Code
+                                        </h2>
+
+                                        <div className="flex items-center justify-center text-center">
+                                            <QRCode
+                                                className="sm:size-50 size-30 md:size-40 lg:size-60"
+                                                value={generateURL(viewablePost)}
+                                                viewBox="0 0 256 256"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
         </MainLayout>
