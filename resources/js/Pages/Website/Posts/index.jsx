@@ -502,6 +502,31 @@ export default function index() {
                     {/* Masonry Layout */}
                     <div className="py-12 sm:py-16">
                         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                            {/* Post Filter For Mobile */}
+                            {windowSize.width < 1024 && (
+                                <div className="my-5 flex items-center justify-end">
+                                    <button
+                                        className="rounded-full bg-white p-1 hover:bg-gray-300/20 dark:bg-gray-700 dark:text-white/80"
+                                        onClick={() => setIsPostFilterSetting(true)}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Compact Masonry */}
                             <div className="columns-1 gap-1 [column-fill:_balance] min-[300px]:columns-2 lg:columns-4">
                                 {posts.map((post, index) => {
