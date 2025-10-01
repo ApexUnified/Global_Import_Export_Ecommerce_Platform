@@ -450,25 +450,30 @@ export default function index() {
         <MainLayout>
             <Head title="Posts" />
 
-            {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
-                <div className="absolute inset-0 bg-black opacity-20"></div>
-                <div className="relative py-16 sm:py-24">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="text-center">
-                            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                                Latest Posts
-                            </h1>
-                            <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
-                                Explore the latest updates, buying guides, and tips on smartphones,
-                                from unboxings and tutorials to industry news, everything you need
-                                to stay informed before making your next purchase.
-                            </p>
+            {windowSize.width > 1024 && (
+                <>
+                    {/* Hero Section */}
+                    <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-gray-500 dark:via-gray-600 dark:to-gray-800">
+                        <div className="absolute inset-0 bg-black opacity-20"></div>
+                        <div className="relative py-16 sm:py-24">
+                            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                                <div className="text-center">
+                                    <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                                        Latest Posts
+                                    </h1>
+                                    <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-gray-200 sm:mt-6 sm:text-xl sm:leading-8">
+                                        Explore the latest updates, buying guides, and tips on
+                                        smartphones, from unboxings and tutorials to industry news,
+                                        everything you need to stay informed before making your next
+                                        purchase.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
+                        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-900"></div>
                     </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-900"></div>
-            </div>
+                </>
+            )}
 
             {!isPostLoaded && (
                 <div className="flex animate-pulse items-center justify-center gap-2 py-10 text-center text-gray-700 transition-all duration-100 dark:text-white/80">
@@ -500,13 +505,13 @@ export default function index() {
             {isPostLoaded && (
                 <>
                     {/* Masonry Layout */}
-                    <div className="py-12 sm:py-16">
+                    <div className="pb-12 sm:pb-16">
                         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                             {/* Post Filter For Mobile */}
                             {windowSize.width < 1024 && (
                                 <div className="mx-3 my-5 flex items-center justify-end">
                                     <button
-                                        className="rounded-full bg-white p-1 hover:bg-gray-300/20 dark:bg-gray-700 dark:text-white/80"
+                                        className="rounded-lg bg-white p-2 hover:bg-gray-300/20 dark:bg-gray-700 dark:text-white/80"
                                         onClick={() => setIsPostFilterSetting(true)}
                                     >
                                         <svg
@@ -1132,7 +1137,7 @@ export default function index() {
                                                             ref={elipsisDropDownRef}
                                                             data-elipsis-dropdown
                                                             onClick={(e) => e.stopPropagation()}
-                                                            className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
+                                                            className="absolute right-0 top-full z-[99999] mt-2 w-44 rounded-lg border border-gray-900 bg-black shadow-xl sm:w-48"
                                                         >
                                                             <ul
                                                                 className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
@@ -1342,7 +1347,7 @@ export default function index() {
                                                     post.post_video_urls.length > 0)
                                                     ? 'bottom-0 right-0'
                                                     : 'right-10 top-10'
-                                            } left-0 z-[50] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
+                                            } left-0 z-[10] bg-gradient-to-t from-black/80 via-black/50 to-black/30 p-4`}
                                         >
                                             {/* Username */}
                                             <div className="mb-2 flex items-center space-x-2">
@@ -1836,20 +1841,6 @@ export default function index() {
                                                     className="mt-5 flex w-[200px] items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-black/80"
                                                     onClick={() => ApplyFilter()}
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="size-6"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                                                        />
-                                                    </svg>
                                                     Apply Filter
                                                 </button>
                                             </div>
