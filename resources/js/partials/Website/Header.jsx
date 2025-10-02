@@ -148,6 +148,7 @@ export default function Header({
                                 <Link
                                     href={route('home')}
                                     className="flex flex-row items-center space-x-3"
+                                    prefetch
                                 >
                                     <div className="flex h-10 w-10 items-center justify-center">
                                         <img
@@ -170,19 +171,20 @@ export default function Header({
                             </div>
                         </div>
 
-                        {/* Navigation */}
+                        {/* Desktop Navigation */}
                         <div className="flex items-center">
-                            {/* Desktop Navigation */}
                             <nav className="hidden lg:ml-10 lg:flex lg:space-x-8">
                                 <Link
                                     href={route('home')}
                                     className={`px-1 py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-white/60 ${route().current() === 'home' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'}`}
+                                    prefetch
                                 >
                                     Home
                                 </Link>
                                 <Link
                                     href={route('website.posts.index')}
                                     className={`px-1 py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-white/60 ${route().current() === 'website.posts.index' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'} `}
+                                    prefetch
                                 >
                                     Posts
                                 </Link>
@@ -756,25 +758,21 @@ export default function Header({
                     )}
 
                     {/* Scrollable links */}
-                    <div className="max-h-[100vh] flex-1 space-y-2 px-4">
-                        <Link
-                            href={route('home')}
-                            className={`block px-3 py-2 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5 ${route().current() === 'home' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'}`}
-                        >
-                            Home
-                        </Link>
-                        <Link
-                            href={route('website.posts.index')}
-                            className={`block px-3 py-2 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5 ${route().current() === 'website.posts.index' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'}`}
-                        >
-                            Posts
-                        </Link>
+                    <div className="max-h-[100vh] flex-1 space-y-2 px-4 pb-10">
                         <a
                             href="#"
                             className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5"
                         >
-                            Products
+                            Privacy Policy
                         </a>
+
+                        <a
+                            href="#"
+                            className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5"
+                        >
+                            Data Deletion Policy
+                        </a>
+
                         <a
                             href="#"
                             className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5"
@@ -855,7 +853,7 @@ export default function Header({
                 </div>
             )}
 
-            {/* Mobile Navigation */}
+            {/* Mobile Bottom Bar Navigation */}
             <div className="fixed bottom-0 left-0 right-0 z-50 p-2 lg:hidden">
                 {/* Home indicator line */}
 

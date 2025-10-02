@@ -81,7 +81,7 @@ export default function MainLayout({ children }) {
 
     return (
         <>
-            <div className="flex flex-col min-h-screen bg-slate-100 scrollbar-thin dark:bg-gray-900">
+            <div className="flex min-h-screen flex-col bg-slate-100 scrollbar-thin dark:bg-gray-900">
                 <Preloader loaded={loaded} setLoaded={setLoaded} />
 
                 <ToastContainer
@@ -106,7 +106,7 @@ export default function MainLayout({ children }) {
                     ApplicationName={generalSetting?.app_name}
                 />
 
-                <main className="flex-1 mb-10 overflow-y-auto">{children}</main>
+                <main className="mb-10 flex-1 overflow-y-auto">{children}</main>
 
                 <div className="hidden lg:block">
                     <Footer

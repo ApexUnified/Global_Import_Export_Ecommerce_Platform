@@ -41,6 +41,7 @@ export default function Footer({ ApplicationName, ApplicationLogoDark, Applicati
                                     <Link
                                         href={route('home')}
                                         className={`py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-white/60 ${route().current() === 'home' ? 'text-blue-600 dark:text-blue-500' : 'text-gray-700 dark:text-white/80'}`}
+                                        prefetch
                                     >
                                         Home
                                     </Link>

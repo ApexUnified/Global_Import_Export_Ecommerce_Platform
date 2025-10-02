@@ -1700,12 +1700,12 @@ export default function index() {
                                     <div className="flex items-center gap-3">
                                         {/* Location */}
                                         {viewablePost?.location_name && (
-                                            <span className="rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                            <span className="rounded-full bg-gray-900 px-2 py-1 text-[10px]">
                                                 {viewablePost?.location_name}
                                             </span>
                                         )}
 
-                                        <span className="w-32 rounded-full bg-gray-900 px-2 py-1 text-xs">
+                                        <span className="w-38 rounded-full bg-gray-900 px-2 py-1 text-[10px]">
                                             {viewablePost?.added_at +
                                                 ' ' +
                                                 viewablePost?.created_at_time}

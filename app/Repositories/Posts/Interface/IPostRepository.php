@@ -30,4 +30,6 @@ interface IPostRepository
     public function getPostsForWebsite(Request $request);
 
     public function getInfinityScrollablePostsForWebsite(Request $request);
+
+    public function getGoogleMapSettings();
 }

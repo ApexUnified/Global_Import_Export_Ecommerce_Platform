@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Loader } from '@googlemaps/js-api-loader';
 
-export default function create({ floors }) {
+export default function create({ floors, googleMapSetting }) {
     // Create Data Form Data
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
@@ -29,9 +29,6 @@ export default function create({ floors }) {
         status: 1,
         location_name: '',
     });
-
-    // Taking Out MapID From Cache
-    const { googleMapSetting } = usePage().props;
 
     // Location Get Success state
     const [LocationGotSuccessMessage, setLocationGotSuccessMessage] = useState(null);

@@ -11,6 +11,7 @@ use App\Repositories\Posts\Interface\IPostRepository;
 use App\Services\GoogleGeoCoderService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -632,5 +633,10 @@ class PostRepository implements IPostRepository
             'next_page_url' => $posts->nextPageUrl(),
 
         ];
+    }
+
+    public function getGoogleMapSettings()
+    {
+        return Cache::get('google_map_settings');
     }
 }

@@ -45,8 +45,9 @@ class PostController extends Controller implements HasMiddleware
     {
 
         $floors = $this->floor->getAllWithoutPaginateFloors();
+        $googleMapSettings = $this->post->getGoogleMapSettings();
 
-        return Inertia::render('Dashboard/Posts/create', compact('floors'));
+        return Inertia::render('Dashboard/Posts/create', compact('floors', 'googleMapSettings'));
     }
 
     public function store(Request $request)
@@ -60,13 +61,13 @@ class PostController extends Controller implements HasMiddleware
         return to_route('dashboard.posts.index')->with('success', $created['message']);
     }
 
-    public function show(?string $slug = null)
+    public function show(Request $request, ?string $slug = null)
     {
         if (empty($slug)) {
             return to_route('dashboard.posts.index')->with('error', 'Post Slug Not Found');
         }
 
-        $post = $this->post->getSinglePostBySlug($slug);
+        $post = $this->post->getSinglePostBySlug($slug, $request);
 
         if (empty($post)) {
             return to_route('dashboard.posts.index')->with('error', 'Post Not Found');
@@ -75,13 +76,13 @@ class PostController extends Controller implements HasMiddleware
         return Inertia::render('Dashboard/Posts/show', compact('post'));
     }
 
-    public function edit(?string $slug = null)
+    public function edit(Request $request, ?string $slug = null)
     {
         if (empty($slug)) {
             return to_route('dashboard.posts.index')->with('error', 'Post Slug Not Found');
         }
 
-        $post = $this->post->getSinglePostBySlug($slug);
+        $post = $this->post->getSinglePostBySlug($slug, $request);
 
         if (empty($post)) {
             return to_route('dashboard.posts.index')->with('error', 'Post Not Found');
