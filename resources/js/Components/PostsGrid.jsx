@@ -116,7 +116,7 @@ export default function PostsGrid({
                         }}
                         className={`md:h-15 md:w-15 relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border-2 text-xs transition sm:h-12 sm:w-12 lg:h-20 lg:w-20 ${
                             selected === idx
-                                ? 'z-10 scale-105 border-blue-800 shadow-lg shadow-blue-500/50'
+                                ? 'z-10 scale-105 border-indigo-800 shadow-lg shadow-indigo-500/50'
                                 : 'border-gray-700 border-transparent opacity-70 hover:opacity-100 dark:border-white/80'
                         }`}
                     >
@@ -143,7 +143,7 @@ export default function PostsGrid({
                                 className="h-full w-full object-cover text-[5px] text-gray-700 dark:text-white/80 lg:text-[10px]"
                             />
                         ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-[5px] text-gray-700 dark:bg-gray-800 dark:text-white/80 lg:text-[10px]">
+                            <div className="dark:bg-deepcharcoal flex h-full w-full items-center justify-center bg-gray-200 text-[5px] text-gray-700 dark:text-white/80 lg:text-[10px]">
                                 {post.title.length > 20
                                     ? post.title.slice(0, 20) + '...'
                                     : post.title}
@@ -161,7 +161,7 @@ export default function PostsGrid({
                         <div role="status">
                             <svg
                                 aria-hidden="true"
-                                className="h-5 w-5 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+                                className="h-5 w-5 animate-spin fill-indigo-600 text-gray-200 dark:text-gray-600"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"

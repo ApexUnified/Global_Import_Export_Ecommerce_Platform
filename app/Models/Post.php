@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Scout\Searchable;
 use Str;
 
 class Post extends Model
 {
+    // use Searchable;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -26,6 +29,26 @@ class Post extends Model
     ];
 
     protected $appends = ['added_at', 'post_image_urls', 'post_video_urls', 'created_at_time', 'is_bookmarked'];
+
+    /**
+     * @message Not Needed For Now
+     */
+    // Algolia Search Logic
+    // public function searchableWith()
+    // {
+    //     return ['floor'];
+    // }
+
+    // public function toSearchableArray()
+    // {
+    //     return [
+    //         'title' => $this->title,
+    //         'content' => $this->content,
+    //         'tag' => $this->tag,
+    //         'location_name' => $this->location_name,
+    //         'floor_name' => optional($this->floor)->name,
+    //     ];
+    // }
 
     // RelationShips
     public function user(): BelongsTo

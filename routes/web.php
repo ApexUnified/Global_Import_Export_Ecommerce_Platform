@@ -22,6 +22,7 @@ use App\Http\Controllers\Dashboard\SmartphoneController;
 use App\Http\Controllers\Dashboard\SmartphoneForSaleController;
 use App\Http\Controllers\Dashboard\SupplierController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\Website\HomeController as WebsiteHomeController;
 use App\Http\Controllers\Website\PostController as WebsitePostController;
 use Illuminate\Support\Facades\Route;
@@ -30,13 +31,30 @@ use Illuminate\Support\Facades\Route;
 // Home
 Route::get('/', [WebsiteHomeController::class, 'index'])->name('home');
 
-// Posts
-Route::controller(WebsitePostController::class)->name('website.posts.')->group(function () {
-    Route::get('/posts', [WebsitePostController::class, 'index'])->name('index');
-    Route::get('/posts-getmore', [WebsitePostController::class, 'getMorePosts'])->name('getmore');
-    Route::get('/posts-getsingle/{slug?}', [WebsitePostController::class, 'getSinglePostBySlug'])->name('getsingle');
-    Route::put('/posts-bookmark', [WebsitePostController::class, 'bookmark'])->name('bookmark')->middleware('auth');
+Route::group(['as' => 'website.'], function () {
+    // Posts
+    Route::controller(WebsitePostController::class)->name('posts.')->group(function () {
+        Route::get('/posts', 'index')->name('index');
+        Route::get('/posts-getmore', 'getMorePosts')->name('getmore');
+        Route::get('/posts-getsingle/{slug?}', 'getSinglePostBySlug')->name('getsingle');
+        Route::put('/posts-bookmark', 'bookmark')->name('bookmark')->middleware('auth');
+    });
 
+    // Global Search Route
+    Route::controller(GlobalSearchController::class)->name('global-search.')->group(function () {
+        Route::get('/global-search', 'index')->name('index');
+
+        /**
+         * @Perfect But Joseph Changed The Filter Logic
+         */
+        // Route::post('/global-search', 'search')->name('search');
+
+        Route::post('/global-search-auto-completion', 'autoCompletion')->name('auto-completion');
+        Route::post('/global-search-get-place-details', 'getPlaceDetails')->name('get-place-details');
+        Route::match(['get', 'post'], 'global-search-results', 'results')->name('results');
+        Route::get('/global-search-getmoreresults', 'getMoreResults')->name('getmoreresults');
+        Route::delete('/global-search-search-session-destroy', 'searchSessionDestroy')->name('search-session-destroy');
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

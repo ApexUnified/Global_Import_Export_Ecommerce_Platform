@@ -50,11 +50,11 @@ export default function GuestLayout({ children }) {
 
             <Toast flash={flash} />
 
-            <div className="z-1 relative bg-slate-50 p-6 dark:bg-gray-900 sm:p-0">
-                <div className="relative flex min-h-screen w-full flex-col justify-center overflow-y-auto dark:bg-gray-900 sm:p-0 lg:flex-row">
+            <div className="z-1 dark:bg-deepcharcoal relative bg-slate-50 p-6 sm:p-0">
+                <div className="dark:bg-deepcharcoal relative flex min-h-screen w-full flex-col justify-center overflow-y-auto sm:p-0 lg:flex-row">
                     {children}
 
-                    <div className="relative hidden h-screen w-full items-center bg-blue-950 dark:bg-white/5 lg:grid lg:w-1/2">
+                    <div className="relative hidden h-screen w-full items-center bg-indigo-950 dark:bg-white/5 lg:grid lg:w-1/2">
                         <div className="z-1 flex items-center justify-center">
                             <CommonGridShape />
                             <div className="flex max-w-xs flex-col items-center">
@@ -70,7 +70,7 @@ export default function GuestLayout({ children }) {
 
                     <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
                         <button
-                            className="hover:bg-brand-600 inline-flex size-14 items-center justify-center rounded-full bg-blue-600 text-white transition-colors"
+                            className="hover:bg-brand-600 inline-flex size-14 items-center justify-center rounded-full bg-indigo-600 text-white transition-colors"
                             onClick={() => {
                                 setDarkMode(!darkMode);
                                 localStorage.setItem(

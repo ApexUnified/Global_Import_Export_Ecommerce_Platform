@@ -319,12 +319,28 @@ Additional Work:
   When the text appears, there is a container spacing issue. ✅
   The feature to scroll the text upward with a finger doesn’t work. ✅
   Swiping the text left or right with a finger doesn’t work. ✅
+  Website Whole Layout Changed 3 Times ✅
+  Search Results Page ✅
+  Search History
+  Restricting Post Creation title should be atleast 10 chars
+  Ad Posts Will be made within the posts Table and its section
+
+  1: The 3 new categories we discussed will be added, and the existing Posts and Products categories will be removed,  ✅
+  2: If spatiotemporal information is applied in the filter, we’ll display it below the search bar as a reference,
+  3: We’ll also update the category enabling/disabling logic to work with these new categories.  ✅
+  4: Implementing AutoLoading Results In Results Page When Scroll✅
+  And just to summarize the search logic we finalized:  ✅
+  1: Hashtags → exact match (=) — returns posts where the hashtag matches 100%.
+  2: URLs → full-string match using LIKE within post content
+  3: Search Terms → partial match (LIKE) across post title and content.
+
+  4: Users → exact match (=) — to be implemented later.
 
 
 Navigation (Latitude/Longitude concept):
 - On mobile, navigation should follow a map-like logic:
 - Up/Down (Latitude): switch between posts in the feed. ✅
-- Left/Right (Longitude): navigate within the gallery/media of a single post.
+- Left/Right (Longitude): navigate within the gallery/media of a single post. ✅
 - On desktop/PC, since swiping isn’t native, I suggest alternatives like:
 - Arrow keys / WASD controls for the same movement.
 - Or hover/click zones with directional arrows.
@@ -357,7 +373,7 @@ So in short:
   Post Create Functionality For All users
 
   Search Methods:
-  1. Spatiotemporal Information:
+  1. Spatiotemporal Information: ✅
   Select one address from an auto-completed list.
   Search by terms (words, numbers, etc.) included in the address.
   Include height information (e.g., number of floors).

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Website;
 use App\Http\Controllers\Controller;
 use App\Repositories\Posts\Interface\IPostRepository;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class PostController extends Controller
 {
@@ -17,7 +16,7 @@ class PostController extends Controller
     {
 
         if ($request->header('X-Inertia')) {
-            return Inertia::render('Website/Posts/index');
+            return to_route('home');
         }
 
         if ($request->ajax()) {
@@ -34,7 +33,7 @@ class PostController extends Controller
             ]);
         }
 
-        return Inertia::render('Website/Posts/index');
+        return to_route('home');
     }
 
     public function getMorePosts(Request $request)

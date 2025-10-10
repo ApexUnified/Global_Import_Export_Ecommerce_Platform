@@ -33,6 +33,9 @@ export default {
                 fadeInDown: 'fadeInDown 0.5s ease-in-out forwards',
                 fadeOutUp: 'fadeOutUp 0.5s ease-in-out forwards',
             },
+            colors: {
+                deepcharcoal: '#0D0E12',
+            }
         },
     },
 

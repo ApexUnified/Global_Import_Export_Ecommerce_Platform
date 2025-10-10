@@ -24,6 +24,8 @@ use App\Repositories\Distributors\Interface\IDistributorRepository;
 use App\Repositories\Distributors\Repository\DistributorRepository;
 use App\Repositories\Floors\Interface\IFloorRepostitory;
 use App\Repositories\Floors\Repository\FloorRepostitory;
+use App\Repositories\GlobalSearch\Interface\IGlobalSearchRepository;
+use App\Repositories\GlobalSearch\Repository\GlobalSearchRepository;
 use App\Repositories\Inventories\Interface\IInventoryRepository;
 use App\Repositories\Inventories\Repository\InventoryRepository;
 use App\Repositories\Orders\Interface\IOrderRepository;
@@ -74,6 +76,7 @@ class BinderServerProvider extends ServiceProvider
         $this->app->bind(ICollaboratorCommissionRepository::class, CollaboratorCommissionRepository::class);
         $this->app->bind(IDistributorCommissionRepository::class, DistributorCommissionRepository::class);
         $this->app->bind(IDashboardRepository::class, DashboardRepository::class);
+        $this->app->bind(IGlobalSearchRepository::class, GlobalSearchRepository::class);
 
     }
 

@@ -173,7 +173,7 @@ export default function create({ floors, googleMapSetting }) {
                     });
             }
         } catch (e) {
-            autoCompletionLoading(false);
+            setAutoCompletionLoading(false);
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',

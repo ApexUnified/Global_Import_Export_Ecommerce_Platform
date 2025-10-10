@@ -139,7 +139,7 @@ export default function PostMediaViewer({
             >
                 {/* Big Viewer */}
                 <div
-                    className="relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black"
+                    className="bg-deepcharcoal relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl"
                     style={{
                         height: windowSize.width >= 1024 ? '70vh' : '60vh',
                         minWidth: windowSize.width >= 1024 ? '30vw' : '100%',
@@ -217,7 +217,7 @@ export default function PostMediaViewer({
                                 onClick={() => onSelectMediaIndex(idx)}
                                 className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border transition-all duration-200 ${
                                     selectedMediaIndex === idx
-                                        ? 'border-blue-600 ring-2 ring-blue-400'
+                                        ? 'border-indigo-600 ring-2 ring-indigo-400'
                                         : 'border-gray-300 hover:border-gray-500'
                                 }`}
                             >

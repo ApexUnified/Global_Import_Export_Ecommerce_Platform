@@ -13,8 +13,8 @@ export default function Preloader({ loaded, setLoaded }) {
     return (
         <>
             {loaded && (
-                <div className="fixed left-0 top-0 z-[999999] flex h-screen w-screen items-center justify-center bg-white dark:bg-gray-900">
-                    <div className="h-20 w-20 animate-spin rounded-full border-4 border-solid border-blue-500 border-t-transparent"></div>
+                <div className="dark:bg-deepcharcoal fixed left-0 top-0 z-[999999] flex h-screen w-screen items-center justify-center bg-white">
+                    <div className="h-20 w-20 animate-spin rounded-full border-4 border-solid border-indigo-500 border-t-transparent"></div>
                 </div>
             )}
         </>

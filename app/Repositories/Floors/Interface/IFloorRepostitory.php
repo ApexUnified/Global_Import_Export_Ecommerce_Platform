@@ -19,4 +19,6 @@ interface IFloorRepostitory
     public function destroyFloorBySelection(Request $request);
 
     public function getAllWithoutPaginateFloors();
+
+    public function getFloorsForSearch();
 }

@@ -111,7 +111,7 @@ export default function Login({ canResetPassword }) {
                                                     <div
                                                         className={
                                                             data.remember === true
-                                                                ? 'mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] border-blue-500 bg-blue-500 dark:border-gray-700'
+                                                                ? 'mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] border-indigo-500 bg-indigo-500 dark:border-gray-700'
                                                                 : 'mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] border-gray-300 bg-transparent'
                                                         }
                                                     >
@@ -145,7 +145,7 @@ export default function Login({ canResetPassword }) {
                                         {canResetPassword && (
                                             <Link
                                                 href={route('password.request')}
-                                                className="text-sm text-blue-500 hover:text-blue-600"
+                                                className="text-sm text-indigo-500 hover:text-indigo-600"
                                             >
                                                 Forgot password?
                                             </Link>
@@ -188,7 +188,7 @@ export default function Login({ canResetPassword }) {
                                     Don't have an account?{' '}
                                     <Link
                                         href={route('register')}
-                                        className="text-blue-500 hover:text-blue-600"
+                                        className="text-indigo-500 hover:text-indigo-600"
                                     >
                                         {' '}
                                         {'  '}

@@ -90,7 +90,7 @@ export default function Header({
 
     return (
         <>
-            <header className="z-50 border-b border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <header className="z-50 bg-white border-b border-gray-200 shadow-md dark:border-gray-700 dark:bg-gray-800">
                 {/* Tech Store Banner */}
                 {/* <div className="bg-gradient-to-r from-blue-600 to-cyan-600 py-2.5 text-center text-white">
                 <div className="flex items-center justify-center space-x-4 text-sm font-medium">
@@ -104,12 +104,12 @@ export default function Header({
             </div> */}
 
                 {/* Main Header */}
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 items-center justify-between">
+                <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-end h-16">
                         {/* Mobile menu button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="rounded-lg p-2 text-gray-700 transition-colors hover:bg-gray-100 dark:text-white/80 dark:hover:bg-white/5 lg:hidden"
+                            className="p-2 text-gray-700 transition-colors rounded-lg hover:bg-gray-100 dark:text-white/80 dark:hover:bg-white/5 lg:hidden"
                         >
                             {isMenuOpen ? (
                                 <svg
@@ -143,14 +143,14 @@ export default function Header({
                         </button>
 
                         {/* Logo */}
-                        <div className="absolute left-1/2 flex -translate-x-1/2 transform items-center lg:relative lg:left-auto lg:flex-none lg:transform-none">
+                        {/* <div className="absolute flex items-center transform -translate-x-1/2 left-1/2 lg:relative lg:left-auto lg:flex-none lg:transform-none">
                             <div className="flex flex-row items-center space-x-3">
                                 <Link
                                     href={route('home')}
                                     className="flex flex-row items-center space-x-3"
                                     prefetch
                                 >
-                                    <div className="flex h-10 w-10 items-center justify-center">
+                                    <div className="flex items-center justify-center w-10 h-10">
                                         <img
                                             src={ApplicationLogoDark}
                                             alt=""
@@ -163,16 +163,16 @@ export default function Header({
                                         />
                                     </div>
                                     <div>
-                                        <h1 className="md:text-md text-sm font-bold text-gray-700 dark:text-white/80 lg:text-2xl xl:text-2xl">
+                                        <h1 className="text-sm font-bold text-gray-700 md:text-md dark:text-white/80 lg:text-2xl xl:text-2xl">
                                             {ApplicationName}
                                         </h1>
                                     </div>
                                 </Link>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Desktop Navigation */}
-                        <div className="flex items-center">
+                        {/* <div className="flex items-center">
                             <nav className="hidden lg:ml-10 lg:flex lg:space-x-8">
                                 <Link
                                     href={route('home')}
@@ -201,16 +201,16 @@ export default function Header({
                                     Contact Us
                                 </a>
                             </nav>
-                        </div>
+                        </div> */}
 
                         {/* Right side - Points, Profile, Auth buttons, Cart */}
                         <div className="flex items-center space-x-1">
                             {auth?.user && (
                                 <>
                                     {/* Reward Points - Direct Display */}
-                                    <div className="hidden items-center space-x-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 dark:border-gray-800 dark:bg-gray-900 sm:flex">
+                                    <div className="items-center hidden px-3 py-2 space-x-2 border border-yellow-200 rounded-lg bg-yellow-50 dark:border-gray-800 dark:bg-gray-900 sm:flex">
                                         <svg
-                                            className="size-4 text-yellow-500 dark:text-white/80"
+                                            className="text-yellow-500 size-4 dark:text-white/80"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
                                         >
@@ -225,9 +225,9 @@ export default function Header({
                                     </div>
 
                                     {/* Mobile Points Display */}
-                                    <div className="flex items-center space-x-1 rounded-lg bg-yellow-50 px-1 py-1 dark:bg-gray-900 sm:hidden">
+                                    <div className="flex items-center px-1 py-1 space-x-1 rounded-lg bg-yellow-50 dark:bg-gray-900 sm:hidden">
                                         <svg
-                                            className="size-4 text-yellow-500 dark:text-white/80"
+                                            className="text-yellow-500 size-4 dark:text-white/80"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
                                         >
@@ -246,7 +246,7 @@ export default function Header({
                                     setDarkMode(!darkMode);
                                     localStorage.setItem('darkMode', !darkMode);
                                 }}
-                                className="flex items-center rounded-lg p-2 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5"
+                                className="flex items-center p-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-50 hover:text-blue-600 dark:text-white/80 dark:hover:bg-white/5"
                             >
                                 <svg
                                     className="hidden dark:block"
@@ -281,7 +281,7 @@ export default function Header({
                             {auth?.user && (
                                 <>
                                     {/* Shopping cart */}
-                                    <button className="relative hidden rounded-lg p-2 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-white/5 lg:block">
+                                    <button className="relative hidden p-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-white/5 lg:block">
                                         <svg
                                             className="size-5 dark:text-white/80"
                                             fill="none"
@@ -296,7 +296,7 @@ export default function Header({
                                             />
                                         </svg>
 
-                                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+                                        <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-600 rounded-full -right-1 -top-1">
                                             3
                                         </span>
                                     </button>
@@ -307,16 +307,16 @@ export default function Header({
                                         ref={profileDropdownRefDesktop}
                                     >
                                         <div
-                                            className="flex cursor-pointer items-center text-gray-700 dark:text-gray-400"
+                                            className="flex items-center text-gray-700 cursor-pointer dark:text-gray-400"
                                             onClick={() =>
                                                 setProfileDesktopDropdown(!profileDesktopDropdown)
                                             }
                                         >
-                                            <span className="hover:text-dark-900 mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                            <span className="flex items-center justify-center mr-3 overflow-hidden bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                                 {auth?.user.avatar}
                                             </span>
 
-                                            <span className="text-theme-sm mr-1 block font-medium">
+                                            <span className="block mr-1 font-medium text-theme-sm">
                                                 {' '}
                                                 {auth?.user.name.length > 6
                                                     ? auth?.user.name.slice(0, 6) + '...'
@@ -344,7 +344,7 @@ export default function Header({
                                         {profileDesktopDropdown && (
                                             <div className="absolute right-0 mt-[17px] flex w-auto min-w-[300px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-800 dark:bg-gray-900">
                                                 <div>
-                                                    <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
+                                                    <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
                                                         {auth?.user.name.length > 20
                                                             ? auth?.user.name.slice(0, 20) + '...'
                                                             : (auth?.user.name ?? 'User')}
@@ -357,11 +357,11 @@ export default function Header({
                                                     </span>
                                                 </div>
 
-                                                <ul className="flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4 dark:border-gray-800">
+                                                <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
                                                     <li>
                                                         <Link
                                                             href={''}
-                                                            className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                         >
                                                             <svg
                                                                 className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -385,7 +385,7 @@ export default function Header({
                                                     <li>
                                                         <Link
                                                             href={''}
-                                                            className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                         >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -408,7 +408,7 @@ export default function Header({
                                                     <li>
                                                         <Link
                                                             href={''}
-                                                            className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                         >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -431,7 +431,7 @@ export default function Header({
                                                     <li>
                                                         <Link
                                                             href={''}
-                                                            className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                         >
                                                             <svg
                                                                 className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -475,7 +475,7 @@ export default function Header({
                                                             },
                                                         });
                                                     }}
-                                                    className="text-theme-sm group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     {logoutProcessing ? (
                                                         <Spinner />
@@ -506,10 +506,10 @@ export default function Header({
 
                             {/* Login/Signup Buttons */}
                             {!auth.user && (
-                                <div className="hidden items-center space-x-1 lg:flex">
+                                <div className="items-center hidden space-x-1 lg:flex">
                                     <Link
                                         href={route('login')}
-                                        className="rounded-lg px-1 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-white/5"
+                                        className="px-1 py-2 text-sm font-medium text-gray-700 transition-colors rounded-lg hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-white/5"
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -528,7 +528,7 @@ export default function Header({
                                     </Link>
                                     <Link
                                         href={route('register')}
-                                        className="rounded-lg px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-white/5"
+                                        className="px-2 py-2 text-sm font-medium text-gray-700 transition-colors rounded-lg hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-white/5"
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -563,14 +563,14 @@ export default function Header({
                                 ref={profileDropdownRefMobileMenu}
                             >
                                 <div
-                                    className="flex cursor-pointer items-center text-gray-700 dark:text-gray-400"
+                                    className="flex items-center text-gray-700 cursor-pointer dark:text-gray-400"
                                     onClick={() => setProfileMobileDropdown(!profileMobileDropdown)}
                                 >
-                                    <span className="hover:text-dark-900 mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    <span className="flex items-center justify-center mr-3 overflow-hidden bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                         {auth?.user.avatar}
                                     </span>
 
-                                    <span className="text-theme-sm mr-1 block font-medium">
+                                    <span className="block mr-1 font-medium text-theme-sm">
                                         {' '}
                                         {auth?.user.name.length > 20
                                             ? auth?.user.name.slice(0, 20) + '...'
@@ -598,7 +598,7 @@ export default function Header({
                                 {profileMobileDropdown && (
                                     <div className="absolute left-10 mt-[10px] flex w-auto min-w-[250px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-800 dark:bg-gray-900">
                                         <div>
-                                            <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
+                                            <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
                                                 {auth?.user.name.length > 20
                                                     ? auth?.user.name.slice(0, 20) + '...'
                                                     : (auth?.user.name ?? 'User')}
@@ -610,11 +610,11 @@ export default function Header({
                                             </span>
                                         </div>
 
-                                        <ul className="flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4 dark:border-gray-800">
+                                        <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
                                             <li>
                                                 <Link
                                                     href={''}
-                                                    className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     <svg
                                                         className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -638,7 +638,7 @@ export default function Header({
                                             <li>
                                                 <Link
                                                     href={''}
-                                                    className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -661,7 +661,7 @@ export default function Header({
                                             <li>
                                                 <Link
                                                     href={''}
-                                                    className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -684,7 +684,7 @@ export default function Header({
                                             <li>
                                                 <Link
                                                     href={''}
-                                                    className="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     <svg
                                                         className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
@@ -728,7 +728,7 @@ export default function Header({
                                                     },
                                                 });
                                             }}
-                                            className="text-theme-sm group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                            className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg text-theme-sm group hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                         >
                                             {logoutProcessing ? (
                                                 <Spinner />
@@ -784,10 +784,10 @@ export default function Header({
                     {!auth?.user && (
                         <>
                             {/* Buttons pinned at bottom */}
-                            <div className="border-t border-gray-200 px-4 py-4 dark:border-gray-700">
-                                <div className="mb-3 flex items-center space-x-2">
+                            <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center mb-3 space-x-2">
                                     <svg
-                                        className="h-5 w-5 dark:text-white/80"
+                                        className="w-5 h-5 dark:text-white/80"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -852,115 +852,6 @@ export default function Header({
                     )}
                 </div>
             )}
-
-            {/* Mobile Bottom Bar Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 p-2 lg:hidden">
-                {/* Home indicator line */}
-
-                {/* Navigation bar */}
-                <nav className="rounded-2xl border-b border-gray-200 bg-white shadow-md backdrop-blur-lg dark:border-t dark:border-gray-800 dark:bg-gray-800">
-                    <div className="flex items-center justify-around px-4 py-2">
-                        {/* Home */}
-                        <Link
-                            href={route('home')}
-                            className={`flex flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 ${
-                                route().current() === 'home'
-                                    ? 'text-blue-600 dark:text-blue-400'
-                                    : 'text-gray-700 hover:text-gray-600 dark:text-white/80 dark:hover:text-white/60'
-                            }`}
-                            prefetch
-                        >
-                            <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                            </svg>
-                            <span className="mt-1 text-xs font-medium">Home</span>
-                        </Link>
-
-                        {/* Products */}
-                        <button
-                            onClick={() => setActiveTab('Products')}
-                            className={`flex flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 ${
-                                activeTab === 'Products'
-                                    ? 'text-blue-600 dark:text-blue-400'
-                                    : 'text-gray-700 hover:text-gray-600 dark:text-white/80 dark:hover:text-white/60'
-                            }`}
-                        >
-                            <svg
-                                className="size-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
-                                />
-                            </svg>
-                            <span className="mt-1 text-xs font-medium">Products</span>
-                        </button>
-
-                        {/* Posts */}
-                        <Link
-                            href={route('website.posts.index')}
-                            className={`relative flex flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 ${
-                                route().current() === 'website.posts.index'
-                                    ? 'text-blue-600 dark:text-blue-400'
-                                    : 'text-gray-700 hover:text-gray-600 dark:text-white/80 dark:hover:text-white/60'
-                            }`}
-                            prefetch
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="size-5"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                                />
-                            </svg>
-
-                            <span className="mt-1 text-xs font-medium">Posts</span>
-                        </Link>
-
-                        {/* Cart */}
-                        {auth?.user && (
-                            <button
-                                onClick={() => setActiveTab('Cart')}
-                                className={`relative flex flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 ${
-                                    activeTab === 'Cart'
-                                        ? 'text-blue-600 dark:text-blue-400'
-                                        : 'text-gray-700 hover:text-gray-600 dark:text-white/80 dark:hover:text-white/60'
-                                }`}
-                            >
-                                <svg
-                                    className="size-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293A1 1 0 004 15h1.586M5 21a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"
-                                    />
-                                </svg>
-                                <span className="mt-1 text-xs font-medium">Cart</span>
-                                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
-                                    3
-                                </span>
-                            </button>
-                        )}
-                    </div>
-                </nav>
-            </div>
         </>
     );
 }

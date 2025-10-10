@@ -1,8 +1,11 @@
 import Preloader from '@/Components/Preloader';
+import useWindowSize from '@/Hooks/useWindowSize';
+import BottomBar from '@/partials/Website/BottomBar';
 import Footer from '@/partials/Website/Footer';
 import Header from '@/partials/Website/Header';
+import Sidebar from '@/partials/Website/Sidebar';
 import { usePage } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ToastContainer, Bounce, toast } from 'react-toastify';
 
 export default function MainLayout({ children }) {
@@ -53,6 +56,34 @@ export default function MainLayout({ children }) {
     // Managing Dark Mode State
     const [darkMode, setDarkMode] = useState(false);
 
+    // Window Size Hook
+    const windowSize = useWindowSize();
+
+    // Sidebar Collapse Logic
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [moreDropdown, setMoreDropdown] = useState(false);
+    const moreDropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target)) {
+                setMoreDropdown(false);
+            }
+        };
+
+        const handleResize = () => {
+            setIsCollapsed(windowSize.width < 1500);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [windowSize.width]);
+
     const notify = (type, message) => {
         toast[type](message, {
             position: 'bottom-center',
@@ -81,11 +112,11 @@ export default function MainLayout({ children }) {
 
     return (
         <>
-            <div className="flex min-h-screen flex-col bg-slate-100 scrollbar-thin dark:bg-gray-900">
+            <div className="relative min-h-screen w-full bg-slate-100 dark:bg-zinc-950/70">
                 <Preloader loaded={loaded} setLoaded={setLoaded} />
 
                 <ToastContainer
-                    position={'bottom-center'}
+                    position="bottom-center"
                     autoClose={5000}
                     hideProgressBar
                     newestOnTop={false}
@@ -94,27 +125,52 @@ export default function MainLayout({ children }) {
                     pauseOnFocusLoss
                     draggable
                     pauseOnHover
-                    theme={'colored'}
+                    theme="colored"
                     transition={Bounce}
                 />
 
-                <Header
-                    darkMode={darkMode}
-                    setDarkMode={setDarkMode}
-                    ApplicationLogoDark={ApplicationLogoDark}
-                    ApplicationLogoLight={ApplicationLogoLight}
-                    ApplicationName={generalSetting?.app_name}
-                />
-
-                <main className="mb-10 flex-1 overflow-y-auto">{children}</main>
-
-                <div className="hidden lg:block">
-                    <Footer
-                        ApplicationLogoDark={ApplicationLogoDark}
-                        ApplicationLogoLight={ApplicationLogoLight}
-                        ApplicationName={generalSetting?.app_name}
+                {/* Sidebar */}
+                {windowSize.width > 1024 && (
+                    <Sidebar
+                        light_logo={ApplicationLogoLight}
+                        dark_logo={ApplicationLogoDark}
+                        app_name={generalSetting?.app_name}
+                        darkMode={darkMode}
+                        setDarkMode={setDarkMode}
+                        isCollapsed={isCollapsed}
+                        moreDropdown={moreDropdown}
+                        setMoreDropdown={setMoreDropdown}
+                        moreDropdownRef={moreDropdownRef}
                     />
+                )}
+
+                {/* Main Content Area */}
+                <div
+                    className={`absolute left-0 top-0 min-h-screen w-full transition-all duration-300 ${
+                        windowSize.width > 1024
+                            ? isCollapsed
+                                ? 'pl-[30px]'
+                                : 'pl-[208px]'
+                            : 'pl-0'
+                    }`}
+                >
+                    {/* Main Content */}
+                    <main className="min-h-screen flex-1 pt-2 dark:bg-zinc-950/70 lg:px-6">
+                        {children ? (
+                            children
+                        ) : (
+                            <div className="flex h-[80vh] items-center justify-center text-gray-400">
+                                No content available.
+                            </div>
+                        )}
+                    </main>
                 </div>
+                {/* Mobile Bottom Navigation */}
+                {windowSize.width < 1024 && (
+                    <>
+                        <BottomBar darkMode={darkMode} setDarkMode={setDarkMode} />
+                    </>
+                )}
             </div>
         </>
     );

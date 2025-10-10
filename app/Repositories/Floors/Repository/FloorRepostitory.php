@@ -149,4 +149,15 @@ class FloorRepostitory implements IFloorRepostitory
 
         return $floors;
     }
+
+    public function getFloorsForSearch()
+    {
+        $from_floors = $this->floor->orderBy('id', 'asc')->get();
+        $to_floors = $this->floor->orderBy('id', 'desc')->get();
+
+        return [
+            'from_floors' => $from_floors,
+            'to_floors' => $to_floors,
+        ];
+    }
 }

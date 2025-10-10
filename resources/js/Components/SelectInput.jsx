@@ -23,7 +23,7 @@ export default function SelectInput({
     const darkStyles = {
         control: (base, state) => ({
             ...base,
-            backgroundColor: '#111827',
+            backgroundColor: '#0D0E12',
             color: '#ffffff',
             borderColor: state.isFocused ? '#3b82f6' : '#4b5563',
             boxShadow: 'none', // <- important
@@ -152,9 +152,13 @@ export default function SelectInput({
                         isClearable={!Multiple}
                         isSearchable
                         required={Required}
-                        {...(!customPlaceHolder && {
-                            placeholder: `Select ${InputName}`,
-                        })}
+                        {...(!customPlaceHolder
+                            ? {
+                                  placeholder: `Select ${InputName}`,
+                              }
+                            : {
+                                  placeholder: Placeholder,
+                              })}
                         styles={isDarkMode ? darkStyles : lightStyles}
                         className={`react-select-container ${isDisabled && 'opacity-30'}`}
                         classNamePrefix="react-select"

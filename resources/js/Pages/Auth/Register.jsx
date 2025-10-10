@@ -31,8 +31,8 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="flex flex-col flex-1 w-full px-4 md:my-5 lg:w-1/2">
-                <div className="w-full max-w-md pt-10 mx-auto">
+            <div className="flex w-full flex-1 flex-col px-4 md:my-5 lg:w-1/2">
+                <div className="mx-auto w-full max-w-md pt-10">
                     <Link
                         href={route('home')}
                         className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-white dark:hover:text-gray-300"
@@ -56,10 +56,10 @@ export default function Register() {
                         Back to Website
                     </Link>
                 </div>
-                <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+                <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
                     <div>
                         <div className="mb-5 sm:mb-8">
-                            <h1 className="mb-2 text-4xl font-bold text-gray-800 sm:text-title-md dark:text-white">
+                            <h1 className="sm:text-title-md mb-2 text-4xl font-bold text-gray-800 dark:text-white">
                                 Register
                             </h1>
                             <p className="text-sm text-gray-500 dark:text-white">
@@ -173,11 +173,11 @@ export default function Register() {
                             </form>
 
                             <div className="mt-5">
-                                <p className="text-sm font-normal text-center text-gray-700 dark:text-white sm:text-start">
+                                <p className="text-center text-sm font-normal text-gray-700 dark:text-white sm:text-start">
                                     Already have an account?{' '}
                                     <Link
                                         href={route('login')}
-                                        className="text-blue-500 hover:text-blue-600"
+                                        className="text-indigo-500 hover:text-indigo-600"
                                     >
                                         {' '}
                                         {'  '}
