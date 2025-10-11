@@ -28,24 +28,22 @@ export default function index({ google_map_api_key }) {
 
     const fetchPosts = async () => {
         const cookieValue = getCookie('post_preferences');
-        if (cookieValue) {
-            try {
-                const parsed = await JSON.parse(decodeURIComponent(cookieValue));
+        try {
+            const parsed = await JSON.parse(decodeURIComponent(cookieValue));
 
-                await axios
-                    .get(route('website.posts.index'), {
-                        params: parsed,
-                    })
-                    .then((res) => {
-                        setPosts(res.data.posts);
-                        setNextPageUrl(res.data.next_page_url);
-                    })
-                    .finally(() => {
-                        setIsPostLoaded(true);
-                    });
-            } catch (e) {
-                console.error('Failed to parse post_preferences cookie', e);
-            }
+            await axios
+                .get(route('website.posts.index'), {
+                    params: parsed,
+                })
+                .then((res) => {
+                    setPosts(res.data.posts);
+                    setNextPageUrl(res.data.next_page_url);
+                })
+                .finally(() => {
+                    setIsPostLoaded(true);
+                });
+        } catch (e) {
+            console.error('Failed to parse post_preferences cookie', e);
         }
     };
 
@@ -231,12 +229,13 @@ export default function index({ google_map_api_key }) {
             const params = new URLSearchParams(nextPageUrl.split('?')[1]);
 
             const cookieValue = getCookie('post_preferences');
-            if (!cookieValue) return;
             const parsed = await JSON.parse(decodeURIComponent(cookieValue));
 
-            Object.entries(parsed).forEach(([key, value]) => {
-                params.set(key, value);
-            });
+            if (parsed) {
+                Object.entries(parsed).forEach(([key, value]) => {
+                    params.set(key, value);
+                });
+            }
 
             const res = await fetch(route('website.posts.getmore') + `?${params.toString()}`);
             const data = await res.json();
@@ -256,7 +255,7 @@ export default function index({ google_map_api_key }) {
     const fetchSinglePost = async (slug) => {
         try {
             const cookieValue = getCookie('post_preferences');
-            if (!cookieValue) return;
+
             const parsed = await JSON.parse(decodeURIComponent(cookieValue));
 
             const queryString = new URLSearchParams(parsed).toString();
@@ -687,7 +686,7 @@ export default function index({ google_map_api_key }) {
                     {viewablePost != '' &&
                         isDesktopPostViewer &&
                         createPortal(
-                            <div className="dark:bg-deepcharcoal fixed inset-0 z-50 bg-white">
+                            <div className="fixed inset-0 z-50 bg-white dark:bg-deepcharcoal">
                                 <div
                                     className="fixed inset-0 backdrop-blur-[32px]"
                                     onClick={() => {
@@ -980,13 +979,13 @@ export default function index({ google_map_api_key }) {
                         isMobilePostViewer &&
                         createPortal(
                             <>
-                                <div className="bg-deepcharcoal fixed inset-0 z-50">
+                                <div className="fixed inset-0 z-50 bg-deepcharcoal">
                                     {/* Backdrop */}
                                     <div className="absolute inset-0 bg-black/70"></div>
 
                                     {/* Scrollable Container */}
                                     <div
-                                        className="bg-deepcharcoal relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-scroll scrollbar-none"
+                                        className="relative z-10 h-[100dvh] w-full snap-y snap-mandatory overflow-y-scroll bg-deepcharcoal scrollbar-none"
                                         onScroll={(e) => {
                                             setElipsisShowDropdown(false);
                                             const scrollTop = e.currentTarget.scrollTop;
@@ -1020,7 +1019,7 @@ export default function index({ google_map_api_key }) {
                                                 className="relative h-[100dvh] w-full snap-start overflow-hidden"
                                             >
                                                 {/* Top Bar */}
-                                                <div className="bg-deepcharcoal/50 absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-4 py-3 text-white backdrop-blur-sm">
+                                                <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between bg-deepcharcoal/50 px-4 py-3 text-white backdrop-blur-sm">
                                                     <button
                                                         onClick={() => {
                                                             setViewablePost('');
@@ -1085,7 +1084,7 @@ export default function index({ google_map_api_key }) {
                                                                         onClick={(e) =>
                                                                             e.stopPropagation()
                                                                         }
-                                                                        className="bg-deepcharcoal absolute right-0 top-full z-[99999] mt-2 w-44 rounded-lg border border-gray-900 shadow-xl sm:w-48"
+                                                                        className="absolute right-0 top-full z-[99999] mt-2 w-44 rounded-lg border border-gray-900 bg-deepcharcoal shadow-xl sm:w-48"
                                                                     >
                                                                         <ul
                                                                             className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
@@ -1410,7 +1409,7 @@ export default function index({ google_map_api_key }) {
                                                 ref={elipsisDropDownRef}
                                                 data-elipsis-dropdown
                                                 onClick={(e) => e.stopPropagation()}
-                                                className="bg-deepcharcoal absolute right-0 top-12 z-[9999] mt-2 w-44 rounded-lg border border-gray-900 shadow-xl sm:w-48"
+                                                className="absolute right-0 top-12 z-[9999] mt-2 w-44 rounded-lg border border-gray-900 bg-deepcharcoal shadow-xl sm:w-48"
                                             >
                                                 <ul
                                                     className="overflow-y-scroll py-1 text-sm text-gray-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white"
@@ -1548,9 +1547,9 @@ export default function index({ google_map_api_key }) {
                                     {/* Backdrop */}
                                     <div className="absolute inset-0 bg-black/70"></div>
 
-                                    <div className="bg-deepcharcoal relative z-10 flex h-[100dvh] w-full flex-col text-white">
+                                    <div className="relative z-10 flex h-[100dvh] w-full flex-col bg-deepcharcoal text-white">
                                         {/* Top Bar */}
-                                        <div className="bg-deepcharcoal/50 flex items-center justify-between px-4 py-3 backdrop-blur-sm">
+                                        <div className="flex items-center justify-between bg-deepcharcoal/50 px-4 py-3 backdrop-blur-sm">
                                             {/* Left side */}
                                             <div className="flex items-center space-x-2">
                                                 {/* Close */}
@@ -1717,7 +1716,7 @@ export default function index({ google_map_api_key }) {
                                     aria-labelledby="qrCodeTitle"
                                     className={`relative z-[101] w-full max-w-sm rounded-2xl p-6 shadow-xl sm:max-w-md ${
                                         isDesktopPostViewer
-                                            ? 'dark:bg-deepcharcoal bg-white text-gray-900 dark:text-gray-100'
+                                            ? 'bg-white text-gray-900 dark:bg-deepcharcoal dark:text-gray-100'
                                             : 'bg-gray-950 text-white/80'
                                     }`}
                                 >

@@ -61,7 +61,6 @@ class GlobalSearchController extends Controller
     public function results(Request $request)
     {
 
-        // dd(session('search_data'));
         if ($request->hasAny(['query', 'post_filters', 'post_preferences'])) {
             session([
                 'search_data' => $request->only(['query', 'post_filters', 'post_preferences']),
@@ -75,13 +74,20 @@ class GlobalSearchController extends Controller
         $query = $request->input('query');
         $post_filters = $request->input('post_filters');
 
-        if (empty($query) && blank($post_filters['address']['lat']) && blank($post_filters['address']['lng'])) {
-            return to_route('website.global-search.index');
-        }
+        // if (empty($query) && blank($post_filters['address']['lat']) && blank($post_filters['address']['lng'])) {
+        //     return to_route('website.global-search.index');
+        // }
 
         $data = $this->globalSearch->search($request);
-        if ($data['status'] == false) {
+
+        if ($data['status'] == false && ! $request->ajax()) {
             return to_route('website.global-search.index')->with('error', $data['message']);
+
+        }
+
+        if ($request->ajax() && $data['status'] == false) {
+
+            return response()->json(['status' => false, 'message' => $data['message']], 400);
         }
 
         $results = $data['data'];

@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import SearchDropdown from '@/Components/searchDropdown';
+import React, { useEffect, useRef, useState } from 'react';
+
 import SelectInput from '@/Components/SelectInput';
 import useWindowSize from '@/Hooks/useWindowSize';
 import axios from 'axios';
@@ -57,8 +57,7 @@ const GlobalSearch = ({
             }
         }
     }, []);
-
-    const [searchQuery, setSearchQuery] = useState(defaultQuery || '');
+    const [searchQuery, setSearchQuery] = useState(defaultQuery || null);
 
     // Google Auto Completion States
     const [autoCompletionLoading, setAutoCompletionLoading] = useState(false);
@@ -688,20 +687,6 @@ const GlobalSearch = ({
                                     </div>
                                 </div>
                             )}
-
-                            {/* Dropdown */}
-                            {/* {searchDropdown && (
-                                <div className="mt-2 sm:mt-3">
-                                    <SearchDropdown
-                                        searchDropdown={searchDropdown}
-                                        setSearchDropdown={setSearchDropdown}
-                                        setSearchQuery={setSearchQuery}
-                                        searchQuery={searchQuery}
-                                        postPreferences={postPreferences}
-                                        page={filter_page || 'search'}
-                                    />
-                                </div>
-                            )} */}
                         </div>
                     </div>
                 </div>
