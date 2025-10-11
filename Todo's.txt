@@ -329,13 +329,14 @@ Additional Work:
   2: If spatiotemporal information is applied in the filter, we’ll display it below the search bar as a reference,
   3: We’ll also update the category enabling/disabling logic to work with these new categories.  ✅
   4: Implementing AutoLoading Results In Results Page When Scroll✅
+
   And just to summarize the search logic we finalized:  ✅
-  1: Hashtags → exact match (=) — returns posts where the hashtag matches 100%.
-  2: URLs → full-string match using LIKE within post content
-  3: Search Terms → partial match (LIKE) across post title and content.
+    1: Hashtags → exact match (=) — returns posts where the hashtag matches 100%.
+    2: URLs → full-string match using LIKE within post content
+    3: Search Terms → partial match (LIKE) across post title and content.
+    4: Users → exact match (=) — to be implemented later.
 
-  4: Users → exact match (=) — to be implemented later.
-
+  Dedicated Matching Hashtag Post Contianing Page for showing post when user clicks on hashtag of any post it it wil redirects to this archive page
 
 Navigation (Latitude/Longitude concept):
 - On mobile, navigation should follow a map-like logic:
