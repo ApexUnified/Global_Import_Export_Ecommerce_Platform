@@ -415,280 +415,273 @@ const GlobalSearch = ({
 
     return (
         <>
-            <div>
-                <div className="lg:max-w-8xl mx-auto w-full sm:px-6 lg:px-8">
-                    <div className="sticky top-0 z-[50] w-full backdrop-blur-md transition-all duration-300">
-                        <div className="mx-auto py-2 sm:py-3">
-                            <div className="flex w-full items-center rounded-xl border border-gray-300 bg-white/90 p-1.5 shadow-md focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:shadow-white/20 dark:focus-within:ring-white/80 sm:p-2">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="ml-1.5 h-5 w-5 text-gray-500 dark:text-gray-300 sm:ml-2 sm:h-6 sm:w-6"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                                    />
-                                </svg>
+            <div className="lg:max-w-8xl sticky top-0 z-[50] mx-auto w-full backdrop-blur-md transition-all duration-300 sm:px-6 lg:px-8">
+                <div className="mx-auto py-2 sm:py-3">
+                    <div className="flex w-full items-center rounded-xl border border-gray-300 bg-white/90 p-1.5 shadow-md focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:shadow-white/20 dark:focus-within:ring-white/80 sm:p-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="ml-1.5 h-5 w-5 text-gray-500 dark:text-gray-300 sm:ml-2 sm:h-6 sm:w-6"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                            />
+                        </svg>
 
-                                <input
-                                    ref={searchInputRef}
-                                    type="search"
-                                    placeholder="What happened...?"
-                                    className="ml-2 flex-1 border-none bg-transparent text-xs text-gray-600 placeholder-gray-400 outline-none focus:outline-none focus:ring-0 dark:text-white/80 sm:text-base"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        if (e.target.value.trim().length > 0) {
-                                            setSearchQuery(e.target.value);
-                                            if (!isPrefChanged) setIsPrefChanged(true);
-                                        } else if (
-                                            e.target.value.trim().length === 0 &&
-                                            defaultQuery === ''
-                                        ) {
-                                            setSearchQuery('');
-                                            if (isPrefChanged) setIsPrefChanged(false);
-                                        } else {
-                                            setSearchQuery('');
-                                            if (!isPrefChanged) setIsPrefChanged(true);
-                                        }
-                                    }}
-                                    onFocus={() => {
-                                        setSearchBarFocused(true);
-                                    }}
+                        <input
+                            ref={searchInputRef}
+                            type="search"
+                            placeholder="What happened...?"
+                            className="ml-2 flex-1 border-none bg-transparent text-xs text-gray-600 placeholder-gray-400 outline-none focus:outline-none focus:ring-0 dark:text-white/80 sm:text-base"
+                            value={searchQuery}
+                            onChange={(e) => {
+                                if (e.target.value.trim().length > 0) {
+                                    setSearchQuery(e.target.value);
+                                    if (!isPrefChanged) setIsPrefChanged(true);
+                                } else if (
+                                    e.target.value.trim().length === 0 &&
+                                    defaultQuery === ''
+                                ) {
+                                    setSearchQuery('');
+                                    if (isPrefChanged) setIsPrefChanged(false);
+                                } else {
+                                    setSearchQuery('');
+                                    if (!isPrefChanged) setIsPrefChanged(true);
+                                }
+                            }}
+                            onFocus={() => {
+                                setSearchBarFocused(true);
+                            }}
+                        />
+
+                        <button
+                            className="mr-1.5 rounded-full p-1.5 text-gray-500 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900 sm:mr-2 sm:p-2"
+                            onClick={() => setIsPostFilterSetting(true)}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="h-5 w-5 sm:h-6 sm:w-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
                                 />
+                            </svg>
+                        </button>
+                    </div>
 
-                                <button
-                                    className="mr-1.5 rounded-full p-1.5 text-gray-500 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900 sm:mr-2 sm:p-2"
-                                    onClick={() => setIsPostFilterSetting(true)}
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                        className="h-5 w-5 sm:h-6 sm:w-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                                        />
-                                    </svg>
-                                </button>
+                    {/* SECTION: Additional Filters */}
+                    {additional_filters && searchBarFocused && (
+                        <section className="mt-4 w-full">
+                            {/* Address Input */}
+                            <div className="mb-5">
+                                <div className="flex items-center rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:focus-within:ring-white/80">
+                                    <input
+                                        key={getPlaceDetails}
+                                        type="search"
+                                        placeholder="Search Address"
+                                        className="ml-2 flex-1 border-none bg-transparent text-sm text-gray-600 placeholder-gray-400 outline-none focus:ring-0 dark:text-white/80"
+                                        value={autoCompletionLocationSearch}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '') {
+                                                setPlaceId('');
+                                                setAutoCompletionLocationSearch('');
+                                                setAutoCompletionResults([]);
+                                                setPostFilters((prev) => ({
+                                                    ...prev,
+                                                    address: {
+                                                        lat: '',
+                                                        lng: '',
+                                                    },
+                                                }));
+                                                setAddressReady(false);
+                                            } else {
+                                                setAutoCompletionLocationSearch(e.target.value);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                {autoCompletionDropdown && (
+                                    <ul className="relative z-50 mt-2 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-deepcharcoal">
+                                        {autoCompletionLoading ? (
+                                            <li className="flex items-center justify-center px-4 py-4">
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"></div>
+                                            </li>
+                                        ) : (
+                                            autoCompletionResults.map((item, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="cursor-pointer px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-900"
+                                                    onClick={() => {
+                                                        setPlaceId(item.place_id);
+                                                        setAutoCompletionLocationSearch(
+                                                            item.description,
+                                                        );
+                                                        setAutoCompletionDropdown(false);
+                                                        setIsPrefChanged(true);
+                                                    }}
+                                                >
+                                                    {item.description}
+                                                </li>
+                                            ))
+                                        )}
+                                    </ul>
+                                )}
                             </div>
 
-                            {/* SECTION: Additional Filters */}
-                            {additional_filters && searchBarFocused && (
-                                <section className="mt-4 w-full">
-                                    {/* Address Input */}
-                                    <div className="mb-5">
-                                        <div className="flex items-center rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:focus-within:ring-white/80">
+                            {/* Floor, Radius, and Time Inputs */}
+                            {addressReady && (
+                                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                    {/* Radius */}
+                                    <div className="col-span-1">
+                                        <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-white/80">
+                                            Radius
+                                        </label>
+                                        <div
+                                            onClick={() => setIsRadiusModal(true)}
+                                            className="flex h-[50px] cursor-pointer items-center rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm transition focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:focus-within:ring-white/80"
+                                        >
                                             <input
-                                                key={getPlaceDetails}
-                                                type="search"
-                                                placeholder="Search Address"
-                                                className="ml-2 flex-1 border-none bg-transparent text-sm text-gray-600 placeholder-gray-400 outline-none focus:ring-0 dark:text-white/80"
-                                                value={autoCompletionLocationSearch}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (value === '') {
-                                                        setPlaceId('');
-                                                        setAutoCompletionLocationSearch('');
-                                                        setAutoCompletionResults([]);
-                                                        setPostFilters((prev) => ({
-                                                            ...prev,
-                                                            address: {
-                                                                lat: '',
-                                                                lng: '',
-                                                            },
-                                                        }));
-                                                        setAddressReady(false);
-                                                    } else {
-                                                        setAutoCompletionLocationSearch(
-                                                            e.target.value,
-                                                        );
-                                                    }
-                                                }}
+                                                readOnly
+                                                type="text"
+                                                className="w-full border-none bg-transparent text-sm text-gray-600 outline-none dark:text-white/80"
+                                                value={
+                                                    (postFilters.radius / 1000).toFixed(2) + ' km'
+                                                }
                                             />
                                         </div>
-                                        {autoCompletionDropdown && (
-                                            <ul className="relative z-50 mt-2 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-deepcharcoal">
-                                                {autoCompletionLoading ? (
-                                                    <li className="flex items-center justify-center px-4 py-4">
-                                                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"></div>
-                                                    </li>
-                                                ) : (
-                                                    autoCompletionResults.map((item, index) => (
-                                                        <li
-                                                            key={index}
-                                                            className="cursor-pointer px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-900"
-                                                            onClick={() => {
-                                                                setPlaceId(item.place_id);
-                                                                setAutoCompletionLocationSearch(
-                                                                    item.description,
-                                                                );
-                                                                setAutoCompletionDropdown(false);
-                                                                setIsPrefChanged(true);
-                                                            }}
-                                                        >
-                                                            {item.description}
-                                                        </li>
-                                                    ))
-                                                )}
-                                            </ul>
-                                        )}
                                     </div>
 
-                                    {/* Floor, Radius, and Time Inputs */}
-                                    {addressReady && (
-                                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                            {/* Radius */}
-                                            <div className="col-span-1">
-                                                <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-white/80">
-                                                    Radius
-                                                </label>
-                                                <div
-                                                    onClick={() => setIsRadiusModal(true)}
-                                                    className="flex h-[50px] cursor-pointer items-center rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm transition focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal dark:focus-within:ring-white/80"
-                                                >
-                                                    <input
-                                                        readOnly
-                                                        type="text"
-                                                        className="w-full border-none bg-transparent text-sm text-gray-600 outline-none dark:text-white/80"
-                                                        value={
-                                                            (postFilters.radius / 1000).toFixed(2) +
-                                                            ' km'
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
+                                    <RadiusMap
+                                        key={isRadiusModal}
+                                        isModalOpen={isRadiusModal}
+                                        setIsModalOpen={setIsRadiusModal}
+                                        lat={postFilters.address.lat}
+                                        lng={postFilters.address.lng}
+                                        onRadiusChange={(newRadius) => {
+                                            setPostFilters((prev) => ({
+                                                ...prev,
+                                                radius: newRadius,
+                                            }));
 
-                                            <RadiusMap
-                                                key={isRadiusModal}
-                                                isModalOpen={isRadiusModal}
-                                                setIsModalOpen={setIsRadiusModal}
-                                                lat={postFilters.address.lat}
-                                                lng={postFilters.address.lng}
-                                                onRadiusChange={(newRadius) => {
-                                                    setPostFilters((prev) => ({
-                                                        ...prev,
-                                                        radius: newRadius,
-                                                    }));
+                                            setIsPrefChanged(true);
+                                        }}
+                                        google_map_api_key={google_map_api_key}
+                                        defaultRadius={postFilters.radius}
+                                    />
+
+                                    {/* Floor Range */}
+                                    <div className="col-span-2">
+                                        <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-white/80">
+                                            Floor Range
+                                        </label>
+                                        <div className="flex h-[50px] items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white/90 px-2 shadow-sm dark:border-gray-700 dark:bg-deepcharcoal">
+                                            <SelectInput
+                                                Id="from_floor_id"
+                                                Name="from_floor_id"
+                                                Value={postFilters.from_floor_id}
+                                                items={floors.from_floors}
+                                                itemKey="name"
+                                                Placeholder="From Floor"
+                                                customPlaceHolder={true}
+                                                Action={(value) => {
+                                                    setPostFilters({
+                                                        ...postFilters,
+                                                        from_floor_id: value,
+                                                    });
 
                                                     setIsPrefChanged(true);
                                                 }}
-                                                google_map_api_key={google_map_api_key}
-                                                defaultRadius={postFilters.radius}
+                                                CustomCss="w-full mt-3  border-none bg-transparent text-sm text-gray-600 dark:text-white/80 placeholder-gray-400 outline-none focus:outline-none "
                                             />
+                                            <span className="text-gray-600 dark:text-white/80">
+                                                –
+                                            </span>
+                                            <SelectInput
+                                                Id="to_floor_id"
+                                                Name="to_floor_id"
+                                                Value={postFilters.to_floor_id}
+                                                items={floors.to_floors}
+                                                itemKey="name"
+                                                Placeholder="To Floor"
+                                                customPlaceHolder={true}
+                                                Action={(value) => {
+                                                    setPostFilters({
+                                                        ...postFilters,
+                                                        to_floor_id: value,
+                                                    });
 
-                                            {/* Floor Range */}
-                                            <div className="col-span-2">
-                                                <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-white/80">
-                                                    Floor Range
-                                                </label>
-                                                <div className="flex h-[50px] items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white/90 px-2 shadow-sm dark:border-gray-700 dark:bg-deepcharcoal">
-                                                    <SelectInput
-                                                        Id="from_floor_id"
-                                                        Name="from_floor_id"
-                                                        Value={postFilters.from_floor_id}
-                                                        items={floors.from_floors}
-                                                        itemKey="name"
-                                                        Placeholder="From Floor"
-                                                        customPlaceHolder={true}
-                                                        Action={(value) => {
-                                                            setPostFilters({
-                                                                ...postFilters,
-                                                                from_floor_id: value,
-                                                            });
-
-                                                            setIsPrefChanged(true);
-                                                        }}
-                                                        CustomCss="w-full mt-3  border-none bg-transparent text-sm text-gray-600 dark:text-white/80 placeholder-gray-400 outline-none focus:outline-none "
-                                                    />
-                                                    <span className="text-gray-600 dark:text-white/80">
-                                                        –
-                                                    </span>
-                                                    <SelectInput
-                                                        Id="to_floor_id"
-                                                        Name="to_floor_id"
-                                                        Value={postFilters.to_floor_id}
-                                                        items={floors.to_floors}
-                                                        itemKey="name"
-                                                        Placeholder="To Floor"
-                                                        customPlaceHolder={true}
-                                                        Action={(value) => {
-                                                            setPostFilters({
-                                                                ...postFilters,
-                                                                to_floor_id: value,
-                                                            });
-
-                                                            setIsPrefChanged(true);
-                                                        }}
-                                                        CustomCss="w-full mt-3 border-none bg-transparent text-sm  placeholder-gray-400 outline-none focus:outline-none text-gray-600 dark:text-white/80"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* Time Range */}
-                                            <div className="col-span-3">
-                                                <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                                                    Date & Time Range
-                                                </label>
-                                                <div className="flex h-[50px] items-center gap-2 rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal">
-                                                    <input
-                                                        ref={rangeRef}
-                                                        readOnly
-                                                        placeholder="Select Date & Time Range"
-                                                        className="w-full border-none bg-transparent text-sm text-gray-600 placeholder-gray-400 outline-none dark:text-white/80"
-                                                    />
-                                                </div>
-                                            </div>
+                                                    setIsPrefChanged(true);
+                                                }}
+                                                CustomCss="w-full mt-3 border-none bg-transparent text-sm  placeholder-gray-400 outline-none focus:outline-none text-gray-600 dark:text-white/80"
+                                            />
                                         </div>
-                                    )}
-                                </section>
-                            )}
+                                    </div>
 
-                            {isPrefChanged && (
-                                <div className="mt-2 flex animate-fadeInDown items-center justify-center">
-                                    <div className="flex justify-center pt-5">
-                                        <button
-                                            onClick={() => ApplyFilter('query')}
-                                            className="flex w-[200px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
-                                            disabled={searchApplying}
-                                        >
-                                            {searchApplying && (
-                                                <div role="status">
-                                                    <svg
-                                                        aria-hidden="true"
-                                                        className="h-4 w-8 animate-spin fill-white/80 text-gray-200 dark:text-gray-200"
-                                                        viewBox="0 0 100 101"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                                            fill="currentColor"
-                                                        />
-                                                        <path
-                                                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                                            fill="currentFill"
-                                                        />
-                                                    </svg>
-                                                    <span className="sr-only"></span>
-                                                </div>
-                                            )}
-                                            Apply Search
-                                        </button>
+                                    {/* Time Range */}
+                                    <div className="col-span-3">
+                                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Date & Time Range
+                                        </label>
+                                        <div className="flex h-[50px] items-center gap-2 rounded-xl border border-gray-300 bg-white/90 p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 dark:border-gray-700 dark:bg-deepcharcoal">
+                                            <input
+                                                ref={rangeRef}
+                                                readOnly
+                                                placeholder="Select Date & Time Range"
+                                                className="w-full border-none bg-transparent text-sm text-gray-600 placeholder-gray-400 outline-none dark:text-white/80"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             )}
+                        </section>
+                    )}
+
+                    {isPrefChanged && (
+                        <div className="mt-2 flex animate-fadeInDown items-center justify-center">
+                            <div className="flex justify-center pt-5">
+                                <button
+                                    onClick={() => ApplyFilter('query')}
+                                    className="flex w-[200px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
+                                    disabled={searchApplying}
+                                >
+                                    {searchApplying && (
+                                        <div role="status">
+                                            <svg
+                                                aria-hidden="true"
+                                                className="h-4 w-8 animate-spin fill-white/80 text-gray-200 dark:text-gray-200"
+                                                viewBox="0 0 100 101"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                                    fill="currentColor"
+                                                />
+                                                <path
+                                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                    fill="currentFill"
+                                                />
+                                            </svg>
+                                            <span className="sr-only"></span>
+                                        </div>
+                                    )}
+                                    Apply Search
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
