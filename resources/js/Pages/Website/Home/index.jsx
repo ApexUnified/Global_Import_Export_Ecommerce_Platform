@@ -1359,14 +1359,14 @@ export default function index({ google_map_api_key }) {
 
                                                     {/* Learn More Button */}
                                                     {showDetails && (
-                                                        <div className="mb-5 flex items-center justify-end">
+                                                        <div className="mb-0 flex items-center justify-end">
                                                             <button
                                                                 className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
                                                                 onClick={() =>
                                                                     setIsMobilePostGallery(true)
                                                                 }
                                                             >
-                                                                Learn More
+                                                                More
                                                             </button>
                                                         </div>
                                                     )}
@@ -1383,7 +1383,7 @@ export default function index({ google_map_api_key }) {
                                                                         setIsMobilePostGallery(true)
                                                                     }
                                                                 >
-                                                                    Learn More
+                                                                    More
                                                                 </button>
                                                             </div>
                                                         )}
