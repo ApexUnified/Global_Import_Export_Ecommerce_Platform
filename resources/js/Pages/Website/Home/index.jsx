@@ -4,7 +4,7 @@ import useDarkMode from '@/Hooks/useDarkMode';
 import useWindowSize from '@/Hooks/useWindowSize';
 import MainLayout from '@/Layouts/Website/MainLayout';
 import { Head, router, usePage } from '@inertiajs/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
 import videoThumbnail from '../../../../../public/assets/images/video-thumb/general-video.png';
@@ -47,12 +47,11 @@ export default function index({ google_map_api_key }) {
         }
     };
 
-    const [viewablePost, setViewablePost] = useState('');
-
     useEffect(() => {
         fetchPosts();
     }, []);
 
+    const [viewablePost, setViewablePost] = useState('');
     const [selectedPostIndex, setSelectedPostIndex] = useState(0);
     const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
 
@@ -183,8 +182,10 @@ export default function index({ google_map_api_key }) {
 
         if (slug) {
             const post = posts.find((post) => post.slug === slug);
+
             if (post) {
                 setViewablePost(post);
+
                 setPostViewerBasedOnWidth(windowSize);
             } else {
                 fetchSinglePost(slug);
@@ -196,11 +197,6 @@ export default function index({ google_map_api_key }) {
     // Stopping Overflow Of Body When Modal is Open Also Preventing Inertia Navigation When Pressing browser Naviagtion buttons for Posts Viewer and gallery
 
     useEffect(() => {
-        if (!window.history.state || (!window.history.state.__initialized && viewablePost == '')) {
-            window.history.pushState({}, '', window.location.href);
-            console.log(window.location.href);
-        }
-
         if (viewablePost !== '') {
             setSelectedMediaIndex(0);
             document.body.classList.add('overflow-hidden');
@@ -208,6 +204,7 @@ export default function index({ google_map_api_key }) {
             document.body.classList.remove('overflow-hidden');
             // if (document.fullscreenElement) closeFullscreen();
         }
+
         const handlePopState = (e) => {
             const currentState = window.history.state;
             if (viewablePost !== '') {
@@ -220,7 +217,7 @@ export default function index({ google_map_api_key }) {
                     return;
                 }
 
-                window.history.replaceState({}, '', window.location.pathname);
+                window.history.pushState({}, '', window.location.pathname);
                 setViewablePost('');
                 // if (document.fullscreenElement) closeFullscreen();
                 setIsDesktopPostViewer(false);
@@ -236,15 +233,16 @@ export default function index({ google_map_api_key }) {
         };
 
         window.addEventListener('popstate', handlePopState);
-        router.on('before', preventInertiaNavigation);
+        const removeBeforeHandler = router.on('before', preventInertiaNavigation);
         // document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.body.classList.remove('overflow-hidden');
             window.removeEventListener('popstate', handlePopState);
 
+            if (removeBeforeHandler) removeBeforeHandler();
             // document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
-    }, [viewablePost, isMobilePostGallery, isDesktopPostViewer, isMobilePostViewer]);
+    }, [viewablePost, isMobilePostGallery, isMobilePostViewer, isDesktopPostViewer]);
 
     // Fetch more posts
     const fetchMorePosts = async () => {
@@ -429,6 +427,27 @@ export default function index({ google_map_api_key }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    const hasMounted = useRef(false);
+
+    useLayoutEffect(() => {
+        // Skip first run
+        if (!hasMounted.current) {
+            hasMounted.current = true;
+            return;
+        }
+
+        if (!window.history.state?.__initialized) {
+            if (
+                !isMobilePostGallery &&
+                !isMobilePostViewer &&
+                !isDesktopPostViewer &&
+                viewablePost === ''
+            ) {
+                window.history.replaceState({ __initialized: true }, '', window.location.href);
+            }
+        }
+    }, [isMobilePostGallery, isMobilePostViewer, isDesktopPostViewer, viewablePost]);
 
     return (
         <MainLayout>
