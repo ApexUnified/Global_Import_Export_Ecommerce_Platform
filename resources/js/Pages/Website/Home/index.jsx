@@ -185,7 +185,6 @@ export default function index({ google_map_api_key }) {
 
             if (post) {
                 setViewablePost(post);
-
                 setPostViewerBasedOnWidth(windowSize);
             } else {
                 fetchSinglePost(slug);
@@ -195,7 +194,6 @@ export default function index({ google_map_api_key }) {
     }, [isPostLoaded, posts]);
 
     // Stopping Overflow Of Body When Modal is Open Also Preventing Inertia Navigation When Pressing browser Naviagtion buttons for Posts Viewer and gallery
-
     useEffect(() => {
         if (viewablePost !== '') {
             setSelectedMediaIndex(0);
@@ -427,27 +425,6 @@ export default function index({ google_map_api_key }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
-    const hasMounted = useRef(false);
-
-    useLayoutEffect(() => {
-        // Skip first run
-        if (!hasMounted.current) {
-            hasMounted.current = true;
-            return;
-        }
-
-        if (!window.history.state?.__initialized) {
-            if (
-                !isMobilePostGallery &&
-                !isMobilePostViewer &&
-                !isDesktopPostViewer &&
-                viewablePost === ''
-            ) {
-                window.history.replaceState({ __initialized: true }, '', window.location.href);
-            }
-        }
-    }, [isMobilePostGallery, isMobilePostViewer, isDesktopPostViewer, viewablePost]);
 
     return (
         <MainLayout>
