@@ -203,16 +203,17 @@ export default function index({ google_map_api_key }) {
             // if (document.fullscreenElement) closeFullscreen();
         }
         const handlePopState = () => {
+            if (isMobilePostGallery) {
+                setIsMobilePostGallery(false);
+                return;
+            }
+
             if (viewablePost !== '') {
                 setViewablePost('');
                 window.history.replaceState({}, '', window.location.pathname);
                 // if (document.fullscreenElement) closeFullscreen();
-                if (isMobilePostGallery) {
-                    setIsMobilePostGallery(false);
-                } else {
-                    setIsDesktopPostViewer(false);
-                    setIsMobilePostViewer(false);
-                }
+                setIsDesktopPostViewer(false);
+                setIsMobilePostViewer(false);
             }
         };
 
