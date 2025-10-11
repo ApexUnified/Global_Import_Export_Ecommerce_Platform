@@ -47,11 +47,11 @@ export default function index({ google_map_api_key }) {
         }
     };
 
+    const [viewablePost, setViewablePost] = useState('');
+
     useEffect(() => {
         fetchPosts();
     }, []);
-
-    const [viewablePost, setViewablePost] = useState('');
 
     const [selectedPostIndex, setSelectedPostIndex] = useState(0);
     const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
@@ -193,8 +193,13 @@ export default function index({ google_map_api_key }) {
         }
     }, [isPostLoaded, posts]);
 
-    // Stopping Overflow Of Body When Modal is Open
+    // Stopping Overflow Of Body When Modal is Open Also Preventing Inertia Navigation When Pressing browser Naviagtion buttons for Posts Viewer and gallery
+
     useEffect(() => {
+        if (!window.history.state || !window.history.state.__initialized) {
+            window.history.pushState({}, '', window.location.href);
+        }
+
         if (viewablePost !== '') {
             setSelectedMediaIndex(0);
             document.body.classList.add('overflow-hidden');
@@ -202,29 +207,43 @@ export default function index({ google_map_api_key }) {
             document.body.classList.remove('overflow-hidden');
             // if (document.fullscreenElement) closeFullscreen();
         }
-        const handlePopState = () => {
-            if (isMobilePostGallery) {
-                setIsMobilePostGallery(false);
-                return;
-            }
-
+        const handlePopState = (e) => {
+            const currentState = window.history.state;
             if (viewablePost !== '') {
-                setViewablePost('');
+                if (isMobilePostGallery) {
+                    setIsMobilePostGallery(false);
+                    if (currentState?.modal === 'post-gallery') {
+                        window.history.replaceState({ modal: 'post-viewer' }, '');
+                    }
+
+                    return;
+                }
+
                 window.history.replaceState({}, '', window.location.pathname);
+                setViewablePost('');
                 // if (document.fullscreenElement) closeFullscreen();
                 setIsDesktopPostViewer(false);
                 setIsMobilePostViewer(false);
+                return;
+            }
+        };
+
+        const preventInertiaNavigation = (event) => {
+            if (viewablePost !== '' || isMobilePostGallery) {
+                event.preventDefault();
             }
         };
 
         window.addEventListener('popstate', handlePopState);
+        router.on('before', preventInertiaNavigation);
         // document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.body.classList.remove('overflow-hidden');
             window.removeEventListener('popstate', handlePopState);
+
             // document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
-    }, [viewablePost]);
+    }, [viewablePost, isMobilePostGallery, isDesktopPostViewer, isMobilePostViewer]);
 
     // Fetch more posts
     const fetchMorePosts = async () => {
@@ -1279,15 +1298,15 @@ export default function index({ google_map_api_key }) {
                                                     {Array.isArray(post.post_image_urls) &&
                                                     post.post_image_urls.length > 0 ? (
                                                         <>
-                                                            <img
+                                                            {/* <img
                                                                 src={post.post_image_urls[0]}
                                                                 alt="Post background blur"
-                                                                className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg"
-                                                            />
+                                                                className="absolute inset-0 object-cover w-full h-full scale-110 blur-lg"
+                                                            /> */}
                                                             <img
                                                                 src={post.post_image_urls[0]}
                                                                 alt="Post main"
-                                                                className="relative z-10 max-h-full max-w-full object-contain"
+                                                                className="relative z-10 max-h-full max-w-full object-cover"
                                                             />
                                                         </>
                                                     ) : (
@@ -1367,9 +1386,13 @@ export default function index({ google_map_api_key }) {
                                                         <div className="mb-0 flex items-center justify-end">
                                                             <button
                                                                 className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
-                                                                onClick={() =>
-                                                                    setIsMobilePostGallery(true)
-                                                                }
+                                                                onClick={() => {
+                                                                    setIsMobilePostGallery(true);
+                                                                    window.history.pushState(
+                                                                        { modal: 'post-gallery' },
+                                                                        '',
+                                                                    );
+                                                                }}
                                                             >
                                                                 More
                                                             </button>
@@ -1384,9 +1407,17 @@ export default function index({ google_map_api_key }) {
                                                             <div className="mt-2 flex items-center justify-end">
                                                                 <button
                                                                     className="rounded-md bg-white p-1 text-[10px] font-semibold hover:bg-white/80"
-                                                                    onClick={() =>
-                                                                        setIsMobilePostGallery(true)
-                                                                    }
+                                                                    onClick={() => {
+                                                                        setIsMobilePostGallery(
+                                                                            true,
+                                                                        );
+                                                                        window.history.pushState(
+                                                                            {
+                                                                                modal: 'post-gallery',
+                                                                            },
+                                                                            '',
+                                                                        );
+                                                                    }}
                                                                 >
                                                                     More
                                                                 </button>

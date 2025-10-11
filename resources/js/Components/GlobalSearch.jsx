@@ -57,7 +57,7 @@ const GlobalSearch = ({
             }
         }
     }, []);
-    const [searchQuery, setSearchQuery] = useState(defaultQuery || null);
+    const [searchQuery, setSearchQuery] = useState(defaultQuery || '');
 
     // Google Auto Completion States
     const [autoCompletionLoading, setAutoCompletionLoading] = useState(false);
