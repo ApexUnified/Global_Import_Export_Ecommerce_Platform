@@ -141,19 +141,19 @@ export default function index({ google_map_api_key }) {
     }, [isMobilePostViewer]);
 
     // When fullscreen toggles
-    const handleFullscreenChange = () => {
-        if (document.fullscreenElement) {
-            scrollToPost(viewablePost);
-        } else {
-            if (viewablePost !== '') {
-                setViewablePost('');
-                setIsDesktopPostViewer(false);
-                setIsMobilePostViewer(false);
-                setIsMobilePostGallery(false);
-                window.history.replaceState({}, '', window.location.pathname);
-            }
-        }
-    };
+    // const handleFullscreenChange = () => {
+    //     if (document.fullscreenElement) {
+    //         scrollToPost(viewablePost);
+    //     } else {
+    //         if (viewablePost !== '') {
+    //             setViewablePost('');
+    //             setIsDesktopPostViewer(false);
+    //             setIsMobilePostViewer(false);
+    //             setIsMobilePostGallery(false);
+    //             window.history.replaceState({}, '', window.location.pathname);
+    //         }
+    //     }
+    // };
 
     const setPostViewerBasedOnWidth = (windowSize) => {
         if (windowSize.width < 1024) {
@@ -207,17 +207,21 @@ export default function index({ google_map_api_key }) {
                 setViewablePost('');
                 window.history.replaceState({}, '', window.location.pathname);
                 // if (document.fullscreenElement) closeFullscreen();
-                setIsDesktopPostViewer(false);
-                setIsMobilePostViewer(false);
+                if (isMobilePostGallery) {
+                    setIsMobilePostGallery(false);
+                } else {
+                    setIsDesktopPostViewer(false);
+                    setIsMobilePostViewer(false);
+                }
             }
         };
 
         window.addEventListener('popstate', handlePopState);
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        // document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.body.classList.remove('overflow-hidden');
             window.removeEventListener('popstate', handlePopState);
-            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            // document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
     }, [viewablePost]);
 
