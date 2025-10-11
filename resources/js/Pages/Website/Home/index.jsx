@@ -4,7 +4,7 @@ import useDarkMode from '@/Hooks/useDarkMode';
 import useWindowSize from '@/Hooks/useWindowSize';
 import MainLayout from '@/Layouts/Website/MainLayout';
 import { Head, router, usePage } from '@inertiajs/react';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
 import videoThumbnail from '../../../../../public/assets/images/video-thumb/general-video.png';
@@ -194,6 +194,7 @@ export default function index({ google_map_api_key }) {
     }, [isPostLoaded, posts]);
 
     // Stopping Overflow Of Body When Modal is Open Also Preventing Inertia Navigation When Pressing browser Naviagtion buttons for Posts Viewer and gallery
+
     useEffect(() => {
         if (viewablePost !== '') {
             setSelectedMediaIndex(0);
@@ -202,7 +203,6 @@ export default function index({ google_map_api_key }) {
             document.body.classList.remove('overflow-hidden');
             // if (document.fullscreenElement) closeFullscreen();
         }
-
         const handlePopState = (e) => {
             const currentState = window.history.state;
             if (viewablePost !== '') {
@@ -215,7 +215,7 @@ export default function index({ google_map_api_key }) {
                     return;
                 }
 
-                window.history.pushState({}, '', window.location.pathname);
+                window.history.replaceState({}, '', window.location.pathname);
                 setViewablePost('');
                 // if (document.fullscreenElement) closeFullscreen();
                 setIsDesktopPostViewer(false);
@@ -231,13 +231,12 @@ export default function index({ google_map_api_key }) {
         };
 
         window.addEventListener('popstate', handlePopState);
-        const removeBeforeHandler = router.on('before', preventInertiaNavigation);
+        router.on('before', preventInertiaNavigation);
         // document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
             document.body.classList.remove('overflow-hidden');
             window.removeEventListener('popstate', handlePopState);
 
-            if (removeBeforeHandler) removeBeforeHandler();
             // document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
     }, [viewablePost, isMobilePostGallery, isMobilePostViewer, isDesktopPostViewer]);
@@ -425,6 +424,32 @@ export default function index({ google_map_api_key }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    const focusRef = useRef(null);
+
+    useEffect(() => {
+        if (isMobilePostViewer && focusRef.current) {
+            // Slight delay to ensure element is mounted
+            requestAnimationFrame(() => {
+                focusRef.current?.focus();
+            });
+        }
+    }, [isMobilePostViewer]);
+
+    useEffect(() => {
+        if (isMobilePostViewer && viewablePost !== '') {
+            // If there's no prior modal state, push one so back button is enabled
+            const hasModalInHistory = window.history.state?.modal === 'post-viewer';
+
+            if (!hasModalInHistory) {
+                window.history.pushState({ modal: 'post-viewer' }, '');
+            }
+
+            requestAnimationFrame(() => {
+                focusRef.current?.focus();
+            });
+        }
+    }, [isMobilePostViewer, viewablePost]);
 
     return (
         <MainLayout>
@@ -1000,7 +1025,7 @@ export default function index({ google_map_api_key }) {
                         isMobilePostViewer &&
                         createPortal(
                             <>
-                                <div className="fixed inset-0 z-50 bg-deepcharcoal">
+                                <div className="fixed inset-0 z-50 bg-deepcharcoal" ref={focusRef}>
                                     {/* Backdrop */}
                                     <div className="absolute inset-0 bg-black/70"></div>
 
