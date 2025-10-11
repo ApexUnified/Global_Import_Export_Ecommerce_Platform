@@ -1310,7 +1310,7 @@ export default function index({ google_map_api_key }) {
                                                             post.post_video_urls.length > 0)
                                                             ? 'bottom-0 right-0'
                                                             : 'right-10 top-10'
-                                                    } ${showDetails ? 'bg-deepcharcoal' : 'bg-deepcharcoal/50'} left-0 z-[10] p-4`}
+                                                    } ${showDetails ? 'bg-deepcharcoal/80' : 'bg-deepcharcoal/40'} left-0 z-[10] p-4`}
                                                 >
                                                     {/* Username */}
                                                     <div className="mb-2 flex items-center space-x-2">
