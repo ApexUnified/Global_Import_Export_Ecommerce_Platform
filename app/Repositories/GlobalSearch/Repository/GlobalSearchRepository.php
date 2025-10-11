@@ -395,52 +395,54 @@ class GlobalSearchRepository implements IGlobalSearchRepository
             }
 
             if (isset($post_preferences['show_products']) && $post_preferences['show_products'] == true) {
-                $smartphones = $this->smartphone::query();
+                if (isset($post_filters['address']) && blank($post_filters['address']['lat']) && blank($post_filters['address']['lng'])) {
+                    $smartphones = $this->smartphone::query();
 
-                if ($request->filled('query')) {
-                    $smartphones = $smartphones->where(function ($query) use ($request) {
-                        $query->whereHas('model_name', function ($subQ) use ($request) {
-                            $subQ->where('name', 'LIKE', '%'.$request->input('query').'%');
-                        })
-                            ->orWhereHas('capacity', function ($subQQ) use ($request) {
-                                $subQQ->where('name', 'LIKE', '%'.$request->input('query').'%');
+                    if ($request->filled('query')) {
+                        $smartphones = $smartphones->where(function ($query) use ($request) {
+                            $query->whereHas('model_name', function ($subQ) use ($request) {
+                                $subQ->where('name', 'LIKE', '%'.$request->input('query').'%');
                             })
-                            ->orWhere('upc', 'LIKE', '%'.$request->input('query').'%');
-                    });
-                }
+                                ->orWhereHas('capacity', function ($subQQ) use ($request) {
+                                    $subQQ->where('name', 'LIKE', '%'.$request->input('query').'%');
+                                })
+                                ->orWhere('upc', 'LIKE', '%'.$request->input('query').'%');
+                        });
+                    }
 
-                $smartphones = $smartphones->with(['model_name', 'capacity'])
-                    ->latest()
-                    ->forPage($page, $perPage)
-                    ->get()
-                    ->map(function ($smartphone) use ($query) {
+                    $smartphones = $smartphones->with(['model_name', 'capacity'])
+                        ->latest()
+                        ->forPage($page, $perPage)
+                        ->get()
+                        ->map(function ($smartphone) use ($query) {
 
-                        $matchType = null;
-                        if (! empty($query)) {
-                            if (Str::startsWith($query, '#')) {
-                                $matchType = 'hashtag';
-                            } elseif (Str::startsWith($query, 'http://') || Str::startsWith($query, 'https://')) {
-                                $matchType = 'url';
-                            } else {
-                                $matchType = 'search_terms';
+                            $matchType = null;
+                            if (! empty($query)) {
+                                if (Str::startsWith($query, '#')) {
+                                    $matchType = 'hashtag';
+                                } elseif (Str::startsWith($query, 'http://') || Str::startsWith($query, 'https://')) {
+                                    $matchType = 'url';
+                                } else {
+                                    $matchType = 'search_terms';
+                                }
                             }
-                        }
 
-                        return [
-                            'id' => $smartphone->id,
-                            'name' => $smartphone->model_name->name,
-                            'capacity' => $smartphone->capacity->name,
-                            'image' => $smartphone->smartphone_image_urls && count($smartphone->smartphone_image_urls) > 0 ? $smartphone->smartphone_image_urls[0] : null,
-                            'type' => 'smartphones',
-                            'created_at' => $smartphone->created_at->format('Y-m-d g:i A'),
-                            'timestamp' => $smartphone->created_at->timestamp,
-                            'matchType' => $matchType,
-                        ];
-                    });
+                            return [
+                                'id' => $smartphone->id,
+                                'name' => $smartphone->model_name->name,
+                                'capacity' => $smartphone->capacity->name,
+                                'image' => $smartphone->smartphone_image_urls && count($smartphone->smartphone_image_urls) > 0 ? $smartphone->smartphone_image_urls[0] : null,
+                                'type' => 'smartphones',
+                                'created_at' => $smartphone->created_at->format('Y-m-d g:i A'),
+                                'timestamp' => $smartphone->created_at->timestamp,
+                                'matchType' => $matchType,
+                            ];
+                        });
 
-                $results = $results->merge($smartphones)
-                    ->sortByDesc('timestamp')
-                    ->values();
+                    $results = $results->merge($smartphones)
+                        ->sortByDesc('timestamp')
+                        ->values();
+                }
             }
 
             $hasMore = ($results->where('type', 'posts')->count() === $perPage) || ($results->where('type', 'smartphones')->count() === $perPage);
