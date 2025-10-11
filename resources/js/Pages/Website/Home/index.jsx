@@ -196,8 +196,9 @@ export default function index({ google_map_api_key }) {
     // Stopping Overflow Of Body When Modal is Open Also Preventing Inertia Navigation When Pressing browser Naviagtion buttons for Posts Viewer and gallery
 
     useEffect(() => {
-        if (!window.history.state || !window.history.state.__initialized) {
+        if (!window.history.state || (!window.history.state.__initialized && viewablePost == '')) {
             window.history.pushState({}, '', window.location.href);
+            console.log(window.location.href);
         }
 
         if (viewablePost !== '') {
